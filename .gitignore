@@ -1,0 +1,63 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Build artifacts
+/build/
+/bin/
+*.exe
+*.so
+*.dll
+*.dylib
+*.a
+*.lib
+
+# Export templates
+/export_templates/
+
+# Android export
+/android/
+
+# iOS export
+/ios/
+
+# Web export
+/web/
+
+# Windows export
+/windows/
+
+# macOS export
+/macos/
+
+# Linux export
+/linux/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# User-specific editor settings
+.vscode/settings.json
+.vscode/launch.json
+
+# Python cache (if using GDScript tools)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+*.log
+
+# Import cache (can be regenerated)
+*.import
+
+# User-specific project settings
+user_settings.json

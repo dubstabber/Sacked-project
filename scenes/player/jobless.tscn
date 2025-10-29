@@ -1,0 +1,72 @@
+[gd_scene load_steps=15 format=3 uid="uid://bxk2l2rhdqtf7"]
+
+[ext_resource type="Texture2D" uid="uid://d3pu715l76s5n" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#002.png" id="1_17xgw"]
+[ext_resource type="Script" uid="uid://bjewcjql8wovv" path="res://scenes/player/jobless.gd" id="1_rrfed"]
+[ext_resource type="Texture2D" uid="uid://ctv16jtysjvl2" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#004.png" id="2_gqk60"]
+[ext_resource type="Texture2D" uid="uid://cxql33yr5v7lg" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#006.png" id="3_rrfed"]
+[ext_resource type="Texture2D" uid="uid://chs1old2w3q4j" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#008.png" id="4_c8ra0"]
+[ext_resource type="Texture2D" uid="uid://ctbjlh4t40b68" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#010.png" id="5_b2a1s"]
+[ext_resource type="Texture2D" uid="uid://cael17b5h4dwa" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#012.png" id="6_2fya7"]
+[ext_resource type="Texture2D" uid="uid://cphsyj183j665" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#014.png" id="7_kqwsp"]
+[ext_resource type="Texture2D" uid="uid://l7h1nqlcqlu" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#016.png" id="8_4llge"]
+[ext_resource type="Texture2D" uid="uid://pkdfgvfw0lg6" path="res://images/characters/jobless/jobless-idle1-atmen/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#018.png" id="9_mao0d"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gqk60"]
+radius = 18.027756
+
+[sub_resource type="Animation" id="Animation_e2l2t"]
+resource_name = "jobless-idle1-atmen-0"
+length = 0.9
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("1_17xgw"), ExtResource("2_gqk60"), ExtResource("3_rrfed"), ExtResource("4_c8ra0"), ExtResource("5_b2a1s"), ExtResource("6_2fya7"), ExtResource("7_kqwsp"), ExtResource("8_4llge"), ExtResource("9_mao0d")]
+}
+
+[sub_resource type="Animation" id="Animation_ou0gy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("1_17xgw")]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vbsef"]
+_data = {
+&"RESET": SubResource("Animation_ou0gy"),
+&"jobless-idle1-atmen-0": SubResource("Animation_e2l2t")
+}
+
+[node name="Jobless" type="CharacterBody2D"]
+script = ExtResource("1_rrfed")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -17)
+shape = SubResource("CircleShape2D_gqk60")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -63.5)
+texture = ExtResource("1_17xgw")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_vbsef")
+}
+
+[node name="Camera2D" type="Camera2D" parent="."]
