@@ -155,203 +155,17 @@ tracks/0/keys = {
 "update": 1,
 "values": [ExtResource("1_17xgw")]
 }
-
-[sub_resource type="Animation" id="Animation_jy1iy"]
-resource_name = "jobless-walk-right"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("82_debdl"), ExtResource("83_4jlcl"), ExtResource("84_s1qvx"), ExtResource("85_qkenp"), ExtResource("86_qspg7"), ExtResource("87_2r5fs"), ExtResource("88_716nl"), ExtResource("89_key1s")]
-}
-
-[sub_resource type="Animation" id="Animation_hnomc"]
-resource_name = "jobless-walk-down-right"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("90_qrues"), ExtResource("91_6rt8u"), ExtResource("92_e6o2l"), ExtResource("93_50ka5"), ExtResource("94_4i3mu"), ExtResource("95_hc65o"), ExtResource("96_1mmrk"), ExtResource("97_em6k8")]
-}
-
-[sub_resource type="Animation" id="Animation_debdl"]
-resource_name = "jobless-walk-up-right"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("74_jy1iy"), ExtResource("75_v4815"), ExtResource("76_2fq37"), ExtResource("77_pjkdn"), ExtResource("78_4emda"), ExtResource("79_usulp"), ExtResource("80_ptyls"), ExtResource("81_v0sv3")]
-}
-
-[sub_resource type="Animation" id="Animation_2iowe"]
-resource_name = "jobless-walk-down"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("98_8p11i"), ExtResource("99_qvreo"), ExtResource("100_8uquy"), ExtResource("101_5dvtm"), ExtResource("102_xs20k"), ExtResource("103_ypewk"), ExtResource("104_5v2vy"), ExtResource("105_6t2v2")]
-}
-
-[sub_resource type="Animation" id="Animation_xscut"]
-resource_name = "jobless-walk-down-left"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("106_6fjat"), ExtResource("107_p1osp"), ExtResource("108_mabp8"), ExtResource("109_dwh87"), ExtResource("110_f63dx"), ExtResource("111_pth41"), ExtResource("112_pdp7g"), ExtResource("113_40bo5")]
-}
-
-[sub_resource type="Animation" id="Animation_6fjat"]
-resource_name = "jobless-walk-left"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("114_8p11i"), ExtResource("115_qvreo"), ExtResource("116_8uquy"), ExtResource("117_5dvtm"), ExtResource("118_xs20k"), ExtResource("119_ypewk"), ExtResource("120_5v2vy"), ExtResource("121_6t2v2")]
-}
-
-[sub_resource type="Animation" id="Animation_w8gwu"]
-resource_name = "jobless-walk-up-left"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("122_hnomc"), ExtResource("123_2iowe"), ExtResource("124_xscut"), ExtResource("125_2l5am"), ExtResource("126_qt061"), ExtResource("127_jikcl"), ExtResource("128_2nqrx"), ExtResource("129_hmivq")]
-}
-
-[sub_resource type="Animation" id="Animation_43d32"]
-resource_name = "jobless-walk-up"
-length = 0.8
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("130_ngok7"), ExtResource("131_i88p4"), ExtResource("132_4h6ud"), ExtResource("133_b1r7u"), ExtResource("134_gile4"), ExtResource("135_iak7o"), ExtResource("136_w2lgu"), ExtResource("137_sr656")]
-}
-
-[sub_resource type="Animation" id="Animation_e2l2t"]
-resource_name = "jobless-idle1-atmen-up-right"
-length = 0.9
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("1_17xgw"), ExtResource("2_gqk60"), ExtResource("3_rrfed"), ExtResource("4_c8ra0"), ExtResource("5_b2a1s"), ExtResource("6_2fya7"), ExtResource("7_kqwsp"), ExtResource("8_4llge"), ExtResource("9_mao0d")]
-}
-
-[sub_resource type="Animation" id="Animation_p76me"]
-resource_name = "jobless-idle1-atmen-right"
-length = 0.9
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("11_vbsef"), ExtResource("12_b4gq4"), ExtResource("13_k3gf2"), ExtResource("14_1mp61"), ExtResource("15_vv1m8"), ExtResource("16_0lq4w"), ExtResource("17_gg24n"), ExtResource("18_reb4t"), ExtResource("19_amaev")]
-}
-
-[sub_resource type="Animation" id="Animation_616se"]
-resource_name = "jobless-idle1-atmen-down-right"
-length = 0.9
-loop_mode = 1
-step = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
-"update": 1,
-"values": [ExtResource("20_ue551"), ExtResource("21_nfduj"), ExtResource("22_g8mn4"), ExtResource("23_e07c4"), ExtResource("24_qx3e7"), ExtResource("25_tph1l"), ExtResource("26_lu4lt"), ExtResource("27_6gi2y"), ExtResource("28_knwpr")]
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-34, -124)]
 }
 
 [sub_resource type="Animation" id="Animation_laj0g"]
@@ -390,6 +204,24 @@ tracks/0/keys = {
 "values": [ExtResource("38_1bkym"), ExtResource("39_u58fu"), ExtResource("40_vkxid"), ExtResource("41_3q6yk"), ExtResource("42_kphy7"), ExtResource("43_hquei"), ExtResource("44_wwl10"), ExtResource("45_mnh83"), ExtResource("46_4cvdp")]
 }
 
+[sub_resource type="Animation" id="Animation_616se"]
+resource_name = "jobless-idle1-atmen-down-right"
+length = 0.9
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("20_ue551"), ExtResource("21_nfduj"), ExtResource("22_g8mn4"), ExtResource("23_e07c4"), ExtResource("24_qx3e7"), ExtResource("25_tph1l"), ExtResource("26_lu4lt"), ExtResource("27_6gi2y"), ExtResource("28_knwpr")]
+}
+
 [sub_resource type="Animation" id="Animation_1bkym"]
 resource_name = "jobless-idle1-atmen-left"
 length = 0.9
@@ -406,6 +238,42 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [ExtResource("47_exh3x"), ExtResource("48_l4xab"), ExtResource("49_2es78"), ExtResource("50_l12kh"), ExtResource("51_it4sr"), ExtResource("52_vyeep"), ExtResource("53_fv5w3"), ExtResource("54_n1gad"), ExtResource("55_6pc70")]
+}
+
+[sub_resource type="Animation" id="Animation_p76me"]
+resource_name = "jobless-idle1-atmen-right"
+length = 0.9
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("11_vbsef"), ExtResource("12_b4gq4"), ExtResource("13_k3gf2"), ExtResource("14_1mp61"), ExtResource("15_vv1m8"), ExtResource("16_0lq4w"), ExtResource("17_gg24n"), ExtResource("18_reb4t"), ExtResource("19_amaev")]
+}
+
+[sub_resource type="Animation" id="Animation_qkenp"]
+resource_name = "jobless-idle1-atmen-up"
+length = 0.9
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("65_v4815"), ExtResource("66_2fq37"), ExtResource("67_pjkdn"), ExtResource("68_4emda"), ExtResource("69_usulp"), ExtResource("70_ptyls"), ExtResource("71_v0sv3"), ExtResource("72_debdl"), ExtResource("73_4jlcl")]
 }
 
 [sub_resource type="Animation" id="Animation_s1qvx"]
@@ -426,8 +294,8 @@ tracks/0/keys = {
 "values": [ExtResource("56_616se"), ExtResource("57_laj0g"), ExtResource("58_rcop8"), ExtResource("59_da646"), ExtResource("60_vx7g7"), ExtResource("61_7d7gr"), ExtResource("62_weq1u"), ExtResource("63_5ls6d"), ExtResource("64_jy1iy")]
 }
 
-[sub_resource type="Animation" id="Animation_qkenp"]
-resource_name = "jobless-idle1-atmen-up"
+[sub_resource type="Animation" id="Animation_e2l2t"]
+resource_name = "jobless-idle1-atmen-up-right"
 length = 0.9
 loop_mode = 1
 step = 0.1
@@ -441,7 +309,163 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [ExtResource("65_v4815"), ExtResource("66_2fq37"), ExtResource("67_pjkdn"), ExtResource("68_4emda"), ExtResource("69_usulp"), ExtResource("70_ptyls"), ExtResource("71_v0sv3"), ExtResource("72_debdl"), ExtResource("73_4jlcl")]
+"values": [ExtResource("1_17xgw"), ExtResource("2_gqk60"), ExtResource("3_rrfed"), ExtResource("4_c8ra0"), ExtResource("5_b2a1s"), ExtResource("6_2fya7"), ExtResource("7_kqwsp"), ExtResource("8_4llge"), ExtResource("9_mao0d")]
+}
+
+[sub_resource type="Animation" id="Animation_2iowe"]
+resource_name = "jobless-walk-down"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("98_8p11i"), ExtResource("99_qvreo"), ExtResource("100_8uquy"), ExtResource("101_5dvtm"), ExtResource("102_xs20k"), ExtResource("103_ypewk"), ExtResource("104_5v2vy"), ExtResource("105_6t2v2")]
+}
+
+[sub_resource type="Animation" id="Animation_xscut"]
+resource_name = "jobless-walk-down-left"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("106_6fjat"), ExtResource("107_p1osp"), ExtResource("108_mabp8"), ExtResource("109_dwh87"), ExtResource("110_f63dx"), ExtResource("111_pth41"), ExtResource("112_pdp7g"), ExtResource("113_40bo5")]
+}
+
+[sub_resource type="Animation" id="Animation_hnomc"]
+resource_name = "jobless-walk-down-right"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("90_qrues"), ExtResource("91_6rt8u"), ExtResource("92_e6o2l"), ExtResource("93_50ka5"), ExtResource("94_4i3mu"), ExtResource("95_hc65o"), ExtResource("96_1mmrk"), ExtResource("97_em6k8")]
+}
+
+[sub_resource type="Animation" id="Animation_6fjat"]
+resource_name = "jobless-walk-left"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("114_8p11i"), ExtResource("115_qvreo"), ExtResource("116_8uquy"), ExtResource("117_5dvtm"), ExtResource("118_xs20k"), ExtResource("119_ypewk"), ExtResource("120_5v2vy"), ExtResource("121_6t2v2")]
+}
+
+[sub_resource type="Animation" id="Animation_jy1iy"]
+resource_name = "jobless-walk-right"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("82_debdl"), ExtResource("83_4jlcl"), ExtResource("84_s1qvx"), ExtResource("85_qkenp"), ExtResource("86_qspg7"), ExtResource("87_2r5fs"), ExtResource("88_716nl"), ExtResource("89_key1s")]
+}
+
+[sub_resource type="Animation" id="Animation_43d32"]
+resource_name = "jobless-walk-up"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("130_ngok7"), ExtResource("131_i88p4"), ExtResource("132_4h6ud"), ExtResource("133_b1r7u"), ExtResource("134_gile4"), ExtResource("135_iak7o"), ExtResource("136_w2lgu"), ExtResource("137_sr656")]
+}
+
+[sub_resource type="Animation" id="Animation_w8gwu"]
+resource_name = "jobless-walk-up-left"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("122_hnomc"), ExtResource("123_2iowe"), ExtResource("124_xscut"), ExtResource("125_2l5am"), ExtResource("126_qt061"), ExtResource("127_jikcl"), ExtResource("128_2nqrx"), ExtResource("129_hmivq")]
+}
+
+[sub_resource type="Animation" id="Animation_debdl"]
+resource_name = "jobless-walk-up-right"
+length = 0.875
+loop_mode = 1
+step = 0.125
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("74_jy1iy"), ExtResource("75_v4815"), ExtResource("76_2fq37"), ExtResource("77_pjkdn"), ExtResource("78_4emda"), ExtResource("79_usulp"), ExtResource("80_ptyls"), ExtResource("81_v0sv3")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:offset")
+tracks/1/interp = 0
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(-34, -124), Vector2(-27, -124), Vector2(-23, -128), Vector2(-29, -130), Vector2(-32, -130), Vector2(-27, -126), Vector2(-22, -122), Vector2(-23, -124)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vbsef"]
@@ -469,17 +493,18 @@ _data = {
 script = ExtResource("1_rrfed")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, -17)
 shape = SubResource("CircleShape2D_gqk60")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -63.5)
 texture = ExtResource("1_17xgw")
+centered = false
+offset = Vector2(-34, -124)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_vbsef")
 }
-speed_scale = 0.7
 
 [node name="Camera2D" type="Camera2D" parent="."]
