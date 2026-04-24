@@ -61,3 +61,6 @@ __pycache__/
 
 # User-specific project settings
 user_settings.json
+
+extract-sacked-assets/
+.codex/
