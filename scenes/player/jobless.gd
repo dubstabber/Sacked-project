@@ -7,6 +7,17 @@ const IDLE_ANIMATION_PREFIX := "jobless-idle1-atmen-"
 const WALK_ANIMATION_PREFIX := "jobless-walk-"
 const FOOTSTEP_STREAM_PATH := "res://audio/sfx/footsteps.wav"
 const FOOTSTEP_LOOP_END_SECONDS := 3.915147
+const MOVEMENT_ARROW_DISTANCE := 40.0
+const MOVEMENT_ARROW_TEXTURES := {
+	0: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_000#000.png"),
+	45: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_045#000.png"),
+	90: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_090#000.png"),
+	135: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_135#000.png"),
+	180: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_180#000.png"),
+	225: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_225#000.png"),
+	270: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_270#000.png"),
+	315: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_315#000.png"),
+}
 
 var is_moving: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
@@ -17,12 +28,14 @@ var footstep_loop_active: bool = false
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var sprite: Sprite2D = $Sprite2D
+@onready var movement_arrow: Sprite2D = $MovementArrow
 @onready var footstep_player: AudioStreamPlayer = $FootstepPlayer
 
 
 func _ready() -> void:
 	cache_clock_driven_animation_frames()
 	load_footstep_stream()
+	hide_movement_arrow()
 	play_idle_animation(last_direction)
 
 
@@ -40,14 +53,16 @@ func _process(_delta: float) -> void:
 func _physics_process(_delta: float) -> void:
 	if is_moving:
 		var mouse_pos = get_global_mouse_position()
-		var movement_direction = (mouse_pos - global_position).normalized()
-		movement_direction = snap_to_8_directions(movement_direction)
+		var raw_movement_direction = (mouse_pos - global_position).normalized()
+		var movement_direction = snap_to_8_directions(raw_movement_direction)
 		last_direction = movement_direction
 		velocity = movement_direction * move_speed
 		play_walk_animation(movement_direction)
+		update_movement_arrow(raw_movement_direction, movement_direction)
 	else:
 		velocity = Vector2.ZERO
 		play_idle_animation(last_direction)
+		hide_movement_arrow()
 
 	move_and_slide()
 
@@ -113,6 +128,44 @@ func play_walk_animation(direction: Vector2) -> void:
 	play_animation(anim_name)
 	if anim_name != "":
 		start_footsteps()
+
+
+func update_movement_arrow(raw_direction: Vector2, snapped_direction: Vector2) -> void:
+	var cursor_angle := get_movement_arrow_angle(snapped_direction)
+	var arrow_direction := raw_direction
+	if arrow_direction == Vector2.ZERO:
+		arrow_direction = snapped_direction
+	movement_arrow.texture = MOVEMENT_ARROW_TEXTURES.get(cursor_angle)
+	movement_arrow.position = arrow_direction * MOVEMENT_ARROW_DISTANCE
+	movement_arrow.visible = movement_arrow.texture != null
+
+
+func hide_movement_arrow() -> void:
+	movement_arrow.visible = false
+
+
+func get_movement_arrow_angle(direction: Vector2) -> int:
+	var index = int(round(direction.angle() / (PI / 4)))
+
+	match index:
+		0:
+			return 45
+		1:
+			return 90
+		2:
+			return 135
+		3:
+			return 180
+		4, -4:
+			return 225
+		-3:
+			return 270
+		-2:
+			return 315
+		-1:
+			return 0
+
+	return 45
 
 
 func play_animation(anim_name: String) -> void:

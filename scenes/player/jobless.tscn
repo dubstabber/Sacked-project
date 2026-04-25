@@ -674,6 +674,10 @@ texture = ExtResource("1_17xgw")
 centered = false
 offset = Vector2(-23, -112)
 
+[node name="MovementArrow" type="Sprite2D" parent="."]
+visible = false
+z_index = 2
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1201666287]
 libraries/ = SubResource("AnimationLibrary_vbsef")
 

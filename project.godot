@@ -19,6 +19,10 @@ run/main_scene="uid://5mi7g3wlmrre"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[display]
+
+mouse_cursor/custom_image="uid://b7bg57k7uv0s3"
+
 [input]
 
 mouse-movement={
