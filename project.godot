@@ -15,12 +15,19 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Sacked project"
-run/main_scene="uid://5mi7g3wlmrre"
+run/main_scene="res://scenes/screens/boot_loading.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+ScreenManager="*res://autoloads/screen_manager.gd"
+
 [display]
 
+window/size/viewport_width=800
+window/size/viewport_height=600
+window/stretch/mode="canvas_items"
 mouse_cursor/custom_image="uid://b7bg57k7uv0s3"
 
 [input]

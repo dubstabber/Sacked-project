@@ -1,0 +1,152 @@
+[gd_scene load_steps=6 format=3 uid="uid://b1mainmenuuid01"]
+
+[ext_resource type="Script" path="res://scenes/screens/main_menu.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cqyanr4onxqa5" path="res://images/gui/screens/menu_background.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://dd52115qg7h6u" path="res://images/gui/screens/menu_char.png" id="3_char"]
+[ext_resource type="Texture2D" uid="uid://trbd1cxyell7" path="res://images/gui/screens/menu_button_passive.png" id="4_btn_passive"]
+[ext_resource type="Texture2D" uid="uid://bpmtdh4w47s0o" path="res://images/gui/screens/menu_button_active.png" id="5_btn_active"]
+[ext_resource type="AudioStream" uid="uid://d1bfkwkgg5m3s" path="res://audio/music/menu1.ogg" id="6_music"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 600.0
+texture = ExtResource("2_bg")
+stretch_mode = 5
+
+[node name="Char" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 32.0
+offset_right = 194.0
+offset_bottom = 583.0
+texture = ExtResource("3_char")
+
+[node name="Buttons" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 0
+
+[node name="Button1" type="TextureButton" parent="Buttons"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 116.0
+offset_right = 620.0
+offset_bottom = 164.0
+texture_normal = ExtResource("4_btn_passive")
+texture_pressed = ExtResource("5_btn_active")
+texture_hover = ExtResource("5_btn_active")
+
+[node name="Label" type="Label" parent="Buttons/Button1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Button2" type="TextureButton" parent="Buttons"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 180.0
+offset_right = 620.0
+offset_bottom = 228.0
+texture_normal = ExtResource("4_btn_passive")
+texture_pressed = ExtResource("5_btn_active")
+texture_hover = ExtResource("5_btn_active")
+
+[node name="Label" type="Label" parent="Buttons/Button2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Button3" type="TextureButton" parent="Buttons"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 244.0
+offset_right = 620.0
+offset_bottom = 292.0
+texture_normal = ExtResource("4_btn_passive")
+texture_pressed = ExtResource("5_btn_active")
+texture_hover = ExtResource("5_btn_active")
+
+[node name="Label" type="Label" parent="Buttons/Button3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Button4" type="TextureButton" parent="Buttons"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 308.0
+offset_right = 620.0
+offset_bottom = 356.0
+texture_normal = ExtResource("4_btn_passive")
+texture_pressed = ExtResource("5_btn_active")
+texture_hover = ExtResource("5_btn_active")
+
+[node name="Label" type="Label" parent="Buttons/Button4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Button5" type="TextureButton" parent="Buttons"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 372.0
+offset_right = 620.0
+offset_bottom = 420.0
+texture_normal = ExtResource("4_btn_passive")
+texture_pressed = ExtResource("5_btn_active")
+texture_hover = ExtResource("5_btn_active")
+
+[node name="Label" type="Label" parent="Buttons/Button5"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Button6" type="TextureButton" parent="Buttons"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 452.0
+offset_right = 620.0
+offset_bottom = 500.0
+texture_normal = ExtResource("4_btn_passive")
+texture_pressed = ExtResource("5_btn_active")
+texture_hover = ExtResource("5_btn_active")
+
+[node name="Label" type="Label" parent="Buttons/Button6"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_music")
+volume_db = -6.0
