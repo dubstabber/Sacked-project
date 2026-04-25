@@ -3,11 +3,21 @@ extends CharacterBody2D
 
 @export var move_speed: float = 300.0
 
+const IDLE_ANIMATION_PREFIX := "jobless-idle1-atmen-"
+const WALK_ANIMATION_PREFIX := "jobless-walk-"
+
 var is_moving: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
 var current_animation: String = ""
+var clock_driven_animation_frames: Dictionary = {}
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var sprite: Sprite2D = $Sprite2D
+
+
+func _ready() -> void:
+	cache_clock_driven_animation_frames()
+	play_idle_animation(last_direction)
 
 
 func _input(event: InputEvent) -> void:
@@ -17,18 +27,22 @@ func _input(event: InputEvent) -> void:
 		is_moving = false
 
 
-func _physics_process(delta: float) -> void:
+func _process(_delta: float) -> void:
+	update_clock_driven_animation_frame()
+
+
+func _physics_process(_delta: float) -> void:
 	if is_moving:
 		var mouse_pos = get_global_mouse_position()
-		var direction = (mouse_pos - global_position).normalized()
-		direction = snap_to_8_directions(direction)
-		last_direction = direction
-		velocity = direction * move_speed
-		play_walk_animation(direction)
+		var movement_direction = (mouse_pos - global_position).normalized()
+		movement_direction = snap_to_8_directions(movement_direction)
+		last_direction = movement_direction
+		velocity = movement_direction * move_speed
+		play_walk_animation(movement_direction)
 	else:
 		velocity = Vector2.ZERO
 		play_idle_animation(last_direction)
-	
+
 	move_and_slide()
 
 
@@ -43,7 +57,7 @@ func play_idle_animation(direction: Vector2) -> void:
 	var angle = direction.angle()
 	var index = int(round(angle / (PI / 4))) % 8
 	var anim_name: String = ""
-	
+
 	match index:
 		0:  # Right
 			anim_name = "jobless-idle1-atmen-right"
@@ -61,17 +75,15 @@ func play_idle_animation(direction: Vector2) -> void:
 			anim_name = "jobless-idle1-atmen-up"
 		-1:  # Up-Right
 			anim_name = "jobless-idle1-atmen-up-right"
-	
-	if anim_name != current_animation:
-		current_animation = anim_name
-		animation_player.play(anim_name)
+
+	play_animation(anim_name)
 
 
 func play_walk_animation(direction: Vector2) -> void:
 	var angle = direction.angle()
 	var index = int(round(angle / (PI / 4))) % 8
 	var anim_name: String = ""
-	
+
 	match index:
 		0:  # Right
 			anim_name = "jobless-walk-right"
@@ -89,8 +101,82 @@ func play_walk_animation(direction: Vector2) -> void:
 			anim_name = "jobless-walk-up"
 		-1:  # Up-Right
 			anim_name = "jobless-walk-up-right"
-		
-	
+
+
+	play_animation(anim_name)
+
+
+func play_animation(anim_name: String) -> void:
+	if anim_name == "":
+		return
+
+	if is_clock_driven_animation(anim_name):
+		current_animation = anim_name
+		if animation_player.is_playing():
+			animation_player.stop()
+		update_clock_driven_animation_frame()
+		return
+
 	if anim_name != current_animation:
 		current_animation = anim_name
 		animation_player.play(anim_name)
+
+
+func is_clock_driven_animation(anim_name: String) -> bool:
+	return anim_name.begins_with(WALK_ANIMATION_PREFIX) or anim_name.begins_with(IDLE_ANIMATION_PREFIX)
+
+
+func update_clock_driven_animation_frame() -> void:
+	if not is_clock_driven_animation(current_animation):
+		return
+
+	var animation_frame_data: Dictionary = clock_driven_animation_frames.get(current_animation, {})
+	var frames: Array = animation_frame_data.get("frames", [])
+	var animation_length := float(animation_frame_data.get("length", 0.0))
+	if frames.is_empty() or animation_length <= 0.0:
+		return
+
+	var animation_time := fposmod(get_global_animation_time(), animation_length)
+	var frame_index := 0
+	for index in range(frames.size()):
+		if float(frames[index]["time"]) > animation_time:
+			break
+		frame_index = index
+
+	var frame: Dictionary = frames[frame_index]
+	sprite.texture = frame["texture"]
+	sprite.offset = frame["offset"]
+
+
+func cache_clock_driven_animation_frames() -> void:
+	for animation_name in animation_player.get_animation_list():
+		var anim_name := String(animation_name)
+		if not is_clock_driven_animation(anim_name):
+			continue
+
+		var animation := animation_player.get_animation(anim_name)
+		var texture_track := animation.find_track(NodePath("Sprite2D:texture"), Animation.TYPE_VALUE)
+		var offset_track := animation.find_track(NodePath("Sprite2D:offset"), Animation.TYPE_VALUE)
+		if texture_track < 0 or offset_track < 0:
+			continue
+
+		var frame_count = min(animation.track_get_key_count(texture_track), animation.track_get_key_count(offset_track))
+		if frame_count <= 0:
+			continue
+
+		var frames: Array = []
+		for frame_index in range(frame_count):
+			frames.append({
+				"time": animation.track_get_key_time(texture_track, frame_index),
+				"texture": animation.track_get_key_value(texture_track, frame_index),
+				"offset": animation.track_get_key_value(offset_track, frame_index),
+			})
+
+		clock_driven_animation_frames[anim_name] = {
+			"length": animation.length,
+			"frames": frames,
+		}
+
+
+func get_global_animation_time() -> float:
+	return Time.get_ticks_usec() * 0.000001
