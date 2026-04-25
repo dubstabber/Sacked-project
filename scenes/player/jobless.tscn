@@ -2,9 +2,12 @@
 
 [ext_resource type="Texture2D" uid="uid://dsrkckjm5yk7d" path="res://images/characters/jobless/jobless-idle1-atmen-000/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#002.png" id="1_17xgw"]
 [ext_resource type="Script" uid="uid://bjewcjql8wovv" path="res://scenes/player/jobless.gd" id="1_rrfed"]
+[ext_resource type="Script" uid="uid://bf5gdjtdfixca" path="res://scenes/player/animation_controller.gd" id="2_animc"]
 [ext_resource type="Texture2D" uid="uid://mycbcay3rguy" path="res://images/characters/jobless/jobless-idle1-atmen-000/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#004.png" id="2_gqk60"]
+[ext_resource type="Script" uid="uid://d3vs28rlrhunx" path="res://scenes/player/movement_cursor.gd" id="3_cur5r"]
 [ext_resource type="Texture2D" uid="uid://cfd2iwfkw8wpy" path="res://images/characters/jobless/jobless-idle1-atmen-000/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#006.png" id="3_rrfed"]
 [ext_resource type="Texture2D" uid="uid://bjooyqkakkmvh" path="res://images/characters/jobless/jobless-idle1-atmen-000/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#008.png" id="4_c8ra0"]
+[ext_resource type="Script" uid="uid://xuv2t41tecl1" path="res://scenes/player/footstep_controller.gd" id="4_footp"]
 [ext_resource type="Texture2D" uid="uid://b7pek88mw1xja" path="res://images/characters/jobless/jobless-idle1-atmen-000/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#010.png" id="5_b2a1s"]
 [ext_resource type="Texture2D" uid="uid://c8d1oi3k8facf" path="res://images/characters/jobless/jobless-idle1-atmen-000/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#012.png" id="6_2fya7"]
 [ext_resource type="Texture2D" uid="uid://bicbj7npfubaj" path="res://images/characters/jobless/jobless-idle1-atmen-000/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#014.png" id="7_kqwsp"]
@@ -674,16 +677,26 @@ texture = ExtResource("1_17xgw")
 centered = false
 offset = Vector2(-23, -112)
 
-[node name="MovementArrow" type="Sprite2D" parent="."]
+[node name="MovementArrow" type="Sprite2D" parent="." unique_id=1806787780]
 visible = false
 z_index = 2
 centered = false
+script = ExtResource("3_cur5r")
+
+[node name="AnimationController" type="Node" parent="." unique_id=755001670]
+script = ExtResource("2_animc")
+idle_animation_prefix = "jobless-idle1-atmen-"
+walk_animation_prefix = "jobless-walk-"
+sprite_path = NodePath("../Sprite2D")
+animation_player_path = NodePath("../AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1201666287]
 libraries/ = SubResource("AnimationLibrary_vbsef")
 
 [node name="FootstepPlayer" type="AudioStreamPlayer" parent="." unique_id=665951100]
 volume_db = -8.0
-max_polyphony = 1
+script = ExtResource("4_footp")
+stream_path = "res://audio/sfx/footsteps.wav"
+loop_end_seconds = 3.915147
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=82757386]
