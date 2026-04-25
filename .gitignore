@@ -64,4 +64,5 @@ user_settings.json
 
 extract-sacked-assets/
 .codex/
+.claude/
 Godot_v4.6.2-stable_linux.x86_64

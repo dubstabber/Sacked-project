@@ -677,4 +677,8 @@ offset = Vector2(-23, -112)
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1201666287]
 libraries/ = SubResource("AnimationLibrary_vbsef")
 
+[node name="FootstepPlayer" type="AudioStreamPlayer" parent="." unique_id=665951100]
+volume_db = -8.0
+max_polyphony = 1
+
 [node name="Camera2D" type="Camera2D" parent="." unique_id=82757386]

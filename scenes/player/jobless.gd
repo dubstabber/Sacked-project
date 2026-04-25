@@ -5,18 +5,24 @@ extends CharacterBody2D
 
 const IDLE_ANIMATION_PREFIX := "jobless-idle1-atmen-"
 const WALK_ANIMATION_PREFIX := "jobless-walk-"
+const FOOTSTEP_STREAM_PATH := "res://audio/sfx/footsteps.wav"
+const FOOTSTEP_LOOP_END_SECONDS := 3.915147
 
 var is_moving: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
 var current_animation: String = ""
 var clock_driven_animation_frames: Dictionary = {}
+var footstep_stream: AudioStream
+var footstep_loop_active: bool = false
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var sprite: Sprite2D = $Sprite2D
+@onready var footstep_player: AudioStreamPlayer = $FootstepPlayer
 
 
 func _ready() -> void:
 	cache_clock_driven_animation_frames()
+	load_footstep_stream()
 	play_idle_animation(last_direction)
 
 
@@ -76,6 +82,8 @@ func play_idle_animation(direction: Vector2) -> void:
 		-1:  # Up-Right
 			anim_name = "jobless-idle1-atmen-up-right"
 
+	if anim_name != "":
+		stop_footsteps()
 	play_animation(anim_name)
 
 
@@ -102,8 +110,9 @@ func play_walk_animation(direction: Vector2) -> void:
 		-1:  # Up-Right
 			anim_name = "jobless-walk-up-right"
 
-
 	play_animation(anim_name)
+	if anim_name != "":
+		start_footsteps()
 
 
 func play_animation(anim_name: String) -> void:
@@ -136,7 +145,8 @@ func update_clock_driven_animation_frame() -> void:
 	if frames.is_empty() or animation_length <= 0.0:
 		return
 
-	var animation_time := fposmod(get_global_animation_time(), animation_length)
+	var animation_clock := get_global_animation_time()
+	var animation_time := fposmod(animation_clock, animation_length)
 	var frame_index := 0
 	for index in range(frames.size()):
 		if float(frames[index]["time"]) > animation_time:
@@ -146,6 +156,36 @@ func update_clock_driven_animation_frame() -> void:
 	var frame: Dictionary = frames[frame_index]
 	sprite.texture = frame["texture"]
 	sprite.offset = frame["offset"]
+
+
+func load_footstep_stream() -> void:
+	var stream := AudioStreamWAV.load_from_file(FOOTSTEP_STREAM_PATH)
+	if stream == null:
+		push_warning("Unable to load jobless footstep stream: %s" % FOOTSTEP_STREAM_PATH)
+		return
+
+	var loop_end_frame := int(round(FOOTSTEP_LOOP_END_SECONDS * stream.mix_rate))
+	stream.loop_begin = 0
+	stream.loop_end = clampi(loop_end_frame, 1, int(round(stream.get_length() * stream.mix_rate)))
+	stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+
+	footstep_stream = stream
+	footstep_player.stream = footstep_stream
+
+
+func start_footsteps() -> void:
+	if footstep_player.stream == null:
+		return
+	if footstep_loop_active:
+		return
+	footstep_player.play()
+	footstep_loop_active = true
+
+
+func stop_footsteps() -> void:
+	footstep_loop_active = false
+	if footstep_player.playing:
+		footstep_player.stop()
 
 
 func cache_clock_driven_animation_frames() -> void:
