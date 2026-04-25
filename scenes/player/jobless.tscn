@@ -677,6 +677,7 @@ offset = Vector2(-23, -112)
 [node name="MovementArrow" type="Sprite2D" parent="."]
 visible = false
 z_index = 2
+centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1201666287]
 libraries/ = SubResource("AnimationLibrary_vbsef")

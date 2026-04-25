@@ -18,6 +18,16 @@ const MOVEMENT_ARROW_TEXTURES := {
 	270: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_270#000.png"),
 	315: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_315#000.png"),
 }
+const MOVEMENT_ARROW_OFFSETS := {
+	0: Vector2(-10, -17),
+	45: Vector2(-10, -9),
+	90: Vector2(-10, -5),
+	135: Vector2(-18, -5),
+	180: Vector2(-36, -5),
+	225: Vector2(-50, -9),
+	270: Vector2(-36, -16),
+	315: Vector2(-19, -22),
+}
 
 var is_moving: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
@@ -35,15 +45,20 @@ var footstep_loop_active: bool = false
 func _ready() -> void:
 	cache_clock_driven_animation_frames()
 	load_footstep_stream()
+	show_main_cursor()
 	hide_movement_arrow()
 	play_idle_animation(last_direction)
 
 
+func _exit_tree() -> void:
+	show_main_cursor()
+
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("mouse-movement"):
-		is_moving = true
+		start_mouse_movement()
 	elif event.is_action_released("mouse-movement"):
-		is_moving = false
+		stop_mouse_movement()
 
 
 func _process(_delta: float) -> void:
@@ -131,12 +146,15 @@ func play_walk_animation(direction: Vector2) -> void:
 
 
 func update_movement_arrow(raw_direction: Vector2, snapped_direction: Vector2) -> void:
-	var cursor_angle := get_movement_arrow_angle(snapped_direction)
 	var arrow_direction := raw_direction
 	if arrow_direction == Vector2.ZERO:
 		arrow_direction = snapped_direction
+
+	var cursor_phase := get_movement_arrow_phase(arrow_direction)
+	var cursor_angle := get_movement_arrow_angle_from_phase(cursor_phase)
 	movement_arrow.texture = MOVEMENT_ARROW_TEXTURES.get(cursor_angle)
-	movement_arrow.position = arrow_direction * MOVEMENT_ARROW_DISTANCE
+	movement_arrow.offset = MOVEMENT_ARROW_OFFSETS.get(cursor_angle, Vector2.ZERO)
+	movement_arrow.position = get_movement_arrow_position(cursor_phase)
 	movement_arrow.visible = movement_arrow.texture != null
 
 
@@ -144,28 +162,45 @@ func hide_movement_arrow() -> void:
 	movement_arrow.visible = false
 
 
-func get_movement_arrow_angle(direction: Vector2) -> int:
-	var index = int(round(direction.angle() / (PI / 4)))
+func start_mouse_movement() -> void:
+	is_moving = true
+	hide_main_cursor()
 
-	match index:
-		0:
-			return 45
-		1:
-			return 90
-		2:
-			return 135
-		3:
-			return 180
-		4, -4:
-			return 225
-		-3:
-			return 270
-		-2:
-			return 315
-		-1:
-			return 0
 
-	return 45
+func stop_mouse_movement() -> void:
+	is_moving = false
+	hide_movement_arrow()
+	warp_main_cursor_to_player()
+	show_main_cursor()
+
+
+func hide_main_cursor() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+
+
+func show_main_cursor() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func warp_main_cursor_to_player() -> void:
+	get_viewport().warp_mouse(get_player_viewport_position())
+
+
+func get_player_viewport_position() -> Vector2:
+	return get_global_transform_with_canvas().origin
+
+
+func get_movement_arrow_phase(direction: Vector2) -> float:
+	return fposmod(direction.angle() / (PI / 4.0) + 1.5, 8.0)
+
+
+func get_movement_arrow_angle_from_phase(cursor_phase: float) -> int:
+	return int(floor(cursor_phase)) * 45
+
+
+func get_movement_arrow_position(cursor_phase: float) -> Vector2:
+	var cursor_radians := cursor_phase * PI / 4.0
+	return Vector2(sin(cursor_radians), -cos(cursor_radians)) * MOVEMENT_ARROW_DISTANCE
 
 
 func play_animation(anim_name: String) -> void:
