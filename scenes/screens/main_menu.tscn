@@ -5,7 +5,6 @@
 [ext_resource type="Texture2D" uid="uid://dd52115qg7h6u" path="res://images/gui/screens/menu_char.png" id="3_char"]
 [ext_resource type="Texture2D" uid="uid://trbd1cxyell7" path="res://images/gui/screens/menu_button_passive.png" id="4_btn_passive"]
 [ext_resource type="Texture2D" uid="uid://bpmtdh4w47s0o" path="res://images/gui/screens/menu_button_active.png" id="5_btn_active"]
-[ext_resource type="AudioStream" uid="uid://d1bfkwkgg5m3s" path="res://audio/music/menu1.ogg" id="6_music"]
 
 [node name="MainMenu" type="Control" unique_id=2086673960]
 layout_mode = 3
@@ -154,7 +153,3 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Music" type="AudioStreamPlayer" parent="." unique_id=1064016641]
-stream = ExtResource("6_music")
-volume_db = -6.0
