@@ -666,6 +666,7 @@ _data = {
 
 [node name="Jobless" type="CharacterBody2D" unique_id=862640182]
 script = ExtResource("1_rrfed")
+move_speed = 200.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1496521801]
 visible = false

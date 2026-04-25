@@ -17,6 +17,20 @@ const _SCENE_PATHS := {
 var current: Screen = Screen.BOOT_LOADING
 
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F1:
+		toggle_window_mode()
+		get_viewport().set_input_as_handled()
+
+
 func change_to(screen: Screen) -> void:
 	current = screen
 	get_tree().change_scene_to_file(_SCENE_PATHS[screen])
+
+
+func toggle_window_mode() -> void:
+	var mode := DisplayServer.window_get_mode()
+	if mode == DisplayServer.WINDOW_MODE_FULLSCREEN or mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
