@@ -2,7 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://bfvmw82bmltt8" path="res://images/floor/sacked-floors.png" id="1_o5qli"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_0wfyh"]
-[ext_resource type="Resource" path="res://scenes/player/profiles/jobless.tres" id="3_jobless"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0wfyh"]
 texture = ExtResource("1_o5qli")
@@ -102,4 +101,3 @@ tile_map_data = PackedByteArray("AAD//wAAAwACAAQAAAD/////AwACAAQAAAAAAP7/AwACAAQ
 tile_set = SubResource("TileSet_sgp6g")
 
 [node name="Player" parent="World" unique_id=2143008759 instance=ExtResource("2_0wfyh")]
-profile = ExtResource("3_jobless")

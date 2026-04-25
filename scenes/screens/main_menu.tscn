@@ -1,27 +1,29 @@
-[gd_scene load_steps=6 format=3 uid="uid://b1mainmenuuid01"]
+[gd_scene format=3 uid="uid://dubeyhidjcieq"]
 
-[ext_resource type="Script" path="res://scenes/screens/main_menu.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://buua0o4ble82t" path="res://scenes/screens/main_menu.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cqyanr4onxqa5" path="res://images/gui/screens/menu_background.png" id="2_bg"]
 [ext_resource type="Texture2D" uid="uid://dd52115qg7h6u" path="res://images/gui/screens/menu_char.png" id="3_char"]
 [ext_resource type="Texture2D" uid="uid://trbd1cxyell7" path="res://images/gui/screens/menu_button_passive.png" id="4_btn_passive"]
 [ext_resource type="Texture2D" uid="uid://bpmtdh4w47s0o" path="res://images/gui/screens/menu_button_active.png" id="5_btn_active"]
 [ext_resource type="AudioStream" uid="uid://d1bfkwkgg5m3s" path="res://audio/music/menu1.ogg" id="6_music"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=2086673960]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=204783885]
 layout_mode = 0
 offset_right = 800.0
 offset_bottom = 600.0
 texture = ExtResource("2_bg")
 stretch_mode = 5
 
-[node name="Char" type="TextureRect" parent="."]
+[node name="Char" type="TextureRect" parent="." unique_id=1100630806]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 32.0
@@ -29,11 +31,11 @@ offset_right = 194.0
 offset_bottom = 583.0
 texture = ExtResource("3_char")
 
-[node name="Buttons" type="Control" parent="."]
+[node name="Buttons" type="Control" parent="." unique_id=240105901]
 layout_mode = 1
 anchors_preset = 0
 
-[node name="Button1" type="TextureButton" parent="Buttons"]
+[node name="Button1" type="TextureButton" parent="Buttons" unique_id=1704569764]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 116.0
@@ -43,16 +45,17 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button1"]
+[node name="Label" type="Label" parent="Buttons/Button1" unique_id=1977413816]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-mouse_filter = 2
 
-[node name="Button2" type="TextureButton" parent="Buttons"]
+[node name="Button2" type="TextureButton" parent="Buttons" unique_id=903631839]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 180.0
@@ -62,16 +65,17 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button2"]
+[node name="Label" type="Label" parent="Buttons/Button2" unique_id=1736979791]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-mouse_filter = 2
 
-[node name="Button3" type="TextureButton" parent="Buttons"]
+[node name="Button3" type="TextureButton" parent="Buttons" unique_id=1725089698]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 244.0
@@ -81,16 +85,17 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button3"]
+[node name="Label" type="Label" parent="Buttons/Button3" unique_id=2032864786]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-mouse_filter = 2
 
-[node name="Button4" type="TextureButton" parent="Buttons"]
+[node name="Button4" type="TextureButton" parent="Buttons" unique_id=624962078]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 308.0
@@ -100,16 +105,17 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button4"]
+[node name="Label" type="Label" parent="Buttons/Button4" unique_id=1998372215]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-mouse_filter = 2
 
-[node name="Button5" type="TextureButton" parent="Buttons"]
+[node name="Button5" type="TextureButton" parent="Buttons" unique_id=1800781845]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 372.0
@@ -119,16 +125,17 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button5"]
+[node name="Label" type="Label" parent="Buttons/Button5" unique_id=247554922]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-mouse_filter = 2
 
-[node name="Button6" type="TextureButton" parent="Buttons"]
+[node name="Button6" type="TextureButton" parent="Buttons" unique_id=2014388984]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 452.0
@@ -138,15 +145,16 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button6"]
+[node name="Label" type="Label" parent="Buttons/Button6" unique_id=119335352]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-mouse_filter = 2
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
+[node name="Music" type="AudioStreamPlayer" parent="." unique_id=1064016641]
 stream = ExtResource("6_music")
 volume_db = -6.0

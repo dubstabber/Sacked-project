@@ -14,7 +14,13 @@ const _SCENE_PATHS := {
 	Screen.LEVEL_1: "res://scenes/level_1.tscn",
 }
 
+const _PROFILES := {
+	&"jobless": preload("res://scenes/player/profiles/jobless.tres"),
+	&"anne": preload("res://scenes/player/profiles/anne.tres"),
+}
+
 var current: Screen = Screen.BOOT_LOADING
+var selected_character: StringName = &"jobless"
 
 
 func _input(event: InputEvent) -> void:
@@ -26,6 +32,18 @@ func _input(event: InputEvent) -> void:
 func change_to(screen: Screen) -> void:
 	current = screen
 	get_tree().change_scene_to_file(_SCENE_PATHS[screen])
+
+
+func change_to_level_tree() -> void:
+	change_to(Screen.LEVEL_TREE)
+
+
+func select_character(character_id: StringName) -> void:
+	selected_character = character_id
+
+
+func get_selected_profile() -> Resource:
+	return _PROFILES.get(selected_character, _PROFILES[&"jobless"])
 
 
 func toggle_window_mode() -> void:

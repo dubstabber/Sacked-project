@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CharacterProfile" format=3 uid="uid://d5onve06owqk"]
+
+[ext_resource type="AnimationLibrary" path="res://scenes/player/profiles/anne_animations.res" id="1_tahcb"]
+[ext_resource type="Texture2D" uid="uid://dl8ehle72bhhl" path="res://images/characters/anne/anne-idle1-atmen-up-right/CO_CHARS_ANNE_IDLE#1#ATMEN_000_000#000.png" id="2_tahcb"]
+[ext_resource type="Script" uid="uid://cech70kmimobr" path="res://scenes/player/character_profile.gd" id="3_mt036"]
+
+[resource]
+script = ExtResource("3_mt036")
+id = &"anne"
+animation_library = ExtResource("1_tahcb")
+idle_animation_prefix = "anne-idle1-atmen-"
+walk_animation_prefix = "anne-walk-"
+initial_texture = ExtResource("2_tahcb")
+footstep_stream_path = "res://audio/sfx/footsteps.wav"
+footstep_loop_end_seconds = 3.915147
