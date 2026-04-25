@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CharacterProfile" format=3]
+
+[ext_resource type="AnimationLibrary" path="res://scenes/player/profiles/jobless_animations.res" id="1_h2v2g"]
+[ext_resource type="Texture2D" path="res://images/characters/jobless/jobless-idle1-atmen-000/CO_CHARS_JOBLESS_IDLE#1#ATMEN_000_Atem#000#002.png" id="2_xr3bs"]
+[ext_resource type="Script" path="res://scenes/player/character_profile.gd" id="3_pp84b"]
+
+[resource]
+script = ExtResource("3_pp84b")
+id = &"jobless"
+animation_library = ExtResource("1_h2v2g")
+idle_animation_prefix = "jobless-idle1-atmen-"
+walk_animation_prefix = "jobless-walk-"
+initial_texture = ExtResource("2_xr3bs")
+footstep_stream_path = "res://audio/sfx/footsteps.wav"
+footstep_loop_end_seconds = 3.915147

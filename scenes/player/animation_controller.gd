@@ -21,6 +21,13 @@ func _process(_delta: float) -> void:
 	update_clock_driven_animation_frame()
 
 
+func configure(idle_prefix: String, walk_prefix: String) -> void:
+	idle_animation_prefix = idle_prefix
+	walk_animation_prefix = walk_prefix
+	current_animation = ""
+	cache_clock_driven_animation_frames()
+
+
 func play_idle(direction: Vector2) -> void:
 	play_animation(get_directional_animation_name(idle_animation_prefix, direction))
 
@@ -100,6 +107,8 @@ func update_clock_driven_animation_frame() -> void:
 
 
 func cache_clock_driven_animation_frames() -> void:
+	clock_driven_animation_frames.clear()
+
 	for animation_name in animation_player.get_animation_list():
 		var anim_name := String(animation_name)
 		if not is_clock_driven_animation(anim_name):

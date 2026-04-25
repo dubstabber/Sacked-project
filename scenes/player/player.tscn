@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://cdbd3qyoqx33s"]
+
+[ext_resource type="Script" uid="uid://bguuf0cb4rmfc" path="res://scenes/player/player.gd" id="1_player"]
+[ext_resource type="Script" uid="uid://d3vs28rlrhunx" path="res://scenes/player/movement_cursor.gd" id="2_cursor"]
+[ext_resource type="Script" uid="uid://bf5gdjtdfixca" path="res://scenes/player/animation_controller.gd" id="3_anim"]
+[ext_resource type="Script" uid="uid://xuv2t41tecl1" path="res://scenes/player/footstep_controller.gd" id="4_foot"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_player"]
+radius = 18.027756
+
+[node name="Player" type="CharacterBody2D" unique_id=1848193145]
+script = ExtResource("1_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1615047916]
+visible = false
+position = Vector2(0, -17)
+shape = SubResource("CircleShape2D_player")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=762900782]
+centered = false
+
+[node name="MovementArrow" type="Sprite2D" parent="." unique_id=589646369]
+visible = false
+z_index = 2
+centered = false
+script = ExtResource("2_cursor")
+
+[node name="AnimationController" type="Node" parent="." unique_id=185485678]
+script = ExtResource("3_anim")
+sprite_path = NodePath("../Sprite2D")
+animation_player_path = NodePath("../AnimationPlayer")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1411697709]
+
+[node name="FootstepPlayer" type="AudioStreamPlayer" parent="." unique_id=1180630708]
+volume_db = -8.0
+script = ExtResource("4_foot")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1688036430]

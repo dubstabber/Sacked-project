@@ -8,10 +8,21 @@ var footstep_loop_active: bool = false
 
 
 func _ready() -> void:
+	if stream_path != "":
+		load_footstep_stream()
+
+
+func configure(path: String, loop_end: float) -> void:
+	stream_path = path
+	loop_end_seconds = loop_end
 	load_footstep_stream()
 
 
 func load_footstep_stream() -> void:
+	if stream_path == "":
+		stream = null
+		return
+
 	var footstep_stream := AudioStreamWAV.load_from_file(stream_path)
 	if footstep_stream == null:
 		push_warning("Unable to load footstep stream: %s" % stream_path)

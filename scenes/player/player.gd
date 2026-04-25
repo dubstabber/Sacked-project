@@ -1,17 +1,21 @@
 extends CharacterBody2D
 
 
-@export var move_speed: float = 300.0
+@export var move_speed: float = 200.0
+@export var profile: Resource
 
 var is_moving: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
 
+@onready var sprite: Sprite2D = $Sprite2D
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var animation_controller = $AnimationController
 @onready var movement_cursor = $MovementArrow
 @onready var footstep_controller = $FootstepPlayer
 
 
 func _ready() -> void:
+	apply_profile(resolve_profile())
 	movement_cursor.show_main_cursor()
 	movement_cursor.hide_arrow()
 	animation_controller.play_idle(last_direction)
@@ -45,6 +49,47 @@ func _physics_process(_delta: float) -> void:
 		movement_cursor.hide_arrow()
 
 	move_and_slide()
+
+
+func resolve_profile() -> Resource:
+	if profile != null:
+		return profile
+	var screen_manager := get_node_or_null("/root/ScreenManager")
+	if screen_manager != null and screen_manager.has_method("get_selected_profile"):
+		return screen_manager.get_selected_profile()
+	return null
+
+
+func apply_profile(selected_profile: Resource) -> void:
+	if selected_profile == null:
+		push_warning("Player has no CharacterProfile")
+		return
+
+	profile = selected_profile
+	var initial_texture := profile.get("initial_texture") as Texture2D
+	if initial_texture != null:
+		sprite.texture = initial_texture
+
+	var animation_library := profile.get("animation_library") as AnimationLibrary
+	var profile_id := StringName(profile.get("id"))
+	if animation_library != null:
+		var library_name: StringName = profile_id
+		if animation_player.has_animation_library(library_name):
+			animation_player.remove_animation_library(library_name)
+		animation_player.add_animation_library(library_name, animation_library)
+
+	var library_prefix := ""
+	if String(profile_id) != "":
+		library_prefix = "%s/" % String(profile_id)
+
+	animation_controller.configure(
+		library_prefix + String(profile.get("idle_animation_prefix")),
+		library_prefix + String(profile.get("walk_animation_prefix"))
+	)
+	footstep_controller.configure(
+		String(profile.get("footstep_stream_path")),
+		float(profile.get("footstep_loop_end_seconds"))
+	)
 
 
 func snap_to_8_directions(dir: Vector2) -> Vector2:
