@@ -8,6 +8,7 @@ const EMPTY_SCORE := -1.0e30
 
 var _color_images: Dictionary = {}
 var _depth_images: Dictionary = {}
+var _opaque_rects: Dictionary = {}
 var _warned_paths: Dictionary = {}
 var _hidden_sprites: Array[Sprite2D] = []
 var _composite_texture: ImageTexture
@@ -29,14 +30,13 @@ func _process(_delta: float) -> void:
 
 
 func update_composition() -> void:
-	_restore_actor_sprites()
-
 	var actors := _collect_actors()
 	var composite_actors := _filter_overlapping_actors(actors)
 	if composite_actors.size() < 2:
 		_disable_composite()
 		return
 	composite_actors = _prepare_composite_actors(composite_actors)
+	composite_actors = _filter_overlapping_actors(composite_actors)
 	if composite_actors.size() < 2:
 		_disable_composite()
 		return
@@ -89,7 +89,9 @@ func _collect_actors() -> Array:
 			continue
 
 		var sprite := node.get_node("Sprite2D") as Sprite2D
-		if sprite == null or not sprite.visible or sprite.texture == null:
+		if sprite == null or sprite.texture == null:
+			continue
+		if not sprite.visible and not _hidden_sprites.has(sprite):
 			continue
 
 		var actor := _make_actor(node, sprite, actor_index)
@@ -114,7 +116,7 @@ func _make_actor(node: Node2D, sprite: Sprite2D, actor_index: int) -> Dictionary
 	var size := Vector2i(sprite.texture.get_width(), sprite.texture.get_height())
 	if size.x <= 0 or size.y <= 0:
 		return {}
-	return {
+	var actor := {
 		"index": actor_index,
 		"node": node,
 		"sprite": sprite,
@@ -124,6 +126,9 @@ func _make_actor(node: Node2D, sprite: Sprite2D, actor_index: int) -> Dictionary
 		"size": size,
 		"base_y": node.global_position.y,
 	}
+	if _opaque_rects.has(color_path):
+		actor["opaque_rect"] = _opaque_rects[color_path]
+	return actor
 
 
 func _prepare_composite_actors(actors: Array) -> Array:
@@ -155,8 +160,13 @@ func _load_actor_images(actor: Dictionary) -> bool:
 		_warn_once(depth_path, "Character depth map dimensions do not match texture: %s" % depth_path)
 		return false
 
+	var opaque_rect := _opaque_rect_for_image(color_path, color_image)
+	if opaque_rect.size.x <= 0 or opaque_rect.size.y <= 0:
+		return false
+
 	actor["color"] = color_image
 	actor["depth"] = depth_image
+	actor["opaque_rect"] = opaque_rect
 	return true
 
 
@@ -240,7 +250,25 @@ func _filter_overlapping_actors(actors: Array) -> Array:
 
 
 func _actor_rect(actor: Dictionary) -> Rect2:
-	return Rect2(actor["position"], Vector2(actor["size"]))
+	var source_rect := _actor_source_rect(actor)
+	var actor_position := actor["position"] as Vector2
+	return Rect2(actor_position + Vector2(source_rect.position), Vector2(source_rect.size))
+
+
+func _actor_source_rect(actor: Dictionary) -> Rect2i:
+	var actor_size := actor["size"] as Vector2i
+	if actor.has("opaque_rect"):
+		return actor["opaque_rect"] as Rect2i
+	return Rect2i(Vector2i.ZERO, actor_size)
+
+
+func _opaque_rect_for_image(path: String, image: Image) -> Rect2i:
+	if _opaque_rects.has(path):
+		return _opaque_rects[path] as Rect2i
+
+	var rect := image.get_used_rect()
+	_opaque_rects[path] = rect
+	return rect
 
 
 func _calculate_union_bounds(actors: Array) -> Rect2:
@@ -250,12 +278,11 @@ func _calculate_union_bounds(actors: Array) -> Rect2:
 	var max_y := -1.0e20
 
 	for actor in actors:
-		var actor_position := actor["position"] as Vector2
-		var actor_size := actor["size"] as Vector2i
-		min_x = minf(min_x, actor_position.x)
-		min_y = minf(min_y, actor_position.y)
-		max_x = maxf(max_x, actor_position.x + actor_size.x)
-		max_y = maxf(max_y, actor_position.y + actor_size.y)
+		var actor_rect := _actor_rect(actor)
+		min_x = minf(min_x, actor_rect.position.x)
+		min_y = minf(min_y, actor_rect.position.y)
+		max_x = maxf(max_x, actor_rect.end.x)
+		max_y = maxf(max_y, actor_rect.end.y)
 
 	var left := int(floor(min_x))
 	var top := int(floor(min_y))
@@ -285,7 +312,9 @@ func _compose_actor(output: Image, scores: PackedFloat32Array, bounds_position: 
 	var color_image := actor["color"] as Image
 	var depth_image := actor["depth"] as Image
 	var actor_position := actor["position"] as Vector2
-	var actor_size := actor["size"] as Vector2i
+	var source_rect := _actor_source_rect(actor)
+	var source_min := source_rect.position
+	var source_max := source_rect.position + source_rect.size
 	var base_y := float(actor["base_y"])
 	var output_height := output.get_height()
 	var output_width := output.get_width()
@@ -294,12 +323,12 @@ func _compose_actor(output: Image, scores: PackedFloat32Array, bounds_position: 
 		int(round(actor_position.y - bounds_position.y))
 	)
 
-	for source_y in range(actor_size.y):
+	for source_y in range(source_min.y, source_max.y):
 		var dst_y := dst_origin.y + source_y
 		if dst_y < 0 or dst_y >= output_height:
 			continue
 
-		for source_x in range(actor_size.x):
+		for source_x in range(source_min.x, source_max.x):
 			var dst_x := dst_origin.x + source_x
 			if dst_x < 0 or dst_x >= output_width:
 				continue
@@ -356,11 +385,18 @@ func _composite_signature(actors: Array, bounds: Rect2) -> String:
 
 
 func _hide_actor_sprites(actors: Array) -> void:
-	_hidden_sprites.clear()
+	var sprites_to_hide: Array[Sprite2D] = []
 	for actor in actors:
 		var actor_sprite := actor["sprite"] as Sprite2D
-		if actor_sprite == null:
-			continue
+		if actor_sprite != null:
+			sprites_to_hide.append(actor_sprite)
+
+	for actor_sprite in _hidden_sprites:
+		if is_instance_valid(actor_sprite) and not sprites_to_hide.has(actor_sprite):
+			actor_sprite.visible = true
+
+	_hidden_sprites.clear()
+	for actor_sprite in sprites_to_hide:
 		actor_sprite.visible = false
 		_hidden_sprites.append(actor_sprite)
 

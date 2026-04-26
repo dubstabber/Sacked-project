@@ -74,9 +74,12 @@ func play_animation(anim_name: String) -> void:
 			current_animation = anim_name
 			_last_clock_animation = ""
 			_last_clock_frame_index = -1
+			if animation_player.is_playing():
+				animation_player.stop()
+			update_clock_driven_animation_frame()
+			return
 		if animation_player.is_playing():
 			animation_player.stop()
-		update_clock_driven_animation_frame()
 		return
 
 	if anim_name != current_animation:

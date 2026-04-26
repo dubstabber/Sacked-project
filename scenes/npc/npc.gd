@@ -42,7 +42,7 @@ func _physics_process(delta: float) -> void:
 
 	var target := _patrol_targets[_target_index]
 	var to_target := target - global_position
-	if to_target.length() <= arrival_distance:
+	if to_target.length_squared() <= arrival_distance * arrival_distance:
 		global_position = target
 		_advance_target()
 		return

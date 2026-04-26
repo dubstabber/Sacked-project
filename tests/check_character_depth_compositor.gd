@@ -22,6 +22,9 @@ func _run() -> void:
 	if _failed:
 		return
 	_check_non_overlapping_actor_excluded()
+	if _failed:
+		return
+	_check_transparent_padding_does_not_overlap()
 	if not _failed:
 		quit(0)
 
@@ -74,6 +77,17 @@ func _check_non_overlapping_actor_excluded() -> void:
 	compositor.free()
 
 
+func _check_transparent_padding_does_not_overlap() -> void:
+	var compositor = CharacterDepthCompositorScript.new()
+	var actors := [
+		_make_padded_actor(Color.RED, 10, 100.0, Rect2i(Vector2i(0, 0), Vector2i(1, 1))),
+		_make_padded_actor(Color.BLUE, 10, 110.0, Rect2i(Vector2i(3, 0), Vector2i(1, 1))),
+	]
+	var overlapping := compositor.overlapping_actors_for_test(actors)
+	_assert_equal_int(overlapping.size(), 0, "transparent padding overlap count")
+	compositor.free()
+
+
 func _compose_two_pixels(
 	left_color: Color,
 	left_depth: int,
@@ -107,6 +121,12 @@ func _make_actor_at(color: Color, depth: int, base_y: float, position: Vector2, 
 		"size": size,
 		"base_y": base_y,
 	}
+
+
+func _make_padded_actor(color: Color, depth: int, base_y: float, opaque_rect: Rect2i) -> Dictionary:
+	var actor := _make_actor_at(color, depth, base_y, Vector2.ZERO, Vector2i(4, 1))
+	actor["opaque_rect"] = opaque_rect
+	return actor
 
 
 func _single_pixel_image(color: Color) -> Image:
