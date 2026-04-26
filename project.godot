@@ -28,7 +28,7 @@ ScreenManager="*res://autoloads/screen_manager.gd"
 window/size/viewport_width=800
 window/size/viewport_height=600
 window/stretch/mode="canvas_items"
-mouse_cursor/custom_image="uid://b7bg57k7uv0s3"
+mouse_cursor/custom_image="res://images/gui/cursors/pointer.png"
 
 [input]
 

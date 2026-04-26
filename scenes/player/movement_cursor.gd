@@ -3,14 +3,14 @@ extends Sprite2D
 
 const MOVEMENT_ARROW_DISTANCE := 40.0
 const MOVEMENT_ARROW_TEXTURES := {
-	0: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_000#000.png"),
-	45: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_045#000.png"),
-	90: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_090#000.png"),
-	135: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_135#000.png"),
-	180: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_180#000.png"),
-	225: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_225#000.png"),
-	270: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_270#000.png"),
-	315: preload("res://images/gui/cursors/active/CO_GUI_Cursor_Active_315#000.png"),
+	0: preload("res://images/gui/cursors/active/active-000.png"),
+	45: preload("res://images/gui/cursors/active/active-045.png"),
+	90: preload("res://images/gui/cursors/active/active-090.png"),
+	135: preload("res://images/gui/cursors/active/active-135.png"),
+	180: preload("res://images/gui/cursors/active/active-180.png"),
+	225: preload("res://images/gui/cursors/active/active-225.png"),
+	270: preload("res://images/gui/cursors/active/active-270.png"),
+	315: preload("res://images/gui/cursors/active/active-315.png"),
 }
 const MOVEMENT_ARROW_OFFSETS := {
 	0: Vector2(-10, -17),

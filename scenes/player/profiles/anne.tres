@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="CharacterProfile" format=3 uid="uid://d5onve06owqk"]
 
 [ext_resource type="AnimationLibrary" path="res://scenes/player/profiles/anne_animations.res" id="1_tahcb"]
-[ext_resource type="Texture2D" uid="uid://dl8ehle72bhhl" path="res://images/characters/anne/anne-idle1-atmen-up-right/CO_CHARS_ANNE_IDLE#1#ATMEN_000_000#000.png" id="2_tahcb"]
+[ext_resource type="Texture2D" path="res://images/characters/anne/anne-idle1-atmen-up-right/anne-idle1-atmen-up-right-000.png" id="2_tahcb"]
 [ext_resource type="Script" uid="uid://cech70kmimobr" path="res://scenes/player/character_profile.gd" id="3_mt036"]
 
 [resource]
