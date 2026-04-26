@@ -1,0 +1,301 @@
+class_name CharacterDepthCompositor
+extends Sprite2D
+
+
+const GROUP_NAME := "depth_composited_characters"
+const DEPTH_SUFFIX := "-depth.png"
+const EMPTY_SCORE := -1.0e30
+
+var _color_images: Dictionary = {}
+var _depth_images: Dictionary = {}
+var _warned_paths: Dictionary = {}
+var _hidden_sprites: Array[Sprite2D] = []
+var _composite_texture: ImageTexture
+
+
+func _ready() -> void:
+	centered = false
+	visible = false
+	z_index = 1
+
+
+func _exit_tree() -> void:
+	_restore_actor_sprites()
+
+
+func _process(_delta: float) -> void:
+	update_composition()
+
+
+func update_composition() -> void:
+	_restore_actor_sprites()
+
+	var actors := _collect_actors()
+	if actors.size() < 2 or not _has_any_overlap(actors):
+		_disable_composite()
+		return
+
+	var bounds := _calculate_union_bounds(actors)
+	if bounds.size.x <= 0 or bounds.size.y <= 0:
+		_disable_composite()
+		return
+
+	var output := _compose_images(actors, bounds)
+	_set_composite_image(output)
+	position = bounds.position
+	visible = true
+	_hide_actor_sprites(actors)
+
+
+func compose_images_for_test(actors: Array) -> Dictionary:
+	var sorted_actors: Array = []
+	for actor in actors:
+		_insert_actor_sorted(sorted_actors, actor)
+
+	var bounds := _calculate_union_bounds(sorted_actors)
+	return {
+		"bounds": bounds,
+		"image": _compose_images(sorted_actors, bounds),
+	}
+
+
+func _collect_actors() -> Array:
+	var actors: Array = []
+	var actor_index := 0
+	for node in get_tree().get_nodes_in_group(GROUP_NAME):
+		if not is_instance_valid(node) or not node is Node2D:
+			continue
+		if not node.visible or not node.has_node("Sprite2D"):
+			continue
+
+		var sprite := node.get_node("Sprite2D") as Sprite2D
+		if sprite == null or not sprite.visible or sprite.texture == null:
+			continue
+
+		var actor := _make_actor(node, sprite, actor_index)
+		actor_index += 1
+		if actor.is_empty():
+			continue
+
+		_insert_actor_sorted(actors, actor)
+
+	return actors
+
+
+func _make_actor(node: Node2D, sprite: Sprite2D, actor_index: int) -> Dictionary:
+	var color_path := sprite.texture.resource_path
+	if color_path == "":
+		return {}
+
+	var depth_path := _depth_path_for_texture(color_path)
+	if depth_path == "":
+		_warn_once(color_path, "Character texture has no depth-map convention: %s" % color_path)
+		return {}
+	if not FileAccess.file_exists(depth_path):
+		_warn_once(depth_path, "Missing character depth map: %s" % depth_path)
+		return {}
+
+	var color_image = _load_image(color_path, _color_images)
+	var depth_image = _load_image(depth_path, _depth_images, true)
+	if color_image == null or depth_image == null:
+		return {}
+
+	if color_image.get_width() != depth_image.get_width() or color_image.get_height() != depth_image.get_height():
+		_warn_once(depth_path, "Character depth map dimensions do not match texture: %s" % depth_path)
+		return {}
+
+	var size := Vector2i(color_image.get_width(), color_image.get_height())
+	return {
+		"index": actor_index,
+		"node": node,
+		"sprite": sprite,
+		"color": color_image,
+		"depth": depth_image,
+		"position": _sprite_draw_position(sprite, size),
+		"size": size,
+		"base_y": node.global_position.y,
+	}
+
+
+func _load_image(path: String, cache: Dictionary, force_raw := false):
+	if cache.has(path):
+		return cache[path]
+
+	var image_texture: Texture2D
+	if not force_raw and ResourceLoader.exists(path):
+		image_texture = load(path) as Texture2D
+	var image: Image
+	if image_texture != null:
+		image = image_texture.get_image()
+	else:
+		image = Image.new()
+		if image.load(path) != OK:
+			_warn_once(path, "Failed to load image: %s" % path)
+			return null
+
+	if image == null:
+		_warn_once(path, "Failed to read image: %s" % path)
+		return null
+
+	cache[path] = image
+	return image
+
+
+func _depth_path_for_texture(texture_path: String) -> String:
+	if not texture_path.ends_with(".png"):
+		return ""
+	return texture_path.substr(0, texture_path.length() - 4) + DEPTH_SUFFIX
+
+
+func _sprite_draw_position(sprite: Sprite2D, image_size: Vector2i) -> Vector2:
+	var draw_position := sprite.global_position + sprite.offset
+	if sprite.centered:
+		draw_position -= Vector2(image_size) * 0.5
+	return draw_position
+
+
+func _insert_actor_sorted(actors: Array, actor: Dictionary) -> void:
+	var insert_at := actors.size()
+	for index in range(actors.size()):
+		if _actor_sorts_before(actor, actors[index]):
+			insert_at = index
+			break
+	actors.insert(insert_at, actor)
+
+
+func _actor_sorts_before(left: Dictionary, right: Dictionary) -> bool:
+	var left_base_y := float(left["base_y"])
+	var right_base_y := float(right["base_y"])
+	if is_equal_approx(left_base_y, right_base_y):
+		return int(left["index"]) < int(right["index"])
+	return left_base_y < right_base_y
+
+
+func _has_any_overlap(actors: Array) -> bool:
+	for left_index in range(actors.size()):
+		var left_rect := _actor_rect(actors[left_index])
+		for right_index in range(left_index + 1, actors.size()):
+			if left_rect.intersects(_actor_rect(actors[right_index])):
+				return true
+	return false
+
+
+func _actor_rect(actor: Dictionary) -> Rect2:
+	return Rect2(actor["position"], Vector2(actor["size"]))
+
+
+func _calculate_union_bounds(actors: Array) -> Rect2:
+	var min_x := 1.0e20
+	var min_y := 1.0e20
+	var max_x := -1.0e20
+	var max_y := -1.0e20
+
+	for actor in actors:
+		var actor_position := actor["position"] as Vector2
+		var actor_size := actor["size"] as Vector2i
+		min_x = minf(min_x, actor_position.x)
+		min_y = minf(min_y, actor_position.y)
+		max_x = maxf(max_x, actor_position.x + actor_size.x)
+		max_y = maxf(max_y, actor_position.y + actor_size.y)
+
+	var left := int(floor(min_x))
+	var top := int(floor(min_y))
+	var right := int(ceil(max_x))
+	var bottom := int(ceil(max_y))
+	return Rect2(Vector2(left, top), Vector2(right - left, bottom - top))
+
+
+func _compose_images(actors: Array, bounds: Rect2) -> Image:
+	var width := int(bounds.size.x)
+	var height := int(bounds.size.y)
+	var output := Image.create(width, height, false, Image.FORMAT_RGBA8)
+	output.fill(Color(0.0, 0.0, 0.0, 0.0))
+
+	var scores := PackedFloat32Array()
+	scores.resize(width * height)
+	for index in range(scores.size()):
+		scores[index] = EMPTY_SCORE
+
+	for actor in actors:
+		_compose_actor(output, scores, bounds.position, width, actor)
+
+	return output
+
+
+func _compose_actor(output: Image, scores: PackedFloat32Array, bounds_position: Vector2, width: int, actor: Dictionary) -> void:
+	var color_image := actor["color"] as Image
+	var depth_image := actor["depth"] as Image
+	var actor_position := actor["position"] as Vector2
+	var actor_size := actor["size"] as Vector2i
+	var base_y := float(actor["base_y"])
+	var dst_origin := Vector2i(
+		int(round(actor_position.x - bounds_position.x)),
+		int(round(actor_position.y - bounds_position.y))
+	)
+
+	for source_y in range(actor_size.y):
+		var dst_y := dst_origin.y + source_y
+		if dst_y < 0 or dst_y >= output.get_height():
+			continue
+
+		for source_x in range(actor_size.x):
+			var dst_x := dst_origin.x + source_x
+			if dst_x < 0 or dst_x >= output.get_width():
+				continue
+
+			var color := color_image.get_pixel(source_x, source_y)
+			if color.a <= 0.0:
+				continue
+
+			var depth_pixel := depth_image.get_pixel(source_x, source_y)
+			if depth_pixel.a <= 0.0:
+				continue
+
+			var score := base_y - float(_decode_depth(depth_pixel))
+			var dst_index := dst_y * width + dst_x
+			if score >= scores[dst_index]:
+				scores[dst_index] = score
+				output.set_pixel(dst_x, dst_y, color)
+
+
+func _decode_depth(depth_pixel: Color) -> int:
+	var low := int(round(depth_pixel.r * 255.0))
+	var high := int(round(depth_pixel.g * 255.0))
+	return low | (high << 8)
+
+
+func _set_composite_image(image: Image) -> void:
+	if _composite_texture == null or _composite_texture.get_width() != image.get_width() or _composite_texture.get_height() != image.get_height():
+		_composite_texture = ImageTexture.create_from_image(image)
+	else:
+		_composite_texture.update(image)
+	texture = _composite_texture
+
+
+func _hide_actor_sprites(actors: Array) -> void:
+	_hidden_sprites.clear()
+	for actor in actors:
+		var actor_sprite := actor["sprite"] as Sprite2D
+		if actor_sprite == null:
+			continue
+		actor_sprite.visible = false
+		_hidden_sprites.append(actor_sprite)
+
+
+func _restore_actor_sprites() -> void:
+	for actor_sprite in _hidden_sprites:
+		if is_instance_valid(actor_sprite):
+			actor_sprite.visible = true
+	_hidden_sprites.clear()
+
+
+func _disable_composite() -> void:
+	_restore_actor_sprites()
+	visible = false
+
+
+func _warn_once(key: String, message: String) -> void:
+	if _warned_paths.has(key):
+		return
+	_warned_paths[key] = true
+	push_warning(message)

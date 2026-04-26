@@ -15,6 +15,7 @@ var last_direction: Vector2 = Vector2.RIGHT
 
 
 func _ready() -> void:
+	add_to_group("depth_composited_characters")
 	apply_profile(resolve_profile())
 	movement_cursor.show_main_cursor()
 	movement_cursor.hide_arrow()

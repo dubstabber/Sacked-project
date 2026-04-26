@@ -20,6 +20,7 @@ var _pause_remaining := 0.0
 
 
 func _ready() -> void:
+	add_to_group("depth_composited_characters")
 	last_direction = IsoDirection.snap_to_8_directions(initial_direction)
 	_patrol_origin = global_position
 	_build_patrol_targets()
