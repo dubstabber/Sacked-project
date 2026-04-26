@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CharacterProfile" format=3]
+
+[ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/boss_animations.res" id="1_boss"]
+[ext_resource type="Script" path="res://scenes/player/character_profile.gd" id="2_profile"]
+
+[resource]
+script = ExtResource("2_profile")
+id = &"boss"
+animation_library = ExtResource("1_boss")
+idle_animation_prefix = "boss-stand-idle-"
+walk_animation_prefix = "boss-walk-"
+footstep_stream_path = ""
+footstep_loop_end_seconds = 0.0

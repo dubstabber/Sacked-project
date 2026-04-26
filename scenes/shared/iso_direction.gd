@@ -1,0 +1,29 @@
+class_name IsoDirection
+extends RefCounted
+
+
+static func snap_to_8_directions(direction: Vector2) -> Vector2:
+	var directions := get_screen_directions()
+	var best: Vector2 = directions[0]
+	var best_dot := direction.dot(best)
+	for i in range(1, directions.size()):
+		var candidate: Vector2 = directions[i]
+		var candidate_dot := direction.dot(candidate)
+		if candidate_dot > best_dot:
+			best_dot = candidate_dot
+			best = candidate
+	return best
+
+
+static func get_screen_directions() -> Array[Vector2]:
+	# Sprite suffix _NNN encodes iso world axes projected onto the 94x48 floor grid.
+	return [
+		Vector2(47.0, -24.0).normalized(),  # iso N  -> suffix _000 / "up-right"
+		Vector2(94.0, 0.0).normalized(),    # iso NE -> suffix _045 / "right"
+		Vector2(47.0, 24.0).normalized(),   # iso E  -> suffix _090 / "down-right"
+		Vector2(0.0, 48.0).normalized(),    # iso SE -> suffix _135 / "down"
+		Vector2(-47.0, 24.0).normalized(),  # iso S  -> suffix _180 / "down-left"
+		Vector2(-94.0, 0.0).normalized(),   # iso SW -> suffix _225 / "left"
+		Vector2(-47.0, -24.0).normalized(), # iso W  -> suffix _270 / "up-left"
+		Vector2(0.0, -48.0).normalized(),   # iso NW -> suffix _315 / "up"
+	]
