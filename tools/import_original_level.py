@@ -42,6 +42,7 @@ class ChunkRecord:
 @dataclass(frozen=True)
 class ObjectDefinition:
     object_id: int
+    category: int
     name: str
     sprite_name: str
 
@@ -236,11 +237,12 @@ def parse_object_database(path: Path) -> Dict[int, ObjectDefinition]:
         object_id = read_u32(record.payload, 0)
         if object_id in (0, 0xFFFFFFFF):
             continue
+        category = read_u32(record.payload, 4)
         name = read_cstr(record.payload, 8, 128)
         sprite_name = read_cstr(record.payload, 264, 64)
         if sprite_name == "":
             continue
-        definitions[object_id] = ObjectDefinition(object_id, name, sprite_name)
+        definitions[object_id] = ObjectDefinition(object_id, category, name, sprite_name)
 
     if not definitions:
         raise ValueError(f"No object definitions parsed from {path}")
@@ -345,16 +347,27 @@ def read_sprite_pivot(sprite_dir: Path, width: int, height: int) -> Tuple[int, i
 
 
 def domain_hints(definition: ObjectDefinition) -> List[str]:
+    category_hints = {
+        0: "ALLGEMEIN",
+        1: "B_RO",
+        2: "K_CHE",
+        3: "WC",
+        4: "CHEF",
+        5: "AKTIV",
+        6: "AUFENTHALT",
+        7: "FOYER",
+        8: "HAUSMEISTER",
+        9: "MEETING",
+    }
     name = definition.name.upper()
     sprite = definition.sprite_name.upper()
-    object_id = definition.object_id
     hints: List[str] = []
 
+    if definition.category in category_hints:
+        return [category_hints[definition.category]]
     if "KÜCH" in name or "KUCH" in name or sprite.startswith("KÜCH") or sprite.startswith("KUCH"):
         hints.append("K_CHE")
-    if 0x00000530 <= object_id <= 0x08000630:
-        hints.append("K_CHE")
-    if "EDEL" in name or 0x000907B0 <= object_id <= 0x07000780:
+    if "EDEL" in name:
         hints.append("CHEF")
     if "MEETING" in name or sprite in {"LEINWAND", "REDNERPULT"}:
         hints.append("MEETING")
@@ -553,6 +566,7 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
                 "node_name": "Object%s" % node_slug.title().replace("-", ""),
                 "kind": "0x%08x" % kind,
                 "object_id": "0x%08x" % object_id,
+                "object_category": int(definition.category),
                 "variant": variant,
                 "display_name": definition.name,
                 "sprite_name": definition.sprite_name,

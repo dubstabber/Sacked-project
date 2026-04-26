@@ -63,6 +63,11 @@ const NpcNames := [
 	"FemaleEmployee1",
 	"FemaleEmployee2",
 ]
+const ExpectedObjectSources := {
+	8: "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_000_Schreibtisch02#000",
+	12: "CO_OBJECTS_B_RO_SCHREIBTISCH01_IDLE_180_Schreibtisch01#180",
+	19: "CO_OBJECTS_CHEF_SCHREIBTISCH02_IDLE_180_ChefSchreibtisch02#180",
+}
 
 var _level
 var _failed := false
@@ -285,6 +290,21 @@ func _check_objects(world: Node, manifest: Dictionary, floor_layer: TileMapLayer
 		if not object_node.position.is_equal_approx(expected_position):
 			_fail("%s position mismatch: expected %s got %s" % [object_node.name, expected_position, object_node.position])
 			return
+		if int(object_node.get_meta("original_object_category", -1)) != int(object_data.get("object_category", -1)):
+			_fail("%s category metadata mismatch" % object_node.name)
+			return
+		if String(object_node.get_meta("original_source_sprite", "")) != String(object_data.get("source_sprite", "")):
+			_fail("%s source sprite metadata mismatch" % object_node.name)
+			return
+		var instance_id := int(object_data.get("instance_id", -1))
+		if ExpectedObjectSources.has(instance_id):
+			if String(object_data.get("source_sprite", "")) != String(ExpectedObjectSources[instance_id]):
+				_fail("%s source sprite mismatch: expected %s got %s" % [
+					object_node.name,
+					String(ExpectedObjectSources[instance_id]),
+					String(object_data.get("source_sprite", "")),
+				])
+				return
 		var sprite := object_node.get_node_or_null("Sprite2D") as Sprite2D
 		if sprite == null or sprite.texture == null:
 			_fail("%s has no Sprite2D texture" % object_node.name)

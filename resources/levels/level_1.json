@@ -19,18 +19,19 @@
       "instance_id": 8,
       "kind": "0x020003d0",
       "node_name": "Object008Schreibtisch02",
+      "object_category": 1,
       "object_id": "0x020003d0",
       "pivot": [
-        63,
-        103
+        118,
+        69
       ],
       "record_name": "ITEM0",
-      "source_sprite": "CO_OBJECTS_CHEF_SCHREIBTISCH02_IDLE_000_ChefSchreibtisch02#000",
+      "source_sprite": "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_000_Schreibtisch02#000",
       "sprite_name": "SCHREIBTISCH02",
-      "texture": "res://images/objects/chef-schreibtisch02-000.png",
+      "texture": "res://images/objects/b-ro-schreibtisch02-000.png",
       "texture_size": [
-        176,
-        127
+        217,
+        119
       ],
       "tile_position": [
         1.0,
@@ -45,6 +46,7 @@
       "instance_id": 9,
       "kind": "0x01060440",
       "node_name": "Object009Drehstuhl01",
+      "object_category": 1,
       "object_id": "0x01060440",
       "pivot": [
         25,
@@ -71,6 +73,7 @@
       "instance_id": 10,
       "kind": "0x00060980",
       "node_name": "Object010MonitorTastaturFrontal",
+      "object_category": 5,
       "object_id": "0x00060980",
       "pivot": [
         21,
@@ -97,6 +100,7 @@
       "instance_id": 11,
       "kind": "0x00000860",
       "node_name": "Object011Pctower",
+      "object_category": 1,
       "object_id": "0x00000860",
       "pivot": [
         14,
@@ -123,18 +127,19 @@
       "instance_id": 12,
       "kind": "0x020003c2",
       "node_name": "Object012Schreibtisch01",
+      "object_category": 1,
       "object_id": "0x020003c0",
       "pivot": [
-        115,
-        79
+        92,
+        70
       ],
       "record_name": "ITEM4",
-      "source_sprite": "CO_OBJECTS_CHEF_SCHREIBTISCH01_IDLE_180_ChefSchreibtisch01#180",
+      "source_sprite": "CO_OBJECTS_B_RO_SCHREIBTISCH01_IDLE_180_Schreibtisch01#180",
       "sprite_name": "SCHREIBTISCH01",
-      "texture": "res://images/objects/chef-schreibtisch01-180.png",
+      "texture": "res://images/objects/b-ro-schreibtisch01-180.png",
       "texture_size": [
-        185,
-        131
+        144,
+        112
       ],
       "tile_position": [
         7.989583,
@@ -149,6 +154,7 @@
       "instance_id": 13,
       "kind": "0x01060462",
       "node_name": "Object013Drehstuhl03",
+      "object_category": 1,
       "object_id": "0x01060460",
       "pivot": [
         28,
@@ -175,6 +181,7 @@
       "instance_id": 14,
       "kind": "0x00060992",
       "node_name": "Object014MonitorTastaturLinks",
+      "object_category": 5,
       "object_id": "0x00060990",
       "pivot": [
         26,
@@ -201,6 +208,7 @@
       "instance_id": 15,
       "kind": "0x00080ad0",
       "node_name": "Object015Toikabine",
+      "object_category": 5,
       "object_id": "0x00080ad0",
       "pivot": [
         75,
@@ -227,6 +235,7 @@
       "instance_id": 16,
       "kind": "0x000006e0",
       "node_name": "Object016Waschbecken",
+      "object_category": 5,
       "object_id": "0x000006e0",
       "pivot": [
         2,
@@ -253,6 +262,7 @@
       "instance_id": 17,
       "kind": "0x05090a90",
       "node_name": "Object017Spiegel",
+      "object_category": 5,
       "object_id": "0x05090a90",
       "pivot": [
         -7,
@@ -279,6 +289,7 @@
       "instance_id": 18,
       "kind": "0x000006c1",
       "node_name": "Object018Seifenspender01",
+      "object_category": 3,
       "object_id": "0x000006c0",
       "pivot": [
         17,
@@ -305,6 +316,7 @@
       "instance_id": 19,
       "kind": "0x07000782",
       "node_name": "Object019Schreibtisch02",
+      "object_category": 4,
       "object_id": "0x07000780",
       "pivot": [
         110,
@@ -331,6 +343,7 @@
       "instance_id": 20,
       "kind": "0x00090710",
       "node_name": "Object020Jagdtrophae",
+      "object_category": 4,
       "object_id": "0x00090710",
       "pivot": [
         5,
@@ -357,6 +370,7 @@
       "instance_id": 21,
       "kind": "0x05090be0",
       "node_name": "Object021Fenster01",
+      "object_category": 5,
       "object_id": "0x05090be0",
       "pivot": [
         31,
@@ -383,6 +397,7 @@
       "instance_id": 22,
       "kind": "0x05090be0",
       "node_name": "Object022Fenster01",
+      "object_category": 5,
       "object_id": "0x05090be0",
       "pivot": [
         31,
@@ -409,6 +424,7 @@
       "instance_id": 23,
       "kind": "0x05090bf0",
       "node_name": "Object023Fenster02",
+      "object_category": 5,
       "object_id": "0x05090bf0",
       "pivot": [
         31,
@@ -435,6 +451,7 @@
       "instance_id": 24,
       "kind": "0x05090bf0",
       "node_name": "Object024Fenster02",
+      "object_category": 5,
       "object_id": "0x05090bf0",
       "pivot": [
         31,
@@ -461,6 +478,7 @@
       "instance_id": 25,
       "kind": "0x05090c01",
       "node_name": "Object025Fenster03",
+      "object_category": 5,
       "object_id": "0x05090c00",
       "pivot": [
         82,
@@ -487,6 +505,7 @@
       "instance_id": 26,
       "kind": "0x05090c01",
       "node_name": "Object026Fenster03",
+      "object_category": 5,
       "object_id": "0x05090c00",
       "pivot": [
         82,
@@ -513,6 +532,7 @@
       "instance_id": 27,
       "kind": "0x08051071",
       "node_name": "Object027Wasserspender",
+      "object_category": 5,
       "object_id": "0x08051070",
       "pivot": [
         33,
@@ -539,6 +559,7 @@
       "instance_id": 28,
       "kind": "0x070005a0",
       "node_name": "Object028Kuchenschrank01",
+      "object_category": 2,
       "object_id": "0x070005a0",
       "pivot": [
         46,
@@ -565,6 +586,7 @@
       "instance_id": 29,
       "kind": "0x00020f80",
       "node_name": "Object029Server",
+      "object_category": 5,
       "object_id": "0x00020f80",
       "pivot": [
         25,
@@ -591,6 +613,7 @@
       "instance_id": 30,
       "kind": "0x00000060",
       "node_name": "Object030Flasche",
+      "object_category": 5,
       "object_id": "0x00000060",
       "pivot": [
         3,
@@ -617,6 +640,7 @@
       "instance_id": 31,
       "kind": "0x050900d0",
       "node_name": "Object031Pappaufsteller01",
+      "object_category": 5,
       "object_id": "0x050900d0",
       "pivot": [
         21,
@@ -643,6 +667,7 @@
       "instance_id": 32,
       "kind": "0x00000660",
       "node_name": "Object032Handtuchspender",
+      "object_category": 5,
       "object_id": "0x00000660",
       "pivot": [
         -3,
@@ -669,6 +694,7 @@
       "instance_id": 33,
       "kind": "0x00000800",
       "node_name": "Object033Papierkorb01",
+      "object_category": 5,
       "object_id": "0x00000800",
       "pivot": [
         10,
@@ -695,6 +721,7 @@
       "instance_id": 34,
       "kind": "0x00000822",
       "node_name": "Object034Aktenablage",
+      "object_category": 5,
       "object_id": "0x00000820",
       "pivot": [
         16,
@@ -721,6 +748,7 @@
       "instance_id": 35,
       "kind": "0x00000831",
       "node_name": "Object035Brief",
+      "object_category": 5,
       "object_id": "0x00000830",
       "pivot": [
         13,
@@ -747,6 +775,7 @@
       "instance_id": 36,
       "kind": "0x070508c0",
       "node_name": "Object036Colamat",
+      "object_category": 5,
       "object_id": "0x070508c0",
       "pivot": [
         35,
@@ -773,6 +802,7 @@
       "instance_id": 37,
       "kind": "0x000008e0",
       "node_name": "Object037Disketten",
+      "object_category": 5,
       "object_id": "0x000008e0",
       "pivot": [
         17,
@@ -799,6 +829,7 @@
       "instance_id": 38,
       "kind": "0x000208f0",
       "node_name": "Object038Drucker01",
+      "object_category": 5,
       "object_id": "0x000208f0",
       "pivot": [
         16,
@@ -825,6 +856,7 @@
       "instance_id": 39,
       "kind": "0x00000910",
       "node_name": "Object039Feuerzeug",
+      "object_category": 5,
       "object_id": "0x00000910",
       "pivot": [
         4,
@@ -851,6 +883,7 @@
       "instance_id": 40,
       "kind": "0x00000940",
       "node_name": "Object040Kleber",
+      "object_category": 5,
       "object_id": "0x00000940",
       "pivot": [
         2,
@@ -877,6 +910,7 @@
       "instance_id": 41,
       "kind": "0x00060992",
       "node_name": "Object041MonitorTastaturLinks",
+      "object_category": 5,
       "object_id": "0x00060990",
       "pivot": [
         26,
@@ -903,6 +937,7 @@
       "instance_id": 42,
       "kind": "0x05090a11",
       "node_name": "Object042Poster01",
+      "object_category": 5,
       "object_id": "0x05090a10",
       "pivot": [
         39,
@@ -929,6 +964,7 @@
       "instance_id": 43,
       "kind": "0x00000ab0",
       "node_name": "Object043Stifthalter01",
+      "object_category": 5,
       "object_id": "0x00000ab0",
       "pivot": [
         4,
@@ -955,6 +991,7 @@
       "instance_id": 44,
       "kind": "0x00050af0",
       "node_name": "Object044Wasserkocher",
+      "object_category": 5,
       "object_id": "0x00050af0",
       "pivot": [
         6,
@@ -981,6 +1018,7 @@
       "instance_id": 45,
       "kind": "0x00000b00",
       "node_name": "Object045Zigaretten",
+      "object_category": 5,
       "object_id": "0x00000b00",
       "pivot": [
         5,
@@ -1007,6 +1045,7 @@
       "instance_id": 46,
       "kind": "0x00000ec0",
       "node_name": "Object046Confidential",
+      "object_category": 5,
       "object_id": "0x00000ec0",
       "pivot": [
         14,
@@ -1033,6 +1072,7 @@
       "instance_id": 47,
       "kind": "0x04020f10",
       "node_name": "Object047Handy",
+      "object_category": 5,
       "object_id": "0x04020f10",
       "pivot": [
         9,
@@ -1059,6 +1099,7 @@
       "instance_id": 48,
       "kind": "0x00050f23",
       "node_name": "Object048Kaffeemaschi",
+      "object_category": 5,
       "object_id": "0x00050f20",
       "pivot": [
         -6,
@@ -1085,6 +1126,7 @@
       "instance_id": 49,
       "kind": "0x00000f30",
       "node_name": "Object049Ketchup",
+      "object_category": 5,
       "object_id": "0x00000f30",
       "pivot": [
         3,
@@ -1111,6 +1153,7 @@
       "instance_id": 50,
       "kind": "0x05020f01",
       "node_name": "Object050Flipchart",
+      "object_category": 5,
       "object_id": "0x05020f00",
       "pivot": [
         32,
@@ -1137,6 +1180,7 @@
       "instance_id": 51,
       "kind": "0x070002f1",
       "node_name": "Object051Komode03",
+      "object_category": 1,
       "object_id": "0x070002f0",
       "pivot": [
         31,
@@ -1163,6 +1207,7 @@
       "instance_id": 52,
       "kind": "0x07000380",
       "node_name": "Object052Regal02",
+      "object_category": 1,
       "object_id": "0x07000380",
       "pivot": [
         35,
@@ -1189,6 +1234,7 @@
       "instance_id": 53,
       "kind": "0x08040960",
       "node_name": "Object053Kuhlschrank",
+      "object_category": 5,
       "object_id": "0x08040960",
       "pivot": [
         31,
@@ -1215,6 +1261,7 @@
       "instance_id": 54,
       "kind": "0x00000011",
       "node_name": "Object054Bucher01",
+      "object_category": 0,
       "object_id": "0x00000010",
       "pivot": [
         13,
@@ -1241,6 +1288,7 @@
       "instance_id": 55,
       "kind": "0x090000a1",
       "node_name": "Object055Heizkorper",
+      "object_category": 0,
       "object_id": "0x090000a0",
       "pivot": [
         52,
@@ -1267,6 +1315,7 @@
       "instance_id": 56,
       "kind": "0x090000a0",
       "node_name": "Object056Heizkorper",
+      "object_category": 0,
       "object_id": "0x090000a0",
       "pivot": [
         6,
@@ -1293,6 +1342,7 @@
       "instance_id": 57,
       "kind": "0x090000a1",
       "node_name": "Object057Heizkorper",
+      "object_category": 0,
       "object_id": "0x090000a0",
       "pivot": [
         52,
@@ -1319,6 +1369,7 @@
       "instance_id": 58,
       "kind": "0x0a0000c0",
       "node_name": "Object058Kleiderstaender02",
+      "object_category": 0,
       "object_id": "0x0a0000c0",
       "pivot": [
         17,
@@ -1345,6 +1396,7 @@
       "instance_id": 59,
       "kind": "0x000002a1",
       "node_name": "Object059VentiGross",
+      "object_category": 0,
       "object_id": "0x000002a0",
       "pivot": [
         20,
@@ -1371,6 +1423,7 @@
       "instance_id": 60,
       "kind": "0x01070b62",
       "node_name": "Object060Sofa01",
+      "object_category": 0,
       "object_id": "0x01070b60",
       "pivot": [
         85,
@@ -1397,6 +1450,7 @@
       "instance_id": 61,
       "kind": "0x00010ea0",
       "node_name": "Object061Standascher02",
+      "object_category": 6,
       "object_id": "0x00010ea0",
       "pivot": [
         7,
@@ -1423,6 +1477,7 @@
       "instance_id": 62,
       "kind": "0x000907d1",
       "node_name": "Object062Aushang",
+      "object_category": 5,
       "object_id": "0x000907d0",
       "pivot": [
         27,
@@ -1449,6 +1504,7 @@
       "instance_id": 63,
       "kind": "0x03090130",
       "node_name": "Object063Pflanzegross03",
+      "object_category": 0,
       "object_id": "0x03090130",
       "pivot": [
         26,
@@ -1475,6 +1531,7 @@
       "instance_id": 64,
       "kind": "0x05090a11",
       "node_name": "Object064Poster01",
+      "object_category": 5,
       "object_id": "0x05090a10",
       "pivot": [
         39,
@@ -1501,6 +1558,7 @@
       "instance_id": 65,
       "kind": "0x04000330",
       "node_name": "Object065Papier03",
+      "object_category": 1,
       "object_id": "0x04000330",
       "pivot": [
         18,
@@ -1527,6 +1585,7 @@
       "instance_id": 66,
       "kind": "0x04000321",
       "node_name": "Object066Papier02",
+      "object_category": 1,
       "object_id": "0x04000320",
       "pivot": [
         12,
@@ -1553,6 +1612,7 @@
       "instance_id": 67,
       "kind": "0x04000331",
       "node_name": "Object067Papier03",
+      "object_category": 1,
       "object_id": "0x04000330",
       "pivot": [
         15,
@@ -1579,6 +1639,7 @@
       "instance_id": 68,
       "kind": "0x04000312",
       "node_name": "Object068Papier01",
+      "object_category": 1,
       "object_id": "0x04000310",
       "pivot": [
         15,
@@ -1605,6 +1666,7 @@
       "instance_id": 69,
       "kind": "0x090000a0",
       "node_name": "Object069Heizkorper",
+      "object_category": 0,
       "object_id": "0x090000a0",
       "pivot": [
         6,
@@ -1631,6 +1693,7 @@
       "instance_id": 70,
       "kind": "0x04000350",
       "node_name": "Object070Papier05",
+      "object_category": 1,
       "object_id": "0x04000350",
       "pivot": [
         12,
@@ -1657,6 +1720,7 @@
       "instance_id": 71,
       "kind": "0x07040c50",
       "node_name": "Object071Spuele",
+      "object_category": 5,
       "object_id": "0x07040c50",
       "pivot": [
         34,
@@ -1683,6 +1747,7 @@
       "instance_id": 72,
       "kind": "0x00000d52",
       "node_name": "Object072Kiste02",
+      "object_category": 8,
       "object_id": "0x00000d50",
       "pivot": [
         18,
@@ -1709,6 +1774,7 @@
       "instance_id": 73,
       "kind": "0x000010f0",
       "node_name": "Object073Eingang",
+      "object_category": 0,
       "object_id": "0x000010f0",
       "pivot": [
         27,
@@ -1735,6 +1801,7 @@
       "instance_id": 74,
       "kind": "0x00000531",
       "node_name": "Object074Geschirrdreckig",
+      "object_category": 2,
       "object_id": "0x00000530",
       "pivot": [
         10,
@@ -1761,6 +1828,7 @@
       "instance_id": 75,
       "kind": "0x00000570",
       "node_name": "Object075Kaffeedose",
+      "object_category": 2,
       "object_id": "0x00000570",
       "pivot": [
         5,
@@ -1787,6 +1855,7 @@
       "instance_id": 76,
       "kind": "0x00000550",
       "node_name": "Object076Geschirrteller",
+      "object_category": 2,
       "object_id": "0x00000550",
       "pivot": [
         7,
@@ -1813,6 +1882,7 @@
       "instance_id": 77,
       "kind": "0x01060792",
       "node_name": "Object077Sessel01",
+      "object_category": 4,
       "object_id": "0x01060790",
       "pivot": [
         40,
@@ -1839,6 +1909,7 @@
       "instance_id": 78,
       "kind": "0x070005c0",
       "node_name": "Object078Kuchenschrank03",
+      "object_category": 2,
       "object_id": "0x070005c0",
       "pivot": [
         46,

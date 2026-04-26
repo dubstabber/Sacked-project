@@ -186,7 +186,9 @@ func _build_objects(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
 		object_node.position = _tile_position_to_local(_vector2(object_data.get("tile_position", [0.0, 0.0])), floor_layer)
 		object_node.set_meta("original_kind", String(object_data.get("kind", "")))
 		object_node.set_meta("original_object_id", String(object_data.get("object_id", "")))
+		object_node.set_meta("original_object_category", int(object_data.get("object_category", -1)))
 		object_node.set_meta("original_sprite_name", String(object_data.get("sprite_name", "")))
+		object_node.set_meta("original_source_sprite", String(object_data.get("source_sprite", "")))
 
 		var sprite := Sprite2D.new()
 		sprite.name = "Sprite2D"
