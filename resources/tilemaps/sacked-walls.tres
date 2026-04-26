@@ -1,0 +1,58 @@
+[gd_resource type="TileSet" format=3 uid="uid://dpao67byuh0co"]
+
+[ext_resource type="Texture2D" uid="uid://bkyyj142p1kl7" path="res://images/tilemaps/sacked-walls.png" id="1_mfkmi"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_586c4"]
+texture = ExtResource("1_mfkmi")
+texture_region_size = Vector2i(96, 176)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(-1, -128)
+1:0/0 = 0
+1:0/0/texture_origin = Vector2i(-1, -128)
+2:0/0 = 0
+2:0/0/texture_origin = Vector2i(-1, -128)
+3:0/0 = 0
+3:0/0/texture_origin = Vector2i(-1, -128)
+4:0/0 = 0
+4:0/0/texture_origin = Vector2i(-1, -128)
+5:0/0 = 0
+5:0/0/texture_origin = Vector2i(-1, -128)
+6:0/0 = 0
+6:0/0/texture_origin = Vector2i(-1, -128)
+7:0/0 = 0
+7:0/0/texture_origin = Vector2i(-1, -128)
+0:1/0 = 0
+0:1/0/texture_origin = Vector2i(-1, -128)
+1:1/0 = 0
+1:1/0/texture_origin = Vector2i(-1, -128)
+2:1/0 = 0
+2:1/0/texture_origin = Vector2i(-1, -128)
+3:1/0 = 0
+3:1/0/texture_origin = Vector2i(-1, -128)
+4:1/0 = 0
+4:1/0/texture_origin = Vector2i(-1, -128)
+5:1/0 = 0
+5:1/0/texture_origin = Vector2i(-1, -128)
+6:1/0 = 0
+6:1/0/texture_origin = Vector2i(-1, -128)
+7:1/0 = 0
+7:1/0/texture_origin = Vector2i(-1, -128)
+0:2/0 = 0
+0:2/0/texture_origin = Vector2i(-1, -128)
+1:2/0 = 0
+1:2/0/texture_origin = Vector2i(-1, -128)
+2:2/0 = 0
+2:2/0/texture_origin = Vector2i(-1, -128)
+3:2/0 = 0
+3:2/0/texture_origin = Vector2i(-1, -128)
+4:2/0 = 0
+4:2/0/texture_origin = Vector2i(-1, -128)
+5:2/0 = 0
+5:2/0/texture_origin = Vector2i(-1, -128)
+6:2/0 = 0
+6:2/0/texture_origin = Vector2i(-1, -128)
+
+[resource]
+tile_shape = 1
+tile_size = Vector2i(94, 48)
+sources/3 = SubResource("TileSetAtlasSource_586c4")
