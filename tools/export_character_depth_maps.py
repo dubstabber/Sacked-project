@@ -3,6 +3,7 @@ import argparse
 import json
 import pathlib
 import re
+import shutil
 import struct
 import zlib
 
@@ -25,6 +26,18 @@ SPECS = [
     ("anne", "ANNE_WALK", "anne-walk"),
     ("boss", "CHEF_STAND#IDLE", "boss-stand-idle"),
     ("boss", "CHEF_WALK", "boss-walk"),
+    ("secretary", "SEKRETAERIN_IDLE#1#ATMEN", "secretary-idle1-atmen"),
+    ("secretary", "SEKRETAERIN_WALK", "secretary-walk"),
+    ("janitor", "HOUSEMEISTER_IDLE#1#ATMEN", "janitor-idle1-atmen"),
+    ("janitor", "HOUSEMEISTER_WALK", "janitor-walk"),
+    ("male-employee-1", "ANGESTELLTER#1_IDLE#1#ATMEN", "male-employee-1-idle1-atmen"),
+    ("male-employee-1", "ANGESTELLTER#1_WALK", "male-employee-1-walk"),
+    ("male-employee-2", "ANGESTELLTER#2_IDLE#1#ATMEN", "male-employee-2-idle1-atmen"),
+    ("male-employee-2", "ANGESTELLTER#2_WALK", "male-employee-2-walk"),
+    ("female-employee-1", "ANGESTELLTE#1_IDLE#1#ATMEN", "female-employee-1-idle1-atmen"),
+    ("female-employee-1", "ANGESTELLTE#1_WALK", "female-employee-1-walk"),
+    ("female-employee-2", "ANGESTELLTE#2_IDLE#1#ATMEN", "female-employee-2-idle1-atmen"),
+    ("female-employee-2", "ANGESTELLTE#2_WALK", "female-employee-2-walk"),
 ]
 
 
@@ -108,7 +121,13 @@ def encode_depth_rgba(depth: bytes, mask: bytes, width: int, height: int) -> byt
     return bytes(rgba)
 
 
-def export_spec(root: pathlib.Path, character: str, source_prefix: str, runtime_prefix: str) -> int:
+def export_spec(
+    root: pathlib.Path,
+    character: str,
+    source_prefix: str,
+    runtime_prefix: str,
+    copy_runtime_pngs: bool,
+) -> int:
     written = 0
     for angle, direction_name in DIRECTIONS.items():
         animation_path = source_animation_path(root, source_prefix, angle)
@@ -126,6 +145,9 @@ def export_spec(root: pathlib.Path, character: str, source_prefix: str, runtime_
                 direction_name,
                 frame["sprite_name"],
             )
+            if copy_runtime_pngs:
+                runtime_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source_frame_dir(root, frame), runtime_path)
             if not runtime_path.is_file():
                 raise FileNotFoundError(runtime_path)
 
@@ -142,12 +164,17 @@ def main() -> int:
         description="Export character SPRITEZB planes as runtime depth PNGs."
     )
     parser.add_argument("--root", default=".", help="Godot project root")
+    parser.add_argument(
+        "--copy-runtime-pngs",
+        action="store_true",
+        help="Copy source frame PNGs into images/characters before writing depth maps",
+    )
     args = parser.parse_args()
 
     root = pathlib.Path(args.root).resolve()
     total = 0
     for character, source_prefix, runtime_prefix in SPECS:
-        total += export_spec(root, character, source_prefix, runtime_prefix)
+        total += export_spec(root, character, source_prefix, runtime_prefix, args.copy_runtime_pngs)
 
     print(f"Wrote {total} character depth maps")
     return 0

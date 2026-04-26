@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CharacterProfile" format=3]
+
+[ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/male-employee-2_animations.res" id="1_4pyrf"]
+[ext_resource type="Texture2D" path="res://images/characters/male-employee-2/male-employee-2-idle1-atmen-right/male-employee-2-idle1-atmen-right-000.png" id="2_yd7dc"]
+[ext_resource type="Script" path="res://scenes/player/character_profile.gd" id="3_qt28p"]
+
+[resource]
+script = ExtResource("3_qt28p")
+id = &"male-employee-2"
+animation_library = ExtResource("1_4pyrf")
+idle_animation_prefix = "male-employee-2-idle1-atmen-"
+walk_animation_prefix = "male-employee-2-walk-"
+initial_texture = ExtResource("2_yd7dc")

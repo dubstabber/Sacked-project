@@ -5,6 +5,12 @@ const Profiles := [
 	preload("res://scenes/player/profiles/jobless.tres"),
 	preload("res://scenes/player/profiles/anne.tres"),
 	preload("res://scenes/npc/profiles/boss.tres"),
+	preload("res://scenes/npc/profiles/secretary.tres"),
+	preload("res://scenes/npc/profiles/janitor.tres"),
+	preload("res://scenes/npc/profiles/male-employee-1.tres"),
+	preload("res://scenes/npc/profiles/male-employee-2.tres"),
+	preload("res://scenes/npc/profiles/female-employee-1.tres"),
+	preload("res://scenes/npc/profiles/female-employee-2.tres"),
 ]
 
 var _failed := false

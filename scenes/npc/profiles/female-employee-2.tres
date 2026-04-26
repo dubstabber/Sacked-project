@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CharacterProfile" format=3]
+
+[ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/female-employee-2_animations.res" id="1_hc1eg"]
+[ext_resource type="Texture2D" path="res://images/characters/female-employee-2/female-employee-2-idle1-atmen-right/female-employee-2-idle1-atmen-right-000.png" id="2_yipux"]
+[ext_resource type="Script" path="res://scenes/player/character_profile.gd" id="3_nq26w"]
+
+[resource]
+script = ExtResource("3_nq26w")
+id = &"female-employee-2"
+animation_library = ExtResource("1_hc1eg")
+idle_animation_prefix = "female-employee-2-idle1-atmen-"
+walk_animation_prefix = "female-employee-2-walk-"
+initial_texture = ExtResource("2_yipux")
