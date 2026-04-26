@@ -4,6 +4,7 @@ extends SceneTree
 const DEFAULT_MANIFEST_PATH := "res://resources/tilemaps/sacked-tile-atlases.json"
 const ATLAS_ORDER := ["floor", "walls", "glass"]
 const TILE_SHAPE := TileSet.TILE_SHAPE_ISOMETRIC
+const TILE_LAYOUT := TileSet.TILE_LAYOUT_DIAMOND_DOWN
 const TILE_SIZE := Vector2i(94, 48)
 const SOURCE_ID := 3
 
@@ -73,10 +74,11 @@ func _save_tileset(atlas_name: String, atlas: Dictionary) -> bool:
 		if tile_data == null:
 			push_error("Failed to create tile %s at %s" % [atlas_name, atlas_coords])
 			return false
-		tile_data.texture_origin = texture_origin
+		tile_data.texture_origin = _vector2i(tile.get("texture_origin", texture_origin))
 
 	var tile_set := TileSet.new()
 	tile_set.tile_shape = TILE_SHAPE
+	tile_set.tile_layout = TILE_LAYOUT
 	tile_set.tile_size = TILE_SIZE
 	tile_set.add_source(source, SOURCE_ID)
 

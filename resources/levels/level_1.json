@@ -1,0 +1,5669 @@
+{
+  "generated_by": "tools/import_original_level.py",
+  "ignored_layers": {
+    "LAYER2": "matches LAYER1 for LEVEL_00.col and is not rendered twice"
+  },
+  "map": {
+    "height": 16,
+    "layer_count": 3,
+    "visible_height": 15,
+    "visible_width": 15,
+    "width": 16
+  },
+  "object_database": "extract-sacked-assets/sacked/CO_OBJECTS.DAT",
+  "objects": [
+    {
+      "display_name": "Schreibtisch  (L) Holz",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 8,
+      "kind": "0x020003d0",
+      "node_name": "Object008Schreibtisch02",
+      "object_id": "0x020003d0",
+      "pivot": [
+        63,
+        103
+      ],
+      "record_name": "ITEM0",
+      "source_sprite": "CO_OBJECTS_CHEF_SCHREIBTISCH02_IDLE_000_ChefSchreibtisch02#000",
+      "sprite_name": "SCHREIBTISCH02",
+      "texture": "res://images/objects/chef-schreibtisch02-000.png",
+      "texture_size": [
+        176,
+        127
+      ],
+      "tile_position": [
+        1.0,
+        1.0
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Drehstuhl blau",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 9,
+      "kind": "0x01060440",
+      "node_name": "Object009Drehstuhl01",
+      "object_id": "0x01060440",
+      "pivot": [
+        25,
+        70
+      ],
+      "record_name": "ITEM1",
+      "source_sprite": "CO_OBJECTS_B_RO_DREHSTUHL01_IDLE_000_DREHSTUHL01#000#",
+      "sprite_name": "DREHSTUHL01",
+      "texture": "res://images/objects/b-ro-drehstuhl01-000.png",
+      "texture_size": [
+        58,
+        83
+      ],
+      "tile_position": [
+        2.0,
+        2.0
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Tastatur frontal",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 10,
+      "kind": "0x00060980",
+      "node_name": "Object010MonitorTastaturFrontal",
+      "object_id": "0x00060980",
+      "pivot": [
+        21,
+        89
+      ],
+      "record_name": "ITEM2",
+      "source_sprite": "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_000_MonitorFrontal#Idle#000#",
+      "sprite_name": "MONITOR&TASTATUR#FRONTAL",
+      "texture": "res://images/objects/aktiv-monitor-tastatur-frontal-000.png",
+      "texture_size": [
+        50,
+        52
+      ],
+      "tile_position": [
+        0.927083,
+        2.114583
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "PC-Tower",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 11,
+      "kind": "0x00000860",
+      "node_name": "Object011Pctower",
+      "object_id": "0x00000860",
+      "pivot": [
+        14,
+        44
+      ],
+      "record_name": "ITEM3",
+      "source_sprite": "CO_OBJECTS_B_RO_PCTOWER_IDLE_000_PCTower#Idle#000#",
+      "sprite_name": "PCTOWER",
+      "texture": "res://images/objects/b-ro-pctower-000.png",
+      "texture_size": [
+        30,
+        51
+      ],
+      "tile_position": [
+        1.0,
+        3.0
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Schreibtisch Holz",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 12,
+      "kind": "0x020003c2",
+      "node_name": "Object012Schreibtisch01",
+      "object_id": "0x020003c0",
+      "pivot": [
+        115,
+        79
+      ],
+      "record_name": "ITEM4",
+      "source_sprite": "CO_OBJECTS_CHEF_SCHREIBTISCH01_IDLE_180_ChefSchreibtisch01#180",
+      "sprite_name": "SCHREIBTISCH01",
+      "texture": "res://images/objects/chef-schreibtisch01-180.png",
+      "texture_size": [
+        185,
+        131
+      ],
+      "tile_position": [
+        7.989583,
+        1.052083
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Drehstuhl blau einfach",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 13,
+      "kind": "0x01060462",
+      "node_name": "Object013Drehstuhl03",
+      "object_id": "0x01060460",
+      "pivot": [
+        28,
+        78
+      ],
+      "record_name": "ITEM5",
+      "source_sprite": "CO_OBJECTS_B_RO_DREHSTUHL03_IDLE_180_DREHSTUHL03#180#",
+      "sprite_name": "DREHSTUHL03",
+      "texture": "res://images/objects/b-ro-drehstuhl03-180.png",
+      "texture_size": [
+        54,
+        91
+      ],
+      "tile_position": [
+        7.083333,
+        1.333333
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Tastatur links",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 14,
+      "kind": "0x00060992",
+      "node_name": "Object014MonitorTastaturLinks",
+      "object_id": "0x00060990",
+      "pivot": [
+        26,
+        94
+      ],
+      "record_name": "ITEM6",
+      "source_sprite": "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#LINKS_IDLE_180_MonitorLinks#Idle#180#",
+      "sprite_name": "MONITOR&TASTATUR#LINKS",
+      "texture": "res://images/objects/aktiv-monitor-tastatur-links-180.png",
+      "texture_size": [
+        69,
+        49
+      ],
+      "tile_position": [
+        8.0,
+        1.333333
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Toilettenkabine",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 15,
+      "kind": "0x00080ad0",
+      "node_name": "Object015Toikabine",
+      "object_id": "0x00080ad0",
+      "pivot": [
+        75,
+        134
+      ],
+      "record_name": "ITEM7",
+      "source_sprite": "CO_OBJECTS_AKTIV_TOIKABINE_IDLE_000_ToiKabine#IdleGreen#000#",
+      "sprite_name": "TOIKABINE",
+      "texture": "res://images/objects/aktiv-toikabine-000.png",
+      "texture_size": [
+        130,
+        158
+      ],
+      "tile_position": [
+        10.677083,
+        0.989583
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Waschbecken",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 16,
+      "kind": "0x000006e0",
+      "node_name": "Object016Waschbecken",
+      "object_id": "0x000006e0",
+      "pivot": [
+        2,
+        71
+      ],
+      "record_name": "ITEM8",
+      "source_sprite": "CO_OBJECTS_AKTIV_WASCHBECKEN_IDLE_000_Waschbecken#Idle#000#",
+      "sprite_name": "WASCHBECKEN",
+      "texture": "res://images/objects/aktiv-waschbecken-000.png",
+      "texture_size": [
+        51,
+        47
+      ],
+      "tile_position": [
+        8.979167,
+        3.354167
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Spiegel",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 17,
+      "kind": "0x05090a90",
+      "node_name": "Object017Spiegel",
+      "object_id": "0x05090a90",
+      "pivot": [
+        -7,
+        107
+      ],
+      "record_name": "ITEM9",
+      "source_sprite": "CO_OBJECTS_AKTIV_SPIEGEL_IDLE_000_Spiegel#Idle#000#",
+      "sprite_name": "SPIEGEL",
+      "texture": "res://images/objects/aktiv-spiegel-000.png",
+      "texture_size": [
+        18,
+        33
+      ],
+      "tile_position": [
+        9.052083,
+        3.447917
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Seifenspender 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 18,
+      "kind": "0x000006c1",
+      "node_name": "Object018Seifenspender01",
+      "object_id": "0x000006c0",
+      "pivot": [
+        17,
+        65
+      ],
+      "record_name": "ITEM10",
+      "source_sprite": "CO_OBJECTS_WC_SEIFENSPENDER01_IDLE_090_Seifenspender01#090",
+      "sprite_name": "SEIFENSPENDER01",
+      "texture": "res://images/objects/wc-seifenspender01-090.png",
+      "texture_size": [
+        10,
+        20
+      ],
+      "tile_position": [
+        9.395833,
+        2.520833
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Schreibtisch edel 2",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 19,
+      "kind": "0x07000782",
+      "node_name": "Object019Schreibtisch02",
+      "object_id": "0x07000780",
+      "pivot": [
+        110,
+        79
+      ],
+      "record_name": "ITEM11",
+      "source_sprite": "CO_OBJECTS_CHEF_SCHREIBTISCH02_IDLE_180_ChefSchreibtisch02#180",
+      "sprite_name": "SCHREIBTISCH02",
+      "texture": "res://images/objects/chef-schreibtisch02-180.png",
+      "texture_size": [
+        175,
+        127
+      ],
+      "tile_position": [
+        2.979167,
+        9.895834
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Jagdtrophäe",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 20,
+      "kind": "0x00090710",
+      "node_name": "Object020Jagdtrophae",
+      "object_id": "0x00090710",
+      "pivot": [
+        5,
+        105
+      ],
+      "record_name": "ITEM12",
+      "source_sprite": "CO_OBJECTS_CHEF_JAGDTROPH_E_IDLE_000_ChefJagdTroph_e#000",
+      "sprite_name": "JAGDTROPHÄE",
+      "texture": "res://images/objects/chef-jagdtroph-e-000.png",
+      "texture_size": [
+        67,
+        99
+      ],
+      "tile_position": [
+        0.0625,
+        10.770833
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Fenster 1a",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 21,
+      "kind": "0x05090be0",
+      "node_name": "Object021Fenster01",
+      "object_id": "0x05090be0",
+      "pivot": [
+        31,
+        150
+      ],
+      "record_name": "ITEM13",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER01_IDLE_000_Fenster01#Idle#000#",
+      "sprite_name": "FENSTER01",
+      "texture": "res://images/objects/aktiv-fenster01-000.png",
+      "texture_size": [
+        116,
+        136
+      ],
+      "tile_position": [
+        -0.052083,
+        5.885417
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Fenster 1a",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 22,
+      "kind": "0x05090be0",
+      "node_name": "Object022Fenster01",
+      "object_id": "0x05090be0",
+      "pivot": [
+        31,
+        150
+      ],
+      "record_name": "ITEM14",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER01_IDLE_000_Fenster01#Idle#000#",
+      "sprite_name": "FENSTER01",
+      "texture": "res://images/objects/aktiv-fenster01-000.png",
+      "texture_size": [
+        116,
+        136
+      ],
+      "tile_position": [
+        -0.020833,
+        2.395833
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Fenster 1b",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 23,
+      "kind": "0x05090bf0",
+      "node_name": "Object023Fenster02",
+      "object_id": "0x05090bf0",
+      "pivot": [
+        31,
+        150
+      ],
+      "record_name": "ITEM15",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER02_IDLE_000_Fenster02#Idle#000#",
+      "sprite_name": "FENSTER02",
+      "texture": "res://images/objects/aktiv-fenster02-000.png",
+      "texture_size": [
+        116,
+        136
+      ],
+      "tile_position": [
+        -0.020833,
+        8.895833
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Fenster 1b",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 24,
+      "kind": "0x05090bf0",
+      "node_name": "Object024Fenster02",
+      "object_id": "0x05090bf0",
+      "pivot": [
+        31,
+        150
+      ],
+      "record_name": "ITEM16",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER02_IDLE_000_Fenster02#Idle#000#",
+      "sprite_name": "FENSTER02",
+      "texture": "res://images/objects/aktiv-fenster02-000.png",
+      "texture_size": [
+        116,
+        136
+      ],
+      "tile_position": [
+        -0.020833,
+        12.770833
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Fenster 1c",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 25,
+      "kind": "0x05090c01",
+      "node_name": "Object025Fenster03",
+      "object_id": "0x05090c00",
+      "pivot": [
+        82,
+        151
+      ],
+      "record_name": "ITEM17",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER03_IDLE_090_Fenster03#Idle#090#",
+      "sprite_name": "FENSTER03",
+      "texture": "res://images/objects/aktiv-fenster03-090.png",
+      "texture_size": [
+        116,
+        137
+      ],
+      "tile_position": [
+        2.375,
+        -0.0
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Fenster 1c",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 26,
+      "kind": "0x05090c01",
+      "node_name": "Object026Fenster03",
+      "object_id": "0x05090c00",
+      "pivot": [
+        82,
+        151
+      ],
+      "record_name": "ITEM18",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER03_IDLE_090_Fenster03#Idle#090#",
+      "sprite_name": "FENSTER03",
+      "texture": "res://images/objects/aktiv-fenster03-090.png",
+      "texture_size": [
+        116,
+        137
+      ],
+      "tile_position": [
+        7.302083,
+        -0.010417
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Wasserspender",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 27,
+      "kind": "0x08051071",
+      "node_name": "Object027Wasserspender",
+      "object_id": "0x08051070",
+      "pivot": [
+        33,
+        105
+      ],
+      "record_name": "ITEM19",
+      "source_sprite": "CO_OBJECTS_AKTIV_WASSERSPENDER_IDLE_090_Wasserspender#Idle#090#",
+      "sprite_name": "WASSERSPENDER",
+      "texture": "res://images/objects/aktiv-wasserspender-090.png",
+      "texture_size": [
+        57,
+        121
+      ],
+      "tile_position": [
+        11.979167,
+        5.020833
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Arbeitszeile 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 28,
+      "kind": "0x070005a0",
+      "node_name": "Object028Kuchenschrank01",
+      "object_id": "0x070005a0",
+      "pivot": [
+        46,
+        69
+      ],
+      "record_name": "ITEM20",
+      "source_sprite": "CO_OBJECTS_K_CHE_K_CHENSCHRANK01_IDLE_000_K_chenschrank01#000",
+      "sprite_name": "KÜCHENSCHRANK01",
+      "texture": "res://images/objects/k-che-k-chenschrank01-000.png",
+      "texture_size": [
+        97,
+        89
+      ],
+      "tile_position": [
+        7.0,
+        11.75
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Server-Tower",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 29,
+      "kind": "0x00020f80",
+      "node_name": "Object029Server",
+      "object_id": "0x00020f80",
+      "pivot": [
+        25,
+        103
+      ],
+      "record_name": "ITEM21",
+      "source_sprite": "CO_OBJECTS_AKTIV_SERVER_IDLE_000_Server#Idle#000#",
+      "sprite_name": "SERVER",
+      "texture": "res://images/objects/aktiv-server-000.png",
+      "texture_size": [
+        55,
+        116
+      ],
+      "tile_position": [
+        10.875,
+        13.083333
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Flasche",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 30,
+      "kind": "0x00000060",
+      "node_name": "Object030Flasche",
+      "object_id": "0x00000060",
+      "pivot": [
+        3,
+        70
+      ],
+      "record_name": "ITEM22",
+      "source_sprite": "CO_OBJECTS_AKTIV_FLASCHE_IDLE_000_Flasche#000",
+      "sprite_name": "FLASCHE",
+      "texture": "res://images/objects/aktiv-flasche-000.png",
+      "texture_size": [
+        9,
+        23
+      ],
+      "tile_position": [
+        0.875,
+        2.583333
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Pappaufsteller 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 31,
+      "kind": "0x050900d0",
+      "node_name": "Object031Pappaufsteller01",
+      "object_id": "0x050900d0",
+      "pivot": [
+        21,
+        57
+      ],
+      "record_name": "ITEM23",
+      "source_sprite": "CO_OBJECTS_AKTIV_PAPPAUFSTELLER01_IDLE_000_Pappaufsteller01#Idle#000#",
+      "sprite_name": "PAPPAUFSTELLER01",
+      "texture": "res://images/objects/aktiv-pappaufsteller01-000.png",
+      "texture_size": [
+        35,
+        62
+      ],
+      "tile_position": [
+        11.125,
+        9.291667
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Handtuchautomat",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 32,
+      "kind": "0x00000660",
+      "node_name": "Object032Handtuchspender",
+      "object_id": "0x00000660",
+      "pivot": [
+        -3,
+        72
+      ],
+      "record_name": "ITEM24",
+      "source_sprite": "CO_OBJECTS_AKTIV_HANDTUCHSPENDER_IDLE_000_Handtuchspender#Idle#000#",
+      "sprite_name": "HANDTUCHSPENDER",
+      "texture": "res://images/objects/aktiv-handtuchspender-000.png",
+      "texture_size": [
+        36,
+        51
+      ],
+      "tile_position": [
+        9.072917,
+        2.177083
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Papierkorb 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 33,
+      "kind": "0x00000800",
+      "node_name": "Object033Papierkorb01",
+      "object_id": "0x00000800",
+      "pivot": [
+        10,
+        27
+      ],
+      "record_name": "ITEM25",
+      "source_sprite": "CO_OBJECTS_AKTIV_PAPIERKORB01_IDLE_000_Papierkorb01#000",
+      "sprite_name": "PAPIERKORB01",
+      "texture": "res://images/objects/aktiv-papierkorb01-000.png",
+      "texture_size": [
+        22,
+        31
+      ],
+      "tile_position": [
+        3.302083,
+        8.864583
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Aktenablage",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 34,
+      "kind": "0x00000822",
+      "node_name": "Object034Aktenablage",
+      "object_id": "0x00000820",
+      "pivot": [
+        16,
+        69
+      ],
+      "record_name": "ITEM26",
+      "source_sprite": "CO_OBJECTS_AKTIV_AKTENABLAGE_IDLE_180_Aktenablage#Idle#180",
+      "sprite_name": "AKTENABLAGE",
+      "texture": "res://images/objects/aktiv-aktenablage-180.png",
+      "texture_size": [
+        34,
+        31
+      ],
+      "tile_position": [
+        8.239583,
+        2.21875
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Brief",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 35,
+      "kind": "0x00000831",
+      "node_name": "Object035Brief",
+      "object_id": "0x00000830",
+      "pivot": [
+        13,
+        56
+      ],
+      "record_name": "ITEM27",
+      "source_sprite": "CO_OBJECTS_AKTIV_BRIEF_IDLE_090_Brief#075#",
+      "sprite_name": "BRIEF",
+      "texture": "res://images/objects/aktiv-brief-090.png",
+      "texture_size": [
+        27,
+        12
+      ],
+      "tile_position": [
+        3.5,
+        9.5
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Colaautomat",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 36,
+      "kind": "0x070508c0",
+      "node_name": "Object036Colamat",
+      "object_id": "0x070508c0",
+      "pivot": [
+        35,
+        112
+      ],
+      "record_name": "ITEM28",
+      "source_sprite": "CO_OBJECTS_AKTIV_COLAMAT_IDLE_000_Colamat#Idle#000#",
+      "sprite_name": "COLAMAT",
+      "texture": "res://images/objects/aktiv-colamat-000.png",
+      "texture_size": [
+        72,
+        130
+      ],
+      "tile_position": [
+        11.072917,
+        10.260417
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Disketten",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 37,
+      "kind": "0x000008e0",
+      "node_name": "Object037Disketten",
+      "object_id": "0x000008e0",
+      "pivot": [
+        17,
+        60
+      ],
+      "record_name": "ITEM29",
+      "source_sprite": "CO_OBJECTS_AKTIV_DISKETTEN_IDLE_000_Disketten#Idle#000#",
+      "sprite_name": "DISKETTEN",
+      "texture": "res://images/objects/aktiv-disketten-000.png",
+      "texture_size": [
+        39,
+        15
+      ],
+      "tile_position": [
+        2.28125,
+        1.177083
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Drucker 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 38,
+      "kind": "0x000208f0",
+      "node_name": "Object038Drucker01",
+      "object_id": "0x000208f0",
+      "pivot": [
+        16,
+        67
+      ],
+      "record_name": "ITEM30",
+      "source_sprite": "CO_OBJECTS_AKTIV_DRUCKER01_IDLE_000_Drucker01#Idle#000#",
+      "sprite_name": "DRUCKER01",
+      "texture": "res://images/objects/aktiv-drucker01-000.png",
+      "texture_size": [
+        34,
+        26
+      ],
+      "tile_position": [
+        1.3125,
+        1.270833
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Feuerzeug",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 39,
+      "kind": "0x00000910",
+      "node_name": "Object039Feuerzeug",
+      "object_id": "0x00000910",
+      "pivot": [
+        4,
+        54
+      ],
+      "record_name": "ITEM31",
+      "source_sprite": "CO_OBJECTS_AKTIV_FEUERZEUG_IDLE_000_Feuerzeug#000#",
+      "sprite_name": "FEUERZEUG",
+      "texture": "res://images/objects/aktiv-feuerzeug-000.png",
+      "texture_size": [
+        12,
+        8
+      ],
+      "tile_position": [
+        3.0625,
+        9.1875
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Kleber",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 40,
+      "kind": "0x00000940",
+      "node_name": "Object040Kleber",
+      "object_id": "0x00000940",
+      "pivot": [
+        2,
+        66
+      ],
+      "record_name": "ITEM32",
+      "source_sprite": "CO_OBJECTS_AKTIV_KLEBER_IDLE_000_Kleber#Idle#135#",
+      "sprite_name": "KLEBER",
+      "texture": "res://images/objects/aktiv-kleber-000.png",
+      "texture_size": [
+        7,
+        18
+      ],
+      "tile_position": [
+        1.822917,
+        0.885417
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Tastatur links",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 41,
+      "kind": "0x00060992",
+      "node_name": "Object041MonitorTastaturLinks",
+      "object_id": "0x00060990",
+      "pivot": [
+        26,
+        94
+      ],
+      "record_name": "ITEM33",
+      "source_sprite": "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#LINKS_IDLE_180_MonitorLinks#Idle#180#",
+      "sprite_name": "MONITOR&TASTATUR#LINKS",
+      "texture": "res://images/objects/aktiv-monitor-tastatur-links-180.png",
+      "texture_size": [
+        69,
+        49
+      ],
+      "tile_position": [
+        3.072917,
+        10.59375
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Poster 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 42,
+      "kind": "0x05090a11",
+      "node_name": "Object042Poster01",
+      "object_id": "0x05090a10",
+      "pivot": [
+        39,
+        106
+      ],
+      "record_name": "ITEM34",
+      "source_sprite": "CO_OBJECTS_AKTIV_POSTER01_IDLE_090_Poster01#Idle#090#",
+      "sprite_name": "POSTER01",
+      "texture": "res://images/objects/aktiv-poster01-090.png",
+      "texture_size": [
+        48,
+        55
+      ],
+      "tile_position": [
+        1.958333,
+        4.25
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Stifthalter 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 43,
+      "kind": "0x00000ab0",
+      "node_name": "Object043Stifthalter01",
+      "object_id": "0x00000ab0",
+      "pivot": [
+        4,
+        68
+      ],
+      "record_name": "ITEM35",
+      "source_sprite": "CO_OBJECTS_AKTIV_STIFTHALTER01_IDLE_000_Stifthalter01#Idle#000#",
+      "sprite_name": "STIFTHALTER01",
+      "texture": "res://images/objects/aktiv-stifthalter01-000.png",
+      "texture_size": [
+        12,
+        22
+      ],
+      "tile_position": [
+        3.4375,
+        11.0625
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Wasserkocher",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 44,
+      "kind": "0x00050af0",
+      "node_name": "Object044Wasserkocher",
+      "object_id": "0x00050af0",
+      "pivot": [
+        6,
+        69
+      ],
+      "record_name": "ITEM36",
+      "source_sprite": "CO_OBJECTS_AKTIV_WASSERKOCHER_IDLE_000_Wasserkocher#Idle#000#",
+      "sprite_name": "WASSERKOCHER",
+      "texture": "res://images/objects/aktiv-wasserkocher-000.png",
+      "texture_size": [
+        15,
+        23
+      ],
+      "tile_position": [
+        7.125,
+        10.375
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Zigaretten",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 45,
+      "kind": "0x00000b00",
+      "node_name": "Object045Zigaretten",
+      "object_id": "0x00000b00",
+      "pivot": [
+        5,
+        56
+      ],
+      "record_name": "ITEM37",
+      "source_sprite": "CO_OBJECTS_AKTIV_ZIGARETTEN_IDLE_000_Zigaretten#Idle#000#",
+      "sprite_name": "ZIGARETTEN",
+      "texture": "res://images/objects/aktiv-zigaretten-000.png",
+      "texture_size": [
+        13,
+        10
+      ],
+      "tile_position": [
+        1.34375,
+        2.864583
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Vertrauliche Akten",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 46,
+      "kind": "0x00000ec0",
+      "node_name": "Object046Confidential",
+      "object_id": "0x00000ec0",
+      "pivot": [
+        14,
+        63
+      ],
+      "record_name": "ITEM38",
+      "source_sprite": "CO_OBJECTS_AKTIV_CONFIDENTIAL_IDLE_000_Confidential#Idle#000#",
+      "sprite_name": "CONFIDENTIAL",
+      "texture": "res://images/objects/aktiv-confidential-000.png",
+      "texture_size": [
+        31,
+        19
+      ],
+      "tile_position": [
+        2.6875,
+        11.270834
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Handy",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 47,
+      "kind": "0x04020f10",
+      "node_name": "Object047Handy",
+      "object_id": "0x04020f10",
+      "pivot": [
+        9,
+        57
+      ],
+      "record_name": "ITEM39",
+      "source_sprite": "CO_OBJECTS_AKTIV_HANDY_IDLE_000_Handy#Idle#000#",
+      "sprite_name": "HANDY",
+      "texture": "res://images/objects/aktiv-handy-000.png",
+      "texture_size": [
+        19,
+        12
+      ],
+      "tile_position": [
+        2.916667,
+        11.666667
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Kaffeemaschine",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 48,
+      "kind": "0x00050f23",
+      "node_name": "Object048Kaffeemaschi",
+      "object_id": "0x00050f20",
+      "pivot": [
+        -6,
+        83
+      ],
+      "record_name": "ITEM40",
+      "source_sprite": "CO_OBJECTS_AKTIV_KAFFEEMASCHI_IDLE_270_Kaffeemaschi#Idle#270#",
+      "sprite_name": "KAFFEEMASCHI",
+      "texture": "res://images/objects/aktiv-kaffeemaschi-270.png",
+      "texture_size": [
+        29,
+        40
+      ],
+      "tile_position": [
+        6.9375,
+        12.520833
+      ],
+      "variant": 3
+    },
+    {
+      "display_name": "Ketchupflasche",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 49,
+      "kind": "0x00000f30",
+      "node_name": "Object049Ketchup",
+      "object_id": "0x00000f30",
+      "pivot": [
+        3,
+        74
+      ],
+      "record_name": "ITEM41",
+      "source_sprite": "CO_OBJECTS_AKTIV_KETCHUP_IDLE_000_Ketchup#Idle#000#",
+      "sprite_name": "KETCHUP",
+      "texture": "res://images/objects/aktiv-ketchup-000.png",
+      "texture_size": [
+        9,
+        27
+      ],
+      "tile_position": [
+        7.3125,
+        10.9375
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Flipchart",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 50,
+      "kind": "0x05020f01",
+      "node_name": "Object050Flipchart",
+      "object_id": "0x05020f00",
+      "pivot": [
+        32,
+        96
+      ],
+      "record_name": "ITEM42",
+      "source_sprite": "CO_OBJECTS_AKTIV_FLIPCHART_IDLE_090_Flipchart#Idle#090#",
+      "sprite_name": "FLIPCHART",
+      "texture": "res://images/objects/aktiv-flipchart-090.png",
+      "texture_size": [
+        54,
+        110
+      ],
+      "tile_position": [
+        2.1875,
+        7.604167
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Komode schwarz 2",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 51,
+      "kind": "0x070002f1",
+      "node_name": "Object051Komode03",
+      "object_id": "0x070002f0",
+      "pivot": [
+        31,
+        61
+      ],
+      "record_name": "ITEM43",
+      "source_sprite": "CO_OBJECTS_B_RO_KOMODE03_IDLE_090_Komode03#090",
+      "sprite_name": "KOMODE03",
+      "texture": "res://images/objects/b-ro-komode03-090.png",
+      "texture_size": [
+        79,
+        85
+      ],
+      "tile_position": [
+        0.833333,
+        7.583333
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Metallregal",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 52,
+      "kind": "0x07000380",
+      "node_name": "Object052Regal02",
+      "object_id": "0x07000380",
+      "pivot": [
+        35,
+        101
+      ],
+      "record_name": "ITEM44",
+      "source_sprite": "CO_OBJECTS_B_RO_REGAL02_IDLE_000_Regal02#000",
+      "sprite_name": "REGAL02",
+      "texture": "res://images/objects/b-ro-regal02-000.png",
+      "texture_size": [
+        120,
+        118
+      ],
+      "tile_position": [
+        5.78125,
+        10.052084
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Kühlschrank",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 53,
+      "kind": "0x08040960",
+      "node_name": "Object053Kuhlschrank",
+      "object_id": "0x08040960",
+      "pivot": [
+        31,
+        113
+      ],
+      "record_name": "ITEM45",
+      "source_sprite": "CO_OBJECTS_AKTIV_K_HLSCHRANK_IDLE_000_K_hlschrank#Idle#000#",
+      "sprite_name": "KÜHLSCHRANK",
+      "texture": "res://images/objects/aktiv-k-hlschrank-000.png",
+      "texture_size": [
+        71,
+        127
+      ],
+      "tile_position": [
+        6.958333,
+        9.416667
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Bücherreihe",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 54,
+      "kind": "0x00000011",
+      "node_name": "Object054Bucher01",
+      "object_id": "0x00000010",
+      "pivot": [
+        13,
+        69
+      ],
+      "record_name": "ITEM46",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_B_CHER01_IDLE_090_B_cher01#090",
+      "sprite_name": "BÜCHER01",
+      "texture": "res://images/objects/allgemein-b-cher01-090.png",
+      "texture_size": [
+        28,
+        28
+      ],
+      "tile_position": [
+        1.083333,
+        7.666667
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Heizkörper",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 55,
+      "kind": "0x090000a1",
+      "node_name": "Object055Heizkorper",
+      "object_id": "0x090000a0",
+      "pivot": [
+        52,
+        58
+      ],
+      "record_name": "ITEM47",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_090_Heizk_rper#090",
+      "sprite_name": "HEIZKÖRPER",
+      "texture": "res://images/objects/allgemein-heizk-rper-090.png",
+      "texture_size": [
+        65,
+        61
+      ],
+      "tile_position": [
+        4.260417,
+        0.114583
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Heizkörper",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 56,
+      "kind": "0x090000a0",
+      "node_name": "Object056Heizkorper",
+      "object_id": "0x090000a0",
+      "pivot": [
+        6,
+        58
+      ],
+      "record_name": "ITEM48",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_000_Heizk_rper#000",
+      "sprite_name": "HEIZKÖRPER",
+      "texture": "res://images/objects/allgemein-heizk-rper-000.png",
+      "texture_size": [
+        59,
+        65
+      ],
+      "tile_position": [
+        5.135417,
+        3.197917
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Heizkörper",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 57,
+      "kind": "0x090000a1",
+      "node_name": "Object057Heizkorper",
+      "object_id": "0x090000a0",
+      "pivot": [
+        52,
+        58
+      ],
+      "record_name": "ITEM49",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_090_Heizk_rper#090",
+      "sprite_name": "HEIZKÖRPER",
+      "texture": "res://images/objects/allgemein-heizk-rper-090.png",
+      "texture_size": [
+        65,
+        61
+      ],
+      "tile_position": [
+        5.458333,
+        13.291667
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Kleiderständer einbeinig",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 58,
+      "kind": "0x0a0000c0",
+      "node_name": "Object058Kleiderstaender02",
+      "object_id": "0x0a0000c0",
+      "pivot": [
+        17,
+        80
+      ],
+      "record_name": "ITEM50",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_KLEIDERSTAENDER02_IDLE_000_Kleiderst_nder02#Idle#000#",
+      "sprite_name": "KLEIDERSTAENDER02",
+      "texture": "res://images/objects/allgemein-kleiderstaender02-000.png",
+      "texture_size": [
+        36,
+        86
+      ],
+      "tile_position": [
+        5.770833,
+        7.8125
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Standventilator",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 59,
+      "kind": "0x000002a1",
+      "node_name": "Object059VentiGross",
+      "object_id": "0x000002a0",
+      "pivot": [
+        20,
+        87
+      ],
+      "record_name": "ITEM51",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_VENTI#GROSS_IDLE_090_VentiGross#090",
+      "sprite_name": "VENTI#GROSS",
+      "texture": "res://images/objects/allgemein-venti-gross-090.png",
+      "texture_size": [
+        46,
+        97
+      ],
+      "tile_position": [
+        5.4375,
+        0.354167
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Sofa 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 60,
+      "kind": "0x01070b62",
+      "node_name": "Object060Sofa01",
+      "object_id": "0x01070b60",
+      "pivot": [
+        85,
+        60
+      ],
+      "record_name": "ITEM52",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_SOFA01_IDLE_180_Sofa01#Idle#180#",
+      "sprite_name": "SOFA01",
+      "texture": "res://images/objects/allgemein-sofa01-180.png",
+      "texture_size": [
+        127,
+        96
+      ],
+      "tile_position": [
+        13.208333,
+        6.125
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Standaschenbecher voll",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 61,
+      "kind": "0x00010ea0",
+      "node_name": "Object061Standascher02",
+      "object_id": "0x00010ea0",
+      "pivot": [
+        7,
+        44
+      ],
+      "record_name": "ITEM53",
+      "source_sprite": "CO_OBJECTS_AUFENTHALT_STANDASCHER02_IDLE_000_Standaschenbecher02#Idle#000#",
+      "sprite_name": "STANDASCHER02",
+      "texture": "res://images/objects/aufenthalt-standascher02-000.png",
+      "texture_size": [
+        17,
+        47
+      ],
+      "tile_position": [
+        12.791667,
+        5.208333
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Aushang",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 62,
+      "kind": "0x000907d1",
+      "node_name": "Object062Aushang",
+      "object_id": "0x000907d0",
+      "pivot": [
+        27,
+        101
+      ],
+      "record_name": "ITEM54",
+      "source_sprite": "CO_OBJECTS_AKTIV_AUSHANG_IDLE_090_Aushang#Idle#090#",
+      "sprite_name": "AUSHANG",
+      "texture": "res://images/objects/aktiv-aushang-090.png",
+      "texture_size": [
+        28,
+        68
+      ],
+      "tile_position": [
+        5.21875,
+        4.03125
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Pflanze gross 3",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 63,
+      "kind": "0x03090130",
+      "node_name": "Object063Pflanzegross03",
+      "object_id": "0x03090130",
+      "pivot": [
+        26,
+        121
+      ],
+      "record_name": "ITEM55",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_PFLANZEGROSS03_IDLE_000_PFLANZEGROSS03#Idle#000#",
+      "sprite_name": "PFLANZEGROSS03",
+      "texture": "res://images/objects/allgemein-pflanzegross03-000.png",
+      "texture_size": [
+        58,
+        126
+      ],
+      "tile_position": [
+        0.666667,
+        4.75
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Poster 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 64,
+      "kind": "0x05090a11",
+      "node_name": "Object064Poster01",
+      "object_id": "0x05090a10",
+      "pivot": [
+        39,
+        106
+      ],
+      "record_name": "ITEM56",
+      "source_sprite": "CO_OBJECTS_AKTIV_POSTER01_IDLE_090_Poster01#Idle#090#",
+      "sprite_name": "POSTER01",
+      "texture": "res://images/objects/aktiv-poster01-090.png",
+      "texture_size": [
+        48,
+        55
+      ],
+      "tile_position": [
+        12.625,
+        0.0
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Papier 3",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 65,
+      "kind": "0x04000330",
+      "node_name": "Object065Papier03",
+      "object_id": "0x04000330",
+      "pivot": [
+        18,
+        65
+      ],
+      "record_name": "ITEM57",
+      "source_sprite": "CO_OBJECTS_B_RO_PAPIER03_IDLE_000_Papier03#000",
+      "sprite_name": "PAPIER03",
+      "texture": "res://images/objects/b-ro-papier03-000.png",
+      "texture_size": [
+        32,
+        23
+      ],
+      "tile_position": [
+        1.895833,
+        1.0625
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Papier 2",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 66,
+      "kind": "0x04000321",
+      "node_name": "Object066Papier02",
+      "object_id": "0x04000320",
+      "pivot": [
+        12,
+        61
+      ],
+      "record_name": "ITEM58",
+      "source_sprite": "CO_OBJECTS_B_RO_PAPIER02_IDLE_090_Papier02#045",
+      "sprite_name": "PAPIER02",
+      "texture": "res://images/objects/b-ro-papier02-090.png",
+      "texture_size": [
+        24,
+        18
+      ],
+      "tile_position": [
+        1.729167,
+        1.3125
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Papier 3",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 67,
+      "kind": "0x04000331",
+      "node_name": "Object067Papier03",
+      "object_id": "0x04000330",
+      "pivot": [
+        15,
+        67
+      ],
+      "record_name": "ITEM59",
+      "source_sprite": "CO_OBJECTS_B_RO_PAPIER03_IDLE_090_Papier03#090",
+      "sprite_name": "PAPIER03",
+      "texture": "res://images/objects/b-ro-papier03-090.png",
+      "texture_size": [
+        37,
+        23
+      ],
+      "tile_position": [
+        8.364583,
+        1.84375
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Papier 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 68,
+      "kind": "0x04000312",
+      "node_name": "Object068Papier01",
+      "object_id": "0x04000310",
+      "pivot": [
+        15,
+        59
+      ],
+      "record_name": "ITEM60",
+      "source_sprite": "CO_OBJECTS_B_RO_PAPIER01_IDLE_180_Papier01#090",
+      "sprite_name": "PAPIER01",
+      "texture": "res://images/objects/b-ro-papier01-180.png",
+      "texture_size": [
+        33,
+        14
+      ],
+      "tile_position": [
+        3.135417,
+        9.65625
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Heizkörper",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 69,
+      "kind": "0x090000a0",
+      "node_name": "Object069Heizkorper",
+      "object_id": "0x090000a0",
+      "pivot": [
+        6,
+        58
+      ],
+      "record_name": "ITEM61",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_000_Heizk_rper#000",
+      "sprite_name": "HEIZKÖRPER",
+      "texture": "res://images/objects/allgemein-heizk-rper-000.png",
+      "texture_size": [
+        59,
+        65
+      ],
+      "tile_position": [
+        0.166667,
+        13.208334
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Papier 5",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 70,
+      "kind": "0x04000350",
+      "node_name": "Object070Papier05",
+      "object_id": "0x04000350",
+      "pivot": [
+        12,
+        61
+      ],
+      "record_name": "ITEM62",
+      "source_sprite": "CO_OBJECTS_B_RO_PAPIER05_IDLE_000_Papier05#000",
+      "sprite_name": "PAPIER05",
+      "texture": "res://images/objects/b-ro-papier05-000.png",
+      "texture_size": [
+        25,
+        17
+      ],
+      "tile_position": [
+        7.875,
+        2.0
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Spüle",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 71,
+      "kind": "0x07040c50",
+      "node_name": "Object071Spuele",
+      "object_id": "0x07040c50",
+      "pivot": [
+        34,
+        81
+      ],
+      "record_name": "ITEM63",
+      "source_sprite": "CO_OBJECTS_AKTIV_SPUELE_IDLE_000_Sp_le#Idle#000#",
+      "sprite_name": "SPUELE",
+      "texture": "res://images/objects/aktiv-spuele-000.png",
+      "texture_size": [
+        98,
+        95
+      ],
+      "tile_position": [
+        6.989583,
+        13.34375
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Kiste 2",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 72,
+      "kind": "0x00000d52",
+      "node_name": "Object072Kiste02",
+      "object_id": "0x00000d50",
+      "pivot": [
+        18,
+        32
+      ],
+      "record_name": "ITEM64",
+      "source_sprite": "CO_OBJECTS_HAUSMEISTER_KISTE02_IDLE_180_Kiste02#Idle#110#",
+      "sprite_name": "KISTE02",
+      "texture": "res://images/objects/hausmeister-kiste02-180.png",
+      "texture_size": [
+        39,
+        42
+      ],
+      "tile_position": [
+        10.677083,
+        12.072917
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Eingangstür",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 73,
+      "kind": "0x000010f0",
+      "node_name": "Object073Eingang",
+      "object_id": "0x000010f0",
+      "pivot": [
+        27,
+        155
+      ],
+      "record_name": "ITEM65",
+      "source_sprite": "CO_OBJECTS_ALLGEMEIN_EINGANG_IDLE_000_Eingang01#Idle#000#",
+      "sprite_name": "EINGANG",
+      "texture": "res://images/objects/allgemein-eingang-000.png",
+      "texture_size": [
+        122,
+        178
+      ],
+      "tile_position": [
+        14.0625,
+        10.0625
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Geschirr dreckig",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 74,
+      "kind": "0x00000531",
+      "node_name": "Object074Geschirrdreckig",
+      "object_id": "0x00000530",
+      "pivot": [
+        10,
+        63
+      ],
+      "record_name": "ITEM66",
+      "source_sprite": "CO_OBJECTS_K_CHE_GESCHIRRDRECKIG_IDLE_090_GeschirrDreckig#090",
+      "sprite_name": "GESCHIRRDRECKIG",
+      "texture": "res://images/objects/k-che-geschirrdreckig-090.png",
+      "texture_size": [
+        23,
+        18
+      ],
+      "tile_position": [
+        7.104167,
+        11.604167
+      ],
+      "variant": 1
+    },
+    {
+      "display_name": "Kaffeedose",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 75,
+      "kind": "0x00000570",
+      "node_name": "Object075Kaffeedose",
+      "object_id": "0x00000570",
+      "pivot": [
+        5,
+        73
+      ],
+      "record_name": "ITEM67",
+      "source_sprite": "CO_OBJECTS_K_CHE_KAFFEEDOSE_IDLE_000_Kaffeedose#000",
+      "sprite_name": "KAFFEEDOSE",
+      "texture": "res://images/objects/k-che-kaffeedose-000.png",
+      "texture_size": [
+        13,
+        26
+      ],
+      "tile_position": [
+        7.375,
+        11.916667
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Teller",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 76,
+      "kind": "0x00000550",
+      "node_name": "Object076Geschirrteller",
+      "object_id": "0x00000550",
+      "pivot": [
+        7,
+        55
+      ],
+      "record_name": "ITEM68",
+      "source_sprite": "CO_OBJECTS_K_CHE_GESCHIRRTELLER_IDLE_000_GeschirrTeller#000",
+      "sprite_name": "GESCHIRRTELLER",
+      "texture": "res://images/objects/k-che-geschirrteller-000.png",
+      "texture_size": [
+        17,
+        9
+      ],
+      "tile_position": [
+        7.0625,
+        11.354167
+      ],
+      "variant": 0
+    },
+    {
+      "display_name": "Chefsessel 1",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 77,
+      "kind": "0x01060792",
+      "node_name": "Object077Sessel01",
+      "object_id": "0x01060790",
+      "pivot": [
+        40,
+        89
+      ],
+      "record_name": "ITEM69",
+      "source_sprite": "CO_OBJECTS_CHEF_SESSEL01_IDLE_180_ChefSessel01#180#",
+      "sprite_name": "SESSEL01",
+      "texture": "res://images/objects/chef-sessel01-180.png",
+      "texture_size": [
+        71,
+        102
+      ],
+      "tile_position": [
+        2.197917,
+        10.21875
+      ],
+      "variant": 2
+    },
+    {
+      "display_name": "Arbeitszeile 2",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 78,
+      "kind": "0x070005c0",
+      "node_name": "Object078Kuchenschrank03",
+      "object_id": "0x070005c0",
+      "pivot": [
+        46,
+        70
+      ],
+      "record_name": "ITEM70",
+      "source_sprite": "CO_OBJECTS_K_CHE_K_CHENSCHRANK03_IDLE_000_K_chenschrank03#000",
+      "sprite_name": "KÜCHENSCHRANK03",
+      "texture": "res://images/objects/k-che-k-chenschrank03-000.png",
+      "texture_size": [
+        97,
+        90
+      ],
+      "tile_position": [
+        7.0,
+        10.416667
+      ],
+      "variant": 0
+    }
+  ],
+  "original_level_index": 0,
+  "original_level_text": "extract-sacked-assets/sacked/Levels/Level_00.txt",
+  "playable_level_number": 1,
+  "player_spawn_id": 0,
+  "source": "extract-sacked-assets/sacked/Levels/LEVEL_00.col",
+  "source_id": 3,
+  "spawns": [
+    {
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 79,
+      "spawn_id": 4,
+      "tile_position": [
+        3.0,
+        2.0
+      ]
+    },
+    {
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 80,
+      "spawn_id": 1,
+      "tile_position": [
+        1.0,
+        12.0
+      ]
+    },
+    {
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 81,
+      "spawn_id": 6,
+      "tile_position": [
+        6.0,
+        1.0
+      ]
+    },
+    {
+      "flags": 3599,
+      "height": 0.0,
+      "instance_id": 82,
+      "spawn_id": 0,
+      "tile_position": [
+        12.0,
+        9.0
+      ]
+    }
+  ],
+  "tile_atlas_manifest": "resources/tilemaps/sacked-tile-atlases.json",
+  "tile_layers": [
+    {
+      "cells": [
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            7,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            8,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            9,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            10,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            11,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            12,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            13,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            1,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            3,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            4,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            6,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            7,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            8,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            9,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            10,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            11,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            12,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            13,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            4,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            6,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            7,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            8,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            9,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            10,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            11,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            12,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            13,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            1,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            3,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            4,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            6,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            7,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            8,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            9,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            10,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            11,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            12,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            13,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            3,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            4,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            6,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            7,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            8,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            9,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 16
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            10,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 16
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            11,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 16
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            13,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            1,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            3,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            4,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            5,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            6,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            7,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            8,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            9,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            10,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            11,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            12,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            13,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            1,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            3,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            4,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            5,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            6,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            7,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            8,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            9,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            10,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            11,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            3,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            4,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            6,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            7,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            8,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            9,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            11,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            1,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            3,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            4,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            5,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            6,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            11,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            5,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            11,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            5,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            11,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            12,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            5,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            11,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            12,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            5,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            11,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            12,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            1,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            3,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            4,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            5,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            11,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            12,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            13,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            7,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            8,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            9,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            11,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            13,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        }
+      ],
+      "name": "FloorTileMapLayer",
+      "tileset": "res://resources/tilemaps/sacked-floor.tres",
+      "z_index": -20
+    },
+    {
+      "cells": [
+        {
+          "atlas_coords": [
+            7,
+            1
+          ],
+          "cell": [
+            0,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 16
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            1,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            2,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            3,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            4,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            2
+          ],
+          "cell": [
+            5,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 22
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            6,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            7,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            8,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            2
+          ],
+          "cell": [
+            9,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 22
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            10,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            11,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            12,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            13,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            0,
+            2
+          ],
+          "cell": [
+            14,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 17
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            5,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            9,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            5,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            9,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            5,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            9,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            2
+          ],
+          "cell": [
+            0,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 20
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            1,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            2,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            1
+          ],
+          "cell": [
+            5,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 10
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            8,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            1
+          ],
+          "cell": [
+            9,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 10
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            12,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            13,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            4,
+            2
+          ],
+          "cell": [
+            14,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            2
+          ],
+          "cell": [
+            0,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 20
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            1,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            2,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            5,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            0,
+            1
+          ],
+          "cell": [
+            6,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 9
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            9,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            3,
+            0
+          ],
+          "cell": [
+            10,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 4
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            10,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            11,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            4,
+            2
+          ],
+          "cell": [
+            14,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 18
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            1,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            2,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            3,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            4,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            5,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            6,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 23
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            7,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            8,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            9,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            10,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 23
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            11,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            12,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            13,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            2,
+            2
+          ],
+          "cell": [
+            14,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 19
+        }
+      ],
+      "name": "WallTileMapLayer",
+      "tileset": "res://resources/tilemaps/sacked-walls.tres",
+      "z_index": -5
+    },
+    {
+      "cells": [],
+      "name": "GlassTileMapLayer",
+      "tileset": "res://resources/tilemaps/sacked-glass.tres",
+      "z_index": -4
+    }
+  ],
+  "tile_size": [
+    94,
+    48
+  ]
+}

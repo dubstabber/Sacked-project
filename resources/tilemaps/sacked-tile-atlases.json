@@ -27,11 +27,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_EMPTY",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-empty"
         },
         {
@@ -44,11 +52,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#01a",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-01a"
         },
         {
@@ -61,11 +77,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#01b",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-01b"
         },
         {
@@ -78,11 +102,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#02a",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-02a"
         },
         {
@@ -95,11 +127,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#02b",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-02b"
         },
         {
@@ -112,11 +152,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#03",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-03"
         },
         {
@@ -129,11 +177,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#04",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-04"
         },
         {
@@ -146,11 +202,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#05",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-05"
         },
         {
@@ -163,11 +227,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#06",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-06"
         },
         {
@@ -180,11 +252,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#07",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-07"
         },
         {
@@ -197,11 +277,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#08",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-08"
         },
         {
@@ -214,11 +302,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#09",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-09"
         },
         {
@@ -231,11 +327,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#10",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-10"
         },
         {
@@ -248,11 +352,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#11",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-11"
         },
         {
@@ -265,11 +377,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#12",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-12"
         },
         {
@@ -282,11 +402,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#13",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-13"
         },
         {
@@ -299,11 +427,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#14",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-14"
         },
         {
@@ -316,11 +452,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#15",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-15"
         },
         {
@@ -333,11 +477,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#16",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-16"
         },
         {
@@ -350,11 +502,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#17",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-17"
         },
         {
@@ -367,11 +527,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#18",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-18"
         },
         {
@@ -384,11 +552,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#19",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-19"
         },
         {
@@ -401,11 +577,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#20",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-20"
         },
         {
@@ -418,11 +602,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#21",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-21"
         },
         {
@@ -435,11 +627,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#22",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-22"
         },
         {
@@ -452,11 +652,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#23",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-23"
         },
         {
@@ -469,11 +677,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#24",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-24"
         },
         {
@@ -486,11 +702,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#25",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-25"
         },
         {
@@ -503,11 +727,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#26",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-26"
         },
         {
@@ -520,11 +752,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#27",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-27"
         },
         {
@@ -537,11 +777,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#28",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-28"
         },
         {
@@ -554,11 +802,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#29",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-29"
         },
         {
@@ -571,11 +827,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#30",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-30"
         },
         {
@@ -588,11 +852,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#31",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-31"
         },
         {
@@ -605,11 +877,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#32",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-32"
         },
         {
@@ -622,11 +902,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#33",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-33"
         },
         {
@@ -639,11 +927,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#34",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-34"
         },
         {
@@ -656,11 +952,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#35",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-35"
         },
         {
@@ -673,11 +977,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#36",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-36"
         },
         {
@@ -690,11 +1002,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#37",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-37"
         },
         {
@@ -707,11 +1027,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#38",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-38"
         },
         {
@@ -724,11 +1052,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_FLOOR#39",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-floor-39"
         },
         {
@@ -741,11 +1077,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#BALKEN1#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-balken1-045"
         },
         {
@@ -758,11 +1102,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#BALKEN1#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-balken1-135"
         },
         {
@@ -775,11 +1127,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#BALKEN2#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-balken2-045"
         },
         {
@@ -792,11 +1152,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#BALKEN2#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-balken2-135"
         },
         {
@@ -809,11 +1177,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#DUNKEL#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-dunkel-045"
         },
         {
@@ -826,11 +1202,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#HELL#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-hell-045"
         },
         {
@@ -843,11 +1227,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#RING1#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-ring1-045"
         },
         {
@@ -860,11 +1252,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#RING1#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-ring1-135"
         },
         {
@@ -877,11 +1277,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#RING1#225#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-ring1-225"
         },
         {
@@ -894,11 +1302,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#RING1#315#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-ring1-315"
         },
         {
@@ -911,11 +1327,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#RING2#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-ring2-045"
         },
         {
@@ -928,11 +1352,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#RING2#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-ring2-135"
         },
         {
@@ -945,11 +1377,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#RING2#225#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-ring2-225"
         },
         {
@@ -962,11 +1402,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#RING2#315#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-ring2-315"
         },
         {
@@ -979,11 +1427,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS1#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans1-045"
         },
         {
@@ -996,11 +1452,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS1#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans1-135"
         },
         {
@@ -1013,11 +1477,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS1#225#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans1-225"
         },
         {
@@ -1030,11 +1502,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS1#315#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans1-315"
         },
         {
@@ -1047,11 +1527,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS2#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans2-045"
         },
         {
@@ -1064,11 +1552,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS2#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans2-135"
         },
         {
@@ -1081,11 +1577,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS2#225#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans2-225"
         },
         {
@@ -1098,11 +1602,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS2#315#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans2-315"
         },
         {
@@ -1115,11 +1627,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS3#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans3-045"
         },
         {
@@ -1132,11 +1652,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS3#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans3-135"
         },
         {
@@ -1149,11 +1677,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS3#225#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans3-225"
         },
         {
@@ -1166,11 +1702,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS3#315#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans3-315"
         },
         {
@@ -1183,11 +1727,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS4#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans4-045"
         },
         {
@@ -1200,11 +1752,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS4#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans4-135"
         },
         {
@@ -1217,11 +1777,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS4#225#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans4-225"
         },
         {
@@ -1234,11 +1802,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS4#315#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans4-315"
         },
         {
@@ -1251,11 +1827,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS5#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans5-045"
         },
         {
@@ -1268,11 +1852,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS5#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans5-135"
         },
         {
@@ -1285,11 +1877,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS5#225#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans5-225"
         },
         {
@@ -1302,11 +1902,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS5#315#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans5-315"
         },
         {
@@ -1319,11 +1927,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS6#045#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans6-045"
         },
         {
@@ -1336,11 +1952,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS6#135#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans6-135"
         },
         {
@@ -1353,11 +1977,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS6#225#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans6-225"
         },
         {
@@ -1370,11 +2002,19 @@
             0,
             0
           ],
+          "pivot": [
+            47,
+            24
+          ],
           "source_size": [
             94,
             48
           ],
           "sprite": "CO_BACKGROUND_OFFICE_FLOOR_REDFLOOR#TRANS6#315#",
+          "texture_origin": [
+            0,
+            0
+          ],
           "tile_key": "floor-redfloor-trans6-315"
         }
       ],
@@ -1407,11 +2047,19 @@
             35,
             13
           ],
+          "pivot": [
+            0,
+            130
+          ],
           "source_size": [
             24,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CORNER#BOTTOM#LEFT",
+          "texture_origin": [
+            12,
+            -119
+          ],
           "tile_key": "glass-corner-bottom-left"
         },
         {
@@ -1424,11 +2072,19 @@
             23,
             25
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             48,
             71
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CORNER#BOTTOM#RIGHT",
+          "texture_origin": [
+            0,
+            -131
+          ],
           "tile_key": "glass-corner-bottom-right"
         },
         {
@@ -1441,11 +2097,19 @@
             23,
             25
           ],
+          "pivot": [
+            24,
+            118
+          ],
           "source_size": [
             48,
             71
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CORNER#TOP#LEFT",
+          "texture_origin": [
+            0,
+            -119
+          ],
           "tile_key": "glass-corner-top-left"
         },
         {
@@ -1458,11 +2122,19 @@
             35,
             13
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             24,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CORNER#TOP#RIGHT",
+          "texture_origin": [
+            -12,
+            -119
+          ],
           "tile_key": "glass-corner-top-right"
         },
         {
@@ -1475,11 +2147,19 @@
             23,
             13
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             48,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CROSS",
+          "texture_origin": [
+            0,
+            -119
+          ],
           "tile_key": "glass-cross"
         },
         {
@@ -1492,11 +2172,19 @@
             23,
             13
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             48,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_TJ#BOTTOM",
+          "texture_origin": [
+            0,
+            -119
+          ],
           "tile_key": "glass-tj-bottom"
         },
         {
@@ -1509,11 +2197,19 @@
             23,
             13
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             48,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_TJ#LEFT",
+          "texture_origin": [
+            0,
+            -119
+          ],
           "tile_key": "glass-tj-left"
         },
         {
@@ -1526,11 +2222,19 @@
             23,
             13
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             48,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_TJ#RIGHT",
+          "texture_origin": [
+            0,
+            -119
+          ],
           "tile_key": "glass-tj-right"
         },
         {
@@ -1543,11 +2247,19 @@
             23,
             13
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             48,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_TJ#TOP",
+          "texture_origin": [
+            0,
+            -119
+          ],
           "tile_key": "glass-tj-top"
         },
         {
@@ -1560,11 +2272,19 @@
             23,
             13
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             48,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_WALL#HORZ",
+          "texture_origin": [
+            0,
+            -119
+          ],
           "tile_key": "glass-wall-horz"
         },
         {
@@ -1577,11 +2297,19 @@
             23,
             13
           ],
+          "pivot": [
+            24,
+            130
+          ],
           "source_size": [
             48,
             83
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_WALL#VERT",
+          "texture_origin": [
+            0,
+            -119
+          ],
           "tile_key": "glass-wall-vert"
         }
       ],
@@ -1611,15 +2339,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            27,
+            18,
             87
           ],
+          "pivot": [
+            30,
+            74
+          ],
           "source_size": [
-            42,
+            60,
             89
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#BOTTOM#LEFT",
-          "tile_key": "walls-corner-bottom-left"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#VERT",
+          "texture_origin": [
+            -1,
+            -137
+          ],
+          "tile_key": "walls-wall-vert"
         },
         {
           "atlas_coords": [
@@ -1629,14 +2365,22 @@
           "has_z": true,
           "paste_offset": [
             18,
-            96
+            87
+          ],
+          "pivot": [
+            30,
+            74
           ],
           "source_size": [
             60,
-            80
+            89
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#BOTTOM#RIGHT",
-          "tile_key": "walls-corner-bottom-right"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#HORZ",
+          "texture_origin": [
+            -1,
+            -137
+          ],
+          "tile_key": "walls-wall-horz"
         },
         {
           "atlas_coords": [
@@ -1645,15 +2389,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            9,
-            10
+            18,
+            96
+          ],
+          "pivot": [
+            30,
+            65
           ],
           "source_size": [
-            78,
-            166
+            60,
+            80
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#BOTTOM#LEFT",
-          "tile_key": "walls-corner-thick-bottom-left"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#TOP#LEFT",
+          "texture_origin": [
+            -1,
+            -137
+          ],
+          "tile_key": "walls-corner-top-left"
         },
         {
           "atlas_coords": [
@@ -1662,15 +2414,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            0,
-            78
+            27,
+            87
+          ],
+          "pivot": [
+            30,
+            74
           ],
           "source_size": [
-            96,
-            98
+            42,
+            89
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#BOTTOM#RIGHT",
-          "tile_key": "walls-corner-thick-bottom-right"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#TOP#RIGHT",
+          "texture_origin": [
+            -10,
+            -137
+          ],
+          "tile_key": "walls-corner-top-right"
         },
         {
           "atlas_coords": [
@@ -1679,15 +2439,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            0,
-            19
+            27,
+            87
+          ],
+          "pivot": [
+            12,
+            74
           ],
           "source_size": [
-            96,
-            157
+            42,
+            89
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#TOP#LEFT",
-          "tile_key": "walls-corner-thick-top-left"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#BOTTOM#LEFT",
+          "texture_origin": [
+            8,
+            -137
+          ],
+          "tile_key": "walls-corner-bottom-left"
         },
         {
           "atlas_coords": [
@@ -1696,15 +2464,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            9,
-            10
+            18,
+            96
+          ],
+          "pivot": [
+            30,
+            74
           ],
           "source_size": [
-            78,
-            166
+            60,
+            80
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#TOP#RIGHT",
-          "tile_key": "walls-corner-thick-top-right"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#BOTTOM#RIGHT",
+          "texture_origin": [
+            -1,
+            -146
+          ],
+          "tile_key": "walls-corner-bottom-right"
         },
         {
           "atlas_coords": [
@@ -1714,14 +2490,22 @@
           "has_z": true,
           "paste_offset": [
             18,
-            96
+            87
+          ],
+          "pivot": [
+            30,
+            74
           ],
           "source_size": [
             60,
-            80
+            89
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#TOP#LEFT",
-          "tile_key": "walls-corner-top-left"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#LEFT",
+          "texture_origin": [
+            -1,
+            -137
+          ],
+          "tile_key": "walls-tj-left"
         },
         {
           "atlas_coords": [
@@ -1730,15 +2514,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            27,
+            18,
             87
           ],
+          "pivot": [
+            30,
+            74
+          ],
           "source_size": [
-            42,
+            60,
             89
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#TOP#RIGHT",
-          "tile_key": "walls-corner-top-right"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#RIGHT",
+          "texture_origin": [
+            -1,
+            -137
+          ],
+          "tile_key": "walls-tj-right"
         },
         {
           "atlas_coords": [
@@ -1750,12 +2542,20 @@
             18,
             87
           ],
+          "pivot": [
+            30,
+            74
+          ],
           "source_size": [
             60,
             89
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CROSS",
-          "tile_key": "walls-cross"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#TOP",
+          "texture_origin": [
+            -1,
+            -137
+          ],
+          "tile_key": "walls-tj-top"
         },
         {
           "atlas_coords": [
@@ -1767,11 +2567,19 @@
             18,
             87
           ],
+          "pivot": [
+            30,
+            74
+          ],
           "source_size": [
             60,
             89
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#BOTTOM",
+          "texture_origin": [
+            -1,
+            -137
+          ],
           "tile_key": "walls-tj-bottom"
         },
         {
@@ -1784,12 +2592,20 @@
             18,
             87
           ],
+          "pivot": [
+            30,
+            74
+          ],
           "source_size": [
             60,
             89
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#LEFT",
-          "tile_key": "walls-tj-left"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CROSS",
+          "texture_origin": [
+            -1,
+            -137
+          ],
+          "tile_key": "walls-cross"
         },
         {
           "atlas_coords": [
@@ -1798,15 +2614,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            18,
-            87
+            9,
+            19
+          ],
+          "pivot": [
+            48,
+            142
           ],
           "source_size": [
-            60,
-            89
+            78,
+            157
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#RIGHT",
-          "tile_key": "walls-tj-right"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#LEFT",
+          "texture_origin": [
+            -10,
+            -137
+          ],
+          "tile_key": "walls-wall-thick-left"
         },
         {
           "atlas_coords": [
@@ -1818,12 +2642,20 @@
             9,
             78
           ],
+          "pivot": [
+            30,
+            74
+          ],
           "source_size": [
             78,
             98
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#BOTTOM",
-          "tile_key": "walls-tj-thick-bottom"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#RIGHT",
+          "texture_origin": [
+            8,
+            -128
+          ],
+          "tile_key": "walls-wall-thick-right"
         },
         {
           "atlas_coords": [
@@ -1835,12 +2667,20 @@
             9,
             19
           ],
+          "pivot": [
+            30,
+            142
+          ],
           "source_size": [
             78,
             157
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#LEFT",
-          "tile_key": "walls-tj-thick-left"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#TOP",
+          "texture_origin": [
+            8,
+            -137
+          ],
+          "tile_key": "walls-wall-thick-top"
         },
         {
           "atlas_coords": [
@@ -1852,12 +2692,20 @@
             9,
             78
           ],
+          "pivot": [
+            48,
+            74
+          ],
           "source_size": [
             78,
             98
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#RIGHT",
-          "tile_key": "walls-tj-thick-right"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#BOTTOM",
+          "texture_origin": [
+            -10,
+            -128
+          ],
+          "tile_key": "walls-wall-thick-bottom"
         },
         {
           "atlas_coords": [
@@ -1866,15 +2714,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            9,
+            0,
             19
           ],
+          "pivot": [
+            48,
+            142
+          ],
           "source_size": [
-            78,
+            96,
             157
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#TOP",
-          "tile_key": "walls-tj-thick-top"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#TOP#LEFT",
+          "texture_origin": [
+            -1,
+            -137
+          ],
+          "tile_key": "walls-corner-thick-top-left"
         },
         {
           "atlas_coords": [
@@ -1883,15 +2739,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            18,
-            87
+            9,
+            10
+          ],
+          "pivot": [
+            30,
+            142
           ],
           "source_size": [
-            60,
-            89
+            78,
+            166
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#TOP",
-          "tile_key": "walls-tj-top"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#TOP#RIGHT",
+          "texture_origin": [
+            8,
+            -128
+          ],
+          "tile_key": "walls-corner-thick-top-right"
         },
         {
           "atlas_coords": [
@@ -1900,15 +2764,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            18,
-            87
+            9,
+            10
+          ],
+          "pivot": [
+            48,
+            142
           ],
           "source_size": [
-            60,
-            89
+            78,
+            166
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#HORZ",
-          "tile_key": "walls-wall-horz"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#BOTTOM#LEFT",
+          "texture_origin": [
+            -10,
+            -128
+          ],
+          "tile_key": "walls-corner-thick-bottom-left"
         },
         {
           "atlas_coords": [
@@ -1917,15 +2789,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            9,
+            0,
             78
           ],
+          "pivot": [
+            48,
+            74
+          ],
           "source_size": [
-            78,
+            96,
             98
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#BOTTOM",
-          "tile_key": "walls-wall-thick-bottom"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#BOTTOM#RIGHT",
+          "texture_origin": [
+            -1,
+            -128
+          ],
+          "tile_key": "walls-corner-thick-bottom-right"
         },
         {
           "atlas_coords": [
@@ -1937,12 +2817,20 @@
             9,
             19
           ],
+          "pivot": [
+            48,
+            142
+          ],
           "source_size": [
             78,
             157
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#LEFT",
-          "tile_key": "walls-wall-thick-left"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#LEFT",
+          "texture_origin": [
+            -10,
+            -137
+          ],
+          "tile_key": "walls-tj-thick-left"
         },
         {
           "atlas_coords": [
@@ -1954,12 +2842,20 @@
             9,
             78
           ],
+          "pivot": [
+            30,
+            74
+          ],
           "source_size": [
             78,
             98
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#RIGHT",
-          "tile_key": "walls-wall-thick-right"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#RIGHT",
+          "texture_origin": [
+            8,
+            -128
+          ],
+          "tile_key": "walls-tj-thick-right"
         },
         {
           "atlas_coords": [
@@ -1971,12 +2867,20 @@
             9,
             19
           ],
+          "pivot": [
+            30,
+            142
+          ],
           "source_size": [
             78,
             157
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#TOP",
-          "tile_key": "walls-wall-thick-top"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#TOP",
+          "texture_origin": [
+            8,
+            -137
+          ],
+          "tile_key": "walls-tj-thick-top"
         },
         {
           "atlas_coords": [
@@ -1985,15 +2889,23 @@
           ],
           "has_z": true,
           "paste_offset": [
-            18,
-            87
+            9,
+            78
+          ],
+          "pivot": [
+            48,
+            74
           ],
           "source_size": [
-            60,
-            89
+            78,
+            98
           ],
-          "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#VERT",
-          "tile_key": "walls-wall-vert"
+          "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#BOTTOM",
+          "texture_origin": [
+            -10,
+            -128
+          ],
+          "tile_key": "walls-tj-thick-bottom"
         }
       ],
       "tileset": "res://resources/tilemaps/sacked-walls.tres"

@@ -1,6 +1,6 @@
-[gd_resource type="TileSet" format=3 uid="uid://d1jfgd6s3fep"]
+[gd_resource type="TileSet" format=3]
 
-[ext_resource type="Texture2D" uid="uid://bfvmw82bmltt8" path="res://images/floor/sacked-floors.png" id="1_8a5sk"]
+[ext_resource type="Texture2D" path="res://images/floor/sacked-floors.png" id="1_8a5sk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fg73u"]
 texture = ExtResource("1_8a5sk")
@@ -88,5 +88,6 @@ texture_region_size = Vector2i(94, 48)
 
 [resource]
 tile_shape = 1
+tile_layout = 5
 tile_size = Vector2i(94, 48)
 sources/3 = SubResource("TileSetAtlasSource_fg73u")

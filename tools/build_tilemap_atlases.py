@@ -5,6 +5,7 @@ import json
 import os
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -29,6 +30,7 @@ class AtlasSpec:
     texture_origin: Tuple[int, int]
     columns: int
     include: Callable[[str], bool]
+    order: Tuple[str, ...] = ()
 
 
 SPECS: Tuple[AtlasSpec, ...] = (
@@ -49,6 +51,31 @@ SPECS: Tuple[AtlasSpec, ...] = (
         texture_origin=(-1, -128),
         columns=8,
         include=lambda sprite: "_WALLS_" in sprite,
+        order=(
+            "CO_BACKGROUND_OFFICE_WALLS_WALL#VERT",
+            "CO_BACKGROUND_OFFICE_WALLS_WALL#HORZ",
+            "CO_BACKGROUND_OFFICE_WALLS_CORNER#TOP#LEFT",
+            "CO_BACKGROUND_OFFICE_WALLS_CORNER#TOP#RIGHT",
+            "CO_BACKGROUND_OFFICE_WALLS_CORNER#BOTTOM#LEFT",
+            "CO_BACKGROUND_OFFICE_WALLS_CORNER#BOTTOM#RIGHT",
+            "CO_BACKGROUND_OFFICE_WALLS_TJ#LEFT",
+            "CO_BACKGROUND_OFFICE_WALLS_TJ#RIGHT",
+            "CO_BACKGROUND_OFFICE_WALLS_TJ#TOP",
+            "CO_BACKGROUND_OFFICE_WALLS_TJ#BOTTOM",
+            "CO_BACKGROUND_OFFICE_WALLS_CROSS",
+            "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#LEFT",
+            "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#RIGHT",
+            "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#TOP",
+            "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#BOTTOM",
+            "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#TOP#LEFT",
+            "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#TOP#RIGHT",
+            "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#BOTTOM#LEFT",
+            "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#BOTTOM#RIGHT",
+            "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#LEFT",
+            "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#RIGHT",
+            "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#TOP",
+            "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#BOTTOM",
+        ),
     ),
     AtlasSpec(
         name="glass",
@@ -70,6 +97,10 @@ def source_root(root: Path) -> Path:
     return root / "extract-sacked-assets" / "extracted" / "textures" / "CO_BACKGROUND"
 
 
+def read_s16(data: bytes, offset: int) -> int:
+    return struct.unpack_from("<h", data, offset)[0]
+
+
 def load_conversion_log(root: Path) -> List[Dict[str, object]]:
     log_path = source_root(root) / "png_conversion_log.json"
     with log_path.open("r", encoding="utf-8") as handle:
@@ -84,6 +115,13 @@ def atlas_entries(entries: List[Dict[str, object]], spec: AtlasSpec) -> List[Dic
     selected = [entry for entry in entries if spec.include(str(entry.get("sprite", "")))]
     if not selected:
         raise ValueError(f"No CO_BACKGROUND entries matched atlas '{spec.name}'")
+    if spec.order:
+        by_sprite = {str(entry.get("sprite", "")): entry for entry in selected}
+        missing = [sprite for sprite in spec.order if sprite not in by_sprite]
+        extra = [str(entry.get("sprite", "")) for entry in selected if str(entry.get("sprite", "")) not in spec.order]
+        if missing or extra:
+            raise ValueError(f"Atlas '{spec.name}' order mismatch: missing={missing} extra={extra}")
+        return [by_sprite[sprite] for sprite in spec.order]
     return selected
 
 
@@ -104,6 +142,20 @@ def paste_offset(cell_size: Tuple[int, int], image_size: Tuple[int, int]) -> Tup
     if image_w > cell_w or image_h > cell_h:
         raise ValueError(f"Sprite {image_w}x{image_h} does not fit cell {cell_w}x{cell_h}")
     return ((cell_w - image_w) // 2, cell_h - image_h)
+
+
+def read_sprite_pivot(root: Path, sprite: str, image_size: Tuple[int, int]) -> Tuple[int, int]:
+    header_path = source_root(root) / sprite / "SPRITEHDR.bin"
+    if header_path.is_file():
+        header = header_path.read_bytes()
+        if len(header) >= 0x208:
+            return read_s16(header, 0x204), read_s16(header, 0x206)
+    return image_size[0] // 2, image_size[1]
+
+
+def texture_origin_for_sprite(pivot: Tuple[int, int], offset: Tuple[int, int]) -> Tuple[int, int]:
+    tile_half = (TILE_SIZE[0] // 2, TILE_SIZE[1] // 2)
+    return (tile_half[0] - pivot[0] - offset[0], tile_half[1] - pivot[1] - offset[1])
 
 
 def write_atomic_image(image: Image.Image, target: Path) -> None:
@@ -144,6 +196,8 @@ def build_atlas(root: Path, output_root: Path, spec: AtlasSpec, entries: List[Di
             image = source.convert("RGBA")
             source_size = (image.width, image.height)
             offset = paste_offset(spec.cell_size, source_size)
+            pivot = read_sprite_pivot(root, sprite, source_size)
+            texture_origin = texture_origin_for_sprite(pivot, offset)
             atlas_coords = (index % spec.columns, index // spec.columns)
             atlas.paste(image, (atlas_coords[0] * cell_w + offset[0], atlas_coords[1] * cell_h + offset[1]))
 
@@ -155,6 +209,8 @@ def build_atlas(root: Path, output_root: Path, spec: AtlasSpec, entries: List[Di
                 "atlas_coords": list(atlas_coords),
                 "source_size": [int(source_size[0]), int(source_size[1])],
                 "paste_offset": [int(offset[0]), int(offset[1])],
+                "pivot": [int(pivot[0]), int(pivot[1])],
+                "texture_origin": [int(texture_origin[0]), int(texture_origin[1])],
                 "has_z": z_path.is_file(),
             }
         )
