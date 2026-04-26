@@ -28,6 +28,9 @@ func show_arrow(raw_direction: Vector2, snapped_direction: Vector2) -> void:
 	var arrow_direction := raw_direction
 	if arrow_direction == Vector2.ZERO:
 		arrow_direction = snapped_direction
+	if arrow_direction == Vector2.ZERO:
+		hide_arrow()
+		return
 
 	var cursor_phase := get_movement_arrow_phase(arrow_direction)
 	var cursor_angle := get_movement_arrow_angle_from_phase(cursor_phase)

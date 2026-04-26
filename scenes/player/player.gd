@@ -7,6 +7,24 @@ extends CharacterBody2D
 var is_moving: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
 
+# Sprite suffix _NNN encodes a compass angle in iso WORLD space (verified
+# against WALK_045 = pure-right profile = world NE projection, WALK_000 =
+# slight up-right = world N projection, etc). The engine walks along 8 iso
+# world axes, which project to these screen-space directions on the 94×48
+# floor tile (main.tscn TileMapLayer tile_shape=1). Snapping movement to
+# uniform 45° screen bins instead would face the diagonal sprites ~18° off
+# from the velocity vector.
+var iso_screen_directions: Array[Vector2] = [
+	Vector2(47.0, -24.0).normalized(),   # iso N  → suffix _000 / "up-right"
+	Vector2(94.0, 0.0).normalized(),     # iso NE → suffix _045 / "right"
+	Vector2(47.0, 24.0).normalized(),    # iso E  → suffix _090 / "down-right"
+	Vector2(0.0, 48.0).normalized(),     # iso SE → suffix _135 / "down"
+	Vector2(-47.0, 24.0).normalized(),   # iso S  → suffix _180 / "down-left"
+	Vector2(-94.0, 0.0).normalized(),    # iso SW → suffix _225 / "left"
+	Vector2(-47.0, -24.0).normalized(),  # iso W  → suffix _270 / "up-left"
+	Vector2(0.0, -48.0).normalized(),    # iso NW → suffix _315 / "up"
+]
+
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 @onready var animation_controller = $AnimationController
@@ -93,10 +111,15 @@ func apply_profile(selected_profile: Resource) -> void:
 
 
 func snap_to_8_directions(dir: Vector2) -> Vector2:
-	var angle = dir.angle()
-	var index = int(round(angle / (PI / 4))) % 8
-	var snapped_angle = index * PI / 4
-	return Vector2.RIGHT.rotated(snapped_angle)
+	var best := iso_screen_directions[0]
+	var best_dot := dir.dot(best)
+	for i in range(1, iso_screen_directions.size()):
+		var candidate: Vector2 = iso_screen_directions[i]
+		var candidate_dot := dir.dot(candidate)
+		if candidate_dot > best_dot:
+			best_dot = candidate_dot
+			best = candidate
+	return best
 
 
 func start_mouse_movement() -> void:
