@@ -33,7 +33,7 @@ func show_arrow(raw_direction: Vector2, snapped_direction: Vector2) -> void:
 		return
 
 	var cursor_phase := get_movement_arrow_phase(arrow_direction)
-	var cursor_angle := get_movement_arrow_angle_from_phase(cursor_phase)
+	var cursor_angle := get_movement_arrow_angle_for_direction(snapped_direction)
 	texture = MOVEMENT_ARROW_TEXTURES.get(cursor_angle)
 	offset = MOVEMENT_ARROW_OFFSETS.get(cursor_angle, Vector2.ZERO)
 	position = get_movement_arrow_position(cursor_phase)
@@ -66,8 +66,28 @@ func get_movement_arrow_phase(direction: Vector2) -> float:
 	return fposmod(direction.angle() / (PI / 4.0) + 1.5, 8.0)
 
 
-func get_movement_arrow_angle_from_phase(cursor_phase: float) -> int:
-	return int(floor(cursor_phase)) * 45
+func get_movement_arrow_angle_for_direction(direction: Vector2) -> int:
+	var direction_index := int(round(direction.angle() / (PI / 4.0))) % 8
+
+	match direction_index:
+		-1:
+			return 0
+		0:
+			return 45
+		1:
+			return 90
+		2:
+			return 135
+		3:
+			return 180
+		4, -4:
+			return 225
+		-3:
+			return 270
+		-2:
+			return 315
+
+	return 0
 
 
 func get_movement_arrow_position(cursor_phase: float) -> Vector2:
