@@ -11,6 +11,7 @@
 [ext_resource type="Resource" path="res://scenes/npc/profiles/male-employee-2.tres" id="9_male2"]
 [ext_resource type="Resource" path="res://scenes/npc/profiles/female-employee-1.tres" id="10_female1"]
 [ext_resource type="Resource" path="res://scenes/npc/profiles/female-employee-2.tres" id="11_female2"]
+[ext_resource type="Script" path="res://scenes/debug/fps_counter.gd" id="12_fps"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0wfyh"]
 texture = ExtResource("1_o5qli")
@@ -169,3 +170,18 @@ initial_direction = Vector2(-94, 48)
 
 [node name="CharacterDepthCompositor" type="Sprite2D" parent="World" unique_id=1619052008]
 script = ExtResource("5_depth")
+
+[node name="DebugOverlay" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="FPSCounter" type="Label" parent="DebugOverlay"]
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 108.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+text = "FPS: --"
+script = ExtResource("12_fps")

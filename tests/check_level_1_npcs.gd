@@ -35,6 +35,9 @@ func _run() -> void:
 		_check_npc(world, npc_name)
 		if _failed:
 			return
+	_check_debug_overlay()
+	if _failed:
+		return
 
 	_free_level()
 	quit(0)
@@ -57,6 +60,16 @@ func _check_npc(world: Node, npc_name: String) -> void:
 		return
 	if String(animation_controller.get("walk_animation_prefix")) == "":
 		_fail("%s has no walk animation prefix" % npc_name)
+		return
+
+
+func _check_debug_overlay() -> void:
+	var fps_counter: Label = _level.get_node_or_null("DebugOverlay/FPSCounter")
+	if fps_counter == null:
+		_fail("Level 1 has no FPS counter")
+		return
+	if fps_counter.get_script() == null:
+		_fail("FPS counter has no script")
 		return
 
 

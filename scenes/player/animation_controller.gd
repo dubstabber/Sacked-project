@@ -8,6 +8,8 @@ extends Node
 
 var current_animation: String = ""
 var clock_driven_animation_frames: Dictionary = {}
+var _last_clock_animation := ""
+var _last_clock_frame_index := -1
 
 @onready var sprite: Sprite2D = get_node(sprite_path)
 @onready var animation_player: AnimationPlayer = get_node(animation_player_path)
@@ -25,6 +27,8 @@ func configure(idle_prefix: String, walk_prefix: String) -> void:
 	idle_animation_prefix = idle_prefix
 	walk_animation_prefix = walk_prefix
 	current_animation = ""
+	_last_clock_animation = ""
+	_last_clock_frame_index = -1
 	cache_clock_driven_animation_frames()
 
 
@@ -66,7 +70,10 @@ func play_animation(anim_name: String) -> void:
 		return
 
 	if is_clock_driven_animation(anim_name):
-		current_animation = anim_name
+		if anim_name != current_animation:
+			current_animation = anim_name
+			_last_clock_animation = ""
+			_last_clock_frame_index = -1
 		if animation_player.is_playing():
 			animation_player.stop()
 		update_clock_driven_animation_frame()
@@ -102,8 +109,13 @@ func update_clock_driven_animation_frame() -> void:
 		frame_index = index
 
 	var frame: Dictionary = frames[frame_index]
+	if current_animation == _last_clock_animation and frame_index == _last_clock_frame_index:
+		return
+
 	sprite.texture = frame["texture"]
 	sprite.offset = frame["offset"]
+	_last_clock_animation = current_animation
+	_last_clock_frame_index = frame_index
 
 
 func cache_clock_driven_animation_frames() -> void:

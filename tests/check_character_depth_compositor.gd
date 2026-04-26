@@ -19,6 +19,9 @@ func _run() -> void:
 	if _failed:
 		return
 	_check_transparent_pixels_do_not_write()
+	if _failed:
+		return
+	_check_non_overlapping_actor_excluded()
 	if not _failed:
 		quit(0)
 
@@ -59,6 +62,18 @@ func _check_transparent_pixels_do_not_write() -> void:
 	compositor.free()
 
 
+func _check_non_overlapping_actor_excluded() -> void:
+	var compositor = CharacterDepthCompositorScript.new()
+	var actors := [
+		_make_actor_at(Color.RED, 10, 100.0, Vector2.ZERO, Vector2i.ONE),
+		_make_actor_at(Color.BLUE, 10, 110.0, Vector2.ZERO, Vector2i.ONE),
+		_make_actor_at(Color.GREEN, 10, 120.0, Vector2(10.0, 10.0), Vector2i.ONE),
+	]
+	var overlapping := compositor.overlapping_actors_for_test(actors)
+	_assert_equal_int(overlapping.size(), 2, "overlapping actor count")
+	compositor.free()
+
+
 func _compose_two_pixels(
 	left_color: Color,
 	left_depth: int,
@@ -80,27 +95,37 @@ func _compose_two_pixels(
 
 
 func _make_actor(color: Color, depth: int, base_y: float) -> Dictionary:
+	return _make_actor_at(color, depth, base_y, Vector2.ZERO, Vector2i.ONE)
+
+
+func _make_actor_at(color: Color, depth: int, base_y: float, position: Vector2, size: Vector2i) -> Dictionary:
 	return {
 		"index": 0,
-		"color": _single_pixel_image(color),
-		"depth": _single_pixel_depth(depth, color.a),
-		"position": Vector2.ZERO,
-		"size": Vector2i.ONE,
+		"color": _solid_image(color, size),
+		"depth": _solid_depth(depth, color.a, size),
+		"position": position,
+		"size": size,
 		"base_y": base_y,
 	}
 
 
 func _single_pixel_image(color: Color) -> Image:
-	var image := Image.create(1, 1, false, Image.FORMAT_RGBA8)
-	image.set_pixel(0, 0, color)
+	return _solid_image(color, Vector2i.ONE)
+
+
+func _solid_image(color: Color, size: Vector2i) -> Image:
+	var image := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
+	image.fill(color)
 	return image
 
 
 func _single_pixel_depth(depth: int, alpha: float) -> Image:
-	var image := Image.create(1, 1, false, Image.FORMAT_RGBA8)
-	image.set_pixel(
-		0,
-		0,
+	return _solid_depth(depth, alpha, Vector2i.ONE)
+
+
+func _solid_depth(depth: int, alpha: float, size: Vector2i) -> Image:
+	var image := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
+	image.fill(
 		Color(
 			float(depth & 0xFF) / 255.0,
 			float((depth >> 8) & 0xFF) / 255.0,
@@ -114,6 +139,11 @@ func _single_pixel_depth(depth: int, alpha: float) -> Image:
 func _assert_color_close(actual: Color, expected: Color, label: String) -> void:
 	if absf(actual.r - expected.r) > EPSILON or absf(actual.g - expected.g) > EPSILON or absf(actual.b - expected.b) > EPSILON or absf(actual.a - expected.a) > EPSILON:
 		_fail("%s expected %s, got %s" % [label, expected, actual])
+
+
+func _assert_equal_int(actual: int, expected: int, label: String) -> void:
+	if actual != expected:
+		_fail("%s expected %d, got %d" % [label, expected, actual])
 
 
 func _fail(message: String) -> void:
