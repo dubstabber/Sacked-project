@@ -4,7 +4,7 @@ extends CharacterBody2D
 @export var move_speed: float = 200.0
 @export var profile: Resource
 
-var is_moving: bool = false
+var is_mouse_movement_active: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
 
 # Sprite suffix _NNN encodes a compass angle in iso WORLD space (verified
@@ -51,15 +51,25 @@ func _input(event: InputEvent) -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if is_moving:
+	var movement_direction := Vector2.ZERO
+	var raw_mouse_movement_direction := Vector2.ZERO
+
+	if is_mouse_movement_active:
 		var mouse_pos = get_global_mouse_position()
-		var raw_movement_direction = (mouse_pos - global_position).normalized()
-		var movement_direction = snap_to_8_directions(raw_movement_direction)
+		raw_mouse_movement_direction = (mouse_pos - global_position).normalized()
+		movement_direction = snap_to_8_directions(raw_mouse_movement_direction)
+	else:
+		movement_direction = get_keyboard_movement_direction()
+
+	if movement_direction != Vector2.ZERO:
 		last_direction = movement_direction
 		velocity = movement_direction * move_speed
 		animation_controller.play_walk(movement_direction)
 		footstep_controller.start_footsteps()
-		movement_cursor.show_arrow(raw_movement_direction, movement_direction)
+		if is_mouse_movement_active:
+			movement_cursor.show_arrow(raw_mouse_movement_direction, movement_direction)
+		else:
+			movement_cursor.hide_arrow()
 	else:
 		velocity = Vector2.ZERO
 		animation_controller.play_idle(last_direction)
@@ -122,13 +132,20 @@ func snap_to_8_directions(dir: Vector2) -> Vector2:
 	return best
 
 
+func get_keyboard_movement_direction() -> Vector2:
+	var input_direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	if input_direction == Vector2.ZERO:
+		return Vector2.ZERO
+	return snap_to_8_directions(input_direction)
+
+
 func start_mouse_movement() -> void:
-	is_moving = true
+	is_mouse_movement_active = true
 	movement_cursor.start_drag()
 
 
 func stop_mouse_movement() -> void:
-	is_moving = false
+	is_mouse_movement_active = false
 	movement_cursor.stop_drag(get_player_viewport_position())
 
 
