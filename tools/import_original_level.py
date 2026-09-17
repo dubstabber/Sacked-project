@@ -16,7 +16,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 
 SOURCE_ID = 3
-TILE_SIZE = (94, 48)
+TILE_SIZE = (96, 48)
 PLAYABLE_LEVEL_NUMBER = 1
 ORIGINAL_LEVEL_INDEX = PLAYABLE_LEVEL_NUMBER - 1
 LEVEL_SOURCE_REL = Path("extract-sacked-assets/sacked/Levels/LEVEL_00.col")
@@ -694,6 +694,7 @@ def remove_stale_object_textures(root: Path, expected_dest_rels: Iterable[Path])
     if not object_dir.is_dir():
         return
     expected = {root / dest_rel for dest_rel in expected_dest_rels}
+    expected |= {path.with_name(path.stem + "-depth.png") for path in expected}
     for path in object_dir.glob("*.png"):
         if path not in expected:
             path.unlink()
@@ -721,6 +722,7 @@ def compare_outputs(root: Path, manifest: Dict[str, object], source_to_dest: Dic
             failures.append(f"stale {dest_rel}")
 
     expected_dest_rels = set(source_to_dest.values())
+    expected_dest_rels |= {path.with_name(path.stem + "-depth.png") for path in expected_dest_rels}
     object_dir = root / OBJECT_IMAGE_DIR_REL
     if object_dir.is_dir():
         for path in sorted(object_dir.glob("*.png")):

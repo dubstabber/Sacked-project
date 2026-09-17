@@ -1,3 +1,4 @@
+@tool
 class_name CharacterDepthCompositor
 extends Sprite2D
 
@@ -13,9 +14,17 @@ var _warned_paths: Dictionary = {}
 var _hidden_sprites: Array[Sprite2D] = []
 var _composite_texture: ImageTexture
 var _last_composite_signature := ""
+var composed_scores := PackedFloat32Array()
+var environment_scores := PackedFloat32Array()
+var environment_bounds := Rect2()
+var _environment_revision := -1
+var _environment_instance_id := 0
 
 
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		set_process(false)
+		return
 	centered = false
 	visible = false
 	z_index = 1
@@ -30,14 +39,18 @@ func _process(_delta: float) -> void:
 
 
 func update_composition() -> void:
+	_update_environment()
 	var actors := _collect_actors()
-	var composite_actors := _filter_overlapping_actors(actors)
-	if composite_actors.size() < 2:
+	var uses_environment := not environment_scores.is_empty()
+	var composite_actors := actors if uses_environment else _filter_overlapping_actors(actors)
+	var minimum_count := 1 if uses_environment else 2
+	if composite_actors.size() < minimum_count:
 		_disable_composite()
 		return
 	composite_actors = _prepare_composite_actors(composite_actors)
-	composite_actors = _filter_overlapping_actors(composite_actors)
-	if composite_actors.size() < 2:
+	if not uses_environment:
+		composite_actors = _filter_overlapping_actors(composite_actors)
+	if composite_actors.size() < minimum_count:
 		_disable_composite()
 		return
 
@@ -48,35 +61,48 @@ func update_composition() -> void:
 
 	var signature := _composite_signature(composite_actors, bounds)
 	if visible and _composite_texture != null and signature == _last_composite_signature:
-		position = bounds.position
+		global_position = bounds.position
 		_hide_actor_sprites(composite_actors)
 		return
 
 	var output := _compose_images(composite_actors, bounds)
 	_set_composite_image(output)
-	position = bounds.position
+	global_position = bounds.position
 	visible = true
 	_last_composite_signature = signature
 	_hide_actor_sprites(composite_actors)
 
 
-func compose_images_for_test(actors: Array) -> Dictionary:
-	var sorted_actors: Array = []
-	for actor in actors:
-		_insert_actor_sorted(sorted_actors, actor)
+func _update_environment() -> void:
+	var world_mask := get_node_or_null("../WorldDepthCompositor")
+	if world_mask == null:
+		if _environment_instance_id != 0:
+			_last_composite_signature = ""
+		environment_scores = PackedFloat32Array()
+		environment_bounds = Rect2()
+		_environment_revision = -1
+		_environment_instance_id = 0
+		return
+	environment_scores = world_mask.depth_scores
+	environment_bounds = world_mask.depth_bounds
+	if _environment_revision != world_mask.revision or _environment_instance_id != world_mask.get_instance_id():
+		_environment_revision = world_mask.revision
+		_environment_instance_id = world_mask.get_instance_id()
+		_last_composite_signature = ""
 
-	var bounds := _calculate_union_bounds(sorted_actors)
+
+func compose_images_for_test(actors: Array) -> Dictionary:
+	var bounds := _calculate_union_bounds(actors)
+	var output := _compose_images(actors, bounds)
 	return {
 		"bounds": bounds,
-		"image": _compose_images(sorted_actors, bounds),
+		"image": output,
+		"scores": composed_scores,
 	}
 
 
 func overlapping_actors_for_test(actors: Array) -> Array:
-	var sorted_actors: Array = []
-	for actor in actors:
-		_insert_actor_sorted(sorted_actors, actor)
-	return _filter_overlapping_actors(sorted_actors)
+	return _filter_overlapping_actors(actors)
 
 
 func _collect_actors() -> Array:
@@ -85,7 +111,7 @@ func _collect_actors() -> Array:
 	for node in get_tree().get_nodes_in_group(GROUP_NAME):
 		if not is_instance_valid(node) or not node is Node2D:
 			continue
-		if not node.visible or not node.has_node("Sprite2D"):
+		if not node.is_visible_in_tree() or not get_parent().is_ancestor_of(node) or not node.has_node("Sprite2D"):
 			continue
 
 		var sprite := node.get_node("Sprite2D") as Sprite2D
@@ -99,7 +125,7 @@ func _collect_actors() -> Array:
 		if actor.is_empty():
 			continue
 
-		_insert_actor_sorted(actors, actor)
+		actors.append(actor)
 
 	return actors
 
@@ -124,7 +150,8 @@ func _make_actor(node: Node2D, sprite: Sprite2D, actor_index: int) -> Dictionary
 		"depth_path": depth_path,
 		"position": _sprite_draw_position(sprite, size),
 		"size": size,
-		"base_y": node.global_position.y,
+		# sub_41A2D0: base Z = trunc(49152 - projected_y / 2).
+		"base_y": ceilf(float(int(node.global_position.y)) * 0.5),
 	}
 	if _opaque_rects.has(color_path):
 		actor["opaque_rect"] = _opaque_rects[color_path]
@@ -147,12 +174,12 @@ func _load_actor_images(actor: Dictionary) -> bool:
 	var depth_path := String(actor.get("depth_path", ""))
 	if color_path == "" or depth_path == "":
 		return actor.has("color") and actor.has("depth")
-	if not FileAccess.file_exists(depth_path):
+	if not ResourceLoader.exists(depth_path) and not FileAccess.file_exists(depth_path):
 		_warn_once(depth_path, "Missing character depth map: %s" % depth_path)
 		return false
 
 	var color_image = _load_image(color_path, _color_images)
-	var depth_image = _load_image(depth_path, _depth_images, true)
+	var depth_image = _load_image(depth_path, _depth_images)
 	if color_image == null or depth_image == null:
 		return false
 
@@ -170,12 +197,12 @@ func _load_actor_images(actor: Dictionary) -> bool:
 	return true
 
 
-func _load_image(path: String, cache: Dictionary, force_raw := false):
+func _load_image(path: String, cache: Dictionary):
 	if cache.has(path):
 		return cache[path]
 
 	var image_texture: Texture2D
-	if not force_raw and ResourceLoader.exists(path):
+	if ResourceLoader.exists(path):
 		image_texture = load(path) as Texture2D
 	var image: Image
 	if image_texture != null:
@@ -189,6 +216,8 @@ func _load_image(path: String, cache: Dictionary, force_raw := false):
 	if image == null:
 		_warn_once(path, "Failed to read image: %s" % path)
 		return null
+	if image.is_compressed():
+		image.decompress()
 
 	cache[path] = image
 	return image
@@ -205,23 +234,6 @@ func _sprite_draw_position(sprite: Sprite2D, image_size: Vector2i) -> Vector2:
 	if sprite.centered:
 		draw_position -= Vector2(image_size) * 0.5
 	return draw_position
-
-
-func _insert_actor_sorted(actors: Array, actor: Dictionary) -> void:
-	var insert_at := actors.size()
-	for index in range(actors.size()):
-		if _actor_sorts_before(actor, actors[index]):
-			insert_at = index
-			break
-	actors.insert(insert_at, actor)
-
-
-func _actor_sorts_before(left: Dictionary, right: Dictionary) -> bool:
-	var left_base_y := float(left["base_y"])
-	var right_base_y := float(right["base_y"])
-	if is_equal_approx(left_base_y, right_base_y):
-		return int(left["index"]) < int(right["index"])
-	return left_base_y < right_base_y
 
 
 func _has_any_overlap(actors: Array) -> bool:
@@ -305,6 +317,7 @@ func _compose_images(actors: Array, bounds: Rect2) -> Image:
 	for actor in actors:
 		_compose_actor(output, scores, bounds.position, width, actor)
 
+	composed_scores = scores
 	return output
 
 
@@ -342,6 +355,11 @@ func _compose_actor(output: Image, scores: PackedFloat32Array, bounds_position: 
 				continue
 
 			var score := base_y - float(_decode_depth(depth_pixel))
+			if not environment_scores.is_empty():
+				var world_pixel := Vector2i(bounds_position) + Vector2i(dst_x, dst_y) - Vector2i(environment_bounds.position)
+				if world_pixel.x >= 0 and world_pixel.y >= 0 and world_pixel.x < int(environment_bounds.size.x) and world_pixel.y < int(environment_bounds.size.y):
+					if score < environment_scores[world_pixel.y * int(environment_bounds.size.x) + world_pixel.x]:
+						continue
 			var dst_index := dst_y * width + dst_x
 			if score >= scores[dst_index]:
 				scores[dst_index] = score

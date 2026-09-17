@@ -13,7 +13,7 @@
         0
       ],
       "tile_size": [
-        94,
+        96,
         48
       ],
       "tiles": [
@@ -2030,10 +2030,10 @@
       "source_id": 3,
       "texture_origin": [
         0,
-        -48
+        95
       ],
       "tile_size": [
-        94,
+        96,
         48
       ],
       "tiles": [
@@ -2057,8 +2057,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CORNER#BOTTOM#LEFT",
           "texture_origin": [
-            12,
-            -119
+            -12,
+            95
           ],
           "tile_key": "glass-corner-bottom-left"
         },
@@ -2083,7 +2083,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CORNER#BOTTOM#RIGHT",
           "texture_origin": [
             0,
-            -131
+            107
           ],
           "tile_key": "glass-corner-bottom-right"
         },
@@ -2108,7 +2108,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CORNER#TOP#LEFT",
           "texture_origin": [
             0,
-            -119
+            95
           ],
           "tile_key": "glass-corner-top-left"
         },
@@ -2132,8 +2132,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CORNER#TOP#RIGHT",
           "texture_origin": [
-            -12,
-            -119
+            12,
+            95
           ],
           "tile_key": "glass-corner-top-right"
         },
@@ -2158,7 +2158,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_CROSS",
           "texture_origin": [
             0,
-            -119
+            95
           ],
           "tile_key": "glass-cross"
         },
@@ -2183,7 +2183,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_TJ#BOTTOM",
           "texture_origin": [
             0,
-            -119
+            95
           ],
           "tile_key": "glass-tj-bottom"
         },
@@ -2208,7 +2208,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_TJ#LEFT",
           "texture_origin": [
             0,
-            -119
+            95
           ],
           "tile_key": "glass-tj-left"
         },
@@ -2233,7 +2233,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_TJ#RIGHT",
           "texture_origin": [
             0,
-            -119
+            95
           ],
           "tile_key": "glass-tj-right"
         },
@@ -2258,7 +2258,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_TJ#TOP",
           "texture_origin": [
             0,
-            -119
+            95
           ],
           "tile_key": "glass-tj-top"
         },
@@ -2283,7 +2283,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_WALL#HORZ",
           "texture_origin": [
             0,
-            -119
+            95
           ],
           "tile_key": "glass-wall-horz"
         },
@@ -2308,7 +2308,7 @@
           "sprite": "CO_BACKGROUND_OFFICE_GLASS_WALL#VERT",
           "texture_origin": [
             0,
-            -119
+            95
           ],
           "tile_key": "glass-wall-vert"
         }
@@ -2324,11 +2324,11 @@
       "image": "res://images/tilemaps/sacked-walls.png",
       "source_id": 3,
       "texture_origin": [
-        -1,
-        -128
+        0,
+        73
       ],
       "tile_size": [
-        94,
+        96,
         48
       ],
       "tiles": [
@@ -2352,8 +2352,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#VERT",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-wall-vert"
         },
@@ -2377,8 +2377,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#HORZ",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-wall-horz"
         },
@@ -2402,8 +2402,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#TOP#LEFT",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-corner-top-left"
         },
@@ -2427,8 +2427,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#TOP#RIGHT",
           "texture_origin": [
-            -10,
-            -137
+            9,
+            73
           ],
           "tile_key": "walls-corner-top-right"
         },
@@ -2452,8 +2452,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#BOTTOM#LEFT",
           "texture_origin": [
-            8,
-            -137
+            -9,
+            73
           ],
           "tile_key": "walls-corner-bottom-left"
         },
@@ -2477,8 +2477,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#BOTTOM#RIGHT",
           "texture_origin": [
-            -1,
-            -146
+            0,
+            82
           ],
           "tile_key": "walls-corner-bottom-right"
         },
@@ -2502,8 +2502,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#LEFT",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-tj-left"
         },
@@ -2527,8 +2527,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#RIGHT",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-tj-right"
         },
@@ -2552,8 +2552,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#TOP",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-tj-top"
         },
@@ -2577,8 +2577,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#BOTTOM",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-tj-bottom"
         },
@@ -2602,8 +2602,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CROSS",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-cross"
         },
@@ -2627,8 +2627,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#LEFT",
           "texture_origin": [
-            -10,
-            -137
+            9,
+            73
           ],
           "tile_key": "walls-wall-thick-left"
         },
@@ -2652,8 +2652,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#RIGHT",
           "texture_origin": [
-            8,
-            -128
+            -9,
+            64
           ],
           "tile_key": "walls-wall-thick-right"
         },
@@ -2677,8 +2677,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#TOP",
           "texture_origin": [
-            8,
-            -137
+            -9,
+            73
           ],
           "tile_key": "walls-wall-thick-top"
         },
@@ -2702,8 +2702,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_WALL#THICK#BOTTOM",
           "texture_origin": [
-            -10,
-            -128
+            9,
+            64
           ],
           "tile_key": "walls-wall-thick-bottom"
         },
@@ -2727,8 +2727,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#TOP#LEFT",
           "texture_origin": [
-            -1,
-            -137
+            0,
+            73
           ],
           "tile_key": "walls-corner-thick-top-left"
         },
@@ -2752,8 +2752,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#TOP#RIGHT",
           "texture_origin": [
-            8,
-            -128
+            -9,
+            64
           ],
           "tile_key": "walls-corner-thick-top-right"
         },
@@ -2777,8 +2777,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#BOTTOM#LEFT",
           "texture_origin": [
-            -10,
-            -128
+            9,
+            64
           ],
           "tile_key": "walls-corner-thick-bottom-left"
         },
@@ -2802,8 +2802,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_CORNER#THICK#BOTTOM#RIGHT",
           "texture_origin": [
-            -1,
-            -128
+            0,
+            64
           ],
           "tile_key": "walls-corner-thick-bottom-right"
         },
@@ -2827,8 +2827,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#LEFT",
           "texture_origin": [
-            -10,
-            -137
+            9,
+            73
           ],
           "tile_key": "walls-tj-thick-left"
         },
@@ -2852,8 +2852,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#RIGHT",
           "texture_origin": [
-            8,
-            -128
+            -9,
+            64
           ],
           "tile_key": "walls-tj-thick-right"
         },
@@ -2877,8 +2877,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#TOP",
           "texture_origin": [
-            8,
-            -137
+            -9,
+            73
           ],
           "tile_key": "walls-tj-thick-top"
         },
@@ -2902,8 +2902,8 @@
           ],
           "sprite": "CO_BACKGROUND_OFFICE_WALLS_TJ#THICK#BOTTOM",
           "texture_origin": [
-            -10,
-            -128
+            9,
+            64
           ],
           "tile_key": "walls-tj-thick-bottom"
         }
@@ -2915,7 +2915,7 @@
   "source": "extract-sacked-assets/extracted/textures/CO_BACKGROUND/png_conversion_log.json",
   "source_id": 3,
   "tile_size": [
-    94,
+    96,
     48
   ]
 }

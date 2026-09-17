@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" format=3 uid="uid://dbdgtepmu0wpv"]
+[gd_resource type="TileSet" format=3 uid="uid://b5uyl2yw5alka"]
 
 [ext_resource type="Texture2D" uid="uid://cprsmtx8x5fon" path="res://images/tilemaps/sacked-glass.png" id="1_8quat"]
 
@@ -6,30 +6,32 @@
 texture = ExtResource("1_8quat")
 texture_region_size = Vector2i(94, 96)
 0:0/0 = 0
-0:0/0/texture_origin = Vector2i(12, -119)
+0:0/0/texture_origin = Vector2i(-12, 95)
 1:0/0 = 0
-1:0/0/texture_origin = Vector2i(0, -131)
+1:0/0/texture_origin = Vector2i(0, 107)
 2:0/0 = 0
-2:0/0/texture_origin = Vector2i(0, -119)
+2:0/0/texture_origin = Vector2i(0, 95)
 3:0/0 = 0
-3:0/0/texture_origin = Vector2i(-12, -119)
+3:0/0/texture_origin = Vector2i(12, 95)
 4:0/0 = 0
-4:0/0/texture_origin = Vector2i(0, -119)
+4:0/0/texture_origin = Vector2i(0, 95)
 5:0/0 = 0
-5:0/0/texture_origin = Vector2i(0, -119)
+5:0/0/texture_origin = Vector2i(0, 95)
 6:0/0 = 0
-6:0/0/texture_origin = Vector2i(0, -119)
+6:0/0/texture_origin = Vector2i(0, 95)
 7:0/0 = 0
-7:0/0/texture_origin = Vector2i(0, -119)
+7:0/0/texture_origin = Vector2i(0, 95)
 0:1/0 = 0
-0:1/0/texture_origin = Vector2i(0, -119)
+0:1/0/texture_origin = Vector2i(0, 95)
 1:1/0 = 0
-1:1/0/texture_origin = Vector2i(0, -119)
+1:1/0/texture_origin = Vector2i(0, 95)
 2:1/0 = 0
-2:1/0/texture_origin = Vector2i(0, -119)
+2:1/0/texture_origin = Vector2i(0, 95)
 
 [resource]
 tile_shape = 1
 tile_layout = 5
-tile_size = Vector2i(94, 48)
+tile_size = Vector2i(96, 48)
+custom_data_layer_0/name = "depth_base_offset"
+custom_data_layer_0/type = 3
 sources/3 = SubResource("TileSetAtlasSource_lexnw")

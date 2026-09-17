@@ -30,29 +30,29 @@ const ExpectedWallTileOrder := [
 	"walls-tj-thick-bottom",
 ]
 const ExpectedWallTextureOrigins := [
-	[-1, -137],
-	[-1, -137],
-	[-1, -137],
-	[-10, -137],
-	[8, -137],
-	[-1, -146],
-	[-1, -137],
-	[-1, -137],
-	[-1, -137],
-	[-1, -137],
-	[-1, -137],
-	[-10, -137],
-	[8, -128],
-	[8, -137],
-	[-10, -128],
-	[-1, -137],
-	[8, -128],
-	[-10, -128],
-	[-1, -128],
-	[-10, -137],
-	[8, -128],
-	[8, -137],
-	[-10, -128],
+	[0, 73],
+	[0, 73],
+	[0, 73],
+	[9, 73],
+	[-9, 73],
+	[0, 82],
+	[0, 73],
+	[0, 73],
+	[0, 73],
+	[0, 73],
+	[0, 73],
+	[9, 73],
+	[-9, 64],
+	[-9, 73],
+	[9, 64],
+	[0, 73],
+	[-9, 64],
+	[9, 64],
+	[0, 64],
+	[9, 73],
+	[-9, 64],
+	[-9, 73],
+	[9, 64],
 ]
 const NpcNames := [
 	"Boss",
@@ -67,6 +67,21 @@ const ExpectedObjectSources := {
 	8: "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_000_Schreibtisch02#000",
 	12: "CO_OBJECTS_B_RO_SCHREIBTISCH01_IDLE_180_Schreibtisch01#180",
 	19: "CO_OBJECTS_CHEF_SCHREIBTISCH02_IDLE_180_ChefSchreibtisch02#180",
+}
+# Sprite top-left pixels matched in debug1.png, cropped to the 800x600 game view.
+const ReferenceCameraOffset := Vector2(556, -20)
+const ReferenceObjectPixels := {
+	19: Vector2(114, 210),
+	20: Vector2(37, 135),
+	41: Vector2(169, 213),
+	50: Vector2(264, 119),
+	51: Vector2(201, 121),
+	53: Vector2(406, 259),
+	56: Vector2(642, 122),
+	62: Vector2(585, 101),
+	71: Vector2(217, 386),
+	77: Vector2(131, 189),
+	78: Vector2(346, 327),
 }
 
 var _level
@@ -96,14 +111,12 @@ func _run() -> void:
 		return
 
 	var floor_layer := _require_tile_layer(world, "FloorTileMapLayer")
+	var wall_layer := _require_tile_layer(world, "WallTileMapLayer")
 	var glass_layer := _require_tile_layer(world, "GlassTileMapLayer")
-	var wall_sprites := world.get_node_or_null("WallSprites") as Node2D
-	if wall_sprites == null:
-		_fail("Level 1 missing WallSprites node")
-		return
 	if _failed:
 		return
 	_check_tile_layout(floor_layer)
+	_check_tile_layout(wall_layer)
 	_check_tile_layout(glass_layer)
 	_check_original_tile_axes(floor_layer)
 	if _failed:
@@ -116,7 +129,7 @@ func _run() -> void:
 	_expect_equal(int(map_data.get("visible_height", 0)), 15, "visible map height")
 	_expect_equal(String(manifest.get("source", "")), "extract-sacked-assets/sacked/Levels/LEVEL_00.col", "original source level")
 	_expect_equal(floor_layer.get_used_cells().size(), 225, "floor cell count")
-	_expect_equal(wall_sprites.get_child_count(), 86, "wall sprite count")
+	_expect_equal(wall_layer.get_used_cells().size(), 86, "wall cell count")
 	_expect_equal(glass_layer.get_used_cells().size(), 0, "glass cell count")
 	if _failed:
 		return
@@ -124,7 +137,7 @@ func _run() -> void:
 	_check_visible_tile_bounds(manifest)
 	if _failed:
 		return
-	_check_wall_sprites(wall_sprites, manifest, floor_layer)
+	_check_wall_tiles(wall_layer, manifest, floor_layer)
 	if _failed:
 		return
 	_check_objects(world, manifest, floor_layer)
@@ -189,8 +202,8 @@ func _check_tile_layout(layer: TileMapLayer) -> void:
 	if layer.tile_set.tile_layout != TileSet.TILE_LAYOUT_DIAMOND_DOWN:
 		_fail("%s should use diamond-down isometric layout" % layer.name)
 		return
-	if layer.tile_set.tile_size != Vector2i(94, 48):
-		_fail("%s should use extracted 94x48 tile art scale" % layer.name)
+	if layer.tile_set.tile_size != Vector2i(96, 48):
+		_fail("%s should use the original 96x48 map grid" % layer.name)
 		return
 
 
@@ -198,11 +211,11 @@ func _check_original_tile_axes(layer: TileMapLayer) -> void:
 	var origin := layer.map_to_local(Vector2i.ZERO)
 	var x_axis := layer.map_to_local(Vector2i(1, 0)) - origin
 	var y_axis := layer.map_to_local(Vector2i(0, 1)) - origin
-	if not x_axis.is_equal_approx(Vector2(47.0, 24.0)):
-		_fail("Level 1 x tile axis mismatch: expected (47, 24), got %s" % x_axis)
+	if not x_axis.is_equal_approx(Vector2(48.0, 24.0)):
+		_fail("Level 1 x tile axis mismatch: expected (48, 24), got %s" % x_axis)
 		return
-	if not y_axis.is_equal_approx(Vector2(-47.0, 24.0)):
-		_fail("Level 1 y tile axis mismatch: expected (-47, 24), got %s" % y_axis)
+	if not y_axis.is_equal_approx(Vector2(-48.0, 24.0)):
+		_fail("Level 1 y tile axis mismatch: expected (-48, 24), got %s" % y_axis)
 
 
 func _check_visible_tile_bounds(manifest: Dictionary) -> void:
@@ -217,36 +230,40 @@ func _check_visible_tile_bounds(manifest: Dictionary) -> void:
 				return
 
 
-func _check_wall_sprites(wall_sprites: Node2D, manifest: Dictionary, floor_layer: TileMapLayer) -> void:
+func _check_wall_tiles(wall_layer: TileMapLayer, manifest: Dictionary, floor_layer: TileMapLayer) -> void:
 	var tile_manifest := _read_json(TileAtlasPath)
 	var atlases: Dictionary = tile_manifest.get("atlases", {})
 	var walls: Dictionary = atlases.get("walls", {})
 	var cell_size := _vector2i(walls.get("cell_size", [0, 0]))
+	_expect_equal(cell_size, Vector2i(96, 176), "wall atlas region size")
 	var tiles_by_coords := _wall_tiles_by_coords(walls)
 	for cell_data in _tile_layer_cells(manifest, "WallTileMapLayer"):
 		var cell := _vector2i(cell_data.get("cell", [0, 0]))
-		var tile_id := int(cell_data.get("tile_id", 0))
-		var sprite := wall_sprites.get_node_or_null("Wall%02d_%02d_%02d" % [tile_id, cell.x, cell.y]) as Sprite2D
-		if sprite == null:
-			_fail("Missing wall sprite for tile %d at %s" % [tile_id, cell])
+		var tile_data := wall_layer.get_cell_tile_data(cell)
+		if tile_data == null:
+			_fail("Missing wall tile at %s" % cell)
 			return
-		var expected_position := _tile_position_to_local(Vector2(cell), floor_layer)
-		if not sprite.position.is_equal_approx(expected_position):
-			_fail("%s position mismatch: expected %s got %s" % [sprite.name, expected_position, sprite.position])
+		if not wall_layer.map_to_local(cell).is_equal_approx(floor_layer.map_to_local(cell)):
+			_fail("Wall tile at %s does not align with floor grid" % cell)
 			return
 		var atlas_coords := _vector2i(cell_data.get("atlas_coords", [0, 0]))
+		_expect_equal(wall_layer.get_cell_atlas_coords(cell), atlas_coords, "wall atlas coordinates at %s" % cell)
+		_expect_equal(wall_layer.get_cell_source_id(cell), int(cell_data.get("source_id", -1)), "wall source at %s" % cell)
+		if _failed:
+			return
 		var tile_info: Dictionary = tiles_by_coords.get(_coords_key(atlas_coords), {})
 		var expected_offset := -_vector2(tile_info.get("pivot", [0, 0])) - _vector2(tile_info.get("paste_offset", [0, 0]))
-		if not sprite.offset.is_equal_approx(expected_offset):
-			_fail("%s offset mismatch: expected %s got %s" % [sprite.name, expected_offset, sprite.offset])
+		var actual_offset := -Vector2(cell_size) * 0.5 - Vector2(tile_data.texture_origin)
+		if not actual_offset.is_equal_approx(expected_offset):
+			_fail("Wall tile at %s offset mismatch: expected %s got %s" % [cell, expected_offset, actual_offset])
 			return
-		var atlas_texture := sprite.texture as AtlasTexture
-		if atlas_texture == null:
-			_fail("%s should use an AtlasTexture region" % sprite.name)
+		var source := wall_layer.tile_set.get_source(wall_layer.get_cell_source_id(cell)) as TileSetAtlasSource
+		if source == null:
+			_fail("Wall tile at %s has no atlas source" % cell)
 			return
-		var expected_region := Rect2(Vector2(atlas_coords * cell_size), Vector2(cell_size))
-		if atlas_texture.region != expected_region:
-			_fail("%s region mismatch: expected %s got %s" % [sprite.name, expected_region, atlas_texture.region])
+		var expected_region := Rect2i(atlas_coords * cell_size, cell_size)
+		if source.get_tile_texture_region(atlas_coords) != expected_region:
+			_fail("Wall tile at %s region mismatch: expected %s got %s" % [cell, expected_region, source.get_tile_texture_region(atlas_coords)])
 			return
 
 
@@ -319,6 +336,13 @@ func _check_objects(world: Node, manifest: Dictionary, floor_layer: TileMapLayer
 		if not sprite.offset.is_equal_approx(expected_offset):
 			_fail("%s pivot offset mismatch: expected %s got %s" % [object_node.name, expected_offset, sprite.offset])
 			return
+		if ReferenceObjectPixels.has(instance_id):
+			var reference_pixel: Vector2 = ReferenceObjectPixels[instance_id]
+			var projected_pixel := object_node.position + sprite.position + sprite.offset - floor_layer.map_to_local(Vector2i.ZERO) + ReferenceCameraOffset
+			# The original truncates projection before subtracting camera offsets.
+			if (projected_pixel - reference_pixel).abs().x > 1.1 or (projected_pixel - reference_pixel).abs().y > 1.1:
+				_fail("%s original screenshot position mismatch: expected near %s got %s" % [object_node.name, reference_pixel, projected_pixel])
+				return
 
 
 func _check_player(world: Node, manifest: Dictionary, floor_layer: TileMapLayer) -> void:

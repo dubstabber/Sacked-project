@@ -1,2060 +1,894 @@
-[gd_scene format=4 uid="uid://cl7ugmrq6qhr1"]
-
-[ext_resource type="PackedScene" uid="uid://cdbd3qyoqx33s" path="res://scenes/player/player.tscn" id="1"]
-[ext_resource type="Script" uid="uid://dcw74oo1170do" path="res://scenes/debug/fps_counter.gd" id="2"]
-[ext_resource type="Script" uid="uid://bbs16gbgjhsql" path="res://scenes/shared/character_depth_compositor.gd" id="4"]
-[ext_resource type="Texture2D" uid="uid://6ol72p2r3dsp" path="res://images/objects/aktiv-aktenablage-180.png" id="5"]
-[ext_resource type="Texture2D" uid="uid://0eo2aoijdtxy" path="res://images/objects/aktiv-aushang-090.png" id="6"]
-[ext_resource type="Texture2D" uid="uid://drtme8es7bu6c" path="res://images/objects/aktiv-brief-090.png" id="7"]
-[ext_resource type="Texture2D" uid="uid://bu4mxrtkipenh" path="res://images/objects/aktiv-colamat-000.png" id="8"]
-[ext_resource type="Texture2D" uid="uid://dg6cd0reqgj8a" path="res://images/objects/aktiv-confidential-000.png" id="9"]
-[ext_resource type="Texture2D" uid="uid://ifjh2gmy18er" path="res://images/objects/aktiv-disketten-000.png" id="10"]
-[ext_resource type="Texture2D" uid="uid://cm60t8g6aqffu" path="res://images/objects/aktiv-drucker01-000.png" id="11"]
-[ext_resource type="Texture2D" uid="uid://8qv4h2ibumsk" path="res://images/objects/aktiv-fenster01-000.png" id="12"]
-[ext_resource type="Texture2D" uid="uid://wcwnv62plhr0" path="res://images/objects/aktiv-fenster02-000.png" id="13"]
-[ext_resource type="Texture2D" uid="uid://dhk6ykcvd6hi4" path="res://images/objects/aktiv-fenster03-090.png" id="14"]
-[ext_resource type="Texture2D" uid="uid://dk77famukwdgq" path="res://images/objects/aktiv-feuerzeug-000.png" id="15"]
-[ext_resource type="Texture2D" uid="uid://bko4u7jii2n6k" path="res://images/objects/aktiv-flasche-000.png" id="16"]
-[ext_resource type="Texture2D" uid="uid://cxg0hd6hes3v6" path="res://images/objects/aktiv-flipchart-090.png" id="17"]
-[ext_resource type="Texture2D" uid="uid://dhyf7oqgnphvw" path="res://images/objects/aktiv-handtuchspender-000.png" id="18"]
-[ext_resource type="Texture2D" uid="uid://cqf5vru7078yl" path="res://images/objects/aktiv-handy-000.png" id="19"]
-[ext_resource type="Texture2D" uid="uid://cu16ncqq4s660" path="res://images/objects/aktiv-k-hlschrank-000.png" id="20"]
-[ext_resource type="Texture2D" uid="uid://bp1s1hjj2sbul" path="res://images/objects/aktiv-kaffeemaschi-270.png" id="21"]
-[ext_resource type="Texture2D" uid="uid://b27mgspk30pqh" path="res://images/objects/aktiv-ketchup-000.png" id="22"]
-[ext_resource type="Texture2D" uid="uid://ey2f48eowy4o" path="res://images/objects/aktiv-kleber-000.png" id="23"]
-[ext_resource type="Texture2D" uid="uid://cuibv5qyn3so5" path="res://images/objects/aktiv-monitor-tastatur-frontal-000.png" id="24"]
-[ext_resource type="Texture2D" uid="uid://bdupb4bqxnfve" path="res://images/objects/aktiv-monitor-tastatur-links-180.png" id="25"]
-[ext_resource type="Texture2D" uid="uid://bdw7q3yl2ti4o" path="res://images/objects/aktiv-papierkorb01-000.png" id="26"]
-[ext_resource type="Texture2D" uid="uid://csxxukim2rgk4" path="res://images/objects/aktiv-pappaufsteller01-000.png" id="27"]
-[ext_resource type="Texture2D" uid="uid://c76joe1gjtkl3" path="res://images/objects/aktiv-poster01-090.png" id="28"]
-[ext_resource type="Texture2D" uid="uid://b2h6ewn1a6ure" path="res://images/objects/aktiv-server-000.png" id="29"]
-[ext_resource type="Texture2D" uid="uid://c3l0wqiyfurfl" path="res://images/objects/aktiv-spiegel-000.png" id="30"]
-[ext_resource type="Texture2D" uid="uid://c7xenwdmcyinv" path="res://images/objects/aktiv-spuele-000.png" id="31"]
-[ext_resource type="Texture2D" uid="uid://c4lh6pykc2e3r" path="res://images/objects/aktiv-stifthalter01-000.png" id="32"]
-[ext_resource type="Texture2D" uid="uid://3hnhvk5d0mxv" path="res://images/objects/aktiv-toikabine-000.png" id="33"]
-[ext_resource type="Texture2D" uid="uid://bcf8cc3mgwhn5" path="res://images/objects/aktiv-waschbecken-000.png" id="34"]
-[ext_resource type="Texture2D" uid="uid://h5d6sgll73u5" path="res://images/objects/aktiv-wasserkocher-000.png" id="35"]
-[ext_resource type="Texture2D" uid="uid://bouumuuc6cgsx" path="res://images/objects/aktiv-wasserspender-090.png" id="36"]
-[ext_resource type="Texture2D" uid="uid://cnwweux5fwvrs" path="res://images/objects/aktiv-zigaretten-000.png" id="37"]
-[ext_resource type="Texture2D" uid="uid://b6vl38hl7gae0" path="res://images/objects/allgemein-b-cher01-090.png" id="38"]
-[ext_resource type="Texture2D" uid="uid://citenccm3ysrq" path="res://images/objects/allgemein-eingang-000.png" id="39"]
-[ext_resource type="Texture2D" uid="uid://joom1bmpufa3" path="res://images/objects/allgemein-heizk-rper-000.png" id="40"]
-[ext_resource type="Texture2D" uid="uid://d1en0stx6u0ld" path="res://images/objects/allgemein-heizk-rper-090.png" id="41"]
-[ext_resource type="Texture2D" uid="uid://d1c0ch3aes3mx" path="res://images/objects/allgemein-kleiderstaender02-000.png" id="42"]
-[ext_resource type="Texture2D" uid="uid://bmv1xr8ickq26" path="res://images/objects/allgemein-pflanzegross03-000.png" id="43"]
-[ext_resource type="Texture2D" uid="uid://bj8m6rpuduase" path="res://images/objects/allgemein-sofa01-180.png" id="44"]
-[ext_resource type="Texture2D" uid="uid://cprdwj25oeh44" path="res://images/objects/allgemein-venti-gross-090.png" id="45"]
-[ext_resource type="Texture2D" uid="uid://bm75lovjcfmy7" path="res://images/objects/aufenthalt-standascher02-000.png" id="46"]
-[ext_resource type="Texture2D" uid="uid://dr3bx2vqsa2w6" path="res://images/objects/b-ro-drehstuhl01-000.png" id="47"]
-[ext_resource type="Texture2D" uid="uid://c6xnytybftp3c" path="res://images/objects/b-ro-drehstuhl03-180.png" id="48"]
-[ext_resource type="Texture2D" uid="uid://iirv2i16pho5" path="res://images/objects/b-ro-komode03-090.png" id="49"]
-[ext_resource type="Texture2D" uid="uid://bwvhfchwk5c5g" path="res://images/objects/b-ro-papier01-180.png" id="50"]
-[ext_resource type="Texture2D" uid="uid://c52aesq7nn3b6" path="res://images/objects/b-ro-papier02-090.png" id="51"]
-[ext_resource type="Texture2D" uid="uid://dluknvdn4pqol" path="res://images/objects/b-ro-papier03-000.png" id="52"]
-[ext_resource type="Texture2D" uid="uid://c6rsrgbmiqkyf" path="res://images/objects/b-ro-papier03-090.png" id="53"]
-[ext_resource type="Texture2D" uid="uid://c70qhmxfghpj8" path="res://images/objects/b-ro-papier05-000.png" id="54"]
-[ext_resource type="Texture2D" uid="uid://dhvu7jusl5wbk" path="res://images/objects/b-ro-pctower-000.png" id="55"]
-[ext_resource type="Texture2D" uid="uid://cgj4kuwetway6" path="res://images/objects/b-ro-regal02-000.png" id="56"]
-[ext_resource type="Texture2D" uid="uid://bkgmbf4n8arf8" path="res://images/objects/b-ro-schreibtisch01-180.png" id="57"]
-[ext_resource type="Texture2D" uid="uid://s8d5rxs6t5i6" path="res://images/objects/b-ro-schreibtisch02-000.png" id="58"]
-[ext_resource type="Texture2D" uid="uid://mrrqkp4i55dw" path="res://images/objects/chef-jagdtroph-e-000.png" id="59"]
-[ext_resource type="Texture2D" uid="uid://25p2myxl6oig" path="res://images/objects/chef-schreibtisch02-180.png" id="60"]
-[ext_resource type="Texture2D" uid="uid://bth5qq4nmvm8y" path="res://images/objects/chef-sessel01-180.png" id="61"]
-[ext_resource type="Texture2D" uid="uid://ctwf03b35o1a1" path="res://images/objects/hausmeister-kiste02-180.png" id="62"]
-[ext_resource type="Texture2D" uid="uid://b81ni4pes2uqi" path="res://images/objects/k-che-geschirrdreckig-090.png" id="63"]
-[ext_resource type="Texture2D" uid="uid://bheae8m1xbldy" path="res://images/objects/k-che-geschirrteller-000.png" id="64"]
-[ext_resource type="Texture2D" uid="uid://csjkrgb0rn6q5" path="res://images/objects/k-che-k-chenschrank01-000.png" id="65"]
-[ext_resource type="Texture2D" uid="uid://pdb3pi4dk04p" path="res://images/objects/k-che-k-chenschrank03-000.png" id="66"]
-[ext_resource type="Texture2D" uid="uid://nephayb7p54p" path="res://images/objects/k-che-kaffeedose-000.png" id="67"]
-[ext_resource type="Texture2D" uid="uid://bkhap08i7cj01" path="res://images/objects/wc-seifenspender01-090.png" id="68"]
-[ext_resource type="Texture2D" uid="uid://bkyyj142p1kl7" path="res://images/tilemaps/sacked-walls.png" id="69"]
-[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-floor.tres" id="70"]
-[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-glass.tres" id="71"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_n8axp"]
-atlas = ExtResource("69")
-region = Rect2(672, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sy755"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gh4wy"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ensp4"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jx4gr"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_j0eh6"]
-atlas = ExtResource("69")
-region = Rect2(480, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_k6c4v"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jie0a"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_a8j6k"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mcd2o"]
-atlas = ExtResource("69")
-region = Rect2(480, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_166xl"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_21ywl"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mxhhh"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bexkj"]
-atlas = ExtResource("69")
-region = Rect2(480, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_smubd"]
-atlas = ExtResource("69")
-region = Rect2(0, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_r8enm"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gcpbe"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ml1t7"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uqb83"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kfuus"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_785by"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lkonv"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ytc8d"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tp2ps"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dhdne"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uk1qv"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kitax"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6khyl"]
-atlas = ExtResource("69")
-region = Rect2(288, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2jm86"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mt75w"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ae6bd"]
-atlas = ExtResource("69")
-region = Rect2(96, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ke8bw"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_uooah"]
-atlas = ExtResource("69")
-region = Rect2(96, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_hqrdg"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_v8jk1"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_1tmls"]
-atlas = ExtResource("69")
-region = Rect2(384, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_d0gbb"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_dxvwm"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w7qat"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5rp4o"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_2mt0h"]
-atlas = ExtResource("69")
-region = Rect2(288, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rlrxf"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nmxl6"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_cau7h"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_avywr"]
-atlas = ExtResource("69")
-region = Rect2(0, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ek1hf"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oe0jw"]
-atlas = ExtResource("69")
-region = Rect2(288, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_n04ug"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pk7rl"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u2q37"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_e20fh"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ht246"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wsiex"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_l3478"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_rou5o"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_l26oj"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gtwsh"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6xspy"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gwfkf"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ijr0b"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oo2hk"]
-atlas = ExtResource("69")
-region = Rect2(576, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_oavnm"]
-atlas = ExtResource("69")
-region = Rect2(96, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3se6s"]
-atlas = ExtResource("69")
-region = Rect2(384, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ic0n8"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ikt6a"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6xdk2"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wflou"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gb50s"]
-atlas = ExtResource("69")
-region = Rect2(288, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_u100o"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vupkl"]
-atlas = ExtResource("69")
-region = Rect2(0, 0, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_caxbj"]
-atlas = ExtResource("69")
-region = Rect2(384, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_23t0e"]
-atlas = ExtResource("69")
-region = Rect2(96, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tdtk2"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x8qj5"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_16hnr"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_auty1"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_n2ndw"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_llcgx"]
-atlas = ExtResource("69")
-region = Rect2(576, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yglak"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_q8nf8"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3xk6v"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fkwda"]
-atlas = ExtResource("69")
-region = Rect2(576, 352, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w38ut"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lf05b"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_psqx4"]
-atlas = ExtResource("69")
-region = Rect2(576, 176, 96, 176)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_apw2n"]
-atlas = ExtResource("69")
-region = Rect2(192, 352, 96, 176)
-
-[node name="Main" type="Node" unique_id=783010252]
-
-[node name="World" type="Node2D" parent="." unique_id=424505115]
-
-[node name="FloorTileMapLayer" type="TileMapLayer" parent="World" unique_id=279026553]
+[gd_scene format=4 uid="uid://dnacfxcjumlnb"]
+
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-aktenablage-180.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-aushang-090.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-brief-090.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-colamat-000.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-confidential-000.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-disketten-000.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-drucker01-000.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-fenster01-000.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-fenster02-000.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-fenster03-090.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-feuerzeug-000.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-flasche-000.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-flipchart-090.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-handtuchspender-000.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-handy-000.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-k-hlschrank-000.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-kaffeemaschi-270.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-ketchup-000.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-kleber-000.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-monitor-tastatur-frontal-000.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-monitor-tastatur-links-180.tscn" id="21"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-papierkorb01-000.tscn" id="22"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-pappaufsteller01-000.tscn" id="23"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-poster01-090.tscn" id="24"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-server-000.tscn" id="25"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-spiegel-000.tscn" id="26"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-spuele-000.tscn" id="27"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-stifthalter01-000.tscn" id="28"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-toikabine-000.tscn" id="29"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-waschbecken-000.tscn" id="30"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-wasserkocher-000.tscn" id="31"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-wasserspender-090.tscn" id="32"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-zigaretten-000.tscn" id="33"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-b-cher01-090.tscn" id="34"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-eingang-000.tscn" id="35"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-heizk-rper-000.tscn" id="36"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-heizk-rper-090.tscn" id="37"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-kleiderstaender02-000.tscn" id="38"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-pflanzegross03-000.tscn" id="39"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-sofa01-180.tscn" id="40"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-venti-gross-090.tscn" id="41"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aufenthalt-standascher02-000.tscn" id="42"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-drehstuhl01-000.tscn" id="43"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-drehstuhl03-180.tscn" id="44"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-komode03-090.tscn" id="45"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-papier01-180.tscn" id="46"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-papier02-090.tscn" id="47"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-papier03-000.tscn" id="48"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-papier03-090.tscn" id="49"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-papier05-000.tscn" id="50"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-pctower-000.tscn" id="51"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-regal02-000.tscn" id="52"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch01-180.tscn" id="53"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch02-000.tscn" id="54"]
+[ext_resource type="PackedScene" path="res://scenes/objects/chef-jagdtroph-e-000.tscn" id="55"]
+[ext_resource type="PackedScene" path="res://scenes/objects/chef-schreibtisch02-180.tscn" id="56"]
+[ext_resource type="PackedScene" path="res://scenes/objects/chef-sessel01-180.tscn" id="57"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-kiste02-180.tscn" id="58"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-geschirrdreckig-090.tscn" id="59"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-geschirrteller-000.tscn" id="60"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenschrank01-000.tscn" id="61"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenschrank03-000.tscn" id="62"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-kaffeedose-000.tscn" id="63"]
+[ext_resource type="PackedScene" path="res://scenes/objects/wc-seifenspender01-090.tscn" id="64"]
+[ext_resource type="PackedScene" uid="uid://cdbd3qyoqx33s" path="res://scenes/player/player.tscn" id="65"]
+[ext_resource type="Script" uid="uid://dcw74oo1170do" path="res://scenes/debug/fps_counter.gd" id="66"]
+[ext_resource type="Script" uid="uid://bbs16gbgjhsql" path="res://scenes/shared/character_depth_compositor.gd" id="68"]
+[ext_resource type="Script" uid="uid://c2saf7uy75i04" path="res://scenes/shared/map_tile_layer.gd" id="69"]
+[ext_resource type="Script" uid="uid://e1axq82ttkty" path="res://scenes/shared/world_depth_compositor.gd" id="70"]
+[ext_resource type="TileSet" uid="uid://bjfntlmpq723g" path="res://resources/tilemaps/sacked-floor.tres" id="71"]
+[ext_resource type="TileSet" uid="uid://b5uyl2yw5alka" path="res://resources/tilemaps/sacked-glass.tres" id="72"]
+[ext_resource type="TileSet" uid="uid://cahjxy0r5xgn2" path="res://resources/tilemaps/sacked-walls.tres" id="73"]
+
+[node name="Main" type="Node" unique_id=1192789871]
+
+[node name="World" type="Node2D" parent="." unique_id=879906823]
+
+[node name="FloorTileMapLayer" type="TileMapLayer" parent="World" unique_id=1149122945]
 z_index = -20
 tile_map_data = PackedByteArray("AAAAAAAAAwABAAIAAAABAAAAAwABAAIAAAACAAAAAwABAAIAAAADAAAAAwABAAIAAAAEAAAAAwABAAIAAAAFAAAAAwABAAIAAAAGAAAAAwABAAIAAAAHAAAAAwABAAIAAAAIAAAAAwABAAIAAAAJAAAAAwAHAAAAAAAKAAAAAwAHAAAAAAALAAAAAwAHAAAAAAAMAAAAAwAHAAAAAAANAAAAAwAHAAAAAAAOAAAAAwABAAIAAAAAAAEAAwABAAIAAAABAAEAAwAGAAIAAAACAAEAAwACAAMAAAADAAEAAwACAAMAAAAEAAEAAwAHAAIAAAAFAAEAAwABAAIAAAAGAAEAAwAGAAIAAAAHAAEAAwACAAMAAAAIAAEAAwAHAAIAAAAJAAEAAwAHAAAAAAAKAAEAAwAHAAAAAAALAAEAAwAHAAAAAAAMAAEAAwAHAAAAAAANAAEAAwAHAAAAAAAOAAEAAwABAAIAAAAAAAIAAwABAAIAAAABAAIAAwADAAMAAAACAAIAAwABAAIAAAADAAIAAwABAAIAAAAEAAIAAwADAAMAAAAFAAIAAwABAAIAAAAGAAIAAwADAAMAAAAHAAIAAwABAAIAAAAIAAIAAwADAAMAAAAJAAIAAwAHAAAAAAAKAAIAAwAHAAAAAAALAAIAAwAHAAAAAAAMAAIAAwAHAAAAAAANAAIAAwAHAAAAAAAOAAIAAwABAAIAAAAAAAMAAwABAAIAAAABAAMAAwAJAAIAAAACAAMAAwACAAMAAAADAAMAAwAHAAIAAAAEAAMAAwADAAMAAAAFAAMAAwABAAIAAAAGAAMAAwADAAMAAAAHAAMAAwAGAAIAAAAIAAMAAwAIAAIAAAAJAAMAAwAHAAAAAAAKAAMAAwAHAAAAAAALAAMAAwAHAAAAAAAMAAMAAwAHAAAAAAANAAMAAwAHAAAAAAAOAAMAAwABAAIAAAAAAAQAAwABAAIAAAABAAQAAwABAAIAAAACAAQAAwABAAIAAAADAAQAAwADAAMAAAAEAAQAAwADAAMAAAAFAAQAAwABAAIAAAAGAAQAAwADAAMAAAAHAAQAAwADAAMAAAAIAAQAAwABAAIAAAAJAAQAAwAGAAEAAAAKAAQAAwAGAAEAAAALAAQAAwAGAAEAAAAMAAQAAwABAAIAAAANAAQAAwABAAIAAAAOAAQAAwABAAIAAAAAAAUAAwABAAIAAAABAAUAAwAGAAIAAAACAAUAAwACAAMAAAADAAUAAwAIAAIAAAAEAAUAAwAJAAIAAAAFAAUAAwACAAMAAAAGAAUAAwAIAAIAAAAHAAUAAwAJAAIAAAAIAAUAAwACAAMAAAAJAAUAAwACAAMAAAAKAAUAAwAIAAIAAAALAAUAAwAJAAIAAAAMAAUAAwACAAMAAAANAAUAAwAHAAIAAAAOAAUAAwABAAIAAAAAAAYAAwABAAIAAAABAAYAAwAJAAIAAAACAAYAAwACAAMAAAADAAYAAwAHAAIAAAAEAAYAAwAGAAIAAAAFAAYAAwACAAMAAAAGAAYAAwACAAMAAAAHAAYAAwAHAAIAAAAIAAYAAwAGAAIAAAAJAAYAAwACAAMAAAAKAAYAAwACAAMAAAALAAYAAwAHAAIAAAAMAAYAAwABAAIAAAANAAYAAwADAAMAAAAOAAYAAwABAAIAAAAAAAcAAwABAAIAAAABAAcAAwABAAIAAAACAAcAAwABAAIAAAADAAcAAwADAAMAAAAEAAcAAwADAAMAAAAFAAcAAwABAAIAAAAGAAcAAwAEAAEAAAAHAAcAAwAEAAEAAAAIAAcAAwAEAAEAAAAJAAcAAwAEAAEAAAAKAAcAAwABAAIAAAALAAcAAwADAAMAAAAMAAcAAwABAAIAAAANAAcAAwADAAMAAAAOAAcAAwABAAIAAAAAAAgAAwABAAIAAAABAAgAAwAGAAIAAAACAAgAAwACAAMAAAADAAgAAwAIAAIAAAAEAAgAAwAJAAIAAAAFAAgAAwAHAAIAAAAGAAgAAwAGAAAAAAAHAAgAAwAGAAAAAAAIAAgAAwAGAAAAAAAJAAgAAwAGAAAAAAAKAAgAAwABAAIAAAALAAgAAwADAAMAAAAMAAgAAwABAAIAAAANAAgAAwADAAMAAAAOAAgAAwABAAIAAAAAAAkAAwABAAIAAAABAAkAAwADAAMAAAACAAkAAwABAAIAAAADAAkAAwABAAIAAAAEAAkAAwABAAIAAAAFAAkAAwADAAMAAAAGAAkAAwABAAIAAAAHAAkAAwAGAAAAAAAIAAkAAwAGAAAAAAAJAAkAAwAGAAAAAAAKAAkAAwABAAIAAAALAAkAAwADAAMAAAAMAAkAAwABAAIAAAANAAkAAwADAAMAAAAOAAkAAwABAAIAAAAAAAoAAwABAAIAAAABAAoAAwADAAMAAAACAAoAAwABAAIAAAADAAoAAwABAAIAAAAEAAoAAwABAAIAAAAFAAoAAwADAAMAAAAGAAoAAwABAAIAAAAHAAoAAwAGAAAAAAAIAAoAAwAGAAAAAAAJAAoAAwAGAAAAAAAKAAoAAwABAAIAAAALAAoAAwAJAAIAAAAMAAoAAwAHAAIAAAANAAoAAwADAAMAAAAOAAoAAwABAAIAAAAAAAsAAwABAAIAAAABAAsAAwADAAMAAAACAAsAAwABAAIAAAADAAsAAwABAAIAAAAEAAsAAwABAAIAAAAFAAsAAwADAAMAAAAGAAsAAwABAAIAAAAHAAsAAwAGAAAAAAAIAAsAAwAGAAAAAAAJAAsAAwAGAAAAAAAKAAsAAwABAAIAAAALAAsAAwABAAIAAAAMAAsAAwADAAMAAAANAAsAAwADAAMAAAAOAAsAAwABAAIAAAAAAAwAAwABAAIAAAABAAwAAwADAAMAAAACAAwAAwABAAIAAAADAAwAAwABAAIAAAAEAAwAAwABAAIAAAAFAAwAAwADAAMAAAAGAAwAAwABAAIAAAAHAAwAAwAGAAAAAAAIAAwAAwAGAAAAAAAJAAwAAwAGAAAAAAAKAAwAAwABAAIAAAALAAwAAwAGAAIAAAAMAAwAAwAIAAIAAAANAAwAAwADAAMAAAAOAAwAAwABAAIAAAAAAA0AAwABAAIAAAABAA0AAwAJAAIAAAACAA0AAwACAAMAAAADAA0AAwACAAMAAAAEAA0AAwACAAMAAAAFAA0AAwAIAAIAAAAGAA0AAwABAAIAAAAHAA0AAwAGAAAAAAAIAA0AAwAGAAAAAAAJAA0AAwAGAAAAAAAKAA0AAwABAAIAAAALAA0AAwAJAAIAAAAMAA0AAwACAAMAAAANAA0AAwAIAAIAAAAOAA0AAwABAAIAAAAAAA4AAwABAAIAAAABAA4AAwABAAIAAAACAA4AAwABAAIAAAADAA4AAwABAAIAAAAEAA4AAwABAAIAAAAFAA4AAwABAAIAAAAGAA4AAwABAAIAAAAHAA4AAwABAAIAAAAIAA4AAwABAAIAAAAJAA4AAwABAAIAAAAKAA4AAwABAAIAAAALAA4AAwABAAIAAAAMAA4AAwABAAIAAAANAA4AAwABAAIAAAAOAA4AAwABAAIAAAA=")
-tile_set = ExtResource("70")
-
-[node name="WallSprites" type="Node2D" parent="World" unique_id=424688996]
-z_index = -5
-
-[node name="Wall16_00_00" type="Sprite2D" parent="World/WallSprites" unique_id=609161667]
-position = Vector2(47, 24)
-texture = SubResource("AtlasTexture_n8axp")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 16
-metadata/original_cell = Vector2i(0, 0)
-
-[node name="Wall14_01_00" type="Sprite2D" parent="World/WallSprites" unique_id=186350742]
-position = Vector2(94, 48)
-texture = SubResource("AtlasTexture_sy755")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(1, 0)
-
-[node name="Wall14_02_00" type="Sprite2D" parent="World/WallSprites" unique_id=1014015442]
-position = Vector2(141, 72)
-texture = SubResource("AtlasTexture_gh4wy")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(2, 0)
-
-[node name="Wall14_03_00" type="Sprite2D" parent="World/WallSprites" unique_id=1628225903]
-position = Vector2(188, 96)
-texture = SubResource("AtlasTexture_ensp4")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(3, 0)
-
-[node name="Wall14_04_00" type="Sprite2D" parent="World/WallSprites" unique_id=1597063245]
-position = Vector2(235, 120)
-texture = SubResource("AtlasTexture_jx4gr")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(4, 0)
-
-[node name="Wall22_05_00" type="Sprite2D" parent="World/WallSprites" unique_id=1906101488]
-position = Vector2(282, 144)
-texture = SubResource("AtlasTexture_j0eh6")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 22
-metadata/original_cell = Vector2i(5, 0)
-
-[node name="Wall14_06_00" type="Sprite2D" parent="World/WallSprites" unique_id=1061179960]
-position = Vector2(329, 168)
-texture = SubResource("AtlasTexture_k6c4v")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(6, 0)
-
-[node name="Wall14_07_00" type="Sprite2D" parent="World/WallSprites" unique_id=1563399254]
-position = Vector2(376, 192)
-texture = SubResource("AtlasTexture_jie0a")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(7, 0)
-
-[node name="Wall14_08_00" type="Sprite2D" parent="World/WallSprites" unique_id=1664232548]
-position = Vector2(423, 216)
-texture = SubResource("AtlasTexture_a8j6k")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(8, 0)
-
-[node name="Wall22_09_00" type="Sprite2D" parent="World/WallSprites" unique_id=934586247]
-position = Vector2(470, 240)
-texture = SubResource("AtlasTexture_mcd2o")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 22
-metadata/original_cell = Vector2i(9, 0)
-
-[node name="Wall14_10_00" type="Sprite2D" parent="World/WallSprites" unique_id=1569553871]
-position = Vector2(517, 264)
-texture = SubResource("AtlasTexture_166xl")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(10, 0)
-
-[node name="Wall14_11_00" type="Sprite2D" parent="World/WallSprites" unique_id=1739988405]
-position = Vector2(564, 288)
-texture = SubResource("AtlasTexture_21ywl")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(11, 0)
-
-[node name="Wall14_12_00" type="Sprite2D" parent="World/WallSprites" unique_id=831248620]
-position = Vector2(611, 312)
-texture = SubResource("AtlasTexture_mxhhh")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(12, 0)
-
-[node name="Wall14_13_00" type="Sprite2D" parent="World/WallSprites" unique_id=1598161627]
-position = Vector2(658, 336)
-texture = SubResource("AtlasTexture_bexkj")
-centered = false
-offset = Vector2(-39, -161)
-metadata/original_tile_id = 14
-metadata/original_cell = Vector2i(13, 0)
-
-[node name="Wall17_14_00" type="Sprite2D" parent="World/WallSprites" unique_id=1252222588]
-position = Vector2(705, 360)
-texture = SubResource("AtlasTexture_smubd")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 17
-metadata/original_cell = Vector2i(14, 0)
-
-[node name="Wall12_00_01" type="Sprite2D" parent="World/WallSprites" unique_id=1214550600]
-position = Vector2(0, 48)
-texture = SubResource("AtlasTexture_r8enm")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 1)
-
-[node name="Wall01_05_01" type="Sprite2D" parent="World/WallSprites" unique_id=1580702024]
-position = Vector2(235, 168)
-texture = SubResource("AtlasTexture_gcpbe")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(5, 1)
-
-[node name="Wall01_09_01" type="Sprite2D" parent="World/WallSprites" unique_id=1570511910]
-position = Vector2(423, 264)
-texture = SubResource("AtlasTexture_ml1t7")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(9, 1)
-
-[node name="Wall13_14_01" type="Sprite2D" parent="World/WallSprites" unique_id=1136533004]
-position = Vector2(658, 384)
-texture = SubResource("AtlasTexture_uqb83")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 1)
-
-[node name="Wall12_00_02" type="Sprite2D" parent="World/WallSprites" unique_id=939466150]
-position = Vector2(-47, 72)
-texture = SubResource("AtlasTexture_kfuus")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 2)
-
-[node name="Wall01_05_02" type="Sprite2D" parent="World/WallSprites" unique_id=194119832]
-position = Vector2(188, 192)
-texture = SubResource("AtlasTexture_785by")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(5, 2)
-
-[node name="Wall01_09_02" type="Sprite2D" parent="World/WallSprites" unique_id=1549230224]
-position = Vector2(376, 288)
-texture = SubResource("AtlasTexture_lkonv")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(9, 2)
-
-[node name="Wall13_14_02" type="Sprite2D" parent="World/WallSprites" unique_id=1797676697]
-position = Vector2(611, 408)
-texture = SubResource("AtlasTexture_ytc8d")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 2)
-
-[node name="Wall12_00_03" type="Sprite2D" parent="World/WallSprites" unique_id=877336200]
-position = Vector2(-94, 96)
-texture = SubResource("AtlasTexture_tp2ps")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 3)
-
-[node name="Wall01_05_03" type="Sprite2D" parent="World/WallSprites" unique_id=501622590]
-position = Vector2(141, 216)
-texture = SubResource("AtlasTexture_dhdne")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(5, 3)
-
-[node name="Wall01_09_03" type="Sprite2D" parent="World/WallSprites" unique_id=934921926]
-position = Vector2(329, 312)
-texture = SubResource("AtlasTexture_uk1qv")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(9, 3)
-
-[node name="Wall13_14_03" type="Sprite2D" parent="World/WallSprites" unique_id=695900809]
-position = Vector2(564, 432)
-texture = SubResource("AtlasTexture_kitax")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 3)
-
-[node name="Wall20_00_04" type="Sprite2D" parent="World/WallSprites" unique_id=1060308530]
-position = Vector2(-141, 120)
-texture = SubResource("AtlasTexture_6khyl")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 20
-metadata/original_cell = Vector2i(0, 4)
-
-[node name="Wall02_01_04" type="Sprite2D" parent="World/WallSprites" unique_id=1659973750]
-position = Vector2(-94, 144)
-texture = SubResource("AtlasTexture_2jm86")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(1, 4)
-
-[node name="Wall02_02_04" type="Sprite2D" parent="World/WallSprites" unique_id=590248047]
-position = Vector2(-47, 168)
-texture = SubResource("AtlasTexture_mt75w")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(2, 4)
-
-[node name="Wall10_05_04" type="Sprite2D" parent="World/WallSprites" unique_id=972924416]
-position = Vector2(94, 240)
-texture = SubResource("AtlasTexture_ae6bd")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 10
-metadata/original_cell = Vector2i(5, 4)
-
-[node name="Wall02_08_04" type="Sprite2D" parent="World/WallSprites" unique_id=1794584085]
-position = Vector2(235, 312)
-texture = SubResource("AtlasTexture_ke8bw")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(8, 4)
-
-[node name="Wall10_09_04" type="Sprite2D" parent="World/WallSprites" unique_id=2068234288]
-position = Vector2(282, 336)
-texture = SubResource("AtlasTexture_uooah")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 10
-metadata/original_cell = Vector2i(9, 4)
-
-[node name="Wall02_12_04" type="Sprite2D" parent="World/WallSprites" unique_id=206270513]
-position = Vector2(423, 408)
-texture = SubResource("AtlasTexture_hqrdg")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(12, 4)
-
-[node name="Wall02_13_04" type="Sprite2D" parent="World/WallSprites" unique_id=1198215749]
-position = Vector2(470, 432)
-texture = SubResource("AtlasTexture_v8jk1")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(13, 4)
-
-[node name="Wall21_14_04" type="Sprite2D" parent="World/WallSprites" unique_id=134967249]
-position = Vector2(517, 456)
-texture = SubResource("AtlasTexture_1tmls")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 21
-metadata/original_cell = Vector2i(14, 4)
-
-[node name="Wall12_00_05" type="Sprite2D" parent="World/WallSprites" unique_id=1279172762]
-position = Vector2(-188, 144)
-texture = SubResource("AtlasTexture_d0gbb")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 5)
-
-[node name="Wall13_14_05" type="Sprite2D" parent="World/WallSprites" unique_id=305019743]
-position = Vector2(470, 480)
-texture = SubResource("AtlasTexture_dxvwm")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 5)
-
-[node name="Wall12_00_06" type="Sprite2D" parent="World/WallSprites" unique_id=1059668644]
-position = Vector2(-235, 168)
-texture = SubResource("AtlasTexture_w7qat")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 6)
-
-[node name="Wall13_14_06" type="Sprite2D" parent="World/WallSprites" unique_id=430264004]
-position = Vector2(423, 504)
-texture = SubResource("AtlasTexture_5rp4o")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 6)
-
-[node name="Wall20_00_07" type="Sprite2D" parent="World/WallSprites" unique_id=1032244958]
-position = Vector2(-282, 192)
-texture = SubResource("AtlasTexture_2mt0h")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 20
-metadata/original_cell = Vector2i(0, 7)
-
-[node name="Wall02_01_07" type="Sprite2D" parent="World/WallSprites" unique_id=1467202485]
-position = Vector2(-235, 216)
-texture = SubResource("AtlasTexture_rlrxf")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(1, 7)
-
-[node name="Wall02_02_07" type="Sprite2D" parent="World/WallSprites" unique_id=1067156270]
-position = Vector2(-188, 240)
-texture = SubResource("AtlasTexture_nmxl6")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(2, 7)
-
-[node name="Wall02_05_07" type="Sprite2D" parent="World/WallSprites" unique_id=1231141905]
-position = Vector2(-47, 312)
-texture = SubResource("AtlasTexture_cau7h")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(5, 7)
-
-[node name="Wall09_06_07" type="Sprite2D" parent="World/WallSprites" unique_id=2049455319]
-position = Vector2(0, 336)
-texture = SubResource("AtlasTexture_avywr")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 9
-metadata/original_cell = Vector2i(6, 7)
-
-[node name="Wall02_09_07" type="Sprite2D" parent="World/WallSprites" unique_id=816233287]
-position = Vector2(141, 408)
-texture = SubResource("AtlasTexture_ek1hf")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(9, 7)
-
-[node name="Wall04_10_07" type="Sprite2D" parent="World/WallSprites" unique_id=1627136219]
-position = Vector2(188, 432)
-texture = SubResource("AtlasTexture_oe0jw")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 4
-metadata/original_cell = Vector2i(10, 7)
-
-[node name="Wall13_14_07" type="Sprite2D" parent="World/WallSprites" unique_id=1397046702]
-position = Vector2(376, 528)
-texture = SubResource("AtlasTexture_n04ug")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 7)
-
-[node name="Wall12_00_08" type="Sprite2D" parent="World/WallSprites" unique_id=367449354]
-position = Vector2(-329, 216)
-texture = SubResource("AtlasTexture_pk7rl")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 8)
-
-[node name="Wall01_06_08" type="Sprite2D" parent="World/WallSprites" unique_id=1508923277]
-position = Vector2(-47, 360)
-texture = SubResource("AtlasTexture_u2q37")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(6, 8)
-
-[node name="Wall01_10_08" type="Sprite2D" parent="World/WallSprites" unique_id=1174242233]
-position = Vector2(141, 456)
-texture = SubResource("AtlasTexture_e20fh")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(10, 8)
-
-[node name="Wall13_14_08" type="Sprite2D" parent="World/WallSprites" unique_id=1006097879]
-position = Vector2(329, 552)
-texture = SubResource("AtlasTexture_ht246")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 8)
-
-[node name="Wall12_00_09" type="Sprite2D" parent="World/WallSprites" unique_id=1865748694]
-position = Vector2(-376, 240)
-texture = SubResource("AtlasTexture_wsiex")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 9)
-
-[node name="Wall01_06_09" type="Sprite2D" parent="World/WallSprites" unique_id=691103468]
-position = Vector2(-94, 384)
-texture = SubResource("AtlasTexture_l3478")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(6, 9)
-
-[node name="Wall01_10_09" type="Sprite2D" parent="World/WallSprites" unique_id=290370708]
-position = Vector2(94, 480)
-texture = SubResource("AtlasTexture_rou5o")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(10, 9)
-
-[node name="Wall12_00_10" type="Sprite2D" parent="World/WallSprites" unique_id=715832544]
-position = Vector2(-423, 264)
-texture = SubResource("AtlasTexture_l26oj")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 10)
-
-[node name="Wall01_06_10" type="Sprite2D" parent="World/WallSprites" unique_id=723531530]
-position = Vector2(-141, 408)
-texture = SubResource("AtlasTexture_gtwsh")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(6, 10)
-
-[node name="Wall01_10_10" type="Sprite2D" parent="World/WallSprites" unique_id=1296667543]
-position = Vector2(47, 504)
-texture = SubResource("AtlasTexture_6xspy")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(10, 10)
-
-[node name="Wall12_00_11" type="Sprite2D" parent="World/WallSprites" unique_id=2133258604]
-position = Vector2(-470, 288)
-texture = SubResource("AtlasTexture_gwfkf")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 11)
-
-[node name="Wall01_06_11" type="Sprite2D" parent="World/WallSprites" unique_id=1277672352]
-position = Vector2(-188, 432)
-texture = SubResource("AtlasTexture_ijr0b")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(6, 11)
-
-[node name="Wall07_10_11" type="Sprite2D" parent="World/WallSprites" unique_id=1395210480]
-position = Vector2(0, 528)
-texture = SubResource("AtlasTexture_oo2hk")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 7
-metadata/original_cell = Vector2i(10, 11)
-
-[node name="Wall02_11_11" type="Sprite2D" parent="World/WallSprites" unique_id=504011060]
-position = Vector2(47, 552)
-texture = SubResource("AtlasTexture_oavnm")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 2
-metadata/original_cell = Vector2i(11, 11)
-
-[node name="Wall21_14_11" type="Sprite2D" parent="World/WallSprites" unique_id=1453080882]
-position = Vector2(188, 624)
-texture = SubResource("AtlasTexture_3se6s")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 21
-metadata/original_cell = Vector2i(14, 11)
-
-[node name="Wall12_00_12" type="Sprite2D" parent="World/WallSprites" unique_id=1250284015]
-position = Vector2(-517, 312)
-texture = SubResource("AtlasTexture_ic0n8")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 12)
-
-[node name="Wall01_06_12" type="Sprite2D" parent="World/WallSprites" unique_id=23389789]
-position = Vector2(-235, 456)
-texture = SubResource("AtlasTexture_ikt6a")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(6, 12)
-
-[node name="Wall01_10_12" type="Sprite2D" parent="World/WallSprites" unique_id=394868501]
-position = Vector2(-47, 552)
-texture = SubResource("AtlasTexture_6xdk2")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(10, 12)
-
-[node name="Wall13_14_12" type="Sprite2D" parent="World/WallSprites" unique_id=84575337]
-position = Vector2(141, 648)
-texture = SubResource("AtlasTexture_wflou")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 12)
-
-[node name="Wall12_00_13" type="Sprite2D" parent="World/WallSprites" unique_id=936764038]
-position = Vector2(-564, 336)
-texture = SubResource("AtlasTexture_gb50s")
-centered = false
-offset = Vector2(-57, -161)
-metadata/original_tile_id = 12
-metadata/original_cell = Vector2i(0, 13)
-
-[node name="Wall01_06_13" type="Sprite2D" parent="World/WallSprites" unique_id=46689211]
-position = Vector2(-282, 480)
-texture = SubResource("AtlasTexture_u100o")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(6, 13)
-
-[node name="Wall01_10_13" type="Sprite2D" parent="World/WallSprites" unique_id=1174000815]
-position = Vector2(-94, 576)
-texture = SubResource("AtlasTexture_vupkl")
-centered = false
-offset = Vector2(-48, -161)
-metadata/original_tile_id = 1
-metadata/original_cell = Vector2i(10, 13)
-
-[node name="Wall13_14_13" type="Sprite2D" parent="World/WallSprites" unique_id=1075827324]
-position = Vector2(94, 672)
-texture = SubResource("AtlasTexture_caxbj")
-centered = false
-offset = Vector2(-39, -152)
-metadata/original_tile_id = 13
-metadata/original_cell = Vector2i(14, 13)
-
-[node name="Wall18_00_14" type="Sprite2D" parent="World/WallSprites" unique_id=1752467457]
-position = Vector2(-611, 360)
-texture = SubResource("AtlasTexture_23t0e")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 18
-metadata/original_cell = Vector2i(0, 14)
-
-[node name="Wall15_01_14" type="Sprite2D" parent="World/WallSprites" unique_id=1380649539]
-position = Vector2(-564, 384)
-texture = SubResource("AtlasTexture_tdtk2")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(1, 14)
-
-[node name="Wall15_02_14" type="Sprite2D" parent="World/WallSprites" unique_id=1601095780]
-position = Vector2(-517, 408)
-texture = SubResource("AtlasTexture_x8qj5")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(2, 14)
-
-[node name="Wall15_03_14" type="Sprite2D" parent="World/WallSprites" unique_id=1282598477]
-position = Vector2(-470, 432)
-texture = SubResource("AtlasTexture_16hnr")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(3, 14)
-
-[node name="Wall15_04_14" type="Sprite2D" parent="World/WallSprites" unique_id=1896673327]
-position = Vector2(-423, 456)
-texture = SubResource("AtlasTexture_auty1")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(4, 14)
-
-[node name="Wall15_05_14" type="Sprite2D" parent="World/WallSprites" unique_id=1396951567]
-position = Vector2(-376, 480)
-texture = SubResource("AtlasTexture_n2ndw")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(5, 14)
-
-[node name="Wall23_06_14" type="Sprite2D" parent="World/WallSprites" unique_id=1794162579]
-position = Vector2(-329, 504)
-texture = SubResource("AtlasTexture_llcgx")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 23
-metadata/original_cell = Vector2i(6, 14)
-
-[node name="Wall15_07_14" type="Sprite2D" parent="World/WallSprites" unique_id=2071929088]
-position = Vector2(-282, 528)
-texture = SubResource("AtlasTexture_yglak")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(7, 14)
-
-[node name="Wall15_08_14" type="Sprite2D" parent="World/WallSprites" unique_id=242011729]
-position = Vector2(-235, 552)
-texture = SubResource("AtlasTexture_q8nf8")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(8, 14)
-
-[node name="Wall15_09_14" type="Sprite2D" parent="World/WallSprites" unique_id=2075988209]
-position = Vector2(-188, 576)
-texture = SubResource("AtlasTexture_3xk6v")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(9, 14)
-
-[node name="Wall23_10_14" type="Sprite2D" parent="World/WallSprites" unique_id=11796051]
-position = Vector2(-141, 600)
-texture = SubResource("AtlasTexture_fkwda")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 23
-metadata/original_cell = Vector2i(10, 14)
-
-[node name="Wall15_11_14" type="Sprite2D" parent="World/WallSprites" unique_id=969131873]
-position = Vector2(-94, 624)
-texture = SubResource("AtlasTexture_w38ut")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(11, 14)
-
-[node name="Wall15_12_14" type="Sprite2D" parent="World/WallSprites" unique_id=2043737300]
-position = Vector2(-47, 648)
-texture = SubResource("AtlasTexture_lf05b")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(12, 14)
-
-[node name="Wall15_13_14" type="Sprite2D" parent="World/WallSprites" unique_id=1034941090]
-position = Vector2(0, 672)
-texture = SubResource("AtlasTexture_psqx4")
-centered = false
-offset = Vector2(-57, -152)
-metadata/original_tile_id = 15
-metadata/original_cell = Vector2i(13, 14)
-
-[node name="Wall19_14_14" type="Sprite2D" parent="World/WallSprites" unique_id=1130201742]
-position = Vector2(47, 696)
-texture = SubResource("AtlasTexture_apw2n")
-centered = false
-offset = Vector2(-48, -152)
-metadata/original_tile_id = 19
-metadata/original_cell = Vector2i(14, 14)
-
-[node name="GlassTileMapLayer" type="TileMapLayer" parent="World" unique_id=336290537]
-z_index = -4
 tile_set = ExtResource("71")
 
-[node name="Objects" type="Node2D" parent="World" unique_id=1975051021]
+[node name="WallTileMapLayer" type="TileMapLayer" parent="World" unique_id=1691331667]
+z_index = -5
+tile_map_data = PackedByteArray("AAAAAAAAAwAHAAEAAAABAAAAAwAFAAEAAAACAAAAAwAFAAEAAAADAAAAAwAFAAEAAAAEAAAAAwAFAAEAAAAFAAAAAwAFAAIAAAAGAAAAAwAFAAEAAAAHAAAAAwAFAAEAAAAIAAAAAwAFAAEAAAAJAAAAAwAFAAIAAAAKAAAAAwAFAAEAAAALAAAAAwAFAAEAAAAMAAAAAwAFAAEAAAANAAAAAwAFAAEAAAAOAAAAAwAAAAIAAAAAAAEAAwADAAEAAAAFAAEAAwAAAAAAAAAJAAEAAwAAAAAAAAAOAAEAAwAEAAEAAAAAAAIAAwADAAEAAAAFAAIAAwAAAAAAAAAJAAIAAwAAAAAAAAAOAAIAAwAEAAEAAAAAAAMAAwADAAEAAAAFAAMAAwAAAAAAAAAJAAMAAwAAAAAAAAAOAAMAAwAEAAEAAAAAAAQAAwADAAIAAAABAAQAAwABAAAAAAACAAQAAwABAAAAAAAFAAQAAwABAAEAAAAIAAQAAwABAAAAAAAJAAQAAwABAAEAAAAMAAQAAwABAAAAAAANAAQAAwABAAAAAAAOAAQAAwAEAAIAAAAAAAUAAwADAAEAAAAOAAUAAwAEAAEAAAAAAAYAAwADAAEAAAAOAAYAAwAEAAEAAAAAAAcAAwADAAIAAAABAAcAAwABAAAAAAACAAcAAwABAAAAAAAFAAcAAwABAAAAAAAGAAcAAwAAAAEAAAAJAAcAAwABAAAAAAAKAAcAAwADAAAAAAAOAAcAAwAEAAEAAAAAAAgAAwADAAEAAAAGAAgAAwAAAAAAAAAKAAgAAwAAAAAAAAAOAAgAAwAEAAEAAAAAAAkAAwADAAEAAAAGAAkAAwAAAAAAAAAKAAkAAwAAAAAAAAAAAAoAAwADAAEAAAAGAAoAAwAAAAAAAAAKAAoAAwAAAAAAAAAAAAsAAwADAAEAAAAGAAsAAwAAAAAAAAAKAAsAAwAGAAAAAAALAAsAAwABAAAAAAAOAAsAAwAEAAIAAAAAAAwAAwADAAEAAAAGAAwAAwAAAAAAAAAKAAwAAwAAAAAAAAAOAAwAAwAEAAEAAAAAAA0AAwADAAEAAAAGAA0AAwAAAAAAAAAKAA0AAwAAAAAAAAAOAA0AAwAEAAEAAAAAAA4AAwABAAIAAAABAA4AAwAGAAEAAAACAA4AAwAGAAEAAAADAA4AAwAGAAEAAAAEAA4AAwAGAAEAAAAFAA4AAwAGAAEAAAAGAA4AAwAGAAIAAAAHAA4AAwAGAAEAAAAIAA4AAwAGAAEAAAAJAA4AAwAGAAEAAAAKAA4AAwAGAAIAAAALAA4AAwAGAAEAAAAMAA4AAwAGAAEAAAANAA4AAwAGAAEAAAAOAA4AAwACAAIAAAA=")
+tile_set = ExtResource("73")
+script = ExtResource("69")
 
-[node name="Object008Schreibtisch02" type="Node2D" parent="World/Objects" unique_id=1463969250]
-position = Vector2(47, 72)
+[node name="GlassTileMapLayer" type="TileMapLayer" parent="World" unique_id=2095181298]
+z_index = -4
+tile_set = ExtResource("72")
+
+[node name="Objects" type="Node2D" parent="World" unique_id=1492033802]
+
+[node name="Object008Schreibtisch02" parent="World/Objects" unique_id=77871169 instance=ExtResource("54")]
+position = Vector2(48, 72)
 metadata/original_kind = "0x020003d0"
 metadata/original_object_id = "0x020003d0"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "SCHREIBTISCH02"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_000_Schreibtisch02#000"
+metadata/original_tile_position = Vector2(1, 1)
+metadata/original_height = 0.0
+metadata/original_instance_id = 8
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object008Schreibtisch02" unique_id=1726673411]
-texture = ExtResource("58")
-centered = false
-offset = Vector2(-118, -69)
-
-[node name="Object009Drehstuhl01" type="Node2D" parent="World/Objects" unique_id=1775968003]
-position = Vector2(47, 120)
+[node name="Object009Drehstuhl01" parent="World/Objects" unique_id=852109488 instance=ExtResource("43")]
+position = Vector2(48, 120)
 metadata/original_kind = "0x01060440"
 metadata/original_object_id = "0x01060440"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "DREHSTUHL01"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL01_IDLE_000_DREHSTUHL01#000#"
+metadata/original_tile_position = Vector2(2, 2)
+metadata/original_height = 0.0
+metadata/original_instance_id = 9
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object009Drehstuhl01" unique_id=1293702491]
-texture = ExtResource("47")
-centered = false
-offset = Vector2(-25, -70)
-
-[node name="Object010MonitorTastaturFrontal" type="Node2D" parent="World/Objects" unique_id=274511829]
-position = Vector2(-8.812492, 96.999985)
+[node name="Object010MonitorTastaturFrontal" parent="World/Objects" unique_id=1037756650 instance=ExtResource("20")]
+position = Vector2(-9, 96.999985)
 metadata/original_kind = "0x00060980"
 metadata/original_object_id = "0x00060980"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "MONITOR&TASTATUR#FRONTAL"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_000_MonitorFrontal#Idle#000#"
+metadata/original_tile_position = Vector2(0.927083, 2.114583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 10
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object010MonitorTastaturFrontal" unique_id=746845843]
-texture = ExtResource("24")
-centered = false
-offset = Vector2(-21, -89)
-
-[node name="Object011Pctower" type="Node2D" parent="World/Objects" unique_id=1203195147]
-position = Vector2(-47, 120)
+[node name="Object011Pctower" parent="World/Objects" unique_id=395119762 instance=ExtResource("51")]
+position = Vector2(-48, 120)
 metadata/original_kind = "0x00000860"
 metadata/original_object_id = "0x00000860"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "PCTOWER"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_000_PCTower#Idle#000#"
+metadata/original_tile_position = Vector2(1, 3)
+metadata/original_height = 0.0
+metadata/original_instance_id = 11
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object011Pctower" unique_id=1340993988]
-texture = ExtResource("55")
-centered = false
-offset = Vector2(-14, -44)
-
-[node name="Object012Schreibtisch01" type="Node2D" parent="World/Objects" unique_id=200983804]
-position = Vector2(373.0625, 241)
+[node name="Object012Schreibtisch01" parent="World/Objects" unique_id=725239126 instance=ExtResource("53")]
+position = Vector2(381, 241)
 metadata/original_kind = "0x020003c2"
 metadata/original_object_id = "0x020003c0"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "SCHREIBTISCH01"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH01_IDLE_180_Schreibtisch01#180"
+metadata/original_tile_position = Vector2(7.989583, 1.052083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 12
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object012Schreibtisch01" unique_id=950185414]
-texture = ExtResource("57")
-centered = false
-offset = Vector2(-92, -70)
-
-[node name="Object013Drehstuhl03" type="Node2D" parent="World/Objects" unique_id=795470226]
-position = Vector2(317.25, 226)
+[node name="Object013Drehstuhl03" parent="World/Objects" unique_id=1017823004 instance=ExtResource("44")]
+position = Vector2(324, 226)
 metadata/original_kind = "0x01060462"
 metadata/original_object_id = "0x01060460"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "DREHSTUHL03"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL03_IDLE_180_DREHSTUHL03#180#"
+metadata/original_tile_position = Vector2(7.083333, 1.333333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 13
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object013Drehstuhl03" unique_id=1967111433]
-texture = ExtResource("48")
-centered = false
-offset = Vector2(-28, -78)
-
-[node name="Object014MonitorTastaturLinks" type="Node2D" parent="World/Objects" unique_id=601530463]
-position = Vector2(360.33334, 248)
+[node name="Object014MonitorTastaturLinks" parent="World/Objects" unique_id=975049497 instance=ExtResource("21")]
+position = Vector2(368, 248)
 metadata/original_kind = "0x00060992"
 metadata/original_object_id = "0x00060990"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "MONITOR&TASTATUR#LINKS"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#LINKS_IDLE_180_MonitorLinks#Idle#180#"
+metadata/original_tile_position = Vector2(8, 1.333333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 14
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object014MonitorTastaturLinks" unique_id=1954585511]
-texture = ExtResource("25")
-centered = false
-offset = Vector2(-26, -94)
-
-[node name="Object015Toikabine" type="Node2D" parent="World/Objects" unique_id=885741686]
-position = Vector2(502.31247, 304)
+[node name="Object015Toikabine" parent="World/Objects" unique_id=1375116252 instance=ExtResource("29")]
+position = Vector2(513, 304)
 metadata/original_kind = "0x00080ad0"
 metadata/original_object_id = "0x00080ad0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "TOIKABINE"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TOIKABINE_IDLE_000_ToiKabine#IdleGreen#000#"
+metadata/original_tile_position = Vector2(10.677083, 0.989583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 15
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object015Toikabine" unique_id=300172600]
-texture = ExtResource("33")
-centered = false
-offset = Vector2(-75, -134)
-
-[node name="Object016Waschbecken" type="Node2D" parent="World/Objects" unique_id=1766635195]
-position = Vector2(311.375, 320)
+[node name="Object016Waschbecken" parent="World/Objects" unique_id=730587697 instance=ExtResource("30")]
+position = Vector2(318, 320)
 metadata/original_kind = "0x000006e0"
 metadata/original_object_id = "0x000006e0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "WASCHBECKEN"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_WASCHBECKEN_IDLE_000_Waschbecken#Idle#000#"
+metadata/original_tile_position = Vector2(8.979167, 3.354167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 16
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object016Waschbecken" unique_id=236479478]
-texture = ExtResource("34")
-centered = false
-offset = Vector2(-2, -71)
-
-[node name="Object017Spiegel" type="Node2D" parent="World/Objects" unique_id=2082421839]
-position = Vector2(310.3958, 324)
+[node name="Object017Spiegel" parent="World/Objects" unique_id=1391880461 instance=ExtResource("26")]
+position = Vector2(317, 324)
 metadata/original_kind = "0x05090a90"
 metadata/original_object_id = "0x05090a90"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "SPIEGEL"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SPIEGEL_IDLE_000_Spiegel#Idle#000#"
+metadata/original_tile_position = Vector2(9.052083, 3.447917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 17
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object017Spiegel" unique_id=174352988]
-texture = ExtResource("30")
-centered = false
-offset = Vector2(7, -107)
-
-[node name="Object018Seifenspender01" type="Node2D" parent="World/Objects" unique_id=460005247]
-position = Vector2(370.125, 310)
+[node name="Object018Seifenspender01" parent="World/Objects" unique_id=851344925 instance=ExtResource("64")]
+position = Vector2(378, 310)
 metadata/original_kind = "0x000006c1"
 metadata/original_object_id = "0x000006c0"
 metadata/original_object_category = 3
 metadata/original_sprite_name = "SEIFENSPENDER01"
 metadata/original_source_sprite = "CO_OBJECTS_WC_SEIFENSPENDER01_IDLE_090_Seifenspender01#090"
+metadata/original_tile_position = Vector2(9.395833, 2.520833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 18
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object018Seifenspender01" unique_id=1206735342]
-texture = ExtResource("68")
-centered = false
-offset = Vector2(-17, -65)
-
-[node name="Object019Schreibtisch02" type="Node2D" parent="World/Objects" unique_id=1495936263]
-position = Vector2(-278.08334, 333.00003)
+[node name="Object019Schreibtisch02" parent="World/Objects" unique_id=155505042 instance=ExtResource("56")]
+position = Vector2(-284, 333.00003)
 metadata/original_kind = "0x07000782"
 metadata/original_object_id = "0x07000780"
 metadata/original_object_category = 4
 metadata/original_sprite_name = "SCHREIBTISCH02"
 metadata/original_source_sprite = "CO_OBJECTS_CHEF_SCHREIBTISCH02_IDLE_180_ChefSchreibtisch02#180"
+metadata/original_tile_position = Vector2(2.979167, 9.895834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 19
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object019Schreibtisch02" unique_id=429118748]
-texture = ExtResource("60")
-centered = false
-offset = Vector2(-110, -79)
-
-[node name="Object020Jagdtrophae" type="Node2D" parent="World/Objects" unique_id=355019226]
-position = Vector2(-456.29166, 284)
+[node name="Object020Jagdtrophae" parent="World/Objects" unique_id=135787936 instance=ExtResource("55")]
+position = Vector2(-466, 284)
 metadata/original_kind = "0x00090710"
 metadata/original_object_id = "0x00090710"
 metadata/original_object_category = 4
 metadata/original_sprite_name = "JAGDTROPHÄE"
 metadata/original_source_sprite = "CO_OBJECTS_CHEF_JAGDTROPH_E_IDLE_000_ChefJagdTroph_e#000"
+metadata/original_tile_position = Vector2(0.0625, 10.770833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 20
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object020Jagdtrophae" unique_id=715510380]
-texture = ExtResource("59")
-centered = false
-offset = Vector2(-5, -105)
-
-[node name="Object021Fenster01" type="Node2D" parent="World/Objects" unique_id=1010890151]
-position = Vector2(-232.0625, 164)
+[node name="Object021Fenster01" parent="World/Objects" unique_id=956427491 instance=ExtResource("8")]
+position = Vector2(-236.99998, 164)
 metadata/original_kind = "0x05090be0"
 metadata/original_object_id = "0x05090be0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FENSTER01"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FENSTER01_IDLE_000_Fenster01#Idle#000#"
+metadata/original_tile_position = Vector2(-0.052083, 5.885417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 21
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object021Fenster01" unique_id=860310177]
-texture = ExtResource("12")
-centered = false
-offset = Vector2(-31, -150)
-
-[node name="Object022Fenster01" type="Node2D" parent="World/Objects" unique_id=1831811693]
-position = Vector2(-66.5833, 81)
+[node name="Object022Fenster01" parent="World/Objects" unique_id=2011573817 instance=ExtResource("8")]
+position = Vector2(-67.99997, 81)
 metadata/original_kind = "0x05090be0"
 metadata/original_object_id = "0x05090be0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FENSTER01"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FENSTER01_IDLE_000_Fenster01#Idle#000#"
+metadata/original_tile_position = Vector2(-0.020833, 2.395833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 22
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object022Fenster01" unique_id=1022780446]
-texture = ExtResource("12")
-centered = false
-offset = Vector2(-31, -150)
-
-[node name="Object023Fenster02" type="Node2D" parent="World/Objects" unique_id=746500000]
-position = Vector2(-372.0833, 237)
+[node name="Object023Fenster02" parent="World/Objects" unique_id=346273904 instance=ExtResource("9")]
+position = Vector2(-380, 237)
 metadata/original_kind = "0x05090bf0"
 metadata/original_object_id = "0x05090bf0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FENSTER02"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FENSTER02_IDLE_000_Fenster02#Idle#000#"
+metadata/original_tile_position = Vector2(-0.020833, 8.895833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 23
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object023Fenster02" unique_id=1484541180]
-texture = ExtResource("13")
-centered = false
-offset = Vector2(-31, -150)
-
-[node name="Object024Fenster02" type="Node2D" parent="World/Objects" unique_id=1774507359]
-position = Vector2(-554.20825, 330)
+[node name="Object024Fenster02" parent="World/Objects" unique_id=41387120 instance=ExtResource("9")]
+position = Vector2(-566, 330)
 metadata/original_kind = "0x05090bf0"
 metadata/original_object_id = "0x05090bf0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FENSTER02"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FENSTER02_IDLE_000_Fenster02#Idle#000#"
+metadata/original_tile_position = Vector2(-0.020833, 12.770833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 24
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object024Fenster02" unique_id=1465431007]
-texture = ExtResource("13")
-centered = false
-offset = Vector2(-31, -150)
-
-[node name="Object025Fenster03" type="Node2D" parent="World/Objects" unique_id=1206024989]
-position = Vector2(158.625, 81)
+[node name="Object025Fenster03" parent="World/Objects" unique_id=493756916 instance=ExtResource("10")]
+position = Vector2(162, 81)
 metadata/original_kind = "0x05090c01"
 metadata/original_object_id = "0x05090c00"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FENSTER03"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FENSTER03_IDLE_090_Fenster03#Idle#090#"
+metadata/original_tile_position = Vector2(2.375, 0)
+metadata/original_height = 0.0
+metadata/original_instance_id = 25
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object025Fenster03" unique_id=1976928050]
-texture = ExtResource("14")
-centered = false
-offset = Vector2(-82, -151)
-
-[node name="Object026Fenster03" type="Node2D" parent="World/Objects" unique_id=1693130624]
-position = Vector2(390.6875, 198.99998)
+[node name="Object026Fenster03" parent="World/Objects" unique_id=1264131768 instance=ExtResource("10")]
+position = Vector2(399.00003, 198.99998)
 metadata/original_kind = "0x05090c01"
 metadata/original_object_id = "0x05090c00"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FENSTER03"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FENSTER03_IDLE_090_Fenster03#Idle#090#"
+metadata/original_tile_position = Vector2(7.302083, -0.010417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 26
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object026Fenster03" unique_id=1724466706]
-texture = ExtResource("14")
-centered = false
-offset = Vector2(-82, -151)
-
-[node name="Object027Wasserspender" type="Node2D" parent="World/Objects" unique_id=1908508296]
-position = Vector2(374.04172, 432)
+[node name="Object027Wasserspender" parent="World/Objects" unique_id=1126420058 instance=ExtResource("32")]
+position = Vector2(382, 432)
 metadata/original_kind = "0x08051071"
 metadata/original_object_id = "0x08051070"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "WASSERSPENDER"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_WASSERSPENDER_IDLE_090_Wasserspender#Idle#090#"
+metadata/original_tile_position = Vector2(11.979167, 5.020833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 27
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object027Wasserspender" unique_id=1805496594]
-texture = ExtResource("36")
-centered = false
-offset = Vector2(-33, -105)
-
-[node name="Object028Kuchenschrank01" type="Node2D" parent="World/Objects" unique_id=1488406128]
-position = Vector2(-176.25, 474)
+[node name="Object028Kuchenschrank01" parent="World/Objects" unique_id=58693986 instance=ExtResource("61")]
+position = Vector2(-180, 474)
 metadata/original_kind = "0x070005a0"
 metadata/original_object_id = "0x070005a0"
 metadata/original_object_category = 2
 metadata/original_sprite_name = "KÜCHENSCHRANK01"
 metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSCHRANK01_IDLE_000_K_chenschrank01#000"
+metadata/original_tile_position = Vector2(7, 11.75)
+metadata/original_height = 0.0
+metadata/original_instance_id = 28
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object028Kuchenschrank01" unique_id=1986235026]
-texture = ExtResource("65")
-centered = false
-offset = Vector2(-46, -69)
-
-[node name="Object029Server" type="Node2D" parent="World/Objects" unique_id=1345036079]
-position = Vector2(-56.791626, 599)
+[node name="Object029Server" parent="World/Objects" unique_id=1646586780 instance=ExtResource("25")]
+position = Vector2(-58, 599)
 metadata/original_kind = "0x00020f80"
 metadata/original_object_id = "0x00020f80"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "SERVER"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SERVER_IDLE_000_Server#Idle#000#"
+metadata/original_tile_position = Vector2(10.875, 13.083333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 29
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object029Server" unique_id=1326240406]
-texture = ExtResource("29")
-centered = false
-offset = Vector2(-25, -103)
-
-[node name="Object030Flasche" type="Node2D" parent="World/Objects" unique_id=547088619]
-position = Vector2(-33.29165, 106.99999)
+[node name="Object030Flasche" parent="World/Objects" unique_id=1336458789 instance=ExtResource("12")]
+position = Vector2(-33.999985, 106.99999)
 metadata/original_kind = "0x00000060"
 metadata/original_object_id = "0x00000060"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FLASCHE"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FLASCHE_IDLE_000_Flasche#000"
+metadata/original_tile_position = Vector2(0.875, 2.583333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 30
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object030Flasche" unique_id=1176070882]
-texture = ExtResource("16")
-centered = false
-offset = Vector2(-3, -70)
-
-[node name="Object031Pappaufsteller01" type="Node2D" parent="World/Objects" unique_id=74855263]
-position = Vector2(133.16666, 514)
+[node name="Object031Pappaufsteller01" parent="World/Objects" unique_id=959009252 instance=ExtResource("23")]
+position = Vector2(136, 514)
 metadata/original_kind = "0x050900d0"
 metadata/original_object_id = "0x050900d0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "PAPPAUFSTELLER01"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPPAUFSTELLER01_IDLE_000_Pappaufsteller01#Idle#000#"
+metadata/original_tile_position = Vector2(11.125, 9.291667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 31
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object031Pappaufsteller01" unique_id=871431456]
-texture = ExtResource("27")
-centered = false
-offset = Vector2(-21, -57)
-
-[node name="Object032Handtuchspender" type="Node2D" parent="World/Objects" unique_id=538958623]
-position = Vector2(371.1042, 294)
+[node name="Object032Handtuchspender" parent="World/Objects" unique_id=1968629100 instance=ExtResource("14")]
+position = Vector2(379, 294)
 metadata/original_kind = "0x00000660"
 metadata/original_object_id = "0x00000660"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "HANDTUCHSPENDER"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_HANDTUCHSPENDER_IDLE_000_Handtuchspender#Idle#000#"
+metadata/original_tile_position = Vector2(9.072917, 2.177083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 32
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object032Handtuchspender" unique_id=817333736]
-texture = ExtResource("18")
-centered = false
-offset = Vector2(3, -72)
-
-[node name="Object033Papierkorb01" type="Node2D" parent="World/Objects" unique_id=530678028]
-position = Vector2(-214.4375, 316)
+[node name="Object033Papierkorb01" parent="World/Objects" unique_id=820877660 instance=ExtResource("22")]
+position = Vector2(-219.00002, 316)
 metadata/original_kind = "0x00000800"
 metadata/original_object_id = "0x00000800"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "PAPIERKORB01"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPIERKORB01_IDLE_000_Papierkorb01#000"
+metadata/original_tile_position = Vector2(3.302083, 8.864583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 33
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object033Papierkorb01" unique_id=868005455]
-texture = ExtResource("26")
-centered = false
-offset = Vector2(-10, -27)
-
-[node name="Object034Aktenablage" type="Node2D" parent="World/Objects" unique_id=506047271]
-position = Vector2(329.97916, 275)
+[node name="Object034Aktenablage" parent="World/Objects" unique_id=1018734731 instance=ExtResource("1")]
+position = Vector2(337, 275)
 metadata/original_kind = "0x00000822"
 metadata/original_object_id = "0x00000820"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "AKTENABLAGE"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_AKTENABLAGE_IDLE_180_Aktenablage#Idle#180"
+metadata/original_tile_position = Vector2(8.239583, 2.21875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 34
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object034Aktenablage" unique_id=1899375310]
-texture = ExtResource("5")
-centered = false
-offset = Vector2(-16, -69)
-
-[node name="Object035Brief" type="Node2D" parent="World/Objects" unique_id=1025623766]
-position = Vector2(-235, 336)
+[node name="Object035Brief" parent="World/Objects" unique_id=906194941 instance=ExtResource("3")]
+position = Vector2(-240, 336)
 metadata/original_kind = "0x00000831"
 metadata/original_object_id = "0x00000830"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "BRIEF"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_BRIEF_IDLE_090_Brief#075#"
+metadata/original_tile_position = Vector2(3.5, 9.5)
+metadata/original_height = 0.0
+metadata/original_instance_id = 35
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object035Brief" unique_id=2011974995]
-texture = ExtResource("7")
-centered = false
-offset = Vector2(-13, -56)
-
-[node name="Object036Colamat" type="Node2D" parent="World/Objects" unique_id=929589233]
-position = Vector2(85.18753, 536)
+[node name="Object036Colamat" parent="World/Objects" unique_id=1029475378 instance=ExtResource("4")]
+position = Vector2(87, 536)
 metadata/original_kind = "0x070508c0"
 metadata/original_object_id = "0x070508c0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "COLAMAT"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_COLAMAT_IDLE_000_Colamat#Idle#000#"
+metadata/original_tile_position = Vector2(11.072917, 10.260417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 36
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object036Colamat" unique_id=578109830]
-texture = ExtResource("8")
-centered = false
-offset = Vector2(-35, -112)
-
-[node name="Object037Disketten" type="Node2D" parent="World/Objects" unique_id=1906982410]
-position = Vector2(98.89584, 106.99999)
+[node name="Object037Disketten" parent="World/Objects" unique_id=2076806233 instance=ExtResource("6")]
+position = Vector2(101.000015, 106.99999)
 metadata/original_kind = "0x000008e0"
 metadata/original_object_id = "0x000008e0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "DISKETTEN"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_DISKETTEN_IDLE_000_Disketten#Idle#000#"
+metadata/original_tile_position = Vector2(2.28125, 1.177083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 37
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object037Disketten" unique_id=1155134479]
-texture = ExtResource("10")
-centered = false
-offset = Vector2(-17, -60)
-
-[node name="Object038Drucker01" type="Node2D" parent="World/Objects" unique_id=1151467033]
-position = Vector2(48.958347, 85.99999)
+[node name="Object038Drucker01" parent="World/Objects" unique_id=1232241494 instance=ExtResource("7")]
+position = Vector2(50.000015, 85.99999)
 metadata/original_kind = "0x000208f0"
 metadata/original_object_id = "0x000208f0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "DRUCKER01"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_DRUCKER01_IDLE_000_Drucker01#Idle#000#"
+metadata/original_tile_position = Vector2(1.3125, 1.270833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 38
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object038Drucker01" unique_id=1885388845]
-texture = ExtResource("11")
-centered = false
-offset = Vector2(-16, -67)
-
-[node name="Object039Feuerzeug" type="Node2D" parent="World/Objects" unique_id=962951013]
-position = Vector2(-240.875, 318)
+[node name="Object039Feuerzeug" parent="World/Objects" unique_id=2117430583 instance=ExtResource("11")]
+position = Vector2(-246, 318)
 metadata/original_kind = "0x00000910"
 metadata/original_object_id = "0x00000910"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FEUERZEUG"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FEUERZEUG_IDLE_000_Feuerzeug#000#"
+metadata/original_tile_position = Vector2(3.0625, 9.1875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 39
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object039Feuerzeug" unique_id=378048742]
-texture = ExtResource("15")
-centered = false
-offset = Vector2(-4, -54)
-
-[node name="Object040Kleber" type="Node2D" parent="World/Objects" unique_id=1975182262]
-position = Vector2(91.0625, 89.000015)
+[node name="Object040Kleber" parent="World/Objects" unique_id=901217231 instance=ExtResource("19")]
+position = Vector2(93, 89.000015)
 metadata/original_kind = "0x00000940"
 metadata/original_object_id = "0x00000940"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "KLEBER"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_KLEBER_IDLE_000_Kleber#Idle#135#"
+metadata/original_tile_position = Vector2(1.822917, 0.885417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 40
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object040Kleber" unique_id=1600544227]
-texture = ExtResource("23")
-centered = false
-offset = Vector2(-2, -66)
-
-[node name="Object041MonitorTastaturLinks" type="Node2D" parent="World/Objects" unique_id=1196638303]
-position = Vector2(-306.47916, 352)
+[node name="Object041MonitorTastaturLinks" parent="World/Objects" unique_id=1851113071 instance=ExtResource("21")]
+position = Vector2(-313, 352)
 metadata/original_kind = "0x00060992"
 metadata/original_object_id = "0x00060990"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "MONITOR&TASTATUR#LINKS"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#LINKS_IDLE_180_MonitorLinks#Idle#180#"
+metadata/original_tile_position = Vector2(3.072917, 10.59375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 41
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object041MonitorTastaturLinks" unique_id=2002062128]
-texture = ExtResource("25")
-centered = false
-offset = Vector2(-26, -94)
-
-[node name="Object042Poster01" type="Node2D" parent="World/Objects" unique_id=1074880228]
-position = Vector2(-60.708344, 173)
+[node name="Object042Poster01" parent="World/Objects" unique_id=28279628 instance=ExtResource("24")]
+position = Vector2(-62.000015, 173)
 metadata/original_kind = "0x05090a11"
 metadata/original_object_id = "0x05090a10"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "POSTER01"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_POSTER01_IDLE_090_Poster01#Idle#090#"
+metadata/original_tile_position = Vector2(1.958333, 4.25)
+metadata/original_height = 0.0
+metadata/original_instance_id = 42
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object042Poster01" unique_id=368752152]
-texture = ExtResource("28")
-centered = false
-offset = Vector2(-39, -106)
-
-[node name="Object043Stifthalter01" type="Node2D" parent="World/Objects" unique_id=353651819]
-position = Vector2(-311.375, 372)
+[node name="Object043Stifthalter01" parent="World/Objects" unique_id=1359560146 instance=ExtResource("28")]
+position = Vector2(-318, 372)
 metadata/original_kind = "0x00000ab0"
 metadata/original_object_id = "0x00000ab0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "STIFTHALTER01"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_STIFTHALTER01_IDLE_000_Stifthalter01#Idle#000#"
+metadata/original_tile_position = Vector2(3.4375, 11.0625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 43
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object043Stifthalter01" unique_id=1732864092]
-texture = ExtResource("32")
-centered = false
-offset = Vector2(-4, -68)
-
-[node name="Object044Wasserkocher" type="Node2D" parent="World/Objects" unique_id=1794293731]
-position = Vector2(-105.75, 444)
+[node name="Object044Wasserkocher" parent="World/Objects" unique_id=606871403 instance=ExtResource("31")]
+position = Vector2(-108, 444)
 metadata/original_kind = "0x00050af0"
 metadata/original_object_id = "0x00050af0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "WASSERKOCHER"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_WASSERKOCHER_IDLE_000_Wasserkocher#Idle#000#"
+metadata/original_tile_position = Vector2(7.125, 10.375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 44
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object044Wasserkocher" unique_id=344475833]
-texture = ExtResource("35")
-centered = false
-offset = Vector2(-6, -69)
-
-[node name="Object045Zigaretten" type="Node2D" parent="World/Objects" unique_id=1931422277]
-position = Vector2(-24.479156, 124.99999)
+[node name="Object045Zigaretten" parent="World/Objects" unique_id=478530445 instance=ExtResource("33")]
+position = Vector2(-24.999985, 124.99999)
 metadata/original_kind = "0x00000b00"
 metadata/original_object_id = "0x00000b00"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "ZIGARETTEN"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_ZIGARETTEN_IDLE_000_Zigaretten#Idle#000#"
+metadata/original_tile_position = Vector2(1.34375, 2.864583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 45
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object045Zigaretten" unique_id=1204647533]
-texture = ExtResource("37")
-centered = false
-offset = Vector2(-5, -56)
-
-[node name="Object046Confidential" type="Node2D" parent="World/Objects" unique_id=1678672385]
-position = Vector2(-356.4167, 359)
+[node name="Object046Confidential" parent="World/Objects" unique_id=422442660 instance=ExtResource("5")]
+position = Vector2(-364, 359)
 metadata/original_kind = "0x00000ec0"
 metadata/original_object_id = "0x00000ec0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "CONFIDENTIAL"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_CONFIDENTIAL_IDLE_000_Confidential#Idle#000#"
+metadata/original_tile_position = Vector2(2.6875, 11.270834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 46
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object046Confidential" unique_id=1865182555]
-texture = ExtResource("9")
-centered = false
-offset = Vector2(-14, -63)
-
-[node name="Object047Handy" type="Node2D" parent="World/Objects" unique_id=1771783149]
-position = Vector2(-364.25003, 374)
+[node name="Object047Handy" parent="World/Objects" unique_id=157761905 instance=ExtResource("15")]
+position = Vector2(-372, 374)
 metadata/original_kind = "0x04020f10"
 metadata/original_object_id = "0x04020f10"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "HANDY"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_HANDY_IDLE_000_Handy#Idle#000#"
+metadata/original_tile_position = Vector2(2.916667, 11.666667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 47
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object047Handy" unique_id=1594498793]
-texture = ExtResource("19")
-centered = false
-offset = Vector2(-9, -57)
-
-[node name="Object048Kaffeemaschi" type="Node2D" parent="World/Objects" unique_id=1658698807]
-position = Vector2(-215.41663, 491)
+[node name="Object048Kaffeemaschi" parent="World/Objects" unique_id=1045753923 instance=ExtResource("17")]
+position = Vector2(-220, 491)
 metadata/original_kind = "0x00050f23"
 metadata/original_object_id = "0x00050f20"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "KAFFEEMASCHI"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_KAFFEEMASCHI_IDLE_270_Kaffeemaschi#Idle#270#"
+metadata/original_tile_position = Vector2(6.9375, 12.520833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 48
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object048Kaffeemaschi" unique_id=747793436]
-texture = ExtResource("21")
-centered = false
-offset = Vector2(6, -83)
-
-[node name="Object049Ketchup" type="Node2D" parent="World/Objects" unique_id=796571991]
-position = Vector2(-123.375, 462)
+[node name="Object049Ketchup" parent="World/Objects" unique_id=652167243 instance=ExtResource("18")]
+position = Vector2(-126, 462)
 metadata/original_kind = "0x00000f30"
 metadata/original_object_id = "0x00000f30"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "KETCHUP"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_KETCHUP_IDLE_000_Ketchup#Idle#000#"
+metadata/original_tile_position = Vector2(7.3125, 10.9375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 49
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object049Ketchup" unique_id=546307496]
-texture = ExtResource("22")
-centered = false
-offset = Vector2(-3, -74)
-
-[node name="Object050Flipchart" type="Node2D" parent="World/Objects" unique_id=1150903602]
-position = Vector2(-207.58334, 259)
+[node name="Object050Flipchart" parent="World/Objects" unique_id=431531225 instance=ExtResource("13")]
+position = Vector2(-212, 259)
 metadata/original_kind = "0x05020f01"
 metadata/original_object_id = "0x05020f00"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "FLIPCHART"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FLIPCHART_IDLE_090_Flipchart#Idle#090#"
+metadata/original_tile_position = Vector2(2.1875, 7.604167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 50
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object050Flipchart" unique_id=876218068]
-texture = ExtResource("17")
-centered = false
-offset = Vector2(-32, -96)
-
-[node name="Object051Komode03" type="Node2D" parent="World/Objects" unique_id=1527260937]
-position = Vector2(-270.25, 226)
+[node name="Object051Komode03" parent="World/Objects" unique_id=1416184653 instance=ExtResource("45")]
+position = Vector2(-276, 226)
 metadata/original_kind = "0x070002f1"
 metadata/original_object_id = "0x070002f0"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "KOMODE03"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE03_IDLE_090_Komode03#090"
+metadata/original_tile_position = Vector2(0.833333, 7.583333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 51
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object051Komode03" unique_id=751876483]
-texture = ExtResource("49")
-centered = false
-offset = Vector2(-31, -61)
-
-[node name="Object052Regal02" type="Node2D" parent="World/Objects" unique_id=824040314]
-position = Vector2(-153.72919, 404)
+[node name="Object052Regal02" parent="World/Objects" unique_id=1671231777 instance=ExtResource("52")]
+position = Vector2(-157.00003, 404)
 metadata/original_kind = "0x07000380"
 metadata/original_object_id = "0x07000380"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "REGAL02"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_REGAL02_IDLE_000_Regal02#000"
+metadata/original_tile_position = Vector2(5.78125, 10.052084)
+metadata/original_height = 0.0
+metadata/original_instance_id = 52
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object052Regal02" unique_id=442806004]
-texture = ExtResource("56")
-centered = false
-offset = Vector2(-35, -101)
-
-[node name="Object053Kuhlschrank" type="Node2D" parent="World/Objects" unique_id=1793801280]
-position = Vector2(-68.54169, 417)
+[node name="Object053Kuhlschrank" parent="World/Objects" unique_id=1378225481 instance=ExtResource("16")]
+position = Vector2(-70, 417)
 metadata/original_kind = "0x08040960"
 metadata/original_object_id = "0x08040960"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "KÜHLSCHRANK"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_K_HLSCHRANK_IDLE_000_K_hlschrank#Idle#000#"
+metadata/original_tile_position = Vector2(6.958333, 9.416667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 53
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object053Kuhlschrank" unique_id=1400520790]
-texture = ExtResource("20")
-centered = false
-offset = Vector2(-31, -113)
-
-[node name="Object054Bucher01" type="Node2D" parent="World/Objects" unique_id=1011867419]
-position = Vector2(-262.4167, 234)
+[node name="Object054Bucher01" parent="World/Objects" unique_id=1382185660 instance=ExtResource("34")]
+position = Vector2(-268, 234)
 metadata/original_kind = "0x00000011"
 metadata/original_object_id = "0x00000010"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "BÜCHER01"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_B_CHER01_IDLE_090_B_cher01#090"
+metadata/original_tile_position = Vector2(1.083333, 7.666667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 54
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object054Bucher01" unique_id=258670830]
-texture = ExtResource("38")
-centered = false
-offset = Vector2(-13, -69)
-
-[node name="Object055Heizkorper" type="Node2D" parent="World/Objects" unique_id=124378949]
-position = Vector2(241.85419, 129)
+[node name="Object055Heizkorper" parent="World/Objects" unique_id=691298552 instance=ExtResource("37")]
+position = Vector2(247.00003, 129)
 metadata/original_kind = "0x090000a1"
 metadata/original_object_id = "0x090000a0"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "HEIZKÖRPER"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_090_Heizk_rper#090"
+metadata/original_tile_position = Vector2(4.260417, 0.114583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 55
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object055Heizkorper" unique_id=169932994]
-texture = ExtResource("41")
-centered = false
-offset = Vector2(-52, -58)
-
-[node name="Object056Heizkorper" type="Node2D" parent="World/Objects" unique_id=1279974354]
-position = Vector2(138.0625, 224)
+[node name="Object056Heizkorper" parent="World/Objects" unique_id=1764252585 instance=ExtResource("36")]
+position = Vector2(140.99998, 224)
 metadata/original_kind = "0x090000a0"
 metadata/original_object_id = "0x090000a0"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "HEIZKÖRPER"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_000_Heizk_rper#000"
+metadata/original_tile_position = Vector2(5.135417, 3.197917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 56
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object056Heizkorper" unique_id=566141667]
-texture = ExtResource("40")
-centered = false
-offset = Vector2(-6, -58)
-
-[node name="Object057Heizkorper" type="Node2D" parent="World/Objects" unique_id=209303168]
-position = Vector2(-321.16672, 474)
+[node name="Object057Heizkorper" parent="World/Objects" unique_id=1719179328 instance=ExtResource("37")]
+position = Vector2(-328, 474)
 metadata/original_kind = "0x090000a1"
 metadata/original_object_id = "0x090000a0"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "HEIZKÖRPER"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_090_Heizk_rper#090"
+metadata/original_tile_position = Vector2(5.458333, 13.291667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 57
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object057Heizkorper" unique_id=761457321]
-texture = ExtResource("41")
-centered = false
-offset = Vector2(-52, -58)
-
-[node name="Object058Kleiderstaender02" type="Node2D" parent="World/Objects" unique_id=177100773]
-position = Vector2(-48.958344, 350)
+[node name="Object058Kleiderstaender02" parent="World/Objects" unique_id=1239088078 instance=ExtResource("38")]
+position = Vector2(-50, 350)
 metadata/original_kind = "0x0a0000c0"
 metadata/original_object_id = "0x0a0000c0"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "KLEIDERSTAENDER02"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_KLEIDERSTAENDER02_IDLE_000_Kleiderst_nder02#Idle#000#"
+metadata/original_tile_position = Vector2(5.770833, 7.8125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 58
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object058Kleiderstaender02" unique_id=1996530213]
-texture = ExtResource("42")
-centered = false
-offset = Vector2(-17, -80)
-
-[node name="Object059VentiGross" type="Node2D" parent="World/Objects" unique_id=1508709505]
-position = Vector2(285.91666, 163.00002)
+[node name="Object059VentiGross" parent="World/Objects" unique_id=1345373778 instance=ExtResource("41")]
+position = Vector2(291.99997, 163.00002)
 metadata/original_kind = "0x000002a1"
 metadata/original_object_id = "0x000002a0"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "VENTI#GROSS"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_VENTI#GROSS_IDLE_090_VentiGross#090"
+metadata/original_tile_position = Vector2(5.4375, 0.354167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 59
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object059VentiGross" unique_id=2022537808]
-texture = ExtResource("45")
-centered = false
-offset = Vector2(-20, -87)
-
-[node name="Object060Sofa01" type="Node2D" parent="World/Objects" unique_id=2009526146]
-position = Vector2(379.91663, 488)
+[node name="Object060Sofa01" parent="World/Objects" unique_id=1889968885 instance=ExtResource("40")]
+position = Vector2(388, 488)
 metadata/original_kind = "0x01070b62"
 metadata/original_object_id = "0x01070b60"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "SOFA01"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SOFA01_IDLE_180_Sofa01#Idle#180#"
+metadata/original_tile_position = Vector2(13.208333, 6.125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 60
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object060Sofa01" unique_id=258541672]
-texture = ExtResource("44")
-centered = false
-offset = Vector2(-85, -60)
-
-[node name="Object061Standascher02" type="Node2D" parent="World/Objects" unique_id=662814830]
-position = Vector2(403.41672, 456)
+[node name="Object061Standascher02" parent="World/Objects" unique_id=1045455980 instance=ExtResource("42")]
+position = Vector2(412, 456)
 metadata/original_kind = "0x00010ea0"
 metadata/original_object_id = "0x00010ea0"
 metadata/original_object_category = 6
 metadata/original_sprite_name = "STANDASCHER02"
 metadata/original_source_sprite = "CO_OBJECTS_AUFENTHALT_STANDASCHER02_IDLE_000_Standaschenbecher02#Idle#000#"
+metadata/original_tile_position = Vector2(12.791667, 5.208333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 61
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object061Standascher02" unique_id=397949460]
-texture = ExtResource("46")
-centered = false
-offset = Vector2(-7, -44)
-
-[node name="Object062Aushang" type="Node2D" parent="World/Objects" unique_id=503674319]
-position = Vector2(102.8125, 246)
+[node name="Object062Aushang" parent="World/Objects" unique_id=327421446 instance=ExtResource("2")]
+position = Vector2(105, 246)
 metadata/original_kind = "0x000907d1"
 metadata/original_object_id = "0x000907d0"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "AUSHANG"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_AUSHANG_IDLE_090_Aushang#Idle#090#"
+metadata/original_tile_position = Vector2(5.21875, 4.03125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 62
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object062Aushang" unique_id=796364002]
-texture = ExtResource("6")
-centered = false
-offset = Vector2(-27, -101)
-
-[node name="Object063Pflanzegross03" type="Node2D" parent="World/Objects" unique_id=1623210854]
-position = Vector2(-144.91666, 154)
+[node name="Object063Pflanzegross03" parent="World/Objects" unique_id=1999461878 instance=ExtResource("39")]
+position = Vector2(-147.99998, 154)
 metadata/original_kind = "0x03090130"
 metadata/original_object_id = "0x03090130"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "PFLANZEGROSS03"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEGROSS03_IDLE_000_PFLANZEGROSS03#Idle#000#"
+metadata/original_tile_position = Vector2(0.666667, 4.75)
+metadata/original_height = 0.0
+metadata/original_instance_id = 63
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object063Pflanzegross03" unique_id=1297419780]
-texture = ExtResource("43")
-centered = false
-offset = Vector2(-26, -121)
-
-[node name="Object064Poster01" type="Node2D" parent="World/Objects" unique_id=840641993]
-position = Vector2(640.375, 327)
+[node name="Object064Poster01" parent="World/Objects" unique_id=725000589 instance=ExtResource("24")]
+position = Vector2(654, 327)
 metadata/original_kind = "0x05090a11"
 metadata/original_object_id = "0x05090a10"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "POSTER01"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_POSTER01_IDLE_090_Poster01#Idle#090#"
+metadata/original_tile_position = Vector2(12.625, 0)
+metadata/original_height = 0.0
+metadata/original_instance_id = 64
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object064Poster01" unique_id=276681158]
-texture = ExtResource("28")
-centered = false
-offset = Vector2(-39, -106)
-
-[node name="Object065Papier03" type="Node2D" parent="World/Objects" unique_id=1551073984]
-position = Vector2(86.16666, 94.99999)
+[node name="Object065Papier03" parent="World/Objects" unique_id=1209975896 instance=ExtResource("48")]
+position = Vector2(87.999985, 94.99999)
 metadata/original_kind = "0x04000330"
 metadata/original_object_id = "0x04000330"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "PAPIER03"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_PAPIER03_IDLE_000_Papier03#000"
+metadata/original_tile_position = Vector2(1.895833, 1.0625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 65
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object065Papier03" unique_id=1718794780]
-texture = ExtResource("52")
-centered = false
-offset = Vector2(-18, -65)
-
-[node name="Object066Papier02" type="Node2D" parent="World/Objects" unique_id=1569000022]
-position = Vector2(66.58334, 97.00001)
+[node name="Object066Papier02" parent="World/Objects" unique_id=1446928460 instance=ExtResource("47")]
+position = Vector2(68.000015, 97.00001)
 metadata/original_kind = "0x04000321"
 metadata/original_object_id = "0x04000320"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "PAPIER02"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_PAPIER02_IDLE_090_Papier02#045"
+metadata/original_tile_position = Vector2(1.729167, 1.3125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 66
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object066Papier02" unique_id=1742684331]
-texture = ExtResource("51")
-centered = false
-offset = Vector2(-12, -61)
-
-[node name="Object067Papier03" type="Node2D" parent="World/Objects" unique_id=298539097]
-position = Vector2(353.47916, 269)
+[node name="Object067Papier03" parent="World/Objects" unique_id=340449210 instance=ExtResource("49")]
+position = Vector2(361, 269)
 metadata/original_kind = "0x04000331"
 metadata/original_object_id = "0x04000330"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "PAPIER03"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_PAPIER03_IDLE_090_Papier03#090"
+metadata/original_tile_position = Vector2(8.364583, 1.84375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 67
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object067Papier03" unique_id=1708792927]
-texture = ExtResource("53")
-centered = false
-offset = Vector2(-15, -67)
-
-[node name="Object068Papier01" type="Node2D" parent="World/Objects" unique_id=1341433923]
-position = Vector2(-259.47916, 331)
+[node name="Object068Papier01" parent="World/Objects" unique_id=35966710 instance=ExtResource("46")]
+position = Vector2(-265, 331)
 metadata/original_kind = "0x04000312"
 metadata/original_object_id = "0x04000310"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "PAPIER01"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_PAPIER01_IDLE_180_Papier01#090"
+metadata/original_tile_position = Vector2(3.135417, 9.65625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 68
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object068Papier01" unique_id=1891499327]
-texture = ExtResource("50")
-centered = false
-offset = Vector2(-15, -59)
-
-[node name="Object069Heizkorper" type="Node2D" parent="World/Objects" unique_id=1310353547]
-position = Vector2(-565.9583, 345)
+[node name="Object069Heizkorper" parent="World/Objects" unique_id=610118322 instance=ExtResource("36")]
+position = Vector2(-578, 345)
 metadata/original_kind = "0x090000a0"
 metadata/original_object_id = "0x090000a0"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "HEIZKÖRPER"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_000_Heizk_rper#000"
+metadata/original_tile_position = Vector2(0.166667, 13.208334)
+metadata/original_height = 0.0
+metadata/original_instance_id = 69
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object069Heizkorper" unique_id=1253366551]
-texture = ExtResource("40")
-centered = false
-offset = Vector2(-6, -58)
-
-[node name="Object070Papier05" type="Node2D" parent="World/Objects" unique_id=516868651]
-position = Vector2(323.125, 261)
+[node name="Object070Papier05" parent="World/Objects" unique_id=1679695683 instance=ExtResource("50")]
+position = Vector2(330, 261)
 metadata/original_kind = "0x04000350"
 metadata/original_object_id = "0x04000350"
 metadata/original_object_category = 1
 metadata/original_sprite_name = "PAPIER05"
 metadata/original_source_sprite = "CO_OBJECTS_B_RO_PAPIER05_IDLE_000_Papier05#000"
+metadata/original_tile_position = Vector2(7.875, 2)
+metadata/original_height = 0.0
+metadata/original_instance_id = 70
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object070Papier05" unique_id=936063271]
-texture = ExtResource("54")
-centered = false
-offset = Vector2(-12, -61)
-
-[node name="Object071Spuele" type="Node2D" parent="World/Objects" unique_id=829444483]
-position = Vector2(-251.64584, 512)
+[node name="Object071Spuele" parent="World/Objects" unique_id=1790170451 instance=ExtResource("27")]
+position = Vector2(-257, 512)
 metadata/original_kind = "0x07040c50"
 metadata/original_object_id = "0x07040c50"
 metadata/original_object_category = 5
 metadata/original_sprite_name = "SPUELE"
 metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SPUELE_IDLE_000_Sp_le#Idle#000#"
+metadata/original_tile_position = Vector2(6.989583, 13.34375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 71
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object071Spuele" unique_id=1177114142]
-texture = ExtResource("31")
-centered = false
-offset = Vector2(-34, -81)
-
-[node name="Object072Kiste02" type="Node2D" parent="World/Objects" unique_id=844386645]
-position = Vector2(-18.604248, 570)
+[node name="Object072Kiste02" parent="World/Objects" unique_id=1306116491 instance=ExtResource("58")]
+position = Vector2(-19, 570)
 metadata/original_kind = "0x00000d52"
 metadata/original_object_id = "0x00000d50"
 metadata/original_object_category = 8
 metadata/original_sprite_name = "KISTE02"
 metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_KISTE02_IDLE_180_Kiste02#Idle#110#"
+metadata/original_tile_position = Vector2(10.677083, 12.072917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 72
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object072Kiste02" unique_id=704649311]
-texture = ExtResource("62")
-centered = false
-offset = Vector2(-18, -32)
-
-[node name="Object073Eingang" type="Node2D" parent="World/Objects" unique_id=327157097]
-position = Vector2(235, 603)
+[node name="Object073Eingang" parent="World/Objects" unique_id=895739144 instance=ExtResource("35")]
+position = Vector2(240, 603)
 metadata/original_kind = "0x000010f0"
 metadata/original_object_id = "0x000010f0"
 metadata/original_object_category = 0
 metadata/original_sprite_name = "EINGANG"
 metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_EINGANG_IDLE_000_Eingang01#Idle#000#"
+metadata/original_tile_position = Vector2(14.0625, 10.0625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 73
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object073Eingang" unique_id=1645381234]
-texture = ExtResource("39")
-centered = false
-offset = Vector2(-27, -155)
-
-[node name="Object074Geschirrdreckig" type="Node2D" parent="World/Objects" unique_id=701662014]
-position = Vector2(-164.50003, 473)
+[node name="Object074Geschirrdreckig" parent="World/Objects" unique_id=2125275541 instance=ExtResource("59")]
+position = Vector2(-168, 473)
 metadata/original_kind = "0x00000531"
 metadata/original_object_id = "0x00000530"
 metadata/original_object_category = 2
 metadata/original_sprite_name = "GESCHIRRDRECKIG"
 metadata/original_source_sprite = "CO_OBJECTS_K_CHE_GESCHIRRDRECKIG_IDLE_090_GeschirrDreckig#090"
+metadata/original_tile_position = Vector2(7.104167, 11.604167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 74
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object074Geschirrdreckig" unique_id=173758213]
-texture = ExtResource("63")
-centered = false
-offset = Vector2(-10, -63)
-
-[node name="Object075Kaffeedose" type="Node2D" parent="World/Objects" unique_id=57593111]
-position = Vector2(-166.45837, 487)
+[node name="Object075Kaffeedose" parent="World/Objects" unique_id=1904533047 instance=ExtResource("63")]
+position = Vector2(-170, 487)
 metadata/original_kind = "0x00000570"
 metadata/original_object_id = "0x00000570"
 metadata/original_object_category = 2
 metadata/original_sprite_name = "KAFFEEDOSE"
 metadata/original_source_sprite = "CO_OBJECTS_K_CHE_KAFFEEDOSE_IDLE_000_Kaffeedose#000"
+metadata/original_tile_position = Vector2(7.375, 11.916667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 75
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object075Kaffeedose" unique_id=412149786]
-texture = ExtResource("67")
-centered = false
-offset = Vector2(-5, -73)
-
-[node name="Object076Geschirrteller" type="Node2D" parent="World/Objects" unique_id=1471676730]
-position = Vector2(-154.70837, 466)
+[node name="Object076Geschirrteller" parent="World/Objects" unique_id=1975087829 instance=ExtResource("60")]
+position = Vector2(-158, 466)
 metadata/original_kind = "0x00000550"
 metadata/original_object_id = "0x00000550"
 metadata/original_object_category = 2
 metadata/original_sprite_name = "GESCHIRRTELLER"
 metadata/original_source_sprite = "CO_OBJECTS_K_CHE_GESCHIRRTELLER_IDLE_000_GeschirrTeller#000"
+metadata/original_tile_position = Vector2(7.0625, 11.354167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 76
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object076Geschirrteller" unique_id=967515771]
-texture = ExtResource("64")
-centered = false
-offset = Vector2(-7, -55)
-
-[node name="Object077Sessel01" type="Node2D" parent="World/Objects" unique_id=1395199458]
-position = Vector2(-329.97916, 322)
+[node name="Object077Sessel01" parent="World/Objects" unique_id=218804538 instance=ExtResource("57")]
+position = Vector2(-337, 322)
 metadata/original_kind = "0x01060792"
 metadata/original_object_id = "0x01060790"
 metadata/original_object_category = 4
 metadata/original_sprite_name = "SESSEL01"
 metadata/original_source_sprite = "CO_OBJECTS_CHEF_SESSEL01_IDLE_180_ChefSessel01#180#"
+metadata/original_tile_position = Vector2(2.197917, 10.21875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 77
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object077Sessel01" unique_id=744717755]
-texture = ExtResource("61")
-centered = false
-offset = Vector2(-40, -89)
-
-[node name="Object078Kuchenschrank03" type="Node2D" parent="World/Objects" unique_id=740338192]
-position = Vector2(-113.58334, 442)
+[node name="Object078Kuchenschrank03" parent="World/Objects" unique_id=1303598517 instance=ExtResource("62")]
+position = Vector2(-116, 442)
 metadata/original_kind = "0x070005c0"
 metadata/original_object_id = "0x070005c0"
 metadata/original_object_category = 2
 metadata/original_sprite_name = "KÜCHENSCHRANK03"
 metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSCHRANK03_IDLE_000_K_chenschrank03#000"
+metadata/original_tile_position = Vector2(7, 10.416667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 78
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Objects/Object078Kuchenschrank03" unique_id=96692384]
-texture = ExtResource("66")
-centered = false
-offset = Vector2(-46, -70)
-
-[node name="Player" parent="World" unique_id=207874546 instance=ExtResource("1")]
-position = Vector2(188, 528)
+[node name="Player" parent="World" unique_id=1158573224 instance=ExtResource("65")]
+position = Vector2(192, 528)
 metadata/original_spawn_id = 0
 
-[node name="CharacterDepthCompositor" type="Sprite2D" parent="World" unique_id=1130787716]
-script = ExtResource("4")
+[node name="WorldDepthCompositor" type="Node2D" parent="World" unique_id=1175869798]
+script = ExtResource("70")
 
-[node name="DebugOverlay" type="CanvasLayer" parent="." unique_id=951710963]
+[node name="CharacterDepthCompositor" type="Sprite2D" parent="World" unique_id=2093017621]
+script = ExtResource("68")
+
+[node name="DebugOverlay" type="CanvasLayer" parent="." unique_id=1585007284]
 layer = 100
 
-[node name="FPSCounter" type="Label" parent="DebugOverlay" unique_id=1922359054]
+[node name="FPSCounter" type="Label" parent="DebugOverlay" unique_id=1357456106]
 offset_left = 8.0
 offset_top = 6.0
 offset_right = 108.0
@@ -2064,4 +898,4 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 text = "FPS: --"
-script = ExtResource("2")
+script = ExtResource("66")

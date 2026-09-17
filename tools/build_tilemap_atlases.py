@@ -17,7 +17,7 @@ from PIL import Image
 
 
 SOURCE_ID = 3
-TILE_SIZE = (94, 48)
+TILE_SIZE = (96, 48)
 MANIFEST_REL = Path("resources/tilemaps/sacked-tile-atlases.json")
 
 
@@ -48,7 +48,7 @@ SPECS: Tuple[AtlasSpec, ...] = (
         image_rel=Path("images/tilemaps/sacked-walls.png"),
         tileset_rel=Path("resources/tilemaps/sacked-walls.tres"),
         cell_size=(96, 176),
-        texture_origin=(-1, -128),
+        texture_origin=(0, 73),
         columns=8,
         include=lambda sprite: "_WALLS_" in sprite,
         order=(
@@ -82,7 +82,7 @@ SPECS: Tuple[AtlasSpec, ...] = (
         image_rel=Path("images/tilemaps/sacked-glass.png"),
         tileset_rel=Path("resources/tilemaps/sacked-glass.tres"),
         cell_size=(94, 96),
-        texture_origin=(0, -48),
+        texture_origin=(0, 95),
         columns=8,
         include=lambda sprite: "_GLASS_" in sprite,
     ),
@@ -153,9 +153,10 @@ def read_sprite_pivot(root: Path, sprite: str, image_size: Tuple[int, int]) -> T
     return image_size[0] // 2, image_size[1]
 
 
-def texture_origin_for_sprite(pivot: Tuple[int, int], offset: Tuple[int, int]) -> Tuple[int, int]:
-    tile_half = (TILE_SIZE[0] // 2, TILE_SIZE[1] // 2)
-    return (tile_half[0] - pivot[0] - offset[0], tile_half[1] - pivot[1] - offset[1])
+def texture_origin_for_sprite(
+    pivot: Tuple[int, int], offset: Tuple[int, int], cell_size: Tuple[int, int]
+) -> Tuple[int, int]:
+    return (pivot[0] + offset[0] - cell_size[0] // 2, pivot[1] + offset[1] - cell_size[1] // 2)
 
 
 def write_atomic_image(image: Image.Image, target: Path) -> None:
@@ -197,7 +198,7 @@ def build_atlas(root: Path, output_root: Path, spec: AtlasSpec, entries: List[Di
             source_size = (image.width, image.height)
             offset = paste_offset(spec.cell_size, source_size)
             pivot = read_sprite_pivot(root, sprite, source_size)
-            texture_origin = texture_origin_for_sprite(pivot, offset)
+            texture_origin = texture_origin_for_sprite(pivot, offset, spec.cell_size)
             atlas_coords = (index % spec.columns, index // spec.columns)
             atlas.paste(image, (atlas_coords[0] * cell_w + offset[0], atlas_coords[1] * cell_h + offset[1]))
 

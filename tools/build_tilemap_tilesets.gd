@@ -5,7 +5,7 @@ const DEFAULT_MANIFEST_PATH := "res://resources/tilemaps/sacked-tile-atlases.jso
 const ATLAS_ORDER := ["floor", "walls", "glass"]
 const TILE_SHAPE := TileSet.TILE_SHAPE_ISOMETRIC
 const TILE_LAYOUT := TileSet.TILE_LAYOUT_DIAMOND_DOWN
-const TILE_SIZE := Vector2i(94, 48)
+const TILE_SIZE := Vector2i(96, 48)
 const SOURCE_ID := 3
 
 
@@ -65,8 +65,15 @@ func _save_tileset(atlas_name: String, atlas: Dictionary) -> bool:
 	var source := TileSetAtlasSource.new()
 	source.texture = texture
 	source.texture_region_size = _vector2i(atlas.get("cell_size", [0, 0]))
+	var tile_set := TileSet.new()
+	tile_set.tile_shape = TILE_SHAPE
+	tile_set.tile_layout = TILE_LAYOUT
+	tile_set.tile_size = TILE_SIZE
+	tile_set.add_custom_data_layer()
+	tile_set.set_custom_data_layer_name(0, "depth_base_offset")
+	tile_set.set_custom_data_layer_type(0, TYPE_FLOAT)
+	tile_set.add_source(source, SOURCE_ID)
 
-	var texture_origin := _vector2i(atlas.get("texture_origin", [0, 0]))
 	for tile in atlas.get("tiles", []):
 		var atlas_coords := _vector2i(tile.get("atlas_coords", [0, 0]))
 		source.create_tile(atlas_coords)
@@ -74,13 +81,10 @@ func _save_tileset(atlas_name: String, atlas: Dictionary) -> bool:
 		if tile_data == null:
 			push_error("Failed to create tile %s at %s" % [atlas_name, atlas_coords])
 			return false
-		tile_data.texture_origin = _vector2i(tile.get("texture_origin", texture_origin))
-
-	var tile_set := TileSet.new()
-	tile_set.tile_shape = TILE_SHAPE
-	tile_set.tile_layout = TILE_LAYOUT
-	tile_set.tile_size = TILE_SIZE
-	tile_set.add_source(source, SOURCE_ID)
+		var pivot := _vector2i(tile.get("pivot", [0, 0]))
+		var paste_offset := _vector2i(tile.get("paste_offset", [0, 0]))
+		tile_data.texture_origin = pivot + paste_offset - source.texture_region_size / 2
+		tile_data.set_custom_data("depth_base_offset", -36.0 if atlas_name == "walls" else 0.0)
 
 	var save_error := ResourceSaver.save(tile_set, tileset_path)
 	if save_error != OK:
