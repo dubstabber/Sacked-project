@@ -2,6 +2,7 @@
 import argparse
 import filecmp
 import json
+import math
 import os
 import re
 import shutil
@@ -28,6 +29,17 @@ OBJECT_IMAGE_DIR_REL = Path("images/objects")
 TILE_ATLAS_MANIFEST_REL = Path("resources/tilemaps/sacked-tile-atlases.json")
 LEVEL_MANIFEST_REL = Path("resources/levels/level_1.json")
 LEVEL_SCENE_REL = Path("scenes/level_1.tscn")
+NPC_PROFILES = {
+    1: "boss",
+    2: "secretary",
+    3: "janitor",
+    4: "male-employee-1",
+    5: "male-employee-2",
+    6: "female-employee-1",
+    7: "female-employee-2",
+}
+WORKSTATION_TYPES = (152, 153, 154, 155)
+CHAIR_TYPES = (68, 69, 70, 71, 72, 73, 74, 86, 93, 94, 121, 122)
 
 
 @dataclass(frozen=True)
@@ -45,6 +57,7 @@ class ObjectDefinition:
     category: int
     name: str
     sprite_name: str
+    interaction_offset: Tuple[float, float] = (0.0, 0.0)
 
 
 @dataclass(frozen=True)
@@ -254,7 +267,7 @@ def parse_object_database(path: Path) -> Dict[int, ObjectDefinition]:
             break
         record = parse_chunk_at(data, offset)
         start = offset + 1
-        if record is None or record.name != "ITEM" or len(record.payload) < 320:
+        if record is None or record.name != "ITEM" or len(record.payload) != 544:
             continue
         object_id = read_u32(record.payload, 0)
         if object_id in (0, 0xFFFFFFFF):
@@ -264,11 +277,81 @@ def parse_object_database(path: Path) -> Dict[int, ObjectDefinition]:
         sprite_name = read_cstr(record.payload, 264, 64)
         if sprite_name == "":
             continue
-        definitions[object_id] = ObjectDefinition(object_id, category, name, sprite_name)
+        interaction_offset = (read_f32(record.payload, 536), read_f32(record.payload, 540))
+        definitions[object_id] = ObjectDefinition(object_id, category, name, sprite_name, interaction_offset)
 
     if not definitions:
         raise ValueError(f"No object definitions parsed from {path}")
     return definitions
+
+
+def oriented_interaction_offset(offset: Tuple[float, float], variant: int) -> Tuple[float, float]:
+    # sub_410550 swaps axes for odd variants; this is not a conventional rotation.
+    x, y = offset
+    return ((x, y), (y, x), (-x, -y), (-y, -x))[variant & 3]
+
+
+def find_startup_item(
+    items: List[Dict[str, object]],
+    item_types: Tuple[int, ...],
+    claimed: set,
+    origin: Tuple[float, float],
+    radii: Iterable[float],
+) -> Optional[Dict[str, object]]:
+    # sub_418230 returns the first item inside each search radius, not the nearest.
+    for radius in radii:
+        for item in items:
+            if int(item["instance_id"]) in claimed or ((int(item["kind"]) >> 4) & 0xFFF) not in item_types:
+                continue
+            if math.hypot(float(item["x"]) - origin[0], float(item["y"]) - origin[1]) < radius:
+                return item
+    return None
+
+
+def build_npcs(level: Dict[str, object], object_db: Dict[int, ObjectDefinition]) -> List[Dict[str, object]]:
+    npcs = []
+    claimed = set()
+    unique_spawns = set()
+    for spawn in sorted(level["spawns"], key=lambda entry: int(entry["spawn_id"])):
+        spawn_id = int(spawn["spawn_id"])
+        if spawn_id == 0:
+            continue
+        if spawn_id not in NPC_PROFILES:
+            raise ValueError(f"Unknown NPC spawn type {spawn_id}")
+        if spawn_id <= 3 and spawn_id in unique_spawns:
+            continue
+        unique_spawns.add(spawn_id)
+        profile_id = NPC_PROFILES[spawn_id]
+        origin = (float(spawn["x"]), float(spawn["y"]))
+        workstation = None
+        chair = None
+        if spawn_id not in (1, 3):
+            workstation = find_startup_item(level["items"], WORKSTATION_TYPES, claimed, origin, (index * 0.5 for index in range(1, 21)))
+            if workstation is not None:
+                if object_db[int(workstation["kind"]) & ~3].category == 5:
+                    claimed.add(int(workstation["instance_id"]))
+                    origin = (float(workstation["x"]), float(workstation["y"]))
+                else:
+                    workstation = None
+            chair = find_startup_item(level["items"], CHAIR_TYPES, claimed, origin, (1.0, 2.0, 3.0))
+            if chair is not None:
+                if object_db[int(chair["kind"]) & ~3].category != 5:
+                    claimed.add(int(chair["instance_id"]))
+                else:
+                    chair = None
+        npcs.append({
+            "node_name": "Npc%03d%s" % (int(spawn["instance_id"]), profile_id.title().replace("-", "")),
+            "spawn_id": spawn_id,
+            "instance_id": int(spawn["instance_id"]),
+            "profile_id": profile_id,
+            "profile": f"res://scenes/npc/profiles/{profile_id}.tres",
+            "tile_position": [round_float(float(spawn["x"])), round_float(float(spawn["y"]))],
+            "height": round_float(float(spawn["z"])),
+            "initial_direction_index": 0,
+            "assigned_workstation_instance_id": int(workstation["instance_id"]) if workstation else None,
+            "assigned_chair_instance_id": int(chair["instance_id"]) if chair else None,
+        })
+    return npcs
 
 
 def slugify(value: str) -> str:
@@ -573,6 +656,7 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
         if definition is None:
             raise ValueError("No object definition for kind 0x%08x" % kind)
         variant = kind & 0xF
+        interaction_offset = oriented_interaction_offset(definition.interaction_offset, variant)
         texture = resolve_texture(definition, variant, texture_candidates)
         if texture.sprite not in resolved_by_source:
             dest_rel = destination_for_texture(texture)
@@ -597,6 +681,10 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
                 "texture_size": [texture.width, texture.height],
                 "pivot": [texture.pivot_x, texture.pivot_y],
                 "tile_position": [round_float(float(item["x"])), round_float(float(item["y"]))],
+                "interaction_tile_position": [
+                    round_float(float(item["x"]) + interaction_offset[0]),
+                    round_float(float(item["y"]) + interaction_offset[1]),
+                ],
                 "height": round_float(float(item["z"])),
                 "instance_id": int(item["instance_id"]),
                 "flags": int(item["flags"]),
@@ -673,6 +761,7 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
             },
         ],
         "objects": objects,
+        "npcs": build_npcs(level, object_db),
         "spawns": spawns,
         "player_spawn_id": 0,
         "ignored_layers": {

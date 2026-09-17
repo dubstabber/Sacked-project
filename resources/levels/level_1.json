@@ -1113,6 +1113,53 @@
     "visible_width": 15,
     "width": 16
   },
+  "npcs": [
+    {
+      "assigned_chair_instance_id": null,
+      "assigned_workstation_instance_id": null,
+      "height": 0.0,
+      "initial_direction_index": 0,
+      "instance_id": 80,
+      "node_name": "Npc080Boss",
+      "profile": "res://scenes/npc/profiles/boss.tres",
+      "profile_id": "boss",
+      "spawn_id": 1,
+      "tile_position": [
+        1.0,
+        12.0
+      ]
+    },
+    {
+      "assigned_chair_instance_id": 9,
+      "assigned_workstation_instance_id": 10,
+      "height": 0.0,
+      "initial_direction_index": 0,
+      "instance_id": 79,
+      "node_name": "Npc079MaleEmployee1",
+      "profile": "res://scenes/npc/profiles/male-employee-1.tres",
+      "profile_id": "male-employee-1",
+      "spawn_id": 4,
+      "tile_position": [
+        3.0,
+        2.0
+      ]
+    },
+    {
+      "assigned_chair_instance_id": 13,
+      "assigned_workstation_instance_id": 14,
+      "height": 0.0,
+      "initial_direction_index": 0,
+      "instance_id": 81,
+      "node_name": "Npc081FemaleEmployee1",
+      "profile": "res://scenes/npc/profiles/female-employee-1.tres",
+      "profile_id": "female-employee-1",
+      "spawn_id": 6,
+      "tile_position": [
+        6.0,
+        1.0
+      ]
+    }
+  ],
   "object_database": "extract-sacked-assets/sacked/CO_OBJECTS.DAT",
   "objects": [
     {
@@ -1120,6 +1167,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 8,
+      "interaction_tile_position": [
+        1.0,
+        1.0
+      ],
       "kind": "0x020003d0",
       "node_name": "Object008Schreibtisch02",
       "object_category": 1,
@@ -1147,6 +1198,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 9,
+      "interaction_tile_position": [
+        3.0,
+        2.0
+      ],
       "kind": "0x01060440",
       "node_name": "Object009Drehstuhl01",
       "object_category": 1,
@@ -1174,6 +1229,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 10,
+      "interaction_tile_position": [
+        1.927083,
+        2.114583
+      ],
       "kind": "0x00060980",
       "node_name": "Object010MonitorTastaturFrontal",
       "object_category": 5,
@@ -1201,6 +1260,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 11,
+      "interaction_tile_position": [
+        1.0,
+        3.0
+      ],
       "kind": "0x00000860",
       "node_name": "Object011Pctower",
       "object_category": 1,
@@ -1228,6 +1291,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 12,
+      "interaction_tile_position": [
+        7.989583,
+        1.052083
+      ],
       "kind": "0x020003c2",
       "node_name": "Object012Schreibtisch01",
       "object_category": 1,
@@ -1255,6 +1322,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 13,
+      "interaction_tile_position": [
+        6.083333,
+        1.333333
+      ],
       "kind": "0x01060462",
       "node_name": "Object013Drehstuhl03",
       "object_category": 1,
@@ -1282,6 +1353,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 14,
+      "interaction_tile_position": [
+        7.0,
+        1.333333
+      ],
       "kind": "0x00060992",
       "node_name": "Object014MonitorTastaturLinks",
       "object_category": 5,
@@ -1309,6 +1384,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 15,
+      "interaction_tile_position": [
+        11.677083,
+        0.989583
+      ],
       "kind": "0x00080ad0",
       "node_name": "Object015Toikabine",
       "object_category": 5,
@@ -1336,6 +1415,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 16,
+      "interaction_tile_position": [
+        9.979167,
+        3.354167
+      ],
       "kind": "0x000006e0",
       "node_name": "Object016Waschbecken",
       "object_category": 5,
@@ -1363,6 +1446,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 17,
+      "interaction_tile_position": [
+        10.052083,
+        3.447917
+      ],
       "kind": "0x05090a90",
       "node_name": "Object017Spiegel",
       "object_category": 5,
@@ -1390,6 +1477,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 18,
+      "interaction_tile_position": [
+        9.395833,
+        2.520833
+      ],
       "kind": "0x000006c1",
       "node_name": "Object018Seifenspender01",
       "object_category": 3,
@@ -1417,6 +1508,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 19,
+      "interaction_tile_position": [
+        2.979167,
+        9.895834
+      ],
       "kind": "0x07000782",
       "node_name": "Object019Schreibtisch02",
       "object_category": 4,
@@ -1444,6 +1539,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 20,
+      "interaction_tile_position": [
+        0.0625,
+        10.770833
+      ],
       "kind": "0x00090710",
       "node_name": "Object020Jagdtrophae",
       "object_category": 4,
@@ -1471,6 +1570,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 21,
+      "interaction_tile_position": [
+        0.647917,
+        5.885417
+      ],
       "kind": "0x05090be0",
       "node_name": "Object021Fenster01",
       "object_category": 5,
@@ -1498,6 +1601,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 22,
+      "interaction_tile_position": [
+        0.679167,
+        2.395833
+      ],
       "kind": "0x05090be0",
       "node_name": "Object022Fenster01",
       "object_category": 5,
@@ -1525,6 +1632,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 23,
+      "interaction_tile_position": [
+        0.679167,
+        8.895833
+      ],
       "kind": "0x05090bf0",
       "node_name": "Object023Fenster02",
       "object_category": 5,
@@ -1552,6 +1663,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 24,
+      "interaction_tile_position": [
+        0.679167,
+        12.770833
+      ],
       "kind": "0x05090bf0",
       "node_name": "Object024Fenster02",
       "object_category": 5,
@@ -1579,6 +1694,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 25,
+      "interaction_tile_position": [
+        2.375,
+        0.7
+      ],
       "kind": "0x05090c01",
       "node_name": "Object025Fenster03",
       "object_category": 5,
@@ -1606,6 +1725,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 26,
+      "interaction_tile_position": [
+        7.302083,
+        0.689583
+      ],
       "kind": "0x05090c01",
       "node_name": "Object026Fenster03",
       "object_category": 5,
@@ -1633,6 +1756,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 27,
+      "interaction_tile_position": [
+        11.979167,
+        6.020833
+      ],
       "kind": "0x08051071",
       "node_name": "Object027Wasserspender",
       "object_category": 5,
@@ -1660,6 +1787,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 28,
+      "interaction_tile_position": [
+        7.0,
+        11.75
+      ],
       "kind": "0x070005a0",
       "node_name": "Object028Kuchenschrank01",
       "object_category": 2,
@@ -1687,6 +1818,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 29,
+      "interaction_tile_position": [
+        11.875,
+        13.083333
+      ],
       "kind": "0x00020f80",
       "node_name": "Object029Server",
       "object_category": 5,
@@ -1714,6 +1849,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 30,
+      "interaction_tile_position": [
+        0.875,
+        2.583333
+      ],
       "kind": "0x00000060",
       "node_name": "Object030Flasche",
       "object_category": 5,
@@ -1741,6 +1880,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 31,
+      "interaction_tile_position": [
+        12.125,
+        9.291667
+      ],
       "kind": "0x050900d0",
       "node_name": "Object031Pappaufsteller01",
       "object_category": 5,
@@ -1768,6 +1911,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 32,
+      "interaction_tile_position": [
+        10.072917,
+        2.177083
+      ],
       "kind": "0x00000660",
       "node_name": "Object032Handtuchspender",
       "object_category": 5,
@@ -1795,6 +1942,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 33,
+      "interaction_tile_position": [
+        4.302083,
+        8.864583
+      ],
       "kind": "0x00000800",
       "node_name": "Object033Papierkorb01",
       "object_category": 5,
@@ -1822,6 +1973,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 34,
+      "interaction_tile_position": [
+        7.239583,
+        2.21875
+      ],
       "kind": "0x00000822",
       "node_name": "Object034Aktenablage",
       "object_category": 5,
@@ -1849,6 +2004,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 35,
+      "interaction_tile_position": [
+        3.5,
+        10.5
+      ],
       "kind": "0x00000831",
       "node_name": "Object035Brief",
       "object_category": 5,
@@ -1876,6 +2035,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 36,
+      "interaction_tile_position": [
+        12.072917,
+        10.260417
+      ],
       "kind": "0x070508c0",
       "node_name": "Object036Colamat",
       "object_category": 5,
@@ -1903,6 +2066,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 37,
+      "interaction_tile_position": [
+        3.28125,
+        1.177083
+      ],
       "kind": "0x000008e0",
       "node_name": "Object037Disketten",
       "object_category": 5,
@@ -1930,6 +2097,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 38,
+      "interaction_tile_position": [
+        2.3125,
+        1.270833
+      ],
       "kind": "0x000208f0",
       "node_name": "Object038Drucker01",
       "object_category": 5,
@@ -1957,6 +2128,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 39,
+      "interaction_tile_position": [
+        4.0625,
+        9.1875
+      ],
       "kind": "0x00000910",
       "node_name": "Object039Feuerzeug",
       "object_category": 5,
@@ -1984,6 +2159,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 40,
+      "interaction_tile_position": [
+        2.822917,
+        0.885417
+      ],
       "kind": "0x00000940",
       "node_name": "Object040Kleber",
       "object_category": 5,
@@ -2011,6 +2190,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 41,
+      "interaction_tile_position": [
+        2.072917,
+        10.59375
+      ],
       "kind": "0x00060992",
       "node_name": "Object041MonitorTastaturLinks",
       "object_category": 5,
@@ -2038,6 +2221,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 42,
+      "interaction_tile_position": [
+        1.958333,
+        5.25
+      ],
       "kind": "0x05090a11",
       "node_name": "Object042Poster01",
       "object_category": 5,
@@ -2065,6 +2252,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 43,
+      "interaction_tile_position": [
+        4.4375,
+        11.0625
+      ],
       "kind": "0x00000ab0",
       "node_name": "Object043Stifthalter01",
       "object_category": 5,
@@ -2092,6 +2283,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 44,
+      "interaction_tile_position": [
+        8.125,
+        10.375
+      ],
       "kind": "0x00050af0",
       "node_name": "Object044Wasserkocher",
       "object_category": 5,
@@ -2119,6 +2314,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 45,
+      "interaction_tile_position": [
+        2.34375,
+        2.864583
+      ],
       "kind": "0x00000b00",
       "node_name": "Object045Zigaretten",
       "object_category": 5,
@@ -2146,6 +2345,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 46,
+      "interaction_tile_position": [
+        2.6875,
+        11.270834
+      ],
       "kind": "0x00000ec0",
       "node_name": "Object046Confidential",
       "object_category": 5,
@@ -2173,6 +2376,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 47,
+      "interaction_tile_position": [
+        3.916667,
+        11.666667
+      ],
       "kind": "0x04020f10",
       "node_name": "Object047Handy",
       "object_category": 5,
@@ -2200,6 +2407,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 48,
+      "interaction_tile_position": [
+        6.9375,
+        12.520833
+      ],
       "kind": "0x00050f23",
       "node_name": "Object048Kaffeemaschi",
       "object_category": 5,
@@ -2227,6 +2438,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 49,
+      "interaction_tile_position": [
+        7.3125,
+        10.9375
+      ],
       "kind": "0x00000f30",
       "node_name": "Object049Ketchup",
       "object_category": 5,
@@ -2254,6 +2469,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 50,
+      "interaction_tile_position": [
+        2.1875,
+        8.604167
+      ],
       "kind": "0x05020f01",
       "node_name": "Object050Flipchart",
       "object_category": 5,
@@ -2281,6 +2500,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 51,
+      "interaction_tile_position": [
+        0.833333,
+        7.583333
+      ],
       "kind": "0x070002f1",
       "node_name": "Object051Komode03",
       "object_category": 1,
@@ -2308,6 +2531,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 52,
+      "interaction_tile_position": [
+        5.78125,
+        10.052084
+      ],
       "kind": "0x07000380",
       "node_name": "Object052Regal02",
       "object_category": 1,
@@ -2335,6 +2562,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 53,
+      "interaction_tile_position": [
+        7.958333,
+        9.416667
+      ],
       "kind": "0x08040960",
       "node_name": "Object053Kuhlschrank",
       "object_category": 5,
@@ -2362,6 +2593,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 54,
+      "interaction_tile_position": [
+        1.083333,
+        7.666667
+      ],
       "kind": "0x00000011",
       "node_name": "Object054Bucher01",
       "object_category": 0,
@@ -2389,6 +2624,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 55,
+      "interaction_tile_position": [
+        4.260417,
+        0.114583
+      ],
       "kind": "0x090000a1",
       "node_name": "Object055Heizkorper",
       "object_category": 0,
@@ -2416,6 +2655,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 56,
+      "interaction_tile_position": [
+        5.135417,
+        3.197917
+      ],
       "kind": "0x090000a0",
       "node_name": "Object056Heizkorper",
       "object_category": 0,
@@ -2443,6 +2686,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 57,
+      "interaction_tile_position": [
+        5.458333,
+        13.291667
+      ],
       "kind": "0x090000a1",
       "node_name": "Object057Heizkorper",
       "object_category": 0,
@@ -2470,6 +2717,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 58,
+      "interaction_tile_position": [
+        5.770833,
+        7.8125
+      ],
       "kind": "0x0a0000c0",
       "node_name": "Object058Kleiderstaender02",
       "object_category": 0,
@@ -2497,6 +2748,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 59,
+      "interaction_tile_position": [
+        5.4375,
+        0.354167
+      ],
       "kind": "0x000002a1",
       "node_name": "Object059VentiGross",
       "object_category": 0,
@@ -2524,6 +2779,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 60,
+      "interaction_tile_position": [
+        12.208333,
+        6.125
+      ],
       "kind": "0x01070b62",
       "node_name": "Object060Sofa01",
       "object_category": 0,
@@ -2551,6 +2810,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 61,
+      "interaction_tile_position": [
+        13.391667,
+        5.208333
+      ],
       "kind": "0x00010ea0",
       "node_name": "Object061Standascher02",
       "object_category": 6,
@@ -2578,6 +2841,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 62,
+      "interaction_tile_position": [
+        5.21875,
+        5.03125
+      ],
       "kind": "0x000907d1",
       "node_name": "Object062Aushang",
       "object_category": 5,
@@ -2605,6 +2872,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 63,
+      "interaction_tile_position": [
+        1.366666,
+        5.45
+      ],
       "kind": "0x03090130",
       "node_name": "Object063Pflanzegross03",
       "object_category": 0,
@@ -2632,6 +2903,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 64,
+      "interaction_tile_position": [
+        12.625,
+        1.0
+      ],
       "kind": "0x05090a11",
       "node_name": "Object064Poster01",
       "object_category": 5,
@@ -2659,6 +2934,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 65,
+      "interaction_tile_position": [
+        1.895833,
+        1.0625
+      ],
       "kind": "0x04000330",
       "node_name": "Object065Papier03",
       "object_category": 1,
@@ -2686,6 +2965,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 66,
+      "interaction_tile_position": [
+        1.729167,
+        1.3125
+      ],
       "kind": "0x04000321",
       "node_name": "Object066Papier02",
       "object_category": 1,
@@ -2713,6 +2996,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 67,
+      "interaction_tile_position": [
+        8.364583,
+        1.84375
+      ],
       "kind": "0x04000331",
       "node_name": "Object067Papier03",
       "object_category": 1,
@@ -2740,6 +3027,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 68,
+      "interaction_tile_position": [
+        3.135417,
+        9.65625
+      ],
       "kind": "0x04000312",
       "node_name": "Object068Papier01",
       "object_category": 1,
@@ -2767,6 +3058,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 69,
+      "interaction_tile_position": [
+        0.166667,
+        13.208334
+      ],
       "kind": "0x090000a0",
       "node_name": "Object069Heizkorper",
       "object_category": 0,
@@ -2794,6 +3089,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 70,
+      "interaction_tile_position": [
+        7.875,
+        2.0
+      ],
       "kind": "0x04000350",
       "node_name": "Object070Papier05",
       "object_category": 1,
@@ -2821,6 +3120,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 71,
+      "interaction_tile_position": [
+        7.989583,
+        13.34375
+      ],
       "kind": "0x07040c50",
       "node_name": "Object071Spuele",
       "object_category": 5,
@@ -2848,6 +3151,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 72,
+      "interaction_tile_position": [
+        10.677083,
+        12.072917
+      ],
       "kind": "0x00000d52",
       "node_name": "Object072Kiste02",
       "object_category": 8,
@@ -2875,6 +3182,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 73,
+      "interaction_tile_position": [
+        14.0625,
+        10.0625
+      ],
       "kind": "0x000010f0",
       "node_name": "Object073Eingang",
       "object_category": 0,
@@ -2902,6 +3213,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 74,
+      "interaction_tile_position": [
+        7.104167,
+        11.604167
+      ],
       "kind": "0x00000531",
       "node_name": "Object074Geschirrdreckig",
       "object_category": 2,
@@ -2929,6 +3244,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 75,
+      "interaction_tile_position": [
+        7.375,
+        11.916667
+      ],
       "kind": "0x00000570",
       "node_name": "Object075Kaffeedose",
       "object_category": 2,
@@ -2956,6 +3275,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 76,
+      "interaction_tile_position": [
+        7.0625,
+        11.354167
+      ],
       "kind": "0x00000550",
       "node_name": "Object076Geschirrteller",
       "object_category": 2,
@@ -2983,6 +3306,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 77,
+      "interaction_tile_position": [
+        1.197917,
+        10.21875
+      ],
       "kind": "0x01060792",
       "node_name": "Object077Sessel01",
       "object_category": 4,
@@ -3010,6 +3337,10 @@
       "flags": 1,
       "height": 0.0,
       "instance_id": 78,
+      "interaction_tile_position": [
+        7.0,
+        10.416667
+      ],
       "kind": "0x070005c0",
       "node_name": "Object078Kuchenschrank03",
       "object_category": 2,
