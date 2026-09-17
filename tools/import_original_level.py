@@ -155,6 +155,26 @@ def parse_layer(payload: bytes, expected_count: int) -> List[int]:
     return [read_u16(payload, offset) for offset in range(0, len(payload), 2)]
 
 
+def parse_info_data(payload: bytes, expected_count: int) -> List[int]:
+    if len(payload) != expected_count * 4:
+        raise ValueError(f"INFODATA has {len(payload)} bytes, expected {expected_count * 4}")
+    return [read_u32(payload, offset) for offset in range(0, len(payload), 4)]
+
+
+def build_collision_grid(info_data: List[int], width: int, height: int) -> Dict[str, object]:
+    if width <= 0 or height <= 0 or len(info_data) != width * height:
+        raise ValueError("INFODATA cell count does not match the map dimensions")
+    # sub_412AE0 reads these bits independently; see docs/collision-reference.md.
+    return {
+        "source_chunk": "INFODATA",
+        "width": width,
+        "height": height,
+        "blocked_cells": [[index % width, index // width] for index, value in enumerate(info_data) if value & 1],
+        "sight_blocked_cells": [[index % width, index // width] for index, value in enumerate(info_data) if value & 2],
+        "room_ids": [(value >> 16) & 0xFF for value in info_data],
+    }
+
+
 def parse_level_file(path: Path) -> Dict[str, object]:
     data = path.read_bytes()
     if not data.startswith(b"#ODIN_ENGINE"):
@@ -171,6 +191,7 @@ def parse_level_file(path: Path) -> Dict[str, object]:
     layer0 = parse_layer(find_chunk(data, "LAYER0").payload, expected_count)
     layer1 = parse_layer(find_chunk(data, "LAYER1").payload, expected_count)
     layer2 = parse_layer(find_chunk(data, "LAYER2").payload, expected_count)
+    info_data = parse_info_data(find_chunk(data, "INFODATA").payload, expected_count)
 
     items = []
     for record in find_numbered_chunks(data, "ITEM"):
@@ -209,6 +230,7 @@ def parse_level_file(path: Path) -> Dict[str, object]:
         "width": width,
         "height": height,
         "layer_count": layer_count,
+        "info_data": info_data,
         "layers": {
             "LAYER0": layer0,
             "LAYER1": layer1,
@@ -610,6 +632,7 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
             "visible_height": visible_height,
             "layer_count": int(level["layer_count"]),
         },
+        "collision_grid": build_collision_grid(level["info_data"], width, height),
         "tile_layers": [
             {
                 "name": "FloorTileMapLayer",
