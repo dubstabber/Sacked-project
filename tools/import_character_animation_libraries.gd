@@ -15,6 +15,7 @@ const DIRECTIONS := {
 const NPC_SPECS := [
 	{
 		"id": &"secretary",
+		"walk_speed_tiles": 1.8,
 		"resource_name": "secretary",
 		"idle_source": "SEKRETAERIN_IDLE#1#ATMEN",
 		"walk_source": "SEKRETAERIN_WALK",
@@ -23,6 +24,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"janitor",
+		"walk_speed_tiles": 1.2,
 		"resource_name": "janitor",
 		"idle_source": "HOUSEMEISTER_IDLE#1#ATMEN",
 		"walk_source": "HOUSEMEISTER_WALK",
@@ -31,6 +33,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"male-employee-1",
+		"walk_speed_tiles": 1.5,
 		"resource_name": "male-employee-1",
 		"idle_source": "ANGESTELLTER#1_IDLE#1#ATMEN",
 		"walk_source": "ANGESTELLTER#1_WALK",
@@ -39,6 +42,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"male-employee-2",
+		"walk_speed_tiles": 1.6,
 		"resource_name": "male-employee-2",
 		"idle_source": "ANGESTELLTER#2_IDLE#1#ATMEN",
 		"walk_source": "ANGESTELLTER#2_WALK",
@@ -47,6 +51,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"female-employee-1",
+		"walk_speed_tiles": 1.7,
 		"resource_name": "female-employee-1",
 		"idle_source": "ANGESTELLTE#1_IDLE#1#ATMEN",
 		"walk_source": "ANGESTELLTE#1_WALK",
@@ -55,6 +60,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"female-employee-2",
+		"walk_speed_tiles": 1.5,
 		"resource_name": "female-employee-2",
 		"idle_source": "ANGESTELLTE#2_IDLE#1#ATMEN",
 		"walk_source": "ANGESTELLTE#2_WALK",
@@ -83,6 +89,7 @@ func _run() -> void:
 
 		var profile := PROFILE_SCRIPT.new()
 		profile.id = spec["id"]
+		profile.walk_speed_tiles = spec["walk_speed_tiles"]
 		profile.animation_library = load(library_path)
 		profile.idle_animation_prefix = spec["idle_prefix"]
 		profile.walk_animation_prefix = spec["walk_prefix"]

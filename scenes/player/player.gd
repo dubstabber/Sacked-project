@@ -3,7 +3,7 @@ extends CharacterBody2D
 
 const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
 
-@export var move_speed: float = 200.0
+@export_range(0.0, 20.0, 0.1, "suffix:tiles/s") var move_speed_tiles: float = 3.0
 @export var profile: Resource
 
 var is_mouse_movement_active: bool = false
@@ -48,7 +48,7 @@ func _physics_process(delta: float) -> void:
 
 	if movement_direction != Vector2.ZERO:
 		last_direction = movement_direction
-		velocity = movement_direction * move_speed
+		velocity = IsoDirection.screen_velocity(movement_direction, move_speed_tiles)
 		animation_controller.play_walk(movement_direction)
 		footstep_controller.start_footsteps()
 		if is_mouse_movement_active:

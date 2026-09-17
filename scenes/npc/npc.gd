@@ -4,7 +4,7 @@ extends CharacterBody2D
 const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
 
 @export var profile: Resource
-@export var move_speed: float = 110.0
+@export_range(0.0, 20.0, 0.1, "suffix:tiles/s") var move_speed_tiles: float = 0.0
 @export var patrol_offsets: Array[Vector2] = []
 @export var arrival_distance: float = 6.0
 @export var pause_seconds: float = 0.4
@@ -53,10 +53,16 @@ func _physics_process(delta: float) -> void:
 
 	var snapped_direction := IsoDirection.snap_to_8_directions(to_target.normalized())
 	last_direction = snapped_direction
-	velocity = snapped_direction * move_speed
+	velocity = IsoDirection.screen_velocity(to_target, get_move_speed_tiles())
 	animation_controller.play_walk(snapped_direction)
 	velocity = MAP_COLLISION.constrain_body_motion(self, velocity * delta) / delta
 	move_and_slide()
+
+
+func get_move_speed_tiles() -> float:
+	if move_speed_tiles > 0.0:
+		return move_speed_tiles
+	return profile.walk_speed_tiles if profile != null else 1.5
 
 
 func apply_profile(selected_profile: Resource) -> void:

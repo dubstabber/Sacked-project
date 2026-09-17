@@ -2,6 +2,19 @@ class_name IsoDirection
 extends RefCounted
 
 
+static func ground_to_screen(direction: Vector2) -> Vector2:
+	return Vector2(48.0 * (direction.x - direction.y), 24.0 * (direction.x + direction.y))
+
+
+static func screen_to_ground(direction: Vector2) -> Vector2:
+	return Vector2(direction.x / 96.0 + direction.y / 48.0, -direction.x / 96.0 + direction.y / 48.0)
+
+
+static func screen_velocity(direction: Vector2, tiles_per_second: float) -> Vector2:
+	# Original movement is normalized before projection; see docs/npc-reference.md.
+	return ground_to_screen(screen_to_ground(direction).normalized() * tiles_per_second)
+
+
 static func snap_to_8_directions(direction: Vector2) -> Vector2:
 	var directions := get_screen_directions()
 	var best: Vector2 = directions[0]

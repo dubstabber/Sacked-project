@@ -146,7 +146,7 @@ func _check_character_runtime(is_npc: bool) -> void:
 	var actor: CharacterBody2D = NPC_SCENE.instantiate() if is_npc else PLAYER_SCENE.instantiate()
 	actor.profile = NPC_PROFILE if is_npc else PLAYER_PROFILE
 	actor.position = _world_position(layer, Vector2.ZERO)
-	actor.move_speed = 600.0
+	actor.move_speed_tiles = 8.838835
 	if is_npc:
 		actor.patrol_offsets = [Vector2(800, 0)] as Array[Vector2]
 		actor.pause_seconds = 0.0

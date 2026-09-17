@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("3_qt28p")
 id = &"male-employee-2"
+walk_speed_tiles = 1.6
 animation_library = ExtResource("1_4pyrf")
 idle_animation_prefix = "male-employee-2-idle1-atmen-"
 walk_animation_prefix = "male-employee-2-walk-"

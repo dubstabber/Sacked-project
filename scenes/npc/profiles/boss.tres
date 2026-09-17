@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_profile")
 id = &"boss"
+walk_speed_tiles = 1.8
 animation_library = ExtResource("1_boss")
 idle_animation_prefix = "boss-stand-idle-"
 walk_animation_prefix = "boss-walk-"

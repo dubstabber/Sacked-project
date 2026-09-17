@@ -3,6 +3,7 @@ extends Resource
 
 
 @export var id: StringName
+@export_range(0.0, 20.0, 0.1, "suffix:tiles/s") var walk_speed_tiles: float = 3.0
 @export var animation_library: AnimationLibrary
 @export var idle_animation_prefix: String = ""
 @export var walk_animation_prefix: String = ""
