@@ -18,7 +18,7 @@ func _run() -> void:
 	_npc.global_position = Vector2(100.0, 100.0)
 	_npc.move_speed = 240.0
 	_npc.pause_seconds = 0.0
-	var patrol_offsets: Array[Vector2] = [Vector2(94.0, 0.0), Vector2(141.0, 24.0)]
+	var patrol_offsets: Array[Vector2] = [Vector2(96.0, 0.0), Vector2(144.0, 24.0)]
 	_npc.patrol_offsets = patrol_offsets
 	root.add_child(_npc)
 

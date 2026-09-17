@@ -9,6 +9,8 @@ const WORLD_DEPTH_COMPOSITOR_SCRIPT := "res://scenes/shared/world_depth_composit
 const MAP_TILE_LAYER_SCRIPT := "res://scenes/shared/map_tile_layer.gd"
 const MAP_OBJECT_SCENE := "res://scenes/shared/map_object.tscn"
 const FPS_COUNTER_SCRIPT := "res://scenes/debug/fps_counter.gd"
+const COLLISION_MAP_SCRIPT := "res://scenes/shared/collision_map_layer.gd"
+const COLLISION_TILESET := "res://resources/tilemaps/sacked-collision.tres"
 
 var _object_prefabs: Dictionary = {}
 var _prefab_paths: Dictionary = {}
@@ -87,6 +89,7 @@ func _build_scene(manifest: Dictionary) -> Node:
 
 	var objects := _build_objects(manifest, floor_layer)
 	world.add_child(objects)
+	world.add_child(_build_collision_layer(manifest))
 
 	var player := _build_player(manifest, floor_layer)
 	world.add_child(player)
@@ -104,6 +107,18 @@ func _build_scene(manifest: Dictionary) -> Node:
 	root.add_child(_build_debug_overlay())
 	_assign_owner(root, root)
 	return root
+
+
+func _build_collision_layer(manifest: Dictionary) -> TileMapLayer:
+	var layer := TileMapLayer.new()
+	layer.name = "CollisionTileMapLayer"
+	layer.script = load(COLLISION_MAP_SCRIPT)
+	layer.tile_set = load(COLLISION_TILESET) as TileSet
+	layer.z_index = 10
+	var collision_grid: Dictionary = manifest.get("collision_grid", {})
+	for cell in collision_grid.get("blocked_cells", []):
+		layer.set_cell(_vector2i(cell), 0, Vector2i.ZERO)
+	return layer
 
 
 func _build_tile_layer(layer_data: Dictionary) -> TileMapLayer:
@@ -181,7 +196,7 @@ func _object_prefab(object_data: Dictionary) -> PackedScene:
 
 func _build_player(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
 	var player_scene := load(PLAYER_SCENE) as PackedScene
-	var player := player_scene.instantiate() as Node2D
+	var player := player_scene.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE) as Node2D
 	player.name = "Player"
 	var spawn := _player_spawn(manifest)
 	player.position = _tile_position_to_local(_vector2(spawn.get("tile_position", [0.0, 0.0])), floor_layer)

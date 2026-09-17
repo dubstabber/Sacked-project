@@ -6,17 +6,17 @@
 [ext_resource type="Script" uid="uid://xuv2t41tecl1" path="res://scenes/player/footstep_controller.gd" id="4_foot"]
 [ext_resource type="Texture2D" uid="uid://bi7owgvueix3m" path="res://images/effects/shadow/shadow.png" id="5_shadow"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_player"]
-radius = 18.027756
+[sub_resource type="ConvexPolygonShape2D" id="Footprint_player"]
+points = PackedVector2Array(0, -16.8, 33.6, 0, 0, 16.8, -33.6, 0)
 
 [node name="Player" type="CharacterBody2D" unique_id=1848193145]
 collision_layer = 2
+motion_mode = 1
 script = ExtResource("1_player")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1615047916]
 visible = false
-position = Vector2(0, -17)
-shape = SubResource("CircleShape2D_player")
+shape = SubResource("Footprint_player")
 
 [node name="Shadow" type="Sprite2D" parent="." unique_id=1021148399]
 modulate = Color(1, 1, 1, 0.5019608)

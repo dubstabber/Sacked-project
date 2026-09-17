@@ -1,6 +1,8 @@
 extends CharacterBody2D
 
 
+const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
+
 @export var move_speed: float = 200.0
 @export var profile: Resource
 
@@ -33,7 +35,7 @@ func _input(event: InputEvent) -> void:
 		stop_mouse_movement()
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	var movement_direction := Vector2.ZERO
 	var raw_mouse_movement_direction := Vector2.ZERO
 
@@ -59,6 +61,7 @@ func _physics_process(_delta: float) -> void:
 		footstep_controller.stop_footsteps()
 		movement_cursor.hide_arrow()
 
+	velocity = MAP_COLLISION.constrain_body_motion(self, velocity * delta) / delta
 	move_and_slide()
 
 

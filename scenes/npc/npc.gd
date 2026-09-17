@@ -1,6 +1,8 @@
 extends CharacterBody2D
 
 
+const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
+
 @export var profile: Resource
 @export var move_speed: float = 110.0
 @export var patrol_offsets: Array[Vector2] = []
@@ -43,14 +45,17 @@ func _physics_process(delta: float) -> void:
 	var target := _patrol_targets[_target_index]
 	var to_target := target - global_position
 	if to_target.length_squared() <= arrival_distance * arrival_distance:
-		global_position = target
-		_advance_target()
-		return
+		var allowed := MAP_COLLISION.constrain_body_motion(self, to_target)
+		if allowed.is_equal_approx(to_target) and not test_move(global_transform, to_target):
+			global_position = target
+			_advance_target()
+			return
 
 	var snapped_direction := IsoDirection.snap_to_8_directions(to_target.normalized())
 	last_direction = snapped_direction
 	velocity = snapped_direction * move_speed
 	animation_controller.play_walk(snapped_direction)
+	velocity = MAP_COLLISION.constrain_body_motion(self, velocity * delta) / delta
 	move_and_slide()
 
 

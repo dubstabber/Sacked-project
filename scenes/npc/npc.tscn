@@ -4,17 +4,17 @@
 [ext_resource type="Script" uid="uid://bf5gdjtdfixca" path="res://scenes/player/animation_controller.gd" id="2_anim"]
 [ext_resource type="Texture2D" uid="uid://bi7owgvueix3m" path="res://images/effects/shadow/shadow.png" id="3_shadow"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_npc"]
-radius = 18.027756
+[sub_resource type="ConvexPolygonShape2D" id="Footprint_npc"]
+points = PackedVector2Array(0, -16.8, 33.6, 0, 0, 16.8, -33.6, 0)
 
 [node name="NPC" type="CharacterBody2D"]
 collision_layer = 2
+motion_mode = 1
 script = ExtResource("1_npc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
-position = Vector2(0, -17)
-shape = SubResource("CircleShape2D_npc")
+shape = SubResource("Footprint_npc")
 
 [node name="Shadow" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0.5019608)
