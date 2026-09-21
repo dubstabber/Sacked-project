@@ -63,8 +63,10 @@ slot 6, the Matrix lamp needs slot 14, and urination needs slot 26. Slot 26 is t
 ## The digit strip
 
 `CO_GUI_CONSOLE_NUMBERS` is **not** what the console's two fields use — those are ordinary
-Arial text. The strip belongs to `CGUIFNumber`, whose draw is `sub_45C190`, and the only
-one built in a level is created hidden at `(400, 300)`.
+Arial text. The strip belongs to `CGUIFNumber`, whose draw is `sub_45C190`. **No level
+builds one**: the only caller of its constructor is `sub_413D40`, and the hidden object
+`sub_405930` creates at `(400, 300)` is the `CGUIRoundMenu` the action ring uses, not a
+digit strip. See [player-action-reference.md](player-action-reference.md) for its layout.
 
 Its mechanics, for whenever that class is needed:
 

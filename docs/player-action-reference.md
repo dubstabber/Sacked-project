@@ -103,10 +103,45 @@ free, rather than in the 600-pixel window. Opening highlights the first entry
 ring is up. The buttons are created at (800, 600) on layer 0 and moved into place by the
 menu itself.
 
-Not recovered: the ring's radius, how the entries are distributed around it, and how the
-highlight follows the mouse. Those live inside the `CGUIRoundMenu` class (`sub_45B400`,
-`sub_45BF10`, `sub_45BE90`, `sub_45BEC0`). The port spaces them evenly on a radius wide
-enough to keep eight 48-pixel icons from overlapping, using the engine's own circle
+### How the ring is laid out (recovered, not yet implemented)
+
+`CGUIRoundMenu::Draw` is `sub_45BC90` and its tick is `sub_4066D0`. Together they place
+every button each frame:
+
+```text
+R       = menu+96 * 1.5                       the ring radius
+theta   = menu+104 - i * 0.60000002 + PI      entry i's angle
+button  = (menu+8 - 16 + sin theta * R, menu+12 + cos theta * R), layer menu+16
+```
+
+- **The pitch between entries is a fixed 0.6 radians (~34.4°)**, not a share of a full turn,
+  so the entries sit on an arc whose length grows with the entry count rather than spreading
+  around the circle.
+- **`menu+104` is an animated rotation, not a constant.** `sub_45BEC0(index)` stores the
+  highlighted index at `+124` and its target angle `index * 0.6` at `+136`; the draw walks
+  `+104` toward it by `frame_delta * menu+112` per frame and snaps once the gap is under
+  0.01. `sub_405930` sets `+112` to **5.0**, overriding the constructor's 0.1. The
+  highlighted entry is therefore the one rotated to `theta = PI`, which is **straight above
+  the centre** — the ring turns under a fixed cursor rather than the cursor moving over it.
+- **The radius animates the menu open and shut.** `sub_4066D0` grows `menu+96` from 0 toward
+  **60** at `frame_delta * 150.0` while the menu is opening and shrinks it the same way
+  while it closes, hiding the menu once it reaches 0. So the ring's settled radius is
+  `60 * 1.5 = 90` pixels. The same value drives the fade: the global alpha is set to
+  `radius / 60 * 254 + 1`, and the open/close passes set a bias of `+16.0` / `-16.0`.
+- **The `-16` is only on x.** Buttons are `CGUIRectangle`s drawn from their top left, so the
+  ring is half-centred horizontally and hangs from the top edge vertically. Reproducing that
+  asymmetry is the faithful choice.
+- **Selection is stepped, not pointed at.** `sub_4066D0` reads the input flags at
+  `game+12740`: bit 0 steps `player+920` down, bit 1 steps it up while it stays below
+  `player+980 - 1` (the entry count), and bits 2/4 commit. `sub_45BE80` gates the step on
+  the rotation having settled.
+- **The highlight is a tint, not a dimming.** The draw writes `(255, 255, 128)` into the
+  selected button's colour fields at `+1160..1162` and `(255, 255, 255)` into every other
+  one; when the menu's byte at `+120` is not `0xFF` they all go black.
+
+The port does not do any of this yet: `scenes/hud/round_menu.gd` spaces the entries evenly
+over a full turn on a fixed 64-pixel radius, picks the entry under the mouse, and dims the
+rest instead of tinting the selected one. The angles it uses follow the engine's circle
 convention from `sub_45A9E0` — angle zero at the top, running clockwise
 (`x = cx + sin a * r`, `y = cy - cos a * r`).
 
