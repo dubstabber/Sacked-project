@@ -103,6 +103,24 @@ free, rather than in the 600-pixel window. Opening highlights the first entry
 ring is up. The buttons are created at (800, 600) on layer 0 and moved into place by the
 menu itself.
 
+### How long the selection lives
+
+`player+920` is the selected menu slot, and it is **not** cleared when the ring shuts.
+`sub_41B240` writes `-1` into it in exactly two places: its case 4, once the action has
+applied, and its case 5, when the action is cancelled. Committing (case 2) instead
+re-asserts the chosen entry's name into `player+1128`, and case 3 — the action running —
+touches neither.
+
+`sub_41CFC0` picks the player's tick from `player+900`, and the one for "no action session"
+is `sub_41B0C0`, which writes `player+1128 = "..."` on both its branches, standing and
+walking. So the hover bar is restored the first frame after the action ends rather than
+lingering.
+
+The console reads both fields every frame (`sub_403780`), so the practical effect is that
+**the centre icon and the hover bar keep showing the committed action for its whole
+duration** and clear together when it applies. See
+[hud-reference.md](hud-reference.md).
+
 ### How the ring is laid out
 
 `CGUIRoundMenu::Draw` is `sub_45BC90` and its tick is `sub_4066D0`. Together they place

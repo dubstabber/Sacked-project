@@ -109,14 +109,25 @@ func open_menu() -> void:
 	highlight_changed.emit(entries[0])
 
 
-func close_menu() -> void:
+# sub_41B240 clears player+920 in its case 4 and its case 5 -- when the action applies, and
+# when it is cancelled -- never when the ring itself shuts. So committing leaves the chosen
+# action's icon and name on the console for as long as it runs, and only the tick that is
+# not an action session (sub_41B0C0) puts the hover bar back to "...".
+func close_menu(keep_selection := false) -> void:
 	if not menu_open:
 		return
 	menu_open = false
 	if state == State.MENU:
 		state = State.FREE
-	highlighted = -1
 	menu_closed.emit()
+	if not keep_selection:
+		clear_selection()
+
+
+func clear_selection() -> void:
+	if highlighted < 0:
+		return
+	highlighted = -1
 	highlight_changed.emit({})
 
 
@@ -139,7 +150,7 @@ func confirm() -> void:
 	_acting_entry = entry
 	_elapsed = 0.0
 	_duration = float(action.get("duration_tenths", 0)) / 10.0
-	close_menu()
+	close_menu(true)
 	state = State.ACTING
 	_draw_highlight(null, TINT_READY)
 	_set_acting(true)
@@ -161,6 +172,7 @@ func _advance_action(delta: float) -> void:
 	if _elapsed < _duration:
 		return
 	_apply_action()
+	clear_selection()
 	state = State.FREE
 	_set_acting(false)
 	_elapsed = 0.0

@@ -101,10 +101,14 @@ so the port's camera is unchanged and the console is drawn over the world.
 | Element | Source |
 | --- | --- |
 | Score, clock | `player+984`, `game+14708` |
-| Hover bar | the highlighted menu entry's name, `"..."` when none |
-| Centre icon | the highlighted entry's ACTICON, hidden when nothing is highlighted |
+| Hover bar | `player+1128`, the selected entry's name |
+| Centre icon | `player+929 + player+920`, the selected entry's ACTICON, hidden at `player+920 == -1` |
 | Stopwatch | `player+992 * 100 / player+1000` — how far the running action has come, swept clockwise from `+1140` |
 | Lamps | `player+1008`: smoking needs slots 5 **and** 6, Matrix 14, urination 26 |
+
+Both of those follow **`player+920`**, the selected menu slot, which outlives the ring: see
+[player-action-reference.md](player-action-reference.md). So the centre icon and the hover
+bar keep showing the action the player committed to for as long as it runs.
 
 `sub_41AF60` clears 28 bytes at `player+1008` when a level starts, so the player always
 begins empty-handed and every lamp is dark. That is why level 1's rows needing items 9, 10,
