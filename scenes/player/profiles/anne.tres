@@ -3,10 +3,12 @@
 [ext_resource type="AnimationLibrary" path="res://scenes/player/profiles/anne_animations.res" id="1_tahcb"]
 [ext_resource type="Texture2D" path="res://images/characters/anne/anne-idle1-atmen-up-right/anne-idle1-atmen-up-right-000.png" id="2_tahcb"]
 [ext_resource type="Script" uid="uid://cech70kmimobr" path="res://scenes/player/character_profile.gd" id="3_mt036"]
+[ext_resource type="AnimationLibrary" path="res://scenes/player/profiles/anne_actions.res" id="4_actions"]
 
 [resource]
 script = ExtResource("3_mt036")
 id = &"anne"
+action_animation_library = ExtResource("4_actions")
 animation_library = ExtResource("1_tahcb")
 idle_animation_prefix = "anne-idle1-atmen-"
 walk_animation_prefix = "anne-walk-"

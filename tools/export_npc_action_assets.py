@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Copy the first level's sitting animations and their original pixel depth masks."""
+"""Copy the animation frames the port needs, with their original pixel depth masks.
+
+Which clips those are lives in tools/character_action_clips.json, shared with
+tools/import_npc_action_animations.gd so the frames on disk and the AnimationLibraries
+built from them can never drift apart. The player's rows come from the animation slot
+table at 0x46EC04; see docs/player-action-reference.md.
+"""
 
 import argparse
 import json
@@ -19,29 +25,23 @@ from export_character_depth_maps import (
 )
 
 
-# Seated clips only exist for the four diagonal views; standing ones have all eight.
-SEATED_ANGLES = ("000", "090", "180", "270")
-STANDING_ANGLES = ("000", "045", "090", "135", "180", "225", "270", "315")
+SPEC_REL = Path("tools/character_action_clips.json")
 
-SPECS = [
-    ("boss", "CHEF_SIT#IDLE", "boss-sit-idle", SEATED_ANGLES),
-    ("boss", "CHEF_SIT#EASY", "boss-sit-easy", SEATED_ANGLES),
-    ("male-employee-1", "ANGESTELLTER#1_SIT#IDLE", "male-employee-1-sit-idle", SEATED_ANGLES),
-    ("male-employee-1", "ANGESTELLTER#1_SIT#USE", "male-employee-1-sit-use", SEATED_ANGLES),
-    ("male-employee-1", "ANGESTELLTER#1_SIT#EASY", "male-employee-1-sit-easy", SEATED_ANGLES),
-    ("male-employee-1", "ANGESTELLTER#1_SPECIAL#1", "male-employee-1-special-1", STANDING_ANGLES),
-    ("female-employee-1", "ANGESTELLTE#1_SIT#IDLE", "female-employee-1-sit-idle", SEATED_ANGLES),
-    ("female-employee-1", "ANGESTELLTE#1_SIT#USE", "female-employee-1-sit-use", SEATED_ANGLES),
-    ("female-employee-1", "ANGESTELLTE#1_SIT#EASY", "female-employee-1-sit-easy", SEATED_ANGLES),
-    ("female-employee-1", "ANGESTELLTE#1_SPECIAL#1", "female-employee-1-special-1", STANDING_ANGLES),
-]
+
+def load_specs(root: Path) -> list:
+    """(character, source prefix, runtime prefix, angles) per clip, from the shared spec."""
+    spec = json.loads((root / SPEC_REL).read_text())
+    return [
+        (row["character"], row["source"], "%s-%s" % (row["character"], row["action"]), tuple(row["angles"]))
+        for row in spec["clips"]
+    ]
 
 
 def export_assets(root: Path, check: bool) -> int:
     failures = []
     count = 0
     clips = 0
-    for character, source_prefix, runtime_prefix, angles in SPECS:
+    for character, source_prefix, runtime_prefix, angles in load_specs(root):
         for angle in angles:
             clips += 1
             animation = json.loads(source_animation_path(root, source_prefix, angle).read_text())

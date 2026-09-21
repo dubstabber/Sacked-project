@@ -7,6 +7,8 @@ const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
 @export var profile: Resource
 
 var is_mouse_movement_active: bool = false
+# Set while a prank is running: the original plays an animation there and takes input away.
+var input_locked: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
 
 @onready var sprite: Sprite2D = $Sprite2D
@@ -29,6 +31,8 @@ func _exit_tree() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if input_locked:
+		return
 	if event.is_action_pressed("mouse-movement"):
 		start_mouse_movement()
 	elif event.is_action_released("mouse-movement"):
@@ -39,6 +43,12 @@ func _physics_process(delta: float) -> void:
 	var movement_direction := Vector2.ZERO
 	var raw_mouse_movement_direction := Vector2.ZERO
 
+	if input_locked:
+		# The prank controller owns the animation for as long as it holds the player.
+		velocity = Vector2.ZERO
+		footstep_controller.stop_footsteps()
+		movement_cursor.hide_arrow()
+		return
 	if is_mouse_movement_active:
 		var mouse_pos = get_global_mouse_position()
 		raw_mouse_movement_direction = (mouse_pos - global_position).normalized()
@@ -92,6 +102,13 @@ func apply_profile(selected_profile: Resource) -> void:
 			animation_player.remove_animation_library(library_name)
 		animation_player.add_animation_library(library_name, animation_library)
 
+	var actions := profile.get("action_animation_library") as AnimationLibrary
+	if actions != null:
+		var action_library_name := StringName("%s-actions" % profile_id)
+		if animation_player.has_animation_library(action_library_name):
+			animation_player.remove_animation_library(action_library_name)
+		animation_player.add_animation_library(action_library_name, actions)
+
 	var library_prefix := ""
 	if String(profile_id) != "":
 		library_prefix = "%s/" % String(profile_id)
@@ -104,6 +121,19 @@ func apply_profile(selected_profile: Resource) -> void:
 		String(profile.get("footstep_stream_path")),
 		float(profile.get("footstep_loop_end_seconds"))
 	)
+
+
+# The prank controller drives these: the library is registered as "<id>-actions" and its
+# clips are named "<id>-<action>-<direction>".
+func play_action_animation(action: String, direction: Vector2) -> bool:
+	if profile == null:
+		return false
+	var prefix := "%s-actions/%s-%s-" % [String(profile.get("id")), String(profile.get("id")), action]
+	var anim_name: String = animation_controller.get_directional_animation_name(prefix, direction)
+	if not animation_player.has_animation(anim_name):
+		return false
+	animation_controller.play_animation(anim_name)
+	return true
 
 
 func snap_to_8_directions(dir: Vector2) -> Vector2:

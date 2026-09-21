@@ -9,6 +9,49 @@ const CONTACT_CLEARANCE := 0.36
 const MAX_STEP := 0.25
 
 
+# sub_412E30 walks the line between two points in quarter-cell steps and reports the first
+# cell that blocks sight (INFODATA bit 1), testing every sample from the start to the
+# destination inclusive. Both ends are already tile centres scaled by four.
+static func has_line_of_sight(from_quarter: Vector2i, to_quarter: Vector2i, is_sight_blocked: Callable) -> bool:
+	var x := from_quarter.x
+	var y := from_quarter.y
+	var span_x := absi(to_quarter.x - from_quarter.x)
+	var span_y := absi(to_quarter.y - from_quarter.y)
+	var step_x := 1 if from_quarter.x <= to_quarter.x else -1
+	var step_y := 1 if from_quarter.y <= to_quarter.y else -1
+
+	if span_y <= span_x:
+		var error := 2 * span_y - span_x
+		if is_sight_blocked.call(Vector2i(x >> 2, y >> 2)):
+			return false
+		while true:
+			x += step_x
+			if error <= 0:
+				error += 2 * span_y
+			else:
+				y += step_y
+				error += 2 * span_y - 2 * span_x
+			span_x -= 1
+			if span_x < 0:
+				return true
+			if is_sight_blocked.call(Vector2i(x >> 2, y >> 2)):
+				return false
+
+	var error_y := 2 * span_x - span_y
+	while not is_sight_blocked.call(Vector2i(x >> 2, y >> 2)):
+		if error_y <= 0:
+			y += step_y
+			error_y += 2 * span_x
+		else:
+			x += step_x
+			y += step_y
+			error_y += 2 * span_x - 2 * span_y
+		span_y -= 1
+		if span_y < 0:
+			return true
+	return false
+
+
 static func constrain_motion(from: Vector2, motion: Vector2, is_blocked: Callable) -> Vector2:
 	if motion == Vector2.ZERO:
 		return Vector2.ZERO

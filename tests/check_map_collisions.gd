@@ -55,6 +55,14 @@ func _check_original_map() -> void:
 		_expect(layer.get_cell_source_id(cell) >= 0, "original wall, furniture or padding cell %s blocks movement" % cell)
 	for cell in [Vector2i(3, 4), Vector2i(4, 4), Vector2i(1, 5), Vector2i(1, 8), Vector2i(8, 3), Vector2i(8, 10), Vector2i(12, 9)]:
 		_expect(layer.get_cell_source_id(cell) == -1, "original doorway, decoration or sight-only cell %s stays passable" % cell)
+	# INFODATA bit 1 rides along as data for the interaction ray; (8,3) blocks sight only.
+	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://resources/levels/level_1.json"))
+	var expected_sight := PackedVector2Array()
+	for cell in manifest["collision_grid"]["sight_blocked_cells"]:
+		expected_sight.append(Vector2(int(cell[0]), int(cell[1])))
+	_expect(layer.sight_blocked_cells == expected_sight, "the level carries all %d original sight blockers" % expected_sight.size())
+	_expect(layer.is_sight_blocked(Vector2i(8, 3)), "a cell that blocks sight but not movement is kept apart")
+	_expect(not layer.is_sight_blocked(Vector2i(12, 9)), "a free cell blocks neither")
 	_expect_vector(_tile_position(layer, player.global_position), Vector2(12, 9), "original player spawn uses the free cell")
 	for direction in [Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN]:
 		_expect_vector(_allowed_motion(layer, Vector2(12, 9), direction * 0.05), direction * 0.05, "player can leave the original spawn")

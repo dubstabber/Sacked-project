@@ -1,6 +1,9 @@
 extends Sprite2D
 
 
+const BUSY_CURSOR_TEXTURE := preload("res://images/gui/cursors/clock-000.png")
+const BUSY_CURSOR_HOTSPOT := Vector2(16, 16)
+
 const MOVEMENT_ARROW_DISTANCE := 40.0
 const MOVEMENT_ARROW_TEXTURES := {
 	0: preload("res://images/gui/cursors/active/active-000.png"),
@@ -52,6 +55,11 @@ func stop_drag(player_viewport_pos: Vector2) -> void:
 	hide_arrow()
 	get_viewport().warp_mouse(player_viewport_pos)
 	show_main_cursor()
+
+
+# sub_4154B0 mode 1: the clock, shown for as long as an action is running.
+func show_busy_cursor() -> void:
+	Input.set_custom_mouse_cursor(BUSY_CURSOR_TEXTURE, Input.CURSOR_ARROW, BUSY_CURSOR_HOTSPOT)
 
 
 func hide_main_cursor() -> void:

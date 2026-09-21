@@ -1,0 +1,440 @@
+{
+  "generated_by": "recovered from the animation slot table at 0x46EC04; see docs/player-action-reference.md",
+  "player_slots": {
+    "3": "STAND#USE",
+    "4": "KNEE#USE",
+    "5": "KICK",
+    "6": "PUNCH",
+    "8": "PISS#2",
+    "9": "STEAL",
+    "10": "DRINK",
+    "15": "PHONE#TYPE",
+    "16": "KETCHUP"
+  },
+  "clips": [
+    {
+      "character": "boss",
+      "library": "npc",
+      "source": "CHEF_SIT#IDLE",
+      "action": "sit-idle",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "boss",
+      "library": "npc",
+      "source": "CHEF_SIT#EASY",
+      "action": "sit-easy",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_SIT#IDLE",
+      "action": "sit-idle",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_SIT#USE",
+      "action": "sit-use",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_SIT#EASY",
+      "action": "sit-easy",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_SPECIAL#1",
+      "action": "special-1",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "female-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTE#1_SIT#IDLE",
+      "action": "sit-idle",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "female-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTE#1_SIT#USE",
+      "action": "sit-use",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "female-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTE#1_SIT#EASY",
+      "action": "sit-easy",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "female-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTE#1_SPECIAL#1",
+      "action": "special-1",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_STAND#USE",
+      "action": "stand-use",
+      "slot": 3,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_KNEE#USE",
+      "action": "knee-use",
+      "slot": 4,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_KICK",
+      "action": "kick",
+      "slot": 5,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_PUNCH",
+      "action": "punch",
+      "slot": 6,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_PISS#2",
+      "action": "piss-2",
+      "slot": 8,
+      "angles": [
+        "000",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_STEAL",
+      "action": "steal",
+      "slot": 9,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_DRINK",
+      "action": "drink",
+      "slot": 10,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_PHONE#TYPE",
+      "action": "phone-type",
+      "slot": 15,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_KETCHUP",
+      "action": "ketchup",
+      "slot": 16,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_STAND#USE",
+      "action": "stand-use",
+      "slot": 3,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_KNEE#USE",
+      "action": "knee-use",
+      "slot": 4,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_KICK",
+      "action": "kick",
+      "slot": 5,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_PUNCH",
+      "action": "punch",
+      "slot": 6,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_PISS#2",
+      "action": "piss-2",
+      "slot": 8,
+      "angles": [
+        "090",
+        "135",
+        "180"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_STEAL",
+      "action": "steal",
+      "slot": 9,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_DRINK",
+      "action": "drink",
+      "slot": 10,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_PHONE#TYPE",
+      "action": "phone-type",
+      "slot": 15,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_KETCHUP",
+      "action": "ketchup",
+      "slot": 16,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    }
+  ]
+}

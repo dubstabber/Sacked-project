@@ -11,27 +11,9 @@ const DIRECTIONS := {
 	"270": "up-left",
 	"315": "up",
 }
-# Seated clips only exist for the four diagonal views; standing ones have all eight.
-const SEATED_ANGLES := ["000", "090", "180", "270"]
-const STANDING_ANGLES := ["000", "045", "090", "135", "180", "225", "270", "315"]
-const ACTIONS := {
-	"boss": [
-		["CHEF_SIT#IDLE", "sit-idle", SEATED_ANGLES],
-		["CHEF_SIT#EASY", "sit-easy", SEATED_ANGLES],
-	],
-	"male-employee-1": [
-		["ANGESTELLTER#1_SIT#IDLE", "sit-idle", SEATED_ANGLES],
-		["ANGESTELLTER#1_SIT#USE", "sit-use", SEATED_ANGLES],
-		["ANGESTELLTER#1_SIT#EASY", "sit-easy", SEATED_ANGLES],
-		["ANGESTELLTER#1_SPECIAL#1", "special-1", STANDING_ANGLES],
-	],
-	"female-employee-1": [
-		["ANGESTELLTE#1_SIT#IDLE", "sit-idle", SEATED_ANGLES],
-		["ANGESTELLTE#1_SIT#USE", "sit-use", SEATED_ANGLES],
-		["ANGESTELLTE#1_SIT#EASY", "sit-easy", SEATED_ANGLES],
-		["ANGESTELLTE#1_SPECIAL#1", "special-1", STANDING_ANGLES],
-	],
-}
+# Which clips to build is shared with tools/export_npc_action_assets.py so the frames on
+# disk and the libraries built from them cannot drift apart.
+const SPEC_PATH := "res://tools/character_action_clips.json"
 
 var _failed := false
 
@@ -41,16 +23,30 @@ func _init() -> void:
 
 
 func _run() -> void:
-	for character in ACTIONS:
+	var file := FileAccess.open(SPEC_PATH, FileAccess.READ)
+	if file == null:
+		push_error("Missing clip spec: %s" % SPEC_PATH)
+		quit(1)
+		return
+	var spec: Dictionary = JSON.parse_string(file.get_as_text())
+	var by_character: Dictionary = {}
+	for row in spec["clips"]:
+		var character: String = row["character"]
+		if not by_character.has(character):
+			by_character[character] = {"library": String(row["library"]), "clips": []}
+		by_character[character]["clips"].append(row)
+
+	for character in by_character:
 		var library := AnimationLibrary.new()
-		for action in ACTIONS[character]:
-			for angle in action[2]:
-				var animation := _build_animation(character, action[0], action[1], angle)
+		for action in by_character[character]["clips"]:
+			for angle in action["angles"]:
+				var animation := _build_animation(character, String(action["source"]), String(action["action"]), String(angle))
 				if _failed:
 					quit(1)
 					return
-				library.add_animation("%s-%s-%s" % [character, action[1], DIRECTIONS[angle]], animation)
-		var path := "res://scenes/npc/profiles/%s_actions.res" % character
+				library.add_animation("%s-%s-%s" % [character, String(action["action"]), DIRECTIONS[angle]], animation)
+		var folder := "npc" if String(by_character[character]["library"]) == "npc" else "player"
+		var path := "res://scenes/%s/profiles/%s_actions.res" % [folder, character]
 		var error := ResourceSaver.save(library, path)
 		if error != OK:
 			push_error("Failed to save %s: %s" % [path, error_string(error)])

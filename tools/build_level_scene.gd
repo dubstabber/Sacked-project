@@ -140,6 +140,12 @@ func _build_collision_layer(manifest: Dictionary) -> TileMapLayer:
 	var collision_grid: Dictionary = manifest.get("collision_grid", {})
 	for cell in collision_grid.get("blocked_cells", []):
 		layer.set_cell(_vector2i(cell), 0, Vector2i.ZERO)
+	# Sight blockers are carried as data rather than painted: they overlap the movement
+	# cells almost everywhere and only the interaction ray reads them.
+	var sight := PackedVector2Array()
+	for cell in collision_grid.get("sight_blocked_cells", []):
+		sight.append(Vector2(_vector2i(cell)))
+	layer.set("sight_blocked_cells", sight)
 	return layer
 
 

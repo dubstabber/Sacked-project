@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://d3vs28rlrhunx" path="res://scenes/player/movement_cursor.gd" id="2_cursor"]
 [ext_resource type="Script" uid="uid://bf5gdjtdfixca" path="res://scenes/player/animation_controller.gd" id="3_anim"]
 [ext_resource type="Script" uid="uid://xuv2t41tecl1" path="res://scenes/player/footstep_controller.gd" id="4_foot"]
+[ext_resource type="Script" path="res://scenes/player/prank_controller.gd" id="6_prank"]
 [ext_resource type="Texture2D" uid="uid://bi7owgvueix3m" path="res://images/effects/shadow/shadow.png" id="5_shadow"]
 
 [sub_resource type="ConvexPolygonShape2D" id="Footprint_player"]
@@ -46,3 +47,6 @@ volume_db = -8.0
 script = ExtResource("4_foot")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1688036430]
+
+[node name="PrankController" type="Node" parent="." unique_id=1930114577]
+script = ExtResource("6_prank")
