@@ -26,12 +26,13 @@ func _run() -> void:
 	_check_player_name_rules()
 	_check_result_routing()
 	await _check_result_screen_shows_the_outcome()
+	await _check_lost_level_returns_to_a_fresh_run()
 
 	_manager.reset_player_setup()
 	_manager.selected_game_mode = &"time"
 	_manager.last_level_won = false
 	if _failures == 0:
-		print("Screen flow: scene paths, game-mode selection, name rules and result routing passed")
+		print("Screen flow: scene paths, mode selection, name rules, result routing and the retry round trip passed")
 	quit(1 if _failures else 0)
 
 
@@ -74,6 +75,56 @@ func _check_result_routing() -> void:
 	_manager.last_level_won = true
 	_expect(_manager.last_level_won, "a win is recorded for the result screen")
 	_manager.last_level_won = false
+
+
+# The whole way round: a lost level reaches the result screen, the result screen leads back
+# to the tree, and the next run starts from zero and still reports its own outcome.
+func _check_lost_level_returns_to_a_fresh_run() -> void:
+	var scene := load("res://scenes/level_1.tscn") as PackedScene
+
+	var first := scene.instantiate()
+	var lost: Node = first.get_node_or_null("LevelRuntime")
+	if lost == null:
+		_expect(false, "the level scene carries its session")
+		first.free()
+		return
+	lost.enabled = false
+	root.add_child(first)
+	await process_frame
+	lost.mode = &"time"
+	lost.add_score(lost.target_score() - 1)
+	lost.advance(lost.limit_seconds() + 1.0)
+	_expect(lost.is_finished and not lost.won, "the clock passing the limit loses the level")
+	_expect(not _manager.last_level_won, "the autoload records the loss")
+	_expect(_manager.current == ScreenManagerScript.Screen.LEVEL_RESULT, "a finished level shows the result screen")
+	root.remove_child(first)
+	first.free()
+
+	var result := (load("res://scenes/screens/level_result.tscn") as PackedScene).instantiate()
+	root.add_child(result)
+	await process_frame
+	var dismiss := InputEventKey.new()
+	dismiss.keycode = KEY_SPACE
+	dismiss.pressed = true
+	root.push_input(dismiss)
+	await process_frame
+	_expect(_manager.current == ScreenManagerScript.Screen.LEVEL_TREE, "the result screen leads back to the level tree")
+	root.remove_child(result)
+	result.free()
+
+	var second := scene.instantiate()
+	var again: Node = second.get_node_or_null("LevelRuntime")
+	again.enabled = false
+	root.add_child(second)
+	await process_frame
+	_expect(again.score == 0, "the next run starts with no score")
+	_expect(again.elapsed == 0.0 and not again.is_finished, "the next run starts with a fresh clock")
+	again.mode = &"time"
+	again.add_score(again.target_score())
+	again.advance(1.0)
+	_expect(_manager.last_level_won, "the next run reports its own outcome")
+	root.remove_child(second)
+	second.free()
 
 
 func _check_result_screen_shows_the_outcome() -> void:

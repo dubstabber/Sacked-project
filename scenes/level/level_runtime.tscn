@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/level/level_session.gd" id="1"]
-[ext_resource type="Script" path="res://scenes/level/level_status_readout.gd" id="2"]
+[ext_resource type="Script" path="res://scenes/debug/level_debug_keys.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/hud/console.tscn" id="3"]
 
 [node name="LevelRuntime" type="Node"]
@@ -9,12 +9,5 @@ script = ExtResource("1")
 
 [node name="Console" parent="." instance=ExtResource("3")]
 
-[node name="StatusLayer" type="CanvasLayer" parent="."]
-layer = 99
-
-[node name="StatusReadout" type="Label" parent="StatusLayer"]
-offset_left = 8.0
-offset_top = 32.0
-offset_right = 320.0
-offset_bottom = 72.0
+[node name="DebugKeys" type="Node" parent="."]
 script = ExtResource("2")
