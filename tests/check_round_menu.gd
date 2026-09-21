@@ -127,6 +127,13 @@ func _check_stepping_through_the_entries() -> void:
 		menu.advance(0.016)
 		_settle(menu)
 	_expect(controller.highlighted == 3, "stepping stops on the last entry rather than wrapping, got %d" % controller.highlighted)
+
+	# sub_4066D0 only reads the step bits while the menu is open.
+	controller.close()
+	var frozen: int = controller.highlighted
+	_swipe(menu, 40.0)
+	menu.advance(0.016)
+	_expect(controller.highlighted == frozen, "a closing ring cannot be turned, got %d" % controller.highlighted)
 	_free(fixture)
 
 

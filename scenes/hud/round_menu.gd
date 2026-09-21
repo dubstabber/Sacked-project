@@ -7,8 +7,8 @@ extends CanvasLayer
 # not in the 600-pixel window.
 const CENTRE := Vector2(400.0, 200.0)
 # The draw's own constants. Entries sit a fixed 0.6 radians apart rather than sharing a full
-# turn, the ring is drawn at 1.5x the radius the tick animates, and every button is nudged
-# 16 pixels left -- on x only, which is why the ring hangs low and slightly left of centre.
+# turn, and the ring is drawn at 1.5x the radius the tick animates. The 16 pixels come off x
+# alone and centre nothing -- every ACTICON is 48 wide -- so the whole ring just sits left.
 const ENTRY_PITCH := 0.60000002
 const RADIUS_SCALE := 1.5
 const ICON_OFFSET := Vector2(-16.0, 0.0)
@@ -84,7 +84,8 @@ func _apply_step() -> void:
 	var up := _step_up
 	_step_down = false
 	_step_up = false
-	if _controller == null or not _settled or not (down or up):
+	# sub_4066D0 only reads the step bits in state 1, so a closing ring cannot be turned.
+	if _controller == null or _closing or not _settled or not (down or up):
 		return
 	var count := (_controller.entries as Array).size()
 	var step := -1 if down else 1
@@ -145,7 +146,8 @@ func _layout() -> void:
 		_icons[index].modulate = SELECTED_TINT if lit and index == highlighted else Color.WHITE
 
 
-# this+120, which the draw only ever compares against 255.
+# this+120 is fed radius / 60 * 254 + 1 and the draw only ever compares it against 255, so
+# what looks like a fade is really a gate on the ring having finished opening.
 func is_fully_open() -> bool:
 	return int(_radius / RADIUS_LIMIT * 254.0 + 1.0) >= 255
 
