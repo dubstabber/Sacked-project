@@ -6,6 +6,7 @@ enum Screen {
 	CHARACTER_SELECT,
 	LEVEL_TREE,
 	LEVEL_1,
+	LEVEL_RESULT,
 }
 
 const _SCENE_PATHS := {
@@ -14,6 +15,7 @@ const _SCENE_PATHS := {
 	Screen.CHARACTER_SELECT: "res://scenes/screens/character_select.tscn",
 	Screen.LEVEL_TREE: "res://scenes/screens/level_tree.tscn",
 	Screen.LEVEL_1: "res://scenes/level_1.tscn",
+	Screen.LEVEL_RESULT: "res://scenes/screens/level_result.tscn",
 }
 
 const _PROFILES := {
@@ -32,6 +34,7 @@ const PLAYER_NAME_MAX_LENGTH := 16
 
 var current: Screen = Screen.BOOT_LOADING
 var selected_game_mode: StringName = &"time"
+var last_level_won := false
 var selected_character: StringName = DEFAULT_CHARACTER
 var player_name: String = get_default_player_name(DEFAULT_CHARACTER)
 var _menu_music_player: AudioStreamPlayer
@@ -65,6 +68,12 @@ func change_to_main_menu() -> void:
 
 func change_to_level_tree() -> void:
 	change_to(Screen.LEVEL_TREE)
+
+
+# A level reports its own outcome; sub_407370 sends both results to their own screen.
+func report_level_finished(won: bool) -> void:
+	last_level_won = won
+	change_to(Screen.LEVEL_RESULT)
 
 
 func start_game_setup(game_mode: StringName) -> void:

@@ -21,6 +21,8 @@ TILE_SIZE = (96, 48)
 PLAYABLE_LEVEL_NUMBER = 1
 ORIGINAL_LEVEL_INDEX = PLAYABLE_LEVEL_NUMBER - 1
 LEVEL_SOURCE_REL = Path("extract-sacked-assets/sacked/Levels/LEVEL_00.col")
+# sub_408D00 picks the plain file for the time game and the S file for the points game.
+LEVEL_POINTS_SOURCE_REL = Path("extract-sacked-assets/sacked/Levels/LEVEL_00s.col")
 LEVEL_TEXT_REL = Path("extract-sacked-assets/sacked/Levels/Level_00.txt")
 OBJECT_DB_REL = Path("extract-sacked-assets/sacked/CO_OBJECTS.DAT")
 OBJECT_TEXTURE_LOG_REL = Path("extract-sacked-assets/extracted/textures/CO_OBJECTS/png_conversion_log.json")
@@ -190,6 +192,25 @@ def build_collision_grid(info_data: List[int], width: int, height: int) -> Dict[
     }
 
 
+# sub_412FB0 accepts a CONDITION half only inside these ranges and otherwise keeps the
+# value it already had; see docs/game-rules-reference.md.
+CONDITION_TIME_RANGE = (1.0, 3600.0)
+CONDITION_SCORE_RANGE = (1, 99999)
+
+
+def parse_condition(data: bytes) -> Dict[str, object]:
+    record = find_chunk(data, "CONDITION")
+    if len(record.payload) != 8:
+        raise ValueError(f"CONDITION has {len(record.payload)} payload bytes, expected 8")
+    time_limit = read_f32(record.payload, 0)
+    score_target = read_u32(record.payload, 4)
+    if not CONDITION_TIME_RANGE[0] <= time_limit <= CONDITION_TIME_RANGE[1]:
+        raise ValueError(f"CONDITION time limit {time_limit} is outside the range the engine accepts")
+    if not CONDITION_SCORE_RANGE[0] <= score_target <= CONDITION_SCORE_RANGE[1]:
+        raise ValueError(f"CONDITION score target {score_target} is outside the range the engine accepts")
+    return {"time_limit_seconds": round_float(time_limit), "score_target": score_target}
+
+
 def parse_level_file(path: Path) -> Dict[str, object]:
     data = path.read_bytes()
     if not data.startswith(b"#ODIN_ENGINE"):
@@ -245,6 +266,7 @@ def parse_level_file(path: Path) -> Dict[str, object]:
         "width": width,
         "height": height,
         "layer_count": layer_count,
+        "condition": parse_condition(data),
         "info_data": info_data,
         "layers": {
             "LAYER0": layer0,
@@ -726,6 +748,10 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
             "visible_width": visible_width,
             "visible_height": visible_height,
             "layer_count": int(level["layer_count"]),
+        },
+        "conditions": {
+            "time": level["condition"],
+            "points": parse_condition((root / LEVEL_POINTS_SOURCE_REL).read_bytes()),
         },
         "collision_grid": build_collision_grid(level["info_data"], width, height),
         "tile_layers": [

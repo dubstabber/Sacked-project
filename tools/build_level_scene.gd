@@ -14,6 +14,7 @@ const COLLISION_TILESET := "res://resources/tilemaps/sacked-collision.tres"
 const NPC_SCENE := "res://scenes/npc/npc.tscn"
 const NPC_BRAIN_SCRIPT := "res://scenes/npc/npc_brain.gd"
 const ACTIVITY_POINT_SCRIPT := "res://scenes/npc/npc_activity_point.gd"
+const LEVEL_RUNTIME_SCENE := "res://scenes/level/level_runtime.tscn"
 
 var _object_prefabs: Dictionary = {}
 var _prefab_paths: Dictionary = {}
@@ -108,9 +109,24 @@ func _build_scene(manifest: Dictionary) -> Node:
 	compositor.script = load(DEPTH_COMPOSITOR_SCRIPT)
 	world.add_child(compositor)
 
+	root.add_child(_build_level_runtime(manifest))
 	root.add_child(_build_debug_overlay())
 	_assign_owner(root, root)
 	return root
+
+
+# The session, and later the console, live in a hand-authored scene so the generated level
+# only has to carry the level's own CONDITION values.
+func _build_level_runtime(manifest: Dictionary) -> Node:
+	var session := (load(LEVEL_RUNTIME_SCENE) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+	var conditions: Dictionary = manifest.get("conditions", {})
+	var time_mode: Dictionary = conditions.get("time", {})
+	var points_mode: Dictionary = conditions.get("points", {})
+	session.set("time_mode_limit_seconds", float(time_mode.get("time_limit_seconds", 0.0)))
+	session.set("time_mode_score_target", int(time_mode.get("score_target", 0)))
+	session.set("points_mode_limit_seconds", float(points_mode.get("time_limit_seconds", 0.0)))
+	session.set("points_mode_score_target", int(points_mode.get("score_target", 0)))
+	return session
 
 
 func _build_collision_layer(manifest: Dictionary) -> TileMapLayer:

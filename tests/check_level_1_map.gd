@@ -152,6 +152,9 @@ func _run() -> void:
 	_check_debug_overlay()
 	if _failed:
 		return
+	_check_level_runtime(manifest)
+	if _failed:
+		return
 
 	_free_level()
 	quit(0)
@@ -495,6 +498,28 @@ func _check_npcs(world: Node, manifest: Dictionary, floor_layer: TileMapLayer) -
 				return
 	profiles.sort()
 	_expect_equal(profiles, ["boss", "female-employee-1", "male-employee-1"] as Array[String], "original character roster")
+
+
+func _check_level_runtime(manifest: Dictionary) -> void:
+	var runtime: Node = _level.get_node_or_null("LevelRuntime")
+	if runtime == null:
+		_fail("Level 1 has no LevelRuntime carrying its CONDITION values")
+		return
+	var conditions: Dictionary = manifest.get("conditions", {})
+	for mode: String in ["time", "points"]:
+		var condition: Dictionary = conditions.get(mode, {})
+		_expect_equal(
+			runtime.get("%s_mode_limit_seconds" % mode),
+			float(condition.get("time_limit_seconds", 0.0)),
+			"%s-game time limit" % mode
+		)
+		_expect_equal(
+			runtime.get("%s_mode_score_target" % mode),
+			int(condition.get("score_target", 0)),
+			"%s-game score target" % mode
+		)
+		if _failed:
+			return
 
 
 func _check_debug_overlay() -> void:

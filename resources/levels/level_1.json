@@ -1102,6 +1102,16 @@
     "source_chunk": "INFODATA",
     "width": 16
   },
+  "conditions": {
+    "points": {
+      "score_target": 3000,
+      "time_limit_seconds": 300.0
+    },
+    "time": {
+      "score_target": 4000,
+      "time_limit_seconds": 360.0
+    }
+  },
   "generated_by": "tools/import_original_level.py",
   "ignored_layers": {
     "LAYER2": "matches LAYER1 for LEVEL_00.col and is not rendered twice"
