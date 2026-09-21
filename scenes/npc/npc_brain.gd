@@ -17,6 +17,13 @@ const SMOKING_GOAL := 6
 const REACTION_GOAL := 8
 # sub_41DEA0(25, agent x, agent y): the player scores for every agent it catches out.
 const REACTION_SCORE := 25
+# sub_4187F0 splits a full meter across the goals the map can actually offer, and
+# sub_417B00 hands an agent one share the first time each of its goals is spoiled -- so an
+# agent is at its angriest once that many different goals have been.
+const AGGRESSION_LIMIT := 100.0
+const AGGRESSION_SHARED_GOALS := [0, 1, 2, 3, 4]
+# An agent that finds its own workstation tampered with gives up on working altogether.
+const WORK_GOAL := 3
 # sub_416960 aims 1.2 tiles in front of the other agent and sub_417320 only
 # considers agents of the other gender within eight tiles.
 const SOCIAL_APPROACH_TILES := 1.2
@@ -83,6 +90,10 @@ var _active: Node2D
 var _passive: Node2D
 var _claimed_seat: Node2D
 var _social_refresh := 0.0
+# agent+1076, agent+1060 and the once-per-goal flags at agent+980 + 4 * goal.
+var aggression := 0.0
+var _aggression_share := 0.0
+var _aggravated: Array[bool] = []
 var _goal_candidates: Array = []
 var _alternate_candidates: Array[Node2D] = []
 var _has_claim := false
@@ -125,6 +136,13 @@ func _initialize() -> void:
 	for goal in range(8):
 		if _goal_disabled[goal]:
 			_rates[goal] = 0.0
+	# sub_4187F0's last line: a full meter divided by the goals that survived that scan.
+	var shared := 0
+	for goal in AGGRESSION_SHARED_GOALS:
+		if not _goal_disabled[goal]:
+			shared += 1
+	_aggression_share = AGGRESSION_LIMIT / float(shared) if shared > 0 else 0.0
+	_aggravated.resize(8)
 	_actor.connect("destination_reached", _on_destination_reached)
 	_actor.connect("navigation_failed", _on_navigation_failed)
 	_actor.connect("activity_finished", _on_activity_finished)
@@ -438,6 +456,7 @@ func _on_destination_reached() -> void:
 # its aggression at agent+952 and hands a janitor the repair job at agent+1816 -- neither
 # system exists here yet, so neither is reproduced. See docs/npc-reference.md.
 func _start_reaction() -> void:
+	_take_offence(_goal)
 	var animation := &"explode" if _profile_id == &"boss" else &"pissed"
 	var facing := _focus_position(_active) - _actor.global_position
 	var started := bool(_actor.call(
@@ -451,6 +470,21 @@ func _start_reaction() -> void:
 	var session := get_tree().get_first_node_in_group("level_session")
 	if session != null:
 		session.call("add_score", REACTION_SCORE, _actor.global_position)
+
+
+# sub_417B00's bookkeeping, which runs before it raises the reaction and only for a goal
+# that is still enabled. The original also adds 25 to the work goal's decay rate, which can
+# never be felt because the same branch disables that goal. See docs/npc-reference.md.
+func _take_offence(goal: int) -> void:
+	if goal < 0 or goal >= _goal_disabled.size() or _goal_disabled[goal]:
+		return
+	if goal == WORK_GOAL:
+		_goal_disabled[WORK_GOAL] = true
+		_rates[WORK_GOAL] = 0.0
+	if _aggravated[goal]:
+		return
+	_aggravated[goal] = true
+	aggression = minf(aggression + _aggression_share, AGGRESSION_LIMIT)
 
 
 func _placement(claim: Node2D, seated: bool, relaxed: bool, focus: Node2D) -> Dictionary:

@@ -176,6 +176,36 @@ bubble already carries all ten.
 while `agent+1788` marks it as the one the cursor selected, and three jittered green copies
 of the sprite while `agent+1792` is set.
 
+## How angry the office gets
+
+The console's bar at (410, 497) reads `game+14728`, and `sub_402350` rebuilds that every
+frame as the **mean of every agent's own `agent+1076`**. Three things feed off it.
+
+**Where an agent's own meter comes from.** `sub_4187F0` ends with
+`agent+1060 = 100.0 / n`, where `n` counts how many of goals 0–4 came out of its candidate
+scan with anything to aim at. `sub_417B00` then hands over one of those shares the first
+time each goal is spoiled — the flag at `agent+980 + 4 * goal` makes it once per goal — and
+clamps the total at 100. So an agent is at its angriest once that many different goals have
+been ruined for it, which on level 1 is five.
+
+The same branch has a special case for goal 3: an agent that walks to its **own
+workstation** and finds it tampered with sets `agent+1032`, the disabled flag for that
+goal, and gives up on working for the rest of the level. It also adds 25 to `agent+952`,
+that goal's decay rate, which can never be felt because the goal it belongs to has just
+been disabled.
+
+**The bands.** `sub_402350` also writes `clamp(floor(mean * 0.04), 0, 3)` into every
+agent's `agent+1064`, reading the mean as it stood at the start of the frame. `sub_419CE0`,
+`sub_41E360` and `sub_41A8D0` walk at `base_speed + 0.15 * that`, so the whole office picks
+up pace as it sours — up to 0.45 tiles a second at the top band. `sub_419740`, the boss,
+reads the band but does not apply that formula.
+
+**The warning.** When the band rises, `sub_402350` calls `sub_407960`, which shows
+`game+14740` — the `THERMO_UP` overlay the console builds hidden at (5, 5) — and sets
+`game+14748` to 2.0. `sub_403780` counts that down by the frame delta and hides it again at
+zero. The comparison is between *unclamped* bands, so an office already past the top band
+cannot announce itself twice.
+
 ## Reacting to a sabotaged object
 
 `agent+1820` is the reaction flag, and `sub_416450` is the whole reaction:
@@ -253,17 +283,12 @@ Both ship 8 views and both loop. They are imported through
 
 ### What the port leaves out
 
-`sub_417B00` does three more things in that branch, all of them hooks into systems that do
-not exist here yet:
+`sub_417B00` does two more things in that branch that hook into systems the port does not
+have yet:
 
-- **`agent+952 += 25`, clamped to 0–100**, when the interrupted goal was 3 and that goal is
-  not disabled. That is the aggression the console's bar at (410, 497) reads, which is
-  still dark.
 - **`agent+1816` and `agent+1832`**: a janitor (`agent+1740 == 3`) whose broken item is one
   of the 30 types `sub_4180F0` lists files it as a repair job, and everyone else does the
   same through `sub_4181F0` for a flagged cubicle (type 173 with `item+224` set). That is
   goal 9, `REPAIR`, which the brain cannot pick yet. Both branches also write `agent+1124`,
   but the unconditional 10-to-12-second write below them overwrites it, so the reaction is
   always the same length.
-- **`agent+980 + 4 * goal` and `agent+1076`**: a once-per-goal flag that accumulates
-  `agent+1060` into a second counter, also aggression-side.

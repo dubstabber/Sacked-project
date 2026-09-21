@@ -7,6 +7,11 @@ signal activity_finished
 signal waypoint_reached(index: int)
 signal route_finished
 
+# sub_419CE0, sub_41E360 and sub_41A8D0 all walk at base_speed + 0.15 * agent+1064, the
+# office's aggression band. sub_419740, the boss, reads the same band but not this formula.
+const AGGRESSION_SPEED_STEP := 0.15
+const UNHURRIED_PROFILE := &"boss"
+
 const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
 const NAVIGATION := preload("res://scenes/shared/grid_navigation.gd")
 
@@ -20,6 +25,8 @@ enum Command { NONE, TRAVEL, ACTIVITY }
 @export var pause_seconds: float = 0.4
 @export var initial_direction: Vector2 = Vector2.RIGHT
 
+# agent+1064, which sub_402350 writes from the office-wide mean every frame.
+var aggression_band := 0
 var last_direction: Vector2 = Vector2.RIGHT
 var _patrol_origin := Vector2.ZERO
 var _patrol_targets: Array[Vector2] = []
@@ -109,9 +116,12 @@ func _physics_process(delta: float) -> void:
 
 
 func get_move_speed_tiles() -> float:
-	if move_speed_tiles > 0.0:
-		return move_speed_tiles
-	return profile.walk_speed_tiles if profile != null else 1.5
+	var base := move_speed_tiles
+	if base <= 0.0:
+		base = profile.walk_speed_tiles if profile != null else 1.5
+	if profile != null and StringName(profile.get("id")) == UNHURRIED_PROFILE:
+		return base
+	return base + AGGRESSION_SPEED_STEP * float(aggression_band)
 
 
 func apply_profile(selected_profile: Resource) -> void:
