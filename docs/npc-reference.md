@@ -24,7 +24,7 @@ NPC class initializers write preliminary speeds, then `sub_4184B0` overwrites th
 
 Factories `sub_404B90`, `sub_404EC0`, `sub_404D20`, `sub_405010`, and `sub_4051D0` establish those character types and variants. Internal type `+1740` is 1 for boss, 2 for secretary, 3 for janitor, and 4 for coworkers. Coworker gender at `+1744` is 0 for male and 1 for female; variant `+1748` is 0 or 1.
 
-`sub_417730` moves NPCs toward their current waypoint using the exact logical normalized vector `(dx, dz) / sqrt(dx² + dz²)`, multiplied by current speed, frame delta, and the multiplier at `+76`. Their velocity is continuous toward the target; only sprite facing is quantized into eight directions. Coworker, secretary, and janitor update functions (`sub_419CE0`, `sub_41E360`, `sub_41A8D0`) adjust current speed to `base_speed + 0.15 * integer_at_1064`. Their slowed flag at `+1792` sets the multiplier to 0.2 instead of 1.0. The boss tick `sub_419740` applies the same slowdown multiplier but does not apply that speed-increase formula. Base-speed support does not imply these reaction states have been implemented.
+`sub_417730` moves NPCs toward their current waypoint using the exact logical normalized vector `(dx, dz) / sqrt(dx² + dz²)`, multiplied by current speed, frame delta, and the multiplier at `+76`. Their velocity is continuous toward the target; only sprite facing is quantized into eight directions. Coworker, secretary, and janitor update functions (`sub_419CE0`, `sub_41E360`, `sub_41A8D0`) adjust current speed to `base_speed + 0.15 * integer_at_1064`. Their slowed flag at `+1792` sets the multiplier to 0.2 instead of 1.0. The boss tick `sub_419740` applies the same slowdown multiplier but does not apply that speed-increase formula. The slowed and speed-increase states themselves are not implemented.
 
 ## Runtime route generation
 
@@ -126,7 +126,7 @@ Coworker animation slots are `0 IDLE#1#ATMEN`, `1 IDLE#2`, `2 WALK`, `3 SIT#IDLE
 
 `sub_41A510` resolves a slot against the agent's current eight-direction index. A slot with no clip for that view falls back to the clip for view `000`, and a slot with no clip at all falls back to the idle slot. Each coworker variant ships only one of `SPECIAL#1` and `SPECIAL#2`, so goal 6 plays the idle fallback for the variant-1 coworkers in `LEVEL_00`.
 
-Full prank reactions, panic, cleanup, anger progression, and the complete social interaction state machine remain outside this reference's recovered ordinary-action subset. A port implementing only workstation behavior should identify that limit rather than describing it as the complete original NPC AI.
+Panic, cleanup, anger progression, and the complete social interaction state machine remain outside this reference's recovered subset; the reaction to a tampered object is covered below. A port implementing only workstation behavior should identify that limit rather than describing it as the complete original NPC AI.
 
 ## Implemented autonomous subset
 
@@ -140,7 +140,7 @@ Two `LEVEL_00` targets cannot be reached, for different reasons. The toilet cubi
 
 `LEVEL_00`'s only standing ashtray sits at tile `(12.79, 5.21)` and its interaction offset of `+0.6` in X keeps the approach inside cell `(13, 5)`, which the original collision grid marks blocked. Goal 6 therefore cannot complete on this map in the original either. The port reproduces that: the attempt fails, the agent keeps decaying its other needs, and the tie-break in `sub_415FF0` — first index wins — hands the turn to a lower-numbered goal once that need also reaches zero.
 
-Coworkers use `SIT#USE` throughout work instead of the original rare per-tick `SIT#IDLE` selection, because reproducing a per-tick clip swap needs the original's clock-driven action playback, which this port has not verified for action clips. The copier's own object animation state 9 is not modelled; only the agent side of that action is. Prank reactions, panic, cleanup, anger progression and the `+1064` speed increase remain unimplemented.
+Coworkers use `SIT#USE` throughout work instead of the original rare per-tick `SIT#IDLE` selection, because reproducing a per-tick clip swap needs the original's clock-driven action playback, which this port has not verified for action clips. The copier's own object animation state 9 is not modelled; only the agent side of that action is. Panic, cleanup, anger progression and the `+1064` speed increase remain unimplemented; reacting to a tampered object is implemented and described below.
 
 The port additionally releases claims and restores standing positions when a brain is disabled, removed, or its activity target/seat disappears. An action with no clip at all plays the idle fallback and warns once, matching `sub_41A510` rather than failing the goal. These are authoring/runtime safety behavior, not claims about original object-deletion handling. The isolated `tests/check_npc_brain.gd` exercises target filters, goal disabling, the arrival dispatch for each item class, work startup, durations, occupation, need resets, retry bounds, authored-route override, and interrupted/missing-action cleanup with a stub actor. `tests/check_npc_level_runtime.gd` runs the three original agents on the imported map for two simulated minutes.
 
@@ -176,7 +176,7 @@ bubble already carries all ten.
 while `agent+1788` marks it as the one the cursor selected, and three jittered green copies
 of the sprite while `agent+1792` is set.
 
-## Reacting to a sabotaged object (recovered, not yet implemented)
+## Reacting to a sabotaged object
 
 `agent+1820` is the reaction flag, and `sub_416450` is the whole reaction:
 
@@ -202,12 +202,68 @@ The arrival path in `sub_417B00` awards **25 points** through `sub_41DEA0(0x19, 
 agent's own position, which confirms the published walkthrough's "+25 when a colleague tries
 something you broke" against the executable.
 
-Still to recover before this can be built: the exact test that *sets* `agent+1820`. The
-region around `0x417C86` clears it on an ordinary arrival, so the setting branch is
-elsewhere in `sub_417B00`'s item-type switch. The reaction must not live in
-`is_available()`, which `_candidates()` calls when choosing a goal — an agent has to walk to
-a broken object before it can be angry about it.
+### What sets `agent+1820`
 
-Assets: `PISSED` ships 8 views for all six coworker archetypes and `CHEF_STAND#EXPLODE` 8
-views for the boss; neither is imported yet. Both would go through
-`tools/character_action_clips.json`.
+`0x417C86` is the **set**, not a clear, and it is the first thing `sub_417B00` does rather
+than a case in its item-type switch:
+
+```c
+item = agent+1112;                       // the active item it walked to
+if ( item && sub_418B10(item) == 1 && item+228 == 1 )
+{
+    ... goal-3 bookkeeping ...
+    agent+1820 = 1;
+    agent+1124 = rand01 * 2 + 10.0;      // busy 10 to 12 seconds
+    for ( each entry in agent+1732 )     // the world's entity list
+        if ( entry->obj->[112] == 1 )    // the player
+            sub_41DEA0(25, agent+20, agent+28);
+}
+else { ... the ordinary item-type dispatch ... }
+```
+
+`sub_418B10` is a liveness check — it walks the world's item list for the pointer — so the
+real test is **`item+228`**. `sub_41B240` sets that at `0x41B83D`, in the same breath as
+clearing the used slot's flag at `item+slot+252`, and it is **unconditional**: finishing
+*any* player action on an object leaves it tampered with, whatever the action did. Only the
+item reset `sub_40FEF0` puts it back to 0, so within a level the mark is permanent.
+
+Two consequences worth stating. The test is on `agent+1112`, the **active** item, so an
+agent whose pick landed in the passive slot — a chair, a sofa, a plant — walks onto it
+without noticing. And the reaction cannot live in the candidate filter: `sub_417120` picks
+targets without consulting `+228`, so an agent has to walk all the way to a broken object
+before it can be angry about it.
+
+`sub_41DEA0` adds its 25 to `player+984`, the score, and calls `sub_40A0D0` to float the
+number at the agent's position. The port awards the score; it has no floating score text
+anywhere yet, for pranks either.
+
+### Animation
+
+The reaction flag picks a slot from each archetype's own animation table, and the names are
+not shared:
+
+| Archetype | Table | Slot | Clip |
+| --- | --- | --- | --- |
+| Coworkers | `0x46EB44`, `sub_419CE0` | 7 | `PISSED` |
+| Boss | `0x46EAE0`, `sub_419740` | 1 | `STAND#EXPLODE` |
+| Secretary | `0x46EEE4`, `sub_41E360` | — | not recovered |
+
+Both ship 8 views and both loop. They are imported through
+`tools/character_action_clips.json` as `pissed` and `explode`.
+
+### What the port leaves out
+
+`sub_417B00` does three more things in that branch, all of them hooks into systems that do
+not exist here yet:
+
+- **`agent+952 += 25`, clamped to 0–100**, when the interrupted goal was 3 and that goal is
+  not disabled. That is the aggression the console's bar at (410, 497) reads, which is
+  still dark.
+- **`agent+1816` and `agent+1832`**: a janitor (`agent+1740 == 3`) whose broken item is one
+  of the 30 types `sub_4180F0` lists files it as a repair job, and everyone else does the
+  same through `sub_4181F0` for a flagged cubicle (type 173 with `item+224` set). That is
+  goal 9, `REPAIR`, which the brain cannot pick yet. Both branches also write `agent+1124`,
+  but the unconditional 10-to-12-second write below them overwrites it, so the reaction is
+  always the same length.
+- **`agent+980 + 4 * goal` and `agent+1076`**: a once-per-goal flag that accumulates
+  `agent+1060` into a second counter, also aggression-side.

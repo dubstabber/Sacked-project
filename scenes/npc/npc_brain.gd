@@ -12,6 +12,11 @@ const ITEM_GOALS := [0, 1, 2, 3, 4, 7]
 const SUPPORTED_GOALS := [0, 1, 2, 3, 4, 5, 6, 7]
 const SOCIAL_GOAL := 5
 const SMOKING_GOAL := 6
+# sub_417B00 sets agent+1820 when the item it walked to is tampered with, and sub_416450
+# holds goal 8 -- the ANGRY bubble -- for as long as the busy timer it starts.
+const REACTION_GOAL := 8
+# sub_41DEA0(25, agent x, agent y): the player scores for every agent it catches out.
+const REACTION_SCORE := 25
 # sub_416960 aims 1.2 tiles in front of the other agent and sub_417320 only
 # considers agents of the other gender within eight tiles.
 const SOCIAL_APPROACH_TILES := 1.2
@@ -354,6 +359,12 @@ func _on_destination_reached() -> void:
 		_on_navigation_failed()
 		return
 
+	# sub_417B00 tests the active item for tampering before it looks at any type, so a
+	# sabotaged object is reacted to rather than used.
+	if is_instance_valid(_active) and bool(_active.get("tampered")):
+		_start_reaction()
+		return
+
 	# sub_417B00 picks the action from the arrived item's type. The active slot is
 	# checked first; a monitor or cubicle consumes the arrival, anything else also
 	# lets the passive slot apply its own rule.
@@ -422,6 +433,26 @@ func _on_destination_reached() -> void:
 		_on_navigation_failed()
 
 
+# sub_417B00's tampered branch, then sub_416450. The agent stands where it arrived and is
+# angry for a fixed stretch; the player is paid once, on the spot. The original also nudges
+# its aggression at agent+952 and hands a janitor the repair job at agent+1816 -- neither
+# system exists here yet, so neither is reproduced. See docs/npc-reference.md.
+func _start_reaction() -> void:
+	var animation := &"explode" if _profile_id == &"boss" else &"pissed"
+	var facing := _focus_position(_active) - _actor.global_position
+	var started := bool(_actor.call(
+		"start_activity", animation, _random.randf_range(10.0, 12.0), facing
+	))
+	if not started:
+		_on_navigation_failed()
+		return
+	_goal = REACTION_GOAL
+	_state = State.ACTING
+	var session := get_tree().get_first_node_in_group("level_session")
+	if session != null:
+		session.call("add_score", REACTION_SCORE)
+
+
 func _placement(claim: Node2D, seated: bool, relaxed: bool, focus: Node2D) -> Dictionary:
 	# sub_4161E0 seats the agent on the item anchor and sub_416090 puts it inside the
 	# cubicle; both step back onto the interaction point when the timer runs out.
@@ -474,7 +505,13 @@ func _on_activity_finished() -> void:
 	if not enabled or _state != State.ACTING:
 		return
 	_release_seat()
-	_needs[_goal] = _random.randf_range(60.0, 100.0)
+	if _goal == REACTION_GOAL:
+		# sub_416450 ends the reaction by resetting every need, not just the one it was
+		# after, so a provoked agent walks away with nothing left to want.
+		for goal in range(_needs.size()):
+			_needs[goal] = _random.randf_range(60.0, 100.0)
+	else:
+		_needs[_goal] = _random.randf_range(60.0, 100.0)
 	_goal = -1
 	_state = State.IDLE
 	_target = null

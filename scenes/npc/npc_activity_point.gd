@@ -11,6 +11,10 @@ extends Marker2D
 @export var action_ids: PackedInt32Array = PackedInt32Array()
 
 var occupant: Node
+# item+228, which sub_41B240 sets the moment the player finishes *any* action on the object
+# and only the item reset at sub_40FEF0 ever clears. An agent that walks to a tampered
+# object reacts instead of using it; see docs/npc-reference.md.
+var tampered := false
 # item+252: one flag per slot, cleared as its action is used. sub_4100B0 enables every slot
 # that carries an action id and then disables everything those slots unlock.
 var action_enabled: Array[bool] = []
@@ -25,6 +29,7 @@ func _ready() -> void:
 
 
 func reset_actions() -> void:
+	tampered = false
 	action_enabled.resize(action_ids.size())
 	for slot in range(action_ids.size()):
 		action_enabled[slot] = action_ids[slot] != 0

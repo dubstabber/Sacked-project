@@ -12,6 +12,15 @@ class AgentStub extends Node2D:
 	var profile: Resource
 	var last_direction := Vector2.RIGHT
 
+class SessionStub extends Node:
+	var score := 0
+
+	func _enter_tree() -> void:
+		add_to_group("level_session")
+
+	func add_score(points: int) -> void:
+		score += points
+
 class Actor extends Node2D:
 	signal destination_reached
 	signal navigation_failed
@@ -68,6 +77,7 @@ func _run() -> void:
 	_check_filters()
 	_check_cleanup()
 	_check_arrival_actions()
+	_check_reacting_to_a_tampered_item()
 	_check_social_target()
 	_check_interrupted_activity()
 	_check_routes_and_retry_limit()
@@ -76,7 +86,7 @@ func _run() -> void:
 	quit(1 if _failures else 0)
 
 
-func _fixture() -> Dictionary:
+func _fixture(profile_id := &"male-employee-1") -> Dictionary:
 	var world := Node2D.new()
 	root.add_child(world)
 	var chair := _point(world, "Chair", Vector2(3, 2), Vector2(1, 0), 6, 68, 0, false)
@@ -84,6 +94,7 @@ func _fixture() -> Dictionary:
 	var actor := Actor.new()
 	actor.name = "NPC"
 	actor.position = chair.global_position
+	actor.profile.id = profile_id
 	var brain := BRAIN.new()
 	brain.name = "Brain"
 	brain.random_seed = 1037
@@ -324,6 +335,74 @@ func _arrive(fixture: Dictionary, goal := 2) -> Dictionary:
 	}
 	fixture["world"].free()
 	return result
+
+
+# sub_417B00 checks the item it arrived at for tampering before it looks at the type, and
+# sub_416450 runs the reaction from there. See docs/npc-reference.md.
+func _check_reacting_to_a_tampered_item() -> void:
+	var session := SessionStub.new()
+	root.add_child(session)
+
+	var fixture := _point_fixture(9, 30, 0, true)
+	var brain: Node = fixture["brain"]
+	var actor: Actor = fixture["actor"]
+	var point: Node2D = fixture["point"]
+	_expect(not bool(point.get("tampered")), "an untouched object is not tampered with")
+	point.set("tampered", true)
+	brain._target = point
+	brain._active = point
+	brain._state = BRAIN.State.NAVIGATING
+	brain._goal = 2
+	actor.destination_reached.emit()
+
+	_expect(actor.activity.get("animation") == &"pissed", "a coworker reacts with its PISSED clip")
+	var duration := float(actor.activity.get("duration", 0.0))
+	_expect(duration >= 10.0 and duration <= 12.0, "the reaction lasts the original ten to twelve seconds, got %f" % duration)
+	_expect(brain._goal == BRAIN.REACTION_GOAL, "the reaction holds goal 8, which is what raises the ANGRY bubble")
+	_expect(brain._state == BRAIN.State.ACTING, "the reaction is an action, not a failed arrival")
+	_expect(point.get("occupant") != actor, "reacting to an object does not claim it")
+	_expect(session.score == BRAIN.REACTION_SCORE, "catching an agent out pays the player 25, got %d" % session.score)
+	_expect(actor.activity.get("anchor", Vector2.INF) == Vector2.INF, "the agent reacts where it arrived")
+
+	# sub_416450 resets every need on the way out, not just the one it was pursuing.
+	for goal in range(brain._needs.size()):
+		brain._needs[goal] = 1.0
+	actor.finish_activity()
+	var reset := true
+	for goal in range(brain._needs.size()):
+		if brain._needs[goal] < 60.0 or brain._needs[goal] > 100.0:
+			reset = false
+	_expect(reset, "ending the reaction resets all eight needs to 60..100")
+	_expect(brain._goal == -1 and brain._state == BRAIN.State.IDLE, "the agent is free again once it has calmed down")
+	fixture["world"].free()
+
+	# The boss has no PISSED clip; its reaction slot is STAND#EXPLODE.
+	var boss_fixture := _fixture(&"boss")
+	var boss_point := _point(boss_fixture["world"], "Target", Vector2(6, 5), Vector2(1, 0), 9, 30, 0, true)
+	boss_fixture["brain"]._build_candidates()
+	boss_point.set("tampered", true)
+	boss_fixture["brain"]._target = boss_point
+	boss_fixture["brain"]._active = boss_point
+	boss_fixture["brain"]._state = BRAIN.State.NAVIGATING
+	boss_fixture["brain"]._goal = 2
+	(boss_fixture["actor"] as Actor).destination_reached.emit()
+	_expect((boss_fixture["actor"] as Actor).activity.get("animation") == &"explode", "the boss reacts with STAND#EXPLODE")
+	boss_fixture["world"].free()
+
+	# An untampered item of the same type still dispatches on its type.
+	var paid := session.score
+	var clean := _arrive(_point_fixture(9, 30, 0, true))
+	_expect(clean["animation"] == &"idle", "an untampered object is used, not reacted to")
+	_expect(session.score == paid, "an untampered object pays nothing")
+
+	# sub_40FEF0 clears item+228 with the rest of the item state.
+	var reset_point := _point(Node2D.new(), "Reset", Vector2.ZERO, Vector2.ZERO, 9, 30, 0, true)
+	reset_point.set("tampered", true)
+	reset_point.call("reset_actions")
+	_expect(not bool(reset_point.get("tampered")), "resetting an item clears the tampering flag")
+	reset_point.get_parent().free()
+
+	session.free()
 
 
 func _check_interrupted_activity() -> void:

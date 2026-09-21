@@ -182,6 +182,9 @@ func _apply_action() -> void:
 	var object := _object_of(point)
 
 	point.disable_slot(slot)
+	# The slot flag and item+228 are written together and unconditionally: finishing any
+	# action on an object is what leaves it tampered with, whatever the action did.
+	point.set("tampered", true)
 	if int(action.get("result_state", 0)) == STATE_IN_USE:
 		point.set("in_use", false)
 

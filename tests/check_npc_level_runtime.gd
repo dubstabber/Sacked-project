@@ -59,10 +59,44 @@ func _run() -> void:
 		_check_actor_result(actor)
 		actor.get_node("Brain").enabled = false
 		_expect(_find_claim(actor, activity_points) == null, "%s releases its seat when its brain is stopped" % actor.profile.id)
+	_check_a_tampered_workstation_is_reacted_to(level)
 	level.free()
 	if _failures == 0:
 		print("Original level NPC runtime: %d simulated seconds, all three brains moved and completed activities with safe walking footprints and released seat claims" % SIMULATION_SECONDS)
 	quit(1 if _failures else 0)
+
+
+# The same arrival the long run exercises, but against an object the player has finished an
+# action on. Level 1's keyboard is an assigned workstation, so this is a goal the agent
+# reaches in ordinary play rather than a contrived target. See docs/npc-reference.md.
+func _check_a_tampered_workstation_is_reacted_to(level: Node) -> void:
+	var actor := level.get_node_or_null("World/Npc079MaleEmployee1") as CharacterBody2D
+	var session := level.get_node_or_null("LevelRuntime")
+	if actor == null or session == null:
+		_expect(false, "the reference map carries the male employee and its session")
+		return
+	var brain := actor.get_node("Brain")
+	var workstation := brain.get_node_or_null(brain.assigned_workstation)
+	if workstation == null:
+		_expect(false, "the male employee has an assigned workstation to find tampered with")
+		return
+
+	brain.enabled = true
+	workstation.tampered = true
+	brain._target = workstation
+	brain._active = workstation
+	brain._passive = null
+	brain._state = BRAIN_SCRIPT.State.NAVIGATING
+	brain._goal = 3
+	var score_before: int = session.score
+	actor.destination_reached.emit()
+
+	_expect(brain._goal == BRAIN_SCRIPT.REACTION_GOAL, "arriving at a tampered workstation raises the reaction goal")
+	_expect(actor.current_activity == &"pissed", "the agent plays its reaction clip, got %s" % actor.current_activity)
+	_expect(actor.animation_player.is_playing(), "the reaction clip is available on the real profile")
+	_expect(session.score == score_before + BRAIN_SCRIPT.REACTION_SCORE, "the reaction pays the level session")
+	_expect(workstation.occupant != actor, "reacting to a workstation does not claim it")
+	brain.enabled = false
 
 
 func _check_actor_frame(actor: CharacterBody2D, layer: TileMapLayer, activity_points: Array[Node]) -> void:

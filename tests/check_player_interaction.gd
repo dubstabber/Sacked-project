@@ -192,6 +192,7 @@ func _check_action_applies() -> void:
 	_controller._advance_action(_controller._duration * 0.5)
 	_expect(_controller.state == 2, "the action is still running halfway through")
 	_expect(session.score == score_before, "no score is paid out before the action finishes")
+	_expect(not point.tampered, "an object is not tampered with until the action applies")
 
 	_controller._advance_action(_controller._duration)
 	_expect(_controller.state == 0, "the action ends when its duration is up")
@@ -199,6 +200,8 @@ func _check_action_applies() -> void:
 	_expect(session.score == score_before + int(action["score"]), "the score rises by the table's value")
 	_expect(object.state == int(action["result_state"]), "the object reaches the action's result state")
 	_expect(not point.is_action_enabled(int(entry["slot"])), "a used slot is not offered again")
+	# sub_41B240 writes the slot flag and item+228 together, whatever the action did.
+	_expect(point.tampered, "finishing an action leaves the object tampered with")
 	var remaining: Array = _controller.build_entries(point).map(func(e): return int(e["action_id"]))
 	_expect(not remaining.has(int(entry["action_id"])), "the ring loses the action that was used")
 	# sub_410450: an action also shuts down whatever its own disable list names.

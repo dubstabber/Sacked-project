@@ -11,14 +11,17 @@ const STANDING_ANGLES := ["000", "045", "090", "135", "180", "225", "270", "315"
 const SPECS := [
 	["boss", "CHEF_SIT#IDLE", "sit-idle", SEATED_ANGLES],
 	["boss", "CHEF_SIT#EASY", "sit-easy", SEATED_ANGLES],
+	["boss", "CHEF_STAND#EXPLODE", "explode", STANDING_ANGLES],
 	["male-employee-1", "ANGESTELLTER#1_SIT#IDLE", "sit-idle", SEATED_ANGLES],
 	["male-employee-1", "ANGESTELLTER#1_SIT#USE", "sit-use", SEATED_ANGLES],
 	["male-employee-1", "ANGESTELLTER#1_SIT#EASY", "sit-easy", SEATED_ANGLES],
 	["male-employee-1", "ANGESTELLTER#1_SPECIAL#1", "special-1", STANDING_ANGLES],
+	["male-employee-1", "ANGESTELLTER#1_PISSED", "pissed", STANDING_ANGLES],
 	["female-employee-1", "ANGESTELLTE#1_SIT#IDLE", "sit-idle", SEATED_ANGLES],
 	["female-employee-1", "ANGESTELLTE#1_SIT#USE", "sit-use", SEATED_ANGLES],
 	["female-employee-1", "ANGESTELLTE#1_SIT#EASY", "sit-easy", SEATED_ANGLES],
 	["female-employee-1", "ANGESTELLTE#1_SPECIAL#1", "special-1", STANDING_ANGLES],
+	["female-employee-1", "ANGESTELLTE#1_PISSED", "pissed", STANDING_ANGLES],
 ]
 
 var _failures := 0

@@ -37,6 +37,22 @@
       ]
     },
     {
+      "character": "boss",
+      "library": "npc",
+      "source": "CHEF_STAND#EXPLODE",
+      "action": "explode",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
       "character": "male-employee-1",
       "library": "npc",
       "source": "ANGESTELLTER#1_SIT#IDLE",
@@ -89,6 +105,22 @@
       ]
     },
     {
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_PISSED",
+      "action": "pissed",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
       "character": "female-employee-1",
       "library": "npc",
       "source": "ANGESTELLTE#1_SIT#IDLE",
@@ -129,6 +161,22 @@
       "library": "npc",
       "source": "ANGESTELLTE#1_SPECIAL#1",
       "action": "special-1",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "female-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTE#1_PISSED",
+      "action": "pissed",
       "angles": [
         "000",
         "045",
