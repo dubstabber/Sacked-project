@@ -101,12 +101,24 @@ The level tree accepts buttons 1 to 21 and calls `sub_408D00(game, n - 1)` befor
 to the description screen; its button 29 returns to the main menu. Sound setup moves each
 volume by 5 and clamps to 0–100, with defaults of 75 for music and 65 for effects.
 
-**Not recovered yet:** which key reaches pause or the quit prompt. The mechanism is known
-— screen 10 sets the pause bit and `sub_403780` then advances nothing, and the prompt
-strings `Pauza`, `Czy na pewno chcesz wyjść?` and `(T)ak lub (N)ie` all sit in the
-localisation table — but nothing here shows the binding, and the level-1 title
-`Ostatnie wyjście F4` is a pun rather than evidence. The port therefore has no pause and
-no way out of a level short of finishing it; picking a key would be inventing behaviour.
+Pause is `game+12740` bit `0x20`, toggled by **scancode 121** and refused while the screen
+is 4 (loading). `sub_403780` returns immediately while it is set, so the clock, the console
+and every agent stop together and only the drawing carries on. `Main_RenderUpdate` then adds
+a panel spanning (49, 232) to (750, 372) restating the level's own CONDITION and the word
+`Pauza`, centred on x 400 with a two-pixel drop shadow. The time game writes
+`Aby ukończyć ten poziom, musisz zdobyć` / `%d punktów w ciągu %d minut.`; the points game
+writes `Zdobądź jak najwięcej puntków w ciągu %d minut.` / `Potrzebujesz przynajmniej %d
+punktów!`. Limit and target fall back to 1200 s and 10000 exactly as the tick does.
+
+The quit prompt is **scancode 16 (`Q`)**, also refused on screen 4, and reaches screen 10:
+an overlay from (49, 150) to (750, 230) holding `Czy na pewno chcesz wyjść?` and
+`(T)ak lub (N)ie`, with the level still running behind it. The port answers it with `T`
+and `N`, the initials the prompt itself names.
+
+**Still not recovered:** which physical key scancode 121 is. Scancodes 1, 16, 57 and the
+arrows 72/75/77/80 are standard set-1 codes, but 109, 111, 112, 114 and 121 fall in a range
+no Polish or German keyboard uses for those functions, and the install ships no manual. The
+port binds pause to `P`, for `Pauza`, as a stand-in until the key is identified.
 
 ## What the console shows
 
