@@ -3,10 +3,13 @@
 [ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/boss_animations.res" id="1_boss"]
 [ext_resource type="Script" path="res://scenes/player/character_profile.gd" id="2_profile"]
 
+[ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/boss_actions.res" id="npc_actions"]
+
 [resource]
 script = ExtResource("2_profile")
 id = &"boss"
 walk_speed_tiles = 1.8
+action_animation_library = ExtResource("npc_actions")
 animation_library = ExtResource("1_boss")
 idle_animation_prefix = "boss-stand-idle-"
 walk_animation_prefix = "boss-walk-"

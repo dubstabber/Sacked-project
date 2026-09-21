@@ -1,14 +1,16 @@
-[gd_resource type="Resource" script_class="CharacterProfile" format=3]
+[gd_resource type="Resource" script_class="CharacterProfile" format=3 uid="uid://cwfts35u83na0"]
 
 [ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/male-employee-1_animations.res" id="1_vk8u3"]
-[ext_resource type="Texture2D" path="res://images/characters/male-employee-1/male-employee-1-idle1-atmen-right/male-employee-1-idle1-atmen-right-000.png" id="2_w0vcy"]
-[ext_resource type="Script" path="res://scenes/player/character_profile.gd" id="3_qgc72"]
+[ext_resource type="Texture2D" uid="uid://d1y0itjg1oxrs" path="res://images/characters/male-employee-1/male-employee-1-idle1-atmen-right/male-employee-1-idle1-atmen-right-000.png" id="2_w0vcy"]
+[ext_resource type="Script" uid="uid://cech70kmimobr" path="res://scenes/player/character_profile.gd" id="3_qgc72"]
+[ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/male-employee-1_actions.res" id="npc_actions"]
 
 [resource]
 script = ExtResource("3_qgc72")
 id = &"male-employee-1"
 walk_speed_tiles = 1.5
 animation_library = ExtResource("1_vk8u3")
+action_animation_library = ExtResource("npc_actions")
 idle_animation_prefix = "male-employee-1-idle1-atmen-"
 walk_animation_prefix = "male-employee-1-walk-"
 initial_texture = ExtResource("2_w0vcy")

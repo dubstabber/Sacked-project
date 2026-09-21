@@ -4,6 +4,10 @@ extends SceneTree
 const Level1Scene := preload("res://scenes/level_1.tscn")
 const ManifestPath := "res://resources/levels/level_1.json"
 const TileAtlasPath := "res://resources/tilemaps/sacked-tile-atlases.json"
+const NpcScriptPath := "res://scenes/npc/npc.gd"
+const NpcBrainScriptPath := "res://scenes/npc/npc_brain.gd"
+const ActivityPointScriptPath := "res://scenes/npc/npc_activity_point.gd"
+const DirectionScript := preload("res://scenes/shared/iso_direction.gd")
 const ExpectedWallTileOrder := [
 	"walls-wall-vert",
 	"walls-wall-horz",
@@ -54,15 +58,6 @@ const ExpectedWallTextureOrigins := [
 	[-9, 73],
 	[9, 64],
 ]
-const NpcNames := [
-	"Boss",
-	"Secretary",
-	"Janitor",
-	"MaleEmployee1",
-	"MaleEmployee2",
-	"FemaleEmployee1",
-	"FemaleEmployee2",
-]
 const ExpectedObjectSources := {
 	8: "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_000_Schreibtisch02#000",
 	12: "CO_OBJECTS_B_RO_SCHREIBTISCH01_IDLE_180_Schreibtisch01#180",
@@ -86,6 +81,7 @@ const ReferenceObjectPixels := {
 
 var _level
 var _failed := false
+var _brain_defaults: Dictionary = {}
 
 
 func _init() -> void:
@@ -102,6 +98,7 @@ func _run() -> void:
 		return
 
 	_level = Level1Scene.instantiate()
+	_disable_npcs_before_start()
 	root.add_child(_level)
 	await process_frame
 
@@ -143,10 +140,13 @@ func _run() -> void:
 	_check_objects(world, manifest, floor_layer)
 	if _failed:
 		return
+	_check_activity_points(world, manifest, floor_layer)
+	if _failed:
+		return
 	_check_player(world, manifest, floor_layer)
 	if _failed:
 		return
-	_check_no_npcs(world)
+	_check_npcs(world, manifest, floor_layer)
 	if _failed:
 		return
 	_check_debug_overlay()
@@ -367,11 +367,128 @@ func _player_spawn(manifest: Dictionary) -> Dictionary:
 	return {}
 
 
-func _check_no_npcs(world: Node) -> void:
-	for npc_name in NpcNames:
-		if world.get_node_or_null(npc_name) != null:
-			_fail("Level 1 should ignore NPC for now, but found: %s" % npc_name)
+func _disable_npcs_before_start() -> void:
+	var world: Node = _level.get_node_or_null("World")
+	if world == null:
+		return
+	for child in world.get_children():
+		if child.get_script() == null or child.get_script().resource_path != NpcScriptPath:
+			continue
+		child.set_physics_process(false)
+		var brain := child.get_node_or_null("Brain")
+		if brain != null:
+			_brain_defaults[String(child.name)] = brain.get("enabled")
+			brain.set("enabled", false)
+			brain.set_physics_process(false)
+
+
+func _check_activity_points(world: Node, manifest: Dictionary, floor_layer: TileMapLayer) -> void:
+	var collision_grid: Dictionary = manifest["collision_grid"]
+	var width := int(collision_grid["width"])
+	var rooms: Array = collision_grid["room_ids"]
+	for object_data: Dictionary in manifest["objects"]:
+		var object_name := String(object_data["node_name"])
+		var point := world.get_node_or_null("Objects/%s/InteractionPoint" % object_name) as Marker2D
+		if point == null or point.get_script() == null or point.get_script().resource_path != ActivityPointScriptPath:
+			_fail("%s has no authored NPC activity point" % object_name)
 			return
+		var expected_position := floor_layer.to_global(_tile_position_to_local(_vector2(object_data["interaction_tile_position"]), floor_layer))
+		if not point.global_position.is_equal_approx(expected_position):
+			_fail("%s interaction point should use the original transformed DAT offset: expected %s got %s" % [object_name, expected_position, point.global_position])
+			return
+		var kind := String(object_data["kind"]).hex_to_int()
+		var tile_position := _vector2(object_data["tile_position"])
+		var cell := Vector2i(floori(tile_position.x + 0.5), floori(tile_position.y + 0.5))
+		var expected := {
+			"category": (kind >> 16) & 0xFF,
+			"item_type": (kind >> 4) & 0xFFF,
+			"room_id": int(rooms[cell.x + width * cell.y]),
+			"active": int(object_data["object_category"]) == 5,
+		}
+		for field: String in expected:
+			_expect_equal(point.get(field), expected[field], "%s activity %s" % [object_name, field])
+			if _failed:
+				return
+		_expect_equal(point.is_in_group("npc_activity_points"), true, "%s participates in NPC target discovery" % object_name)
+		if _failed:
+			return
+
+
+func _check_npcs(world: Node, manifest: Dictionary, floor_layer: TileMapLayer) -> void:
+	var entries: Array = manifest.get("npcs", [])
+	_expect_equal(entries.size(), 3, "original NPC manifest count")
+	if _failed:
+		return
+	var count := 0
+	for child in world.get_children():
+		if child.get_script() != null and child.get_script().resource_path == NpcScriptPath:
+			count += 1
+	_expect_equal(count, 3, "NPCs directly under World")
+	if _failed:
+		return
+	var object_names: Dictionary = {}
+	for object_data: Dictionary in manifest["objects"]:
+		object_names[int(object_data["instance_id"])] = String(object_data["node_name"])
+	var profiles: Array[String] = []
+	for entry: Dictionary in entries:
+		var npc_name := String(entry["node_name"])
+		var npc := world.get_node_or_null(npc_name) as CharacterBody2D
+		if npc == null or npc.get_script() == null or npc.get_script().resource_path != NpcScriptPath:
+			_fail("Missing original NPC: %s" % npc_name)
+			return
+		var expected_position := _tile_position_to_local(_vector2(entry["tile_position"]), floor_layer)
+		if not npc.position.is_equal_approx(expected_position):
+			_fail("%s spawn mismatch: expected %s got %s" % [npc_name, expected_position, npc.position])
+			return
+		var profile := npc.get("profile") as Resource
+		if profile == null:
+			_fail("%s has no character profile" % npc_name)
+			return
+		profiles.append(String(profile.get("id")))
+		var expected := {
+			"profile_path": String(entry["profile"]),
+			"profile_id": String(entry["profile_id"]),
+			"spawn_id": int(entry["spawn_id"]),
+			"instance_id": int(entry["instance_id"]),
+			"brain_enabled": true,
+		}
+		var actual := {
+			"profile_path": profile.resource_path,
+			"profile_id": String(profile.get("id")),
+			"spawn_id": int(npc.get_meta("original_spawn_id", -1)),
+			"instance_id": int(npc.get_meta("original_instance_id", -1)),
+			"brain_enabled": _brain_defaults.get(npc_name, false),
+		}
+		for field: String in expected:
+			_expect_equal(actual[field], expected[field], "%s %s" % [npc_name, field])
+			if _failed:
+				return
+		var expected_direction: Vector2 = DirectionScript.get_screen_directions()[int(entry["initial_direction_index"])]
+		var initial_direction: Vector2 = npc.get("initial_direction")
+		var last_direction: Vector2 = npc.get("last_direction")
+		if not initial_direction.is_equal_approx(expected_direction) or not last_direction.is_equal_approx(expected_direction):
+			_fail("%s should start facing the original direction index 0" % npc_name)
+			return
+		var brain := npc.get_node_or_null("Brain")
+		if brain == null or brain.get_script() == null or brain.get_script().resource_path != NpcBrainScriptPath:
+			_fail("%s has no NPC brain" % npc_name)
+			return
+		for field: String in ["assigned_workstation", "assigned_chair"]:
+			var reference = brain.get(field)
+			if not reference is NodePath:
+				_fail("%s %s is not an authored NodePath" % [npc_name, field])
+				return
+			var instance_id = entry[field + "_instance_id"]
+			if instance_id == null:
+				_expect_equal(reference.is_empty(), true, "%s has no original %s assignment" % [npc_name, field])
+			else:
+				var object_name: String = object_names[int(instance_id)]
+				var point := world.get_node("Objects/%s/InteractionPoint" % object_name)
+				_expect_equal(brain.get_node_or_null(reference), point, "%s %s resolves to the original object" % [npc_name, field])
+			if _failed:
+				return
+	profiles.sort()
+	_expect_equal(profiles, ["boss", "female-employee-1", "male-employee-1"] as Array[String], "original character roster")
 
 
 func _check_debug_overlay() -> void:

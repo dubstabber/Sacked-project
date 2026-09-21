@@ -11,6 +11,9 @@ const MAP_OBJECT_SCENE := "res://scenes/shared/map_object.tscn"
 const FPS_COUNTER_SCRIPT := "res://scenes/debug/fps_counter.gd"
 const COLLISION_MAP_SCRIPT := "res://scenes/shared/collision_map_layer.gd"
 const COLLISION_TILESET := "res://resources/tilemaps/sacked-collision.tres"
+const NPC_SCENE := "res://scenes/npc/npc.tscn"
+const NPC_BRAIN_SCRIPT := "res://scenes/npc/npc_brain.gd"
+const ACTIVITY_POINT_SCRIPT := "res://scenes/npc/npc_activity_point.gd"
 
 var _object_prefabs: Dictionary = {}
 var _prefab_paths: Dictionary = {}
@@ -93,6 +96,7 @@ func _build_scene(manifest: Dictionary) -> Node:
 
 	var player := _build_player(manifest, floor_layer)
 	world.add_child(player)
+	_build_npcs(manifest, floor_layer, world)
 
 	var world_compositor := Node2D.new()
 	world_compositor.name = "WorldDepthCompositor"
@@ -156,6 +160,20 @@ func _build_objects(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
 		object_node.set_meta("original_height", float(object_data.get("height", 0.0)))
 		object_node.set_meta("original_instance_id", int(object_data.get("instance_id", 0)))
 		objects.add_child(object_node)
+		var interaction := Marker2D.new()
+		interaction.name = "InteractionPoint"
+		interaction.script = load(ACTIVITY_POINT_SCRIPT)
+		interaction.position = _tile_position_to_local(_vector2(object_data["interaction_tile_position"]), floor_layer) - object_node.position
+		var kind := String(object_data["kind"]).hex_to_int()
+		interaction.set("category", (kind >> 16) & 0xff)
+		interaction.set("item_type", (kind >> 4) & 0xfff)
+		interaction.set("active", int(object_data["object_category"]) == 5)
+		var tile := _vector2(object_data["tile_position"])
+		var collision: Dictionary = manifest["collision_grid"]
+		var cell := Vector2i(floori(tile.x + 0.5), floori(tile.y + 0.5))
+		if cell.x >= 0 and cell.y >= 0 and cell.x < int(collision["width"]) and cell.y < int(collision["height"]):
+			interaction.set("room_id", int(collision["room_ids"][cell.y * int(collision["width"]) + cell.x]))
+		object_node.add_child(interaction)
 	return objects
 
 
@@ -204,6 +222,30 @@ func _build_player(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
 	return player
 
 
+func _build_npcs(manifest: Dictionary, floor_layer: TileMapLayer, world: Node2D) -> void:
+	var npc_scene := load(NPC_SCENE) as PackedScene
+	var object_names: Dictionary = {}
+	for object_data in manifest.get("objects", []):
+		object_names[int(object_data["instance_id"])] = String(object_data["node_name"])
+	for npc_data in manifest.get("npcs", []):
+		var npc := npc_scene.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE) as Node2D
+		npc.name = String(npc_data["node_name"])
+		npc.position = _tile_position_to_local(_vector2(npc_data["tile_position"]), floor_layer)
+		npc.set("profile", load(npc_data["profile"]))
+		npc.set("initial_direction", IsoDirection.get_screen_directions()[int(npc_data["initial_direction_index"])])
+		npc.set_meta("original_spawn_id", int(npc_data["spawn_id"]))
+		npc.set_meta("original_instance_id", int(npc_data["instance_id"]))
+		var brain := Node.new()
+		brain.name = "Brain"
+		brain.script = load(NPC_BRAIN_SCRIPT)
+		for field in ["assigned_workstation", "assigned_chair"]:
+			var instance_id = npc_data.get(field + "_instance_id")
+			if instance_id != null:
+				brain.set(field, NodePath("../../Objects/%s/InteractionPoint" % object_names[int(instance_id)]))
+		npc.add_child(brain)
+		world.add_child(npc)
+
+
 func _player_spawn(manifest: Dictionary) -> Dictionary:
 	var player_spawn_id := int(manifest.get("player_spawn_id", 0))
 	for spawn in manifest.get("spawns", []):
@@ -243,9 +285,9 @@ func _build_debug_overlay() -> CanvasLayer:
 
 func _assign_owner(node: Node, owner: Node) -> void:
 	for child in node.get_children():
-		child.owner = owner
-		if String(child.scene_file_path) == "":
-			_assign_owner(child, owner)
+		if child.owner == null:
+			child.owner = owner
+		_assign_owner(child, owner)
 
 
 func _vector2(value) -> Vector2:

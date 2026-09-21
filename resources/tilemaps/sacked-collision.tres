@@ -1,6 +1,6 @@
-[gd_resource type="TileSet" load_steps=3 format=3]
+[gd_resource type="TileSet" format=3 uid="uid://dnth0c3tbpoi2"]
 
-[ext_resource type="Texture2D" path="res://images/tilemaps/collision-cell.svg" id="1"]
+[ext_resource type="Texture2D" uid="uid://cb2df61ke2wc7" path="res://images/tilemaps/collision-cell.svg" id="1"]
 
 [sub_resource type="TileSetAtlasSource" id="CollisionAtlas"]
 texture = ExtResource("1")

@@ -90,6 +90,9 @@ func _run() -> void:
 		var profile := PROFILE_SCRIPT.new()
 		profile.id = spec["id"]
 		profile.walk_speed_tiles = spec["walk_speed_tiles"]
+		var action_path := "res://scenes/npc/profiles/%s_actions.res" % resource_name
+		if ResourceLoader.exists(action_path):
+			profile.action_animation_library = load(action_path)
 		profile.animation_library = load(library_path)
 		profile.idle_animation_prefix = spec["idle_prefix"]
 		profile.walk_animation_prefix = spec["walk_prefix"]

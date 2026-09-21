@@ -329,16 +329,19 @@ func _load_actor_images(actor: Dictionary) -> bool:
 	var depth_path := String(actor.get("depth_path", ""))
 	if color_path == "" or depth_path == "":
 		return actor.has("color") and actor.has("depth")
-	if not ResourceLoader.exists(depth_path) and not FileAccess.file_exists(depth_path):
-		_warn_once(depth_path, "Missing character depth map: %s" % depth_path)
-		return false
-
 	var color_image = _load_image(color_path, _color_images)
-	var depth_image = _load_image(depth_path, _depth_images)
-	if color_image == null or depth_image == null:
+	if color_image == null:
 		return false
 
-	if color_image.get_width() != depth_image.get_width() or color_image.get_height() != depth_image.get_height():
+	# A few original frames ship no Z plane. The engine blits those without a depth
+	# test, so keep the actor and let it paint over whatever the group already holds.
+	var depth_image: Image = null
+	if ResourceLoader.exists(depth_path) or FileAccess.file_exists(depth_path):
+		depth_image = _load_image(depth_path, _depth_images)
+		if depth_image == null:
+			return false
+
+	if depth_image != null and (color_image.get_width() != depth_image.get_width() or color_image.get_height() != depth_image.get_height()):
 		_warn_once(depth_path, "Character depth map dimensions do not match texture: %s" % depth_path)
 		return false
 
@@ -492,7 +495,8 @@ func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_
 	var color_image := actor["color"] as Image
 	var depth_image := actor["depth"] as Image
 	var color_bytes := _rgba8_bytes(color_image)
-	var depth_bytes := _rgba8_bytes(depth_image)
+	var depth_bytes := _rgba8_bytes(depth_image) if depth_image != null else PackedByteArray()
+	var depth_tested := not depth_bytes.is_empty()
 	var source_width := color_image.get_width()
 	var actor_position := actor["position"] as Vector2
 	var source_rect := _actor_source_rect(actor)
@@ -526,6 +530,14 @@ func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_
 			var source_index := (source_row + source_x) * 4
 			if color_bytes[source_index + 3] == 0:
 				continue
+			var dst_index := dst_row + dst_x
+			if not depth_tested:
+				var untested_index := dst_index * 4
+				pixels[untested_index] = color_bytes[source_index]
+				pixels[untested_index + 1] = color_bytes[source_index + 1]
+				pixels[untested_index + 2] = color_bytes[source_index + 2]
+				pixels[untested_index + 3] = color_bytes[source_index + 3]
+				continue
 			if depth_bytes[source_index + 3] == 0:
 				continue
 
@@ -537,7 +549,6 @@ func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_
 					if score < environment_scores[environment_row * environment_width + environment_column]:
 						continue
 
-			var dst_index := dst_row + dst_x
 			if score >= scores[dst_index]:
 				scores[dst_index] = score
 				var output_index := dst_index * 4
