@@ -37,6 +37,60 @@ STATE_MANIFEST_DIR_REL = Path("resources/objects")
 DESTROYED_OFFSET = 7
 FIRST_TRANSITION_STATE = 2
 LAST_TRANSITION_STATE = 8
+# No sprite in the container is anywhere near this far from its own frame, so a pivot past
+# it means the field was read unsigned again; an off-frame sprite drags the world's static
+# composite bounds out with it.
+PIVOT_SANITY_LIMIT = 4096
+
+# States a level can ask an object for that ship no art at all. sub_40FDA0 stores the state
+# regardless and keeps the previous clip, so the object reaches its damaged look without a
+# transition; the port settles an unplayable DESTROY_n on its DESTROYED_n instead. Listing
+# them keeps the gap from growing silently -- a state that stops resolving fails the check.
+KNOWN_MISSING_STATES = {
+    "aktiv-aktenablage-180 DESTROY_1 (no clip in the container)",
+    "aktiv-aushang-090 DESTROY_1 (no clip in the container)",
+    "aktiv-colamat-000 DESTROY_1 (no clip in the container)",
+    "aktiv-colamat-000 DESTROY_4 (no clip in the container)",
+    "aktiv-disketten-000 DESTROY_1 (no clip in the container)",
+    "aktiv-drucker01-000 DESTROY_1 (no clip in the container)",
+    "aktiv-fenster01-000 DESTROY_1 (no clip in the container)",
+    "aktiv-fenster02-000 DESTROY_1 (no clip in the container)",
+    "aktiv-fenster03-090 DESTROY_1 (no clip in the container)",
+    "aktiv-flipchart-090 DESTROY_1 (no clip in the container)",
+    "aktiv-handtuchspender-000 DESTROY_1 (no clip in the container)",
+    "aktiv-handy-000 DESTROY_1 (no clip in the container)",
+    "aktiv-k-hlschrank-000 DESTROYED_1 (no clip in the container)",
+    "aktiv-k-hlschrank-000 DESTROYED_2 (no clip in the container)",
+    "aktiv-k-hlschrank-000 DESTROYED_3 (no clip in the container)",
+    "aktiv-k-hlschrank-000 DESTROY_1 (no clip in the container)",
+    "aktiv-k-hlschrank-000 DESTROY_2 (no clip in the container)",
+    "aktiv-k-hlschrank-000 DESTROY_3 (no clip in the container)",
+    "aktiv-kaffeemaschi-270 DESTROYED_2 (no clip in the container)",
+    "aktiv-kaffeemaschi-270 DESTROY_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-frontal-000 DESTROYED_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-frontal-000 DESTROYED_2 (no clip in the container)",
+    "aktiv-monitor-tastatur-frontal-000 DESTROYED_3 (no clip in the container)",
+    "aktiv-monitor-tastatur-frontal-000 DESTROY_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-frontal-000 DESTROY_2 (no clip in the container)",
+    "aktiv-monitor-tastatur-frontal-000 DESTROY_3 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-180 DESTROYED_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-180 DESTROYED_2 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-180 DESTROYED_3 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-180 DESTROY_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-180 DESTROY_2 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-180 DESTROY_3 (no clip in the container)",
+    "aktiv-poster01-090 DESTROY_1 (no clip in the container)",
+    "aktiv-server-000 DESTROY_1 (no clip in the container)",
+    "aktiv-server-000 DESTROY_6 (no clip in the container)",
+    "aktiv-spiegel-000 DESTROY_1 (no clip in the container)",
+    "aktiv-spuele-000 DESTROYED_1 (frames missing on disk)",
+    "aktiv-spuele-000 DESTROY_1 (no clip in the container)",
+    "aktiv-stifthalter01-000 DESTROY_1 (no clip in the container)",
+    "aktiv-toikabine-000 DESTROY_1 (no clip in the container)",
+    "aktiv-toikabine-000 DESTROY_2 (no clip in the container)",
+    "aktiv-toikabine-000 DESTROY_3 (no clip in the container)",
+    "aktiv-waschbecken-000 DESTROY_1 (no clip in the container)",
+}
 
 
 def load_container(root: Path):
@@ -52,6 +106,13 @@ def load_container(root: Path):
 
 def slug(text: str) -> str:
     return "".join(character if character.isalnum() else "-" for character in text.lower()).strip("-")
+
+
+def signed16(value: int) -> int:
+    """SPRITEHDR pivots are signed, and a sprite anchored left of its own frame has a
+    negative one. The extraction helper reads the field unsigned, so -6 arrives as 65530;
+    import_original_level.py reads the same field with read_s16 for the IDLE sprite."""
+    return value - 0x10000 if value >= 0x8000 else value
 
 
 def wanted_states(actions: dict, action_ids: list) -> list:
@@ -116,11 +177,11 @@ def export(root: Path, check: bool) -> int:
             name = f"{spec['prefix']}_{state_names[state]}_{spec['angle']}"
             anim = animations.get(name)
             if anim is None:
-                unresolved.append(f"{spec['sprite']} {state_names[state]}")
+                unresolved.append(f"{key} {state_names[state]} (no clip in the container)")
                 continue
             frames = frame_paths(root, sprites, anim.frames)
             if not frames:
-                unresolved.append(f"{spec['sprite']} {state_names[state]} (frames missing on disk)")
+                unresolved.append(f"{key} {state_names[state]} (frames missing on disk)")
                 continue
             clips += 1
             entries = []
@@ -130,10 +191,13 @@ def export(root: Path, check: bool) -> int:
                 depth_destination = destination.with_name(f"{stem}-depth.png")
                 source = folder / f"{info.name}.png"
                 written += 1
+                pivot = [signed16(info.pivot_x), signed16(info.pivot_y)]
+                if max(abs(pivot[0]), abs(pivot[1])) > PIVOT_SANITY_LIMIT:
+                    failures.append(f"{key} {state_names[state]} frame {index} has pivot {pivot}")
                 entries.append(
                     {
                         "texture": f"res://{destination.relative_to(root).as_posix()}",
-                        "pivot": [info.pivot_x, info.pivot_y],
+                        "pivot": pivot,
                         "size": [info.w, info.h],
                     }
                 )
@@ -176,6 +240,17 @@ def export(root: Path, check: bool) -> int:
     if failures:
         print("Object state assets out of date:\n" + "\n".join(f"  {line}" for line in failures[:20]))
         return 1
+
+    appeared = sorted(set(unresolved) - KNOWN_MISSING_STATES)
+    resolved = sorted(KNOWN_MISSING_STATES - set(unresolved))
+    if appeared or resolved:
+        print("KNOWN_MISSING_STATES no longer matches the container:")
+        for line in appeared:
+            print(f"  now missing, not listed: {line}")
+        for line in resolved:
+            print(f"  listed, but resolves now: {line}")
+        return 1
+
     print(
         f"{'Verified' if check else 'Exported'} {written} frames across {clips} state clips. "
         f"{len(unresolved)} states have no art and settle on the object's damaged state instead."
