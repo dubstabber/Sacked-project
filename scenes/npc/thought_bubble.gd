@@ -7,6 +7,12 @@ extends Sprite2D
 
 const HEAD_OFFSET := Vector2(0.0, -135.0)
 const ALPHA := 180.0 / 255.0
+# sub_417460 switches the blitter to mode 20 for the bubble and back afterwards, and mode 20
+# is the one entry the tables share between the z-tested and untested sprite paths
+# (0x431030 in both): it blends and writes z but never tests it, so nothing already in the
+# buffer can hide the bubble. Here that means drawing above the world composite (0) and the
+# characters the depth compositor raises to 1.
+const DEPTH_INDEX := 2
 # The table's order, which is also the goal order; 8 and 9 are the reaction goals.
 const BUBBLES := [
 	"food", "coffee", "happy", "back-to-work", "toilett",
@@ -20,6 +26,7 @@ func _ready() -> void:
 	centered = true
 	position = HEAD_OFFSET
 	modulate.a = ALPHA
+	z_index = DEPTH_INDEX
 	visible = false
 	for name in BUBBLES:
 		var path := "res://images/effects/bubbles/%s.png" % name

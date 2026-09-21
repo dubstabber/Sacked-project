@@ -152,6 +152,16 @@ it holds before queueing the next one into `+1082`. `sub_417460` draws
 `bubbleNames[agent+1080]` from the table at `0x46E7A8`, **135 pixels above** the agent at
 alpha 180, so a bubble is up for exactly as long as its goal is.
 
+The bubble is **not depth tested**. `sub_417460` sets the blitter's mode field (`+24` on the
+object at `agent+68`, which `sub_42CCF0` masks to 6 bits to index a 64-entry blitter table)
+to 7 for the agent itself and to **20** for the bubble, restoring it afterwards. Mode 20 is
+one of the few entries that is the *same function* in the z-tested and untested tables
+(`0x431030` for 8-bit sources, `0x446270` for 32-bit): it alpha-blends the source over the
+back buffer and writes the z value, but never compares against it. So nothing already drawn
+can hide a bubble, even though it is handed the agent's own z. The port reproduces that by
+drawing the bubble above the world composite instead of into it; see
+`scenes/npc/thought_bubble.gd`.
+
 The table's ten entries therefore line up with the goals one for one:
 
 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |

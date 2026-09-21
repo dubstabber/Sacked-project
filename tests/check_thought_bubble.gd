@@ -43,6 +43,22 @@ func _check_bubbles_follow_goals() -> void:
 	_expect(is_equal_approx(bubble.modulate.a, BUBBLE.ALPHA), "the bubble is drawn at the original's alpha")
 	_expect(brain.has_signal("goal_changed"), "the brain reports the goal it is pursuing")
 
+	# Blitter mode 20 blends without testing z, so a wall between the camera and the bubble
+	# cannot hide it. Here that means above the world composite and above the characters.
+	var characters := level.get_node_or_null("World/CharacterDepthCompositor") as CanvasItem
+	var world := level.get_node_or_null("World/WorldDepthCompositor") as CanvasItem
+	_expect(bubble.z_index == BUBBLE.DEPTH_INDEX, "the bubble keeps its own draw order")
+	_expect(
+		characters != null and bubble.z_index > characters.z_index,
+		"the bubble is drawn over the characters, got %d against %d" % [
+			bubble.z_index, characters.z_index if characters != null else 0
+		]
+	)
+	_expect(
+		world != null and bubble.z_index > world.z_index,
+		"the bubble is drawn over the world composite, not into it"
+	)
+
 	# Every entry in the table, including the two reaction goals the brain cannot pick yet.
 	for goal in range(BUBBLE.BUBBLES.size()):
 		bubble.show_goal(goal)
