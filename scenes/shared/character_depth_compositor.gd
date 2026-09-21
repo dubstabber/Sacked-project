@@ -160,13 +160,34 @@ func _invalidate_surfaces() -> void:
 
 
 func compose_images_for_test(actors: Array) -> Dictionary:
-	var bounds := _calculate_union_bounds(actors)
-	var output := _compose_images(actors, bounds)
+	return compose_region(actors, _calculate_union_bounds(actors))
+
+
+# Composes into an arbitrary window instead of the actors' union. A window is offset from
+# the union by whole pixels, so every actor lands on the same pixel either way.
+func compose_region(actors: Array, region: Rect2) -> Dictionary:
+	var output := _compose_images(actors, region)
 	return {
-		"bounds": bounds,
+		"bounds": region,
 		"image": output,
 		"scores": composed_scores,
 	}
+
+
+func union_bounds(actors: Array) -> Rect2:
+	return _calculate_union_bounds(actors)
+
+
+# The pixels _compose_actor writes for this actor, relative to a buffer origin. It repeats
+# that function's rounding so a caller can clip to exactly the same rectangle.
+func actor_buffer_rect(actor: Dictionary, origin: Vector2) -> Rect2i:
+	var actor_position := actor["position"] as Vector2
+	var source_rect := _actor_source_rect(actor)
+	var dst_origin := Vector2i(
+		int(round(actor_position.x - origin.x)),
+		int(round(actor_position.y - origin.y))
+	)
+	return Rect2i(dst_origin + source_rect.position, source_rect.size)
 
 
 func overlapping_actors_for_test(actors: Array) -> Array:
@@ -515,17 +536,20 @@ func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_
 	var environment_x := int(environment_bounds.position.x)
 	var environment_y := int(environment_bounds.position.y)
 
-	for source_y in range(source_min.y, source_max.y):
+	# Clamped once instead of per pixel: composing into a small window then costs only the
+	# pixels that land inside it.
+	var y_start := maxi(source_min.y, -dst_origin.y)
+	var y_end := mini(source_max.y, height - dst_origin.y)
+	var x_start := maxi(source_min.x, -dst_origin.x)
+	var x_end := mini(source_max.x, width - dst_origin.x)
+
+	for source_y in range(y_start, y_end):
 		var dst_y := dst_origin.y + source_y
-		if dst_y < 0 or dst_y >= height:
-			continue
 		var source_row := source_y * source_width
 		var dst_row := dst_y * width
 
-		for source_x in range(source_min.x, source_max.x):
+		for source_x in range(x_start, x_end):
 			var dst_x := dst_origin.x + source_x
-			if dst_x < 0 or dst_x >= width:
-				continue
 
 			var source_index := (source_row + source_x) * 4
 			if color_bytes[source_index + 3] == 0:

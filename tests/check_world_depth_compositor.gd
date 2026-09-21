@@ -44,10 +44,77 @@ func _run() -> void:
 	_check_partial_static_overlap_and_cache()
 	_check_equal_depth_uses_authored_order()
 	_check_editor_remove_and_restore()
+	_check_incremental_matches_full_rebuild()
 	await _check_character_mask_tracks_object_changes()
 	if _failures == 0:
-		print("World depth compositor: partial occlusion, draw order, cache and live masks passed")
+		print("World depth compositor: partial occlusion, draw order, cache, incremental repaint and live masks passed")
 	quit(1 if _failures else 0)
+
+
+# A change repaints only the rectangles it touches. Every step has to leave the buffer
+# byte-identical to a full recomposite, or a prank would slowly corrupt the world.
+func _check_incremental_matches_full_rebuild() -> void:
+	var world := Node2D.new()
+	root.add_child(world)
+	# Wide enough that nothing below it moves the buffer's bounds.
+	var backdrop := _add_sized_object(world, Color(0.1, 0.1, 0.1), Vector2i(40, 10), 400, Vector2.ZERO)
+	var movable := _add_sized_object(world, Color.RED, Vector2i(6, 4), 100, Vector2(4, 2))
+	var swapped := _add_sized_object(world, Color.GREEN, Vector2i(5, 5), 120, Vector2(12, 1))
+	var hidden := _add_sized_object(world, Color.BLUE, Vector2i(7, 3), 140, Vector2(20, 4))
+	var removed := _add_sized_object(world, Color.YELLOW, Vector2i(4, 4), 160, Vector2(28, 3))
+	var mask = _add_world_mask(world)
+	mask.rebuild()
+
+	var bounds: Rect2 = mask.depth_bounds
+	var depth_texture: Texture2D = mask.depth_texture
+	var color_texture: Texture2D = mask._composite.texture
+	var full: int = mask.full_rebuilds
+	var partial: int = mask.partial_rebuilds
+	var revision: int = mask.revision
+
+	var steps := [
+		["a same-size texture swap", func() -> void:
+			swapped.color_texture = ImageTexture.create_from_image(_filled_color(Vector2i(5, 5), Color.AQUA))],
+		["a swap to another size", func() -> void:
+			swapped.color_texture = ImageTexture.create_from_image(_filled_color(Vector2i(3, 7), Color.AQUA))
+			swapped.depth_texture = ImageTexture.create_from_image(_filled_depth(Vector2i(3, 7), 90))],
+		["a move inside the bounds", func() -> void: movable.position = Vector2(7, 3)],
+		["hiding an object", func() -> void: hidden.visible = false],
+		["freeing an object", func() -> void:
+			world.remove_child(removed)
+			removed.free()],
+		["adding an object", func() -> void:
+			_add_sized_object(world, Color.ORANGE, Vector2i(5, 5), 180, Vector2(30, 2))],
+		["two changes at once", func() -> void:
+			movable.position = Vector2(5, 1)
+			swapped.color_texture = ImageTexture.create_from_image(_filled_color(Vector2i(3, 7), Color.FUCHSIA))],
+	]
+
+	for step in steps:
+		var label: String = step[0]
+		(step[1] as Callable).call()
+		mask.rebuild()
+		partial += 1
+		revision += 1
+		_expect(mask.partial_rebuilds == partial, "%s repaints only the dirty rectangles" % label)
+		_expect(mask.full_rebuilds == full, "%s does not recompose the whole buffer" % label)
+		_expect(mask.revision == revision, "%s bumps the revision once" % label)
+		_expect(mask.depth_bounds == bounds, "%s leaves the buffer where it was" % label)
+		_expect(mask.depth_texture == depth_texture, "%s keeps the depth texture the shaders hold" % label)
+		_expect(mask._composite.texture == color_texture, "%s keeps the composite texture" % label)
+		var reference: Dictionary = mask.compose_reference_for_test()
+		_expect(mask._color_image.get_data() == (reference.image as Image).get_data(), "%s matches a full rebuild pixel for pixel" % label)
+		_expect(mask.depth_scores == reference.scores, "%s matches a full rebuild score for score" % label)
+
+	mask.rebuild()
+	_expect(mask.revision == revision, "an unchanged scene is not repainted at all")
+
+	# Growth cannot be patched in place: the stored rectangles are relative to the origin.
+	backdrop.position = Vector2(-6, 0)
+	mask.rebuild()
+	_expect(mask.full_rebuilds == full + 1, "a buffer that has to grow is recomposed whole")
+	_expect(mask.depth_bounds.position.x == -6, "the recomposed buffer covers the grown bounds")
+	world.free()
 
 
 func _check_partial_static_overlap_and_cache() -> void:
@@ -210,6 +277,30 @@ func _add_object(world: Node2D, color: Color, depths: Array, anchor: Vector2, pi
 	object.add_child(sprite)
 	world.add_child(object)
 	return object
+
+
+func _add_sized_object(world: Node2D, color: Color, size: Vector2i, depth: int, anchor: Vector2) -> Node2D:
+	var object = OBJECT_SCRIPT.new()
+	object.position = anchor
+	object.color_texture = ImageTexture.create_from_image(_filled_color(size, color))
+	object.depth_texture = ImageTexture.create_from_image(_filled_depth(size, depth))
+	var sprite := Sprite2D.new()
+	sprite.name = "Sprite2D"
+	object.add_child(sprite)
+	world.add_child(object)
+	return object
+
+
+func _filled_color(size: Vector2i, color: Color) -> Image:
+	var image := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
+	image.fill(color)
+	return image
+
+
+func _filled_depth(size: Vector2i, depth: int) -> Image:
+	var image := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
+	image.fill(Color(float(depth & 255) / 255.0, float(depth >> 8) / 255.0, 0.0, 1.0))
+	return image
 
 
 func _color_image(color: Color) -> Image:

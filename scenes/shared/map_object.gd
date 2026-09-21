@@ -38,6 +38,7 @@ var _states_loaded := false
 var _idle_texture: Texture2D
 var _idle_pivot := Vector2.ZERO
 var _clip: Array = []
+var _clip_textures: Array = []
 var _clip_fps := 0.0
 var _clip_elapsed := 0.0
 var _clip_frame := -1
@@ -115,6 +116,7 @@ func set_state(target: int) -> void:
 		state_changed.emit(state)
 		return
 	_clip = frames
+	_warm_clip_textures(frames)
 	_clip_fps = maxf(float(clip.get("fps", 8.0)), 0.001)
 	_clip_elapsed = 0.0
 	_clip_frame = -1
@@ -123,6 +125,20 @@ func set_state(target: int) -> void:
 	set_process(frames.size() > 1)
 	_show_frame(0)
 	state_changed.emit(state)
+
+
+# Frames are loaded by path as they are shown. Holding them for the length of the clip
+# keeps a disk read, and a second decode, out of the middle of a transition.
+func _warm_clip_textures(frames: Array) -> void:
+	_clip_textures.clear()
+	if frames.size() < 2:
+		return
+	for frame in frames:
+		var path := String(frame["texture"])
+		_clip_textures.append(load(path))
+		var depth_path := path.get_basename() + "-depth.png"
+		if ResourceLoader.exists(depth_path):
+			_clip_textures.append(load(depth_path))
 
 
 func _show_frame(index: int) -> void:
@@ -147,6 +163,7 @@ func _apply_texture(texture: Texture2D, frame_pivot: Vector2) -> void:
 func _stop_clip() -> void:
 	set_process(false)
 	_clip = []
+	_clip_textures.clear()
 	_clip_frame = -1
 	_clip_advances_to = -1
 

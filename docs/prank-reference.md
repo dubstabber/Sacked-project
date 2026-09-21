@@ -116,12 +116,16 @@ where the object ends up, only whether a frame or two of the old art is shown fi
 
 ### Cost of a state change in the port
 
-Measured on level 1: a full static recomposite takes **about 600 ms**, and changing an
-object's state triggers one, because `MapObject` publishes its texture into the world
-composite. That is fine for the dormant state machine but not for playing a seven frame
-transition, so the incremental recomposite has to land before any prank drives these
-states. The cheap path already exists for characters and is described in
-[map-rendering.md](map-rendering.md).
+Changing an object's state republishes its texture into the static world composite. A full
+recomposite of level 1 takes **about 600 ms**, which would have made a seven frame
+transition unplayable, so the compositor now repaints only the rectangles a change touches:
+**about 16 ms per swap**, peaking near 26 ms on the Colamat's large frames, against the
+125 ms a frame an 8 fps clip allows. The mechanism, its fallbacks to a full recomposite and
+the byte-identity guarantee are described in [map-rendering.md](map-rendering.md).
+
+Of the 80 state clips level 1 can reach, eight are real multi-frame transitions; all eight
+are one-shot `DESTROY_n`. No looping multi-frame state is reachable on this level, so
+nothing yet needs the per-frame cost of a looping object clip.
 
 ## Availability
 
