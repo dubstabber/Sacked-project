@@ -70,7 +70,8 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	_player = get_parent() as Node2D
-	inventory.resize(32)
+	# sub_41AF60 clears 0x1C bytes: the player starts every level holding nothing.
+	inventory.resize(28)
 
 
 func _process(delta: float) -> void:

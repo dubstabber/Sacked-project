@@ -132,7 +132,38 @@ func _check_level_focus_rules() -> void:
 	_expect(not _controller.menu_open and _controller.highlighted == -1, "cancelling closes the ring")
 
 	_check_action_applies()
+	_check_pickup_opens_a_gated_action()
 	_level.free()
+
+
+# A pickup is the only way level 1 opens its item-gated rows: sub_41AF60 clears the whole
+# inventory, so the player starts every level holding nothing.
+func _check_pickup_opens_a_gated_action() -> void:
+	var lighter := _level.get_node_or_null("World/Objects/Object039Feuerzeug")
+	var bin := _level.get_node_or_null("World/Objects/Object033Papierkorb01")
+	if lighter == null or bin == null:
+		_expect(false, "level 1 places the lighter and the wastebasket")
+		return
+	var lighter_point := lighter.get_node("InteractionPoint")
+	var bin_point := bin.get_node("InteractionPoint")
+
+	_expect(_controller.inventory.count(0) == _controller.inventory.size(), "the player starts with an empty inventory")
+	_expect(_controller.build_entries(bin_point).is_empty(), "the wastebasket offers nothing without the lighter")
+
+	_player.global_position = (lighter_point as Node2D).global_position
+	_controller.focus_point = lighter_point
+	_controller.entries = _controller.build_entries(lighter_point)
+	_expect(_controller.entries.size() == 1, "the lighter offers exactly its pickup")
+	_controller.open_menu()
+	_controller.confirm()
+	_controller._advance_action(_controller._duration)
+
+	# Ids 6 and 9 are inexhaustible, so the pickup fills the slot rather than adding one.
+	_expect(_controller.inventory[6] == 99, "taking the lighter fills its inventory slot")
+	_expect(lighter.is_queued_for_deletion(), "a pickup that grants an item takes the object out of the world")
+
+	var opened: Array = _controller.build_entries(bin_point)
+	_expect(opened.size() == 1 and int(opened[0]["action_id"]) == 34, "holding the lighter opens the wastebasket")
 
 
 # sub_41B240 states 2 to 4: commit, run out the record's own duration, then apply.

@@ -7,11 +7,18 @@ extends CanvasLayer
 const CLOCK_OVERFLOW_SECONDS := 5940
 const IDLE_HOVER_TEXT := "..."
 
+# player+1008 slots each lamp watches; the smoking lamp needs both of its two.
+const LAMP_SLOTS := {"LampSmoke": [5, 6], "LampMatrix": [14], "LampPiss": [26]}
+
 @onready var _score: Label = $Score
 @onready var _clock: Label = $Clock
 @onready var _hover: Label = $HoverText
+@onready var _action_icon: Sprite2D = $ActionIcon
+@onready var _progress: Sprite2D = $AggroBar
 
 var _session: Node
+var _actions: Node
+var _progress_region: Rect2
 
 
 func _ready() -> void:
@@ -22,6 +29,52 @@ func _ready() -> void:
 		_on_score_changed(_session.score)
 		_on_time_changed(int(_session.elapsed))
 	set_hover_text(IDLE_HOVER_TEXT)
+
+	# The round bar is the action's progress, not aggression: game+14724 is fed
+	# player+992 * 100 / player+1000. See docs/hud-reference.md.
+	if _progress.texture != null:
+		_progress_region = Rect2(Vector2.ZERO, _progress.texture.get_size())
+		_progress.region_enabled = true
+	set_action_progress(0.0, 0.0)
+
+	_actions = get_tree().get_first_node_in_group("player_actions")
+	if _actions != null:
+		_actions.highlight_changed.connect(_on_highlight_changed)
+		_actions.progress_changed.connect(set_action_progress)
+		_actions.inventory_changed.connect(set_inventory)
+		set_inventory(_actions.inventory)
+
+
+# The centre field carries the highlighted action's icon and the hover bar its name.
+func _on_highlight_changed(entry: Dictionary) -> void:
+	var icon := entry.get("icon") as Texture2D
+	_action_icon.texture = icon
+	_action_icon.visible = icon != null
+	set_hover_text(String(entry.get("name", "")))
+
+
+func set_action_progress(elapsed: float, total: float) -> void:
+	if _progress.texture == null:
+		return
+	var fraction := clampf(elapsed / total, 0.0, 1.0) if total > 0.0 else 0.0
+	_progress.visible = fraction > 0.0
+	# CGUIRoundBarTex clips AGGRO_FULL rather than sweeping it; which edge it clips from
+	# is not recovered, so the port reveals it from the left.
+	var region := _progress_region
+	region.size.x = _progress_region.size.x * fraction
+	_progress.region_rect = region
+
+
+func set_inventory(inventory: PackedInt32Array) -> void:
+	for lamp_name in LAMP_SLOTS:
+		var lamp := get_node_or_null(lamp_name) as Sprite2D
+		if lamp == null:
+			continue
+		var lit := true
+		for slot in LAMP_SLOTS[lamp_name]:
+			if int(slot) >= inventory.size() or inventory[int(slot)] <= 0:
+				lit = false
+		lamp.visible = lit
 
 
 # The original puts the score in the left field and the clock in the right one, under

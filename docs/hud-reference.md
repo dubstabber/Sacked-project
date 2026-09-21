@@ -85,3 +85,22 @@ Polish UI. The port draws this text with Godot's default font at the same sizes.
 The camera. Whether the world viewport is clipped above the console or simply drawn behind
 its transparent top edge, and what `CIsoCamera` clamps to at the map edges, are still open,
 so the port's camera is unchanged and the console is drawn over the world.
+
+## What drives each element (implemented)
+
+`sub_403780` feeds the console every tick, and the port now follows it:
+
+| Element | Source |
+| --- | --- |
+| Score, clock | `player+984`, `game+14708` |
+| Hover bar | the highlighted menu entry's name, `"..."` when none |
+| Centre icon | the highlighted entry's ACTICON, hidden when nothing is highlighted |
+| Round bar | `player+992 * 100 / player+1000` — how far the running action has come |
+| Lamps | `player+1008`: smoking needs slots 5 **and** 6, Matrix 14, urination 26 |
+
+`sub_41AF60` clears 28 bytes at `player+1008` when a level starts, so the player always
+begins empty-handed and every lamp is dark. That is why level 1's rows needing items 9, 10,
+22, 24 or 29 can never be reached: nothing on that level grants them.
+
+Still not recovered: which edge `CGUIRoundBarTex` clips `AGGRO_FULL` from. The port reveals
+it from the left.

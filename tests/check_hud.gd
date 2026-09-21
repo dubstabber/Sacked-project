@@ -17,7 +17,8 @@ const ExpectedPositions := {
 	"LampPiss": Vector2(756, 485),
 	"LampMatrix": Vector2(754, 537),
 }
-# Nothing drives these yet, so they must not be drawn over the frame.
+# Each of these waits on something: an action running, an action highlighted, or an item
+# held. At rest, with an empty inventory, none of them may be drawn over the frame.
 const InertElements := ["ActionIcon", "AggroBar", "ClockBar", "LampSmoke", "LampPiss", "LampMatrix"]
 
 var _failures := 0
@@ -35,6 +36,8 @@ func _run() -> void:
 	_check_positions(console)
 	_check_frame_covers_the_console_band(console)
 	_check_inert_elements(console)
+	_check_lamps(console)
+	_check_action_progress(console)
 	_check_score_field(console)
 	_check_clock_field(console)
 	_check_hover_text(console)
@@ -84,6 +87,39 @@ func _check_inert_elements(console: Node) -> void:
 	for element: String in InertElements:
 		var node := console.get_node(element) as CanvasItem
 		_expect(not node.visible, "%s stays hidden until something drives it" % element)
+
+
+# The lamps read player+1008 directly: smoking needs both of its slots, the other two one
+# each. See docs/hud-reference.md.
+func _check_lamps(console: Node) -> void:
+	var inventory := PackedInt32Array()
+	inventory.resize(28)
+	inventory[5] = 1
+	console.set_inventory(inventory)
+	_expect(not (console.get_node("LampSmoke") as CanvasItem).visible, "the smoking lamp needs both of its items")
+	inventory[6] = 1
+	console.set_inventory(inventory)
+	_expect((console.get_node("LampSmoke") as CanvasItem).visible, "the smoking lamp lights once both are held")
+	inventory[14] = 1
+	inventory[26] = 1
+	console.set_inventory(inventory)
+	_expect((console.get_node("LampMatrix") as CanvasItem).visible, "the Matrix lamp reads slot 14")
+	_expect((console.get_node("LampPiss") as CanvasItem).visible, "the urination lamp reads slot 26")
+	console.set_inventory(PackedInt32Array())
+
+
+# game+14724 is fed player+992 * 100 / player+1000: the bar is action progress.
+func _check_action_progress(console: Node) -> void:
+	var bar := console.get_node("AggroBar") as Sprite2D
+	var full: float = bar.texture.get_size().x
+	console.set_action_progress(0.0, 0.0)
+	_expect(not bar.visible, "the progress bar is hidden while no action runs")
+	console.set_action_progress(2.5, 5.0)
+	_expect(bar.visible, "the progress bar shows while an action runs")
+	_expect(is_equal_approx(bar.region_rect.size.x, full * 0.5), "the bar is clipped to how far the action has come")
+	console.set_action_progress(9.0, 5.0)
+	_expect(is_equal_approx(bar.region_rect.size.x, full), "the bar never clips past its own width")
+	console.set_action_progress(0.0, 0.0)
 
 
 func _check_score_field(console: Node) -> void:
