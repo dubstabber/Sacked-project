@@ -40,6 +40,7 @@ signal menu_opened(entries: Array)
 signal menu_closed()
 signal highlight_changed(entry: Dictionary)
 signal progress_changed(elapsed: float, total: float)
+signal action_started(action: Dictionary, point: Node)
 signal action_applied(action: Dictionary, point: Node)
 signal inventory_changed(inventory: PackedInt32Array)
 
@@ -150,6 +151,7 @@ func confirm() -> void:
 		_acting_point.set("in_use", true)
 	elif bool(action.get("state_at_start", false)):
 		_apply_result_state(object, action, int(entry["action_id"]))
+	action_started.emit(action, _acting_point)
 	progress_changed.emit(0.0, _duration)
 
 

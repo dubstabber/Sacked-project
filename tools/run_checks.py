@@ -18,6 +18,7 @@ EXTRACTION_REL = Path("extract-sacked-assets")
 REFERENCE_CHECKS = [
     ["tools/export_action_table.py", "--check"],
     ["tools/export_gui_assets.py", "--check"],
+    ["tools/export_sounds.py", "--check"],
     ["tools/export_object_state_assets.py", "--check"],
     ["tools/export_character_depth_maps.py", "--check"],
     ["tools/export_npc_action_assets.py", "--check"],

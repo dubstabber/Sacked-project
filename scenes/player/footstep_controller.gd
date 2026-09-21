@@ -8,6 +8,7 @@ var footstep_loop_active: bool = false
 
 
 func _ready() -> void:
+	bus = &"SFX"
 	if stream_path != "":
 		load_footstep_stream()
 

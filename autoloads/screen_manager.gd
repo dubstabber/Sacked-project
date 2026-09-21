@@ -50,7 +50,7 @@ func _ready() -> void:
 	_menu_music_player = AudioStreamPlayer.new()
 	_menu_music_player.name = "MenuMusic"
 	_menu_music_player.stream = _MENU_MUSIC_STREAM
-	_menu_music_player.volume_db = -6.0
+	_menu_music_player.bus = &"Music"
 	_menu_music_player.finished.connect(_on_menu_music_finished)
 	add_child(_menu_music_player)
 	_sync_menu_music()

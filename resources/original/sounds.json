@@ -1,0 +1,617 @@
+{
+  "effects": [
+    {
+      "id": "S1000",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s1000.wav"
+    },
+    {
+      "id": "S0001",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0001.wav"
+    },
+    {
+      "id": "S0002",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0002.wav"
+    },
+    {
+      "id": "S0003",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0003.wav"
+    },
+    {
+      "id": "S0004",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0004.wav"
+    },
+    {
+      "id": "S0005",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0006",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0006.wav"
+    },
+    {
+      "id": "S0007",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0008",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0009",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0010",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0010.wav"
+    },
+    {
+      "id": "S0011",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0012",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0012.wav"
+    },
+    {
+      "id": "S0013",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0013.wav"
+    },
+    {
+      "id": "S0014",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0014.wav"
+    },
+    {
+      "id": "S0015",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0015.wav"
+    },
+    {
+      "id": "S0016",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0016.wav"
+    },
+    {
+      "id": "S0017",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0017.wav"
+    },
+    {
+      "id": "S0018",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0019",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0020",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0020.wav"
+    },
+    {
+      "id": "S0021",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0022",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0023",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0023.wav"
+    },
+    {
+      "id": "S0024",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0024.wav"
+    },
+    {
+      "id": "S0025",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0025.wav"
+    },
+    {
+      "id": "S0026",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0027",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0028",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0029",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0029.wav"
+    },
+    {
+      "id": "S0030",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0030.wav"
+    },
+    {
+      "id": "S0031",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0032",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0033",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0033.wav"
+    },
+    {
+      "id": "S0034",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0034.wav"
+    },
+    {
+      "id": "S0035",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0035.wav"
+    },
+    {
+      "id": "S0036",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0037",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0037.wav"
+    },
+    {
+      "id": "S0038",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0038.wav"
+    },
+    {
+      "id": "S0039",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0040",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0040.wav"
+    },
+    {
+      "id": "S0041",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0041.wav"
+    },
+    {
+      "id": "S0042",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0042.wav"
+    },
+    {
+      "id": "S0043",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0044",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0044.wav"
+    },
+    {
+      "id": "S0045",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0046",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0046.wav"
+    },
+    {
+      "id": "S0047",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0047.wav"
+    },
+    {
+      "id": "S0048",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0048.wav"
+    },
+    {
+      "id": "S0049",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0049.wav"
+    },
+    {
+      "id": "S0050",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0050.wav"
+    },
+    {
+      "id": "S0051",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0051.wav"
+    },
+    {
+      "id": "S0052",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0052.wav"
+    },
+    {
+      "id": "S0053",
+      "preloaded": false,
+      "stream": ""
+    },
+    {
+      "id": "S0054",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0054.wav"
+    },
+    {
+      "id": "S0055",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0055.wav"
+    },
+    {
+      "id": "S0056",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0056.wav"
+    },
+    {
+      "id": "S0057",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0057.wav"
+    },
+    {
+      "id": "S0058",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0058.wav"
+    },
+    {
+      "id": "S0059",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0059.wav"
+    },
+    {
+      "id": "S0060",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0060.wav"
+    },
+    {
+      "id": "S0061",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0061.wav"
+    },
+    {
+      "id": "S0062",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0062.wav"
+    },
+    {
+      "id": "S0063",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0063.wav"
+    },
+    {
+      "id": "S0064",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0064.wav"
+    },
+    {
+      "id": "S0065",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0065.wav"
+    },
+    {
+      "id": "S0066",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0066.wav"
+    },
+    {
+      "id": "S0067",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0067.wav"
+    },
+    {
+      "id": "S0068",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0068.wav"
+    },
+    {
+      "id": "S0069",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0069.wav"
+    },
+    {
+      "id": "S0070",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0070.wav"
+    },
+    {
+      "id": "S0071",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0071.wav"
+    },
+    {
+      "id": "S0072",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0072.wav"
+    },
+    {
+      "id": "S0073",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0073.wav"
+    },
+    {
+      "id": "S0074",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0074.wav"
+    },
+    {
+      "id": "S0075",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0075.wav"
+    },
+    {
+      "id": "S0076",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0076.wav"
+    },
+    {
+      "id": "S0077",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0077.wav"
+    },
+    {
+      "id": "S0078",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0078.wav"
+    },
+    {
+      "id": "S0079",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0079.wav"
+    },
+    {
+      "id": "S0080",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0080.wav"
+    },
+    {
+      "id": "S0081",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0081.wav"
+    },
+    {
+      "id": "S0082",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0082.wav"
+    },
+    {
+      "id": "S0084",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0084.wav"
+    },
+    {
+      "id": "S0143",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0143.wav"
+    },
+    {
+      "id": "S0144",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0144.wav"
+    },
+    {
+      "id": "S0145",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0145.wav"
+    },
+    {
+      "id": "S0146",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0146.wav"
+    },
+    {
+      "id": "S0174",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0174.wav"
+    },
+    {
+      "id": "S0500",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0500.wav"
+    },
+    {
+      "id": "S0501",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0501.wav"
+    },
+    {
+      "id": "S0502",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0502.wav"
+    },
+    {
+      "id": "S0503",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0503.wav"
+    },
+    {
+      "id": "S0504",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s0504.wav"
+    },
+    {
+      "id": "S0600",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s0600.wav"
+    },
+    {
+      "id": "S0601",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s0601.wav"
+    },
+    {
+      "id": "S0602",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s0602.wav"
+    },
+    {
+      "id": "S0603",
+      "preloaded": true,
+      "stream": ""
+    },
+    {
+      "id": "S0604",
+      "preloaded": true,
+      "stream": ""
+    },
+    {
+      "id": "S0605",
+      "preloaded": true,
+      "stream": ""
+    },
+    {
+      "id": "S1001",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1001.wav"
+    },
+    {
+      "id": "S1002",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1002.wav"
+    },
+    {
+      "id": "S1003",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1003.wav"
+    },
+    {
+      "id": "S1004",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1004.wav"
+    },
+    {
+      "id": "S1005",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1005.wav"
+    },
+    {
+      "id": "S1006",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1006.wav"
+    },
+    {
+      "id": "S1007",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1007.wav"
+    },
+    {
+      "id": "S1008",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1008.wav"
+    },
+    {
+      "id": "S1009",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1009.wav"
+    },
+    {
+      "id": "S1010",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1010.wav"
+    },
+    {
+      "id": "S1011",
+      "preloaded": false,
+      "stream": "res://audio/sfx/s1011.wav"
+    },
+    {
+      "id": "S1012",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s1012.wav"
+    },
+    {
+      "id": "S1013",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s1013.wav"
+    },
+    {
+      "id": "S1014",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s1014.wav"
+    },
+    {
+      "id": "S1015",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s1015.wav"
+    },
+    {
+      "id": "S1100",
+      "preloaded": true,
+      "stream": "res://audio/sfx/s1100.wav"
+    }
+  ],
+  "generated_by": "tools/export_sounds.py",
+  "missing_from_disk": [
+    "S0005",
+    "S0007",
+    "S0008",
+    "S0009",
+    "S0011",
+    "S0018",
+    "S0019",
+    "S0021",
+    "S0022",
+    "S0026",
+    "S0027",
+    "S0028",
+    "S0031",
+    "S0032",
+    "S0036",
+    "S0039",
+    "S0043",
+    "S0045",
+    "S0053",
+    "S0603",
+    "S0604",
+    "S0605"
+  ],
+  "music": {
+    "Menu1": "res://audio/music/menu1.ogg",
+    "Menu2": "res://audio/music/menu2.ogg",
+    "Theme1": "res://audio/music/theme1.ogg",
+    "Theme2": "res://audio/music/theme2.ogg",
+    "Theme3": "res://audio/music/theme3.ogg"
+  },
+  "source": "extract-sacked-assets/sacked/Sound/sounds.txt"
+}
