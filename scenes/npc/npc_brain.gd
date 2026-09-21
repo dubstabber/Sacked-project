@@ -450,7 +450,7 @@ func _start_reaction() -> void:
 	_state = State.ACTING
 	var session := get_tree().get_first_node_in_group("level_session")
 	if session != null:
-		session.call("add_score", REACTION_SCORE)
+		session.call("add_score", REACTION_SCORE, _actor.global_position)
 
 
 func _placement(claim: Node2D, seated: bool, relaxed: bool, focus: Node2D) -> Dictionary:

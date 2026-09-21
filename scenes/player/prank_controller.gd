@@ -227,7 +227,8 @@ func _apply_action() -> void:
 
 	var session := get_tree().get_first_node_in_group("level_session")
 	if session != null:
-		session.add_score(int(action.get("score", 0)))
+		# sub_41DE60 floats the number off the player, not off the object it acted on.
+		session.add_score(int(action.get("score", 0)), _player.global_position)
 	action_applied.emit(action, point)
 
 

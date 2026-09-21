@@ -60,6 +60,47 @@ The lamps read the player's inventory at `player+1008`: smoking needs **both** s
 slot 6, the Matrix lamp needs slot 14, and urination needs slot 26. Slot 26 is the item
 `Napełnij pęcherz` grants, which cross-checks against the action table.
 
+## The floating score numbers
+
+A score that happens somewhere in the world also floats off the spot that earned it.
+`sub_41DE60(player, points)` adds to `player+984` and queues one at the player's own
+position a world unit up; `sub_41DEA0` does the same for an agent that has just been caught
+out by a tampered object. `sub_40A0D0` queues, `sub_40A310` ages, `sub_40A390` draws.
+
+**The glyphs.** The sprite is `CO_EFFECT_FONT_SCORE` (falling back to `FONT_GOLDEN.TGA`),
+13 glyphs of **24 × 32** side by side. `sub_40A0D0` stores each character of
+`sprintf("%d")` as `c - 44` and the draw sources it at `24 * (byte - 1)`, which puts `-` on
+glyph 0, the unused `.` and `/` on the two blanks, and `0`–`9` on glyphs 3–12. The advance
+is **25** pixels, one more than a glyph is wide.
+
+**The position.** `screen = (48 * (x - z), 24 * (x + z))` as everywhere else, minus the
+camera, and then minus `height * 59` — a unit of height is 59 pixels here, unlike the 24 a
+seated sprite's lift uses. Each character is then raised by its own table entry.
+
+**The animation.** `sub_409E40` fills two 1280-entry tables once, rather than shipping them
+as data, and the draw indexes both at `phase * 256 + 16 * character`, so every character
+lags the one before it by a sixteenth of a second and the number peels upward left to
+right. `sub_40A310` adds the frame delta to every phase and drops a number once it reaches
+**4.0**, which is exactly where the first character's alpha hits zero.
+
+```text
+rise[i]  = int(clamp(i/256, 0, 2) * 72)                              while i/256 < 2
+         = int((clamp(i/256, 0, 2) + wobble) * 64)                   otherwise
+  wobble = (sin(i * 0.024543693) + 1) / 2 * clamp(i/256, 0.5, 1) / 2
+
+alpha[i] = 4 * i          i < 64          fading in
+         = 255            i < 768         held
+         = (-1 - i) & 255 i < 1024        fading out
+         = 0              otherwise
+```
+
+So a number climbs 144 pixels over two seconds, then hangs between 128 and 160 bobbing on a
+sine of one turn per 256 steps, and the table is exactly long enough for the last live phase
+of the longest number `snprintf` can produce (`1023 + 16 * 14`).
+
+The port draws these in `scenes/effects/score_popup.gd`, over the world composite, the
+characters and a thought bubble; `tests/check_score_popup.gd` pins both tables.
+
 ## The digit strip
 
 `CO_GUI_CONSOLE_NUMBERS` is **not** what the console's two fields use — those are ordinary

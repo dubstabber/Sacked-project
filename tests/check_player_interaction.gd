@@ -210,6 +210,9 @@ func _check_action_applies() -> void:
 	_expect(_controller.state == 0, "the action ends when its duration is up")
 	_expect(not _player.input_locked, "the player is free again once the action applies")
 	_expect(session.score == score_before + int(action["score"]), "the score rises by the table's value")
+	# sub_41DE60 adds the score and floats the number off the player in the same breath.
+	var popups := session.get_node_or_null("ScorePopups")
+	_expect(popups != null and popups.live_count() == 1, "finishing an action floats its score")
 	_expect(object.state == int(action["result_state"]), "the object reaches the action's result state")
 	_expect(not point.is_action_enabled(int(entry["slot"])), "a used slot is not offered again")
 	# ... and sub_41B0C0, the tick that is not an action session, puts it back to "...".

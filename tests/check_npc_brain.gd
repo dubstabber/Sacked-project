@@ -14,12 +14,14 @@ class AgentStub extends Node2D:
 
 class SessionStub extends Node:
 	var score := 0
+	var scored_at := Vector2.INF
 
 	func _enter_tree() -> void:
 		add_to_group("level_session")
 
-	func add_score(points: int) -> void:
+	func add_score(points: int, world_position := Vector2.INF) -> void:
 		score += points
+		scored_at = world_position
 
 class Actor extends Node2D:
 	signal destination_reached
@@ -362,6 +364,8 @@ func _check_reacting_to_a_tampered_item() -> void:
 	_expect(brain._state == BRAIN.State.ACTING, "the reaction is an action, not a failed arrival")
 	_expect(point.get("occupant") != actor, "reacting to an object does not claim it")
 	_expect(session.score == BRAIN.REACTION_SCORE, "catching an agent out pays the player 25, got %d" % session.score)
+	# sub_41DEA0 floats that 25 at the agent, not at the player.
+	_expect(session.scored_at == actor.global_position, "the 25 is scored where the agent is standing")
 	_expect(actor.activity.get("anchor", Vector2.INF) == Vector2.INF, "the agent reacts where it arrived")
 
 	# sub_416450 resets every need on the way out, not just the one it was pursuing.

@@ -58,11 +58,18 @@ func target_score() -> int:
 	return target if target > 0 else DEFAULT_SCORE_TARGET
 
 
-func add_score(points: int) -> void:
+# sub_41DE60 and sub_41DEA0 both add to player+984 and float the number off the spot that
+# earned it in the same breath, so a score with a place to come from carries one.
+func add_score(points: int, world_position := Vector2.INF) -> void:
 	if is_finished:
 		return
 	score += points
 	score_changed.emit(score)
+	if not world_position.is_finite():
+		return
+	var popups := get_tree().get_first_node_in_group("score_popups")
+	if popups != null:
+		popups.call("spawn", world_position, points)
 
 
 func advance(delta: float) -> void:
