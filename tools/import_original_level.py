@@ -59,6 +59,7 @@ class ObjectDefinition:
     name: str
     sprite_name: str
     interaction_offset: Tuple[float, float] = (0.0, 0.0)
+    action_ids: Tuple[int, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -279,7 +280,11 @@ def parse_object_database(path: Path) -> Dict[int, ObjectDefinition]:
         if sprite_name == "":
             continue
         interaction_offset = (read_f32(record.payload, 536), read_f32(record.payload, 540))
-        definitions[object_id] = ObjectDefinition(object_id, category, name, sprite_name, interaction_offset)
+        # item_crazyoffice.cpp keeps eight prank action ids per object; see docs/prank-reference.md.
+        action_ids = tuple(value for value in record.payload[528:536] if value)
+        definitions[object_id] = ObjectDefinition(
+            object_id, category, name, sprite_name, interaction_offset, action_ids
+        )
 
     if not definitions:
         raise ValueError(f"No object definitions parsed from {path}")
@@ -675,6 +680,7 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
                 "object_id": "0x%08x" % object_id,
                 "object_category": int(definition.category),
                 "variant": variant,
+                "action_ids": list(definition.action_ids),
                 "display_name": definition.name,
                 "sprite_name": definition.sprite_name,
                 "source_sprite": texture.sprite,

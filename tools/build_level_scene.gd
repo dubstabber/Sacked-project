@@ -170,6 +170,10 @@ func _build_objects(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
 		interaction.set("category", (kind >> 16) & 0xff)
 		interaction.set("item_type", (kind >> 4) & 0xfff)
 		interaction.set("active", int(object_data["object_category"]) == 5)
+		var action_ids := PackedInt32Array()
+		for action_id in object_data.get("action_ids", []):
+			action_ids.append(int(action_id))
+		interaction.set("action_ids", action_ids)
 		var tile := _vector2(object_data["tile_position"])
 		var collision: Dictionary = manifest["collision_grid"]
 		var cell := Vector2i(floori(tile.x + 0.5), floori(tile.y + 0.5))

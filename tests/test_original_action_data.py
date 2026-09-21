@@ -91,5 +91,19 @@ class TraceActionTableTest(unittest.TestCase):
         self.assertEqual(exported, self.table)
 
 
+@unittest.skipUnless(ORIGINAL_EXE.is_file(), "original sacked.exe is not available")
+class LevelActionIdsTest(unittest.TestCase):
+    def test_manifest_matches_the_object_database(self):
+        manifest = json.loads((ROOT / "resources/levels/level_1.json").read_text())
+        definitions = object_action_ids(ROOT)
+        carrying = 0
+        for item in manifest["objects"]:
+            item_type = (int(item["kind"], 16) >> 4) & 0xFFF
+            expected = definitions[item_type]["action_ids"]
+            self.assertEqual(item["action_ids"], expected, item["node_name"])
+            carrying += bool(expected)
+        self.assertEqual(carrying, 38)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1163,6 +1163,7 @@
   "object_database": "extract-sacked-assets/sacked/CO_OBJECTS.DAT",
   "objects": [
     {
+      "action_ids": [],
       "display_name": "Schreibtisch  (L) Holz",
       "flags": 1,
       "height": 0.0,
@@ -1194,6 +1195,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Drehstuhl blau",
       "flags": 1,
       "height": 0.0,
@@ -1225,6 +1227,12 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        13,
+        14,
+        15,
+        58
+      ],
       "display_name": "Tastatur frontal",
       "flags": 1,
       "height": 0.0,
@@ -1256,6 +1264,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "PC-Tower",
       "flags": 1,
       "height": 0.0,
@@ -1287,6 +1296,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Schreibtisch Holz",
       "flags": 1,
       "height": 0.0,
@@ -1318,6 +1328,7 @@
       "variant": 2
     },
     {
+      "action_ids": [],
       "display_name": "Drehstuhl blau einfach",
       "flags": 1,
       "height": 0.0,
@@ -1349,6 +1360,12 @@
       "variant": 2
     },
     {
+      "action_ids": [
+        13,
+        14,
+        15,
+        58
+      ],
       "display_name": "Tastatur links",
       "flags": 1,
       "height": 0.0,
@@ -1380,6 +1397,14 @@
       "variant": 2
     },
     {
+      "action_ids": [
+        43,
+        44,
+        109,
+        110,
+        112,
+        113
+      ],
       "display_name": "Toilettenkabine",
       "flags": 1,
       "height": 0.0,
@@ -1411,6 +1436,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        136
+      ],
       "display_name": "Waschbecken",
       "flags": 1,
       "height": 0.0,
@@ -1442,6 +1470,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        40
+      ],
       "display_name": "Spiegel",
       "flags": 1,
       "height": 0.0,
@@ -1473,6 +1504,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Seifenspender 1",
       "flags": 1,
       "height": 0.0,
@@ -1504,6 +1536,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Schreibtisch edel 2",
       "flags": 1,
       "height": 0.0,
@@ -1535,6 +1568,7 @@
       "variant": 2
     },
     {
+      "action_ids": [],
       "display_name": "Jagdtrophäe",
       "flags": 1,
       "height": 0.0,
@@ -1566,6 +1600,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        120
+      ],
       "display_name": "Fenster 1a",
       "flags": 1,
       "height": 0.0,
@@ -1597,6 +1634,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        120
+      ],
       "display_name": "Fenster 1a",
       "flags": 1,
       "height": 0.0,
@@ -1628,6 +1668,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        120
+      ],
       "display_name": "Fenster 1b",
       "flags": 1,
       "height": 0.0,
@@ -1659,6 +1702,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        120
+      ],
       "display_name": "Fenster 1b",
       "flags": 1,
       "height": 0.0,
@@ -1690,6 +1736,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        120
+      ],
       "display_name": "Fenster 1c",
       "flags": 1,
       "height": 0.0,
@@ -1721,6 +1770,9 @@
       "variant": 1
     },
     {
+      "action_ids": [
+        120
+      ],
       "display_name": "Fenster 1c",
       "flags": 1,
       "height": 0.0,
@@ -1752,6 +1804,9 @@
       "variant": 1
     },
     {
+      "action_ids": [
+        139
+      ],
       "display_name": "Wasserspender",
       "flags": 1,
       "height": 0.0,
@@ -1783,6 +1838,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Arbeitszeile 1",
       "flags": 1,
       "height": 0.0,
@@ -1814,6 +1870,12 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        96,
+        97,
+        98,
+        99
+      ],
       "display_name": "Server-Tower",
       "flags": 1,
       "height": 0.0,
@@ -1845,6 +1907,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        154
+      ],
       "display_name": "Flasche",
       "flags": 1,
       "height": 0.0,
@@ -1876,6 +1941,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        145
+      ],
       "display_name": "Pappaufsteller 1",
       "flags": 1,
       "height": 0.0,
@@ -1907,6 +1975,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        146
+      ],
       "display_name": "Handtuchautomat",
       "flags": 1,
       "height": 0.0,
@@ -1938,6 +2009,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        34
+      ],
       "display_name": "Papierkorb 1",
       "flags": 1,
       "height": 0.0,
@@ -1969,6 +2043,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        1
+      ],
       "display_name": "Aktenablage",
       "flags": 1,
       "height": 0.0,
@@ -2000,6 +2077,9 @@
       "variant": 2
     },
     {
+      "action_ids": [
+        9
+      ],
       "display_name": "Brief",
       "flags": 1,
       "height": 0.0,
@@ -2031,6 +2111,12 @@
       "variant": 1
     },
     {
+      "action_ids": [
+        11,
+        12,
+        57,
+        56
+      ],
       "display_name": "Colaautomat",
       "flags": 1,
       "height": 0.0,
@@ -2062,6 +2148,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        16
+      ],
       "display_name": "Disketten",
       "flags": 1,
       "height": 0.0,
@@ -2093,6 +2182,10 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        17,
+        18
+      ],
       "display_name": "Drucker 1",
       "flags": 1,
       "height": 0.0,
@@ -2124,6 +2217,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        19
+      ],
       "display_name": "Feuerzeug",
       "flags": 1,
       "height": 0.0,
@@ -2155,6 +2251,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        27
+      ],
       "display_name": "Kleber",
       "flags": 1,
       "height": 0.0,
@@ -2186,6 +2285,12 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        13,
+        14,
+        15,
+        58
+      ],
       "display_name": "Tastatur links",
       "flags": 1,
       "height": 0.0,
@@ -2217,6 +2322,9 @@
       "variant": 2
     },
     {
+      "action_ids": [
+        35
+      ],
       "display_name": "Poster 1",
       "flags": 1,
       "height": 0.0,
@@ -2248,6 +2356,9 @@
       "variant": 1
     },
     {
+      "action_ids": [
+        42
+      ],
       "display_name": "Stifthalter 1",
       "flags": 1,
       "height": 0.0,
@@ -2279,6 +2390,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        47
+      ],
       "display_name": "Wasserkocher",
       "flags": 1,
       "height": 0.0,
@@ -2310,6 +2424,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        48
+      ],
       "display_name": "Zigaretten",
       "flags": 1,
       "height": 0.0,
@@ -2341,6 +2458,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        50
+      ],
       "display_name": "Vertrauliche Akten",
       "flags": 1,
       "height": 0.0,
@@ -2372,6 +2492,11 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        66,
+        67,
+        68
+      ],
       "display_name": "Handy",
       "flags": 1,
       "height": 0.0,
@@ -2403,6 +2528,10 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        77,
+        125
+      ],
       "display_name": "Kaffeemaschine",
       "flags": 1,
       "height": 0.0,
@@ -2434,6 +2563,9 @@
       "variant": 3
     },
     {
+      "action_ids": [
+        78
+      ],
       "display_name": "Ketchupflasche",
       "flags": 1,
       "height": 0.0,
@@ -2465,6 +2597,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        64
+      ],
       "display_name": "Flipchart",
       "flags": 1,
       "height": 0.0,
@@ -2496,6 +2631,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Komode schwarz 2",
       "flags": 1,
       "height": 0.0,
@@ -2527,6 +2663,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Metallregal",
       "flags": 1,
       "height": 0.0,
@@ -2558,6 +2695,13 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        30,
+        31,
+        84,
+        128,
+        83
+      ],
       "display_name": "Kühlschrank",
       "flags": 1,
       "height": 0.0,
@@ -2589,6 +2733,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Bücherreihe",
       "flags": 1,
       "height": 0.0,
@@ -2620,6 +2765,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Heizkörper",
       "flags": 1,
       "height": 0.0,
@@ -2651,6 +2797,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Heizkörper",
       "flags": 1,
       "height": 0.0,
@@ -2682,6 +2829,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Heizkörper",
       "flags": 1,
       "height": 0.0,
@@ -2713,6 +2861,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Kleiderständer einbeinig",
       "flags": 1,
       "height": 0.0,
@@ -2744,6 +2893,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Standventilator",
       "flags": 1,
       "height": 0.0,
@@ -2775,6 +2925,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Sofa 1",
       "flags": 1,
       "height": 0.0,
@@ -2806,6 +2957,7 @@
       "variant": 2
     },
     {
+      "action_ids": [],
       "display_name": "Standaschenbecher voll",
       "flags": 1,
       "height": 0.0,
@@ -2837,6 +2989,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        7
+      ],
       "display_name": "Aushang",
       "flags": 1,
       "height": 0.0,
@@ -2868,6 +3023,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Pflanze gross 3",
       "flags": 1,
       "height": 0.0,
@@ -2899,6 +3055,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        35
+      ],
       "display_name": "Poster 1",
       "flags": 1,
       "height": 0.0,
@@ -2930,6 +3089,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Papier 3",
       "flags": 1,
       "height": 0.0,
@@ -2961,6 +3121,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Papier 2",
       "flags": 1,
       "height": 0.0,
@@ -2992,6 +3153,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Papier 3",
       "flags": 1,
       "height": 0.0,
@@ -3023,6 +3185,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Papier 1",
       "flags": 1,
       "height": 0.0,
@@ -3054,6 +3217,7 @@
       "variant": 2
     },
     {
+      "action_ids": [],
       "display_name": "Heizkörper",
       "flags": 1,
       "height": 0.0,
@@ -3085,6 +3249,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Papier 5",
       "flags": 1,
       "height": 0.0,
@@ -3116,6 +3281,9 @@
       "variant": 0
     },
     {
+      "action_ids": [
+        135
+      ],
       "display_name": "Spüle",
       "flags": 1,
       "height": 0.0,
@@ -3147,6 +3315,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Kiste 2",
       "flags": 1,
       "height": 0.0,
@@ -3178,6 +3347,7 @@
       "variant": 2
     },
     {
+      "action_ids": [],
       "display_name": "Eingangstür",
       "flags": 1,
       "height": 0.0,
@@ -3209,6 +3379,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Geschirr dreckig",
       "flags": 1,
       "height": 0.0,
@@ -3240,6 +3411,7 @@
       "variant": 1
     },
     {
+      "action_ids": [],
       "display_name": "Kaffeedose",
       "flags": 1,
       "height": 0.0,
@@ -3271,6 +3443,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Teller",
       "flags": 1,
       "height": 0.0,
@@ -3302,6 +3475,7 @@
       "variant": 0
     },
     {
+      "action_ids": [],
       "display_name": "Chefsessel 1",
       "flags": 1,
       "height": 0.0,
@@ -3333,6 +3507,7 @@
       "variant": 2
     },
     {
+      "action_ids": [],
       "display_name": "Arbeitszeile 2",
       "flags": 1,
       "height": 0.0,

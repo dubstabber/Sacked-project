@@ -7,6 +7,8 @@ extends Marker2D
 @export var item_type: int = 0
 @export var room_id: int = 0
 @export var active: bool = false
+# The object's prank action ids, in original slot order; see docs/prank-reference.md.
+@export var action_ids: PackedInt32Array = PackedInt32Array()
 
 var occupant: Node
 

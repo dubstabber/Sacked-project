@@ -412,6 +412,12 @@ func _check_activity_points(world: Node, manifest: Dictionary, floor_layer: Tile
 		_expect_equal(point.is_in_group("npc_activity_points"), true, "%s participates in NPC target discovery" % object_name)
 		if _failed:
 			return
+		var expected_actions := PackedInt32Array()
+		for action_id: int in object_data.get("action_ids", []):
+			expected_actions.append(int(action_id))
+		_expect_equal(point.get("action_ids"), expected_actions, "%s prank action ids" % object_name)
+		if _failed:
+			return
 
 
 func _check_npcs(world: Node, manifest: Dictionary, floor_layer: TileMapLayer) -> void:
