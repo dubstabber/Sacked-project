@@ -41,6 +41,8 @@ CONSOLE = [
     ("CO_GUI_CONSOLE_SMOKE_ACT", "images/gui/hud/lamp-smoke.png"),
     ("CO_GUI_CONSOLE_PISS_ACT", "images/gui/hud/lamp-piss.png"),
     ("CO_GUI_CONSOLE_MATRIX_ACT", "images/gui/hud/lamp-matrix.png"),
+    # Shown for two seconds whenever the office crosses into a higher aggression band.
+    ("CO_GUI_CONSOLE_THERMO_UP", "images/gui/hud/thermo-up.png"),
 ]
 
 SCREENS = [

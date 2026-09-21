@@ -21,7 +21,8 @@ are absolute screen coordinates in the 800 × 600 viewport.
 | Matrix lamp | `(754, 537)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_MATRIX_ACT` |
 | Urination lamp | `(756, 485)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_PISS_ACT` |
 | Smoking lamp | `(717, 461)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_SMOKE_ACT` |
-| `THERMO_UP`, `AGGRO_UP` | `(5, 5)` | 100 | both created hidden, `+1163 = -36` |
+| `THERMO_UP`, `AGGRO_UP` | `(5, 5)` | 100 | 800 × 600 banners, created hidden, `+1163 = 220` |
+| Warning caption | `(240, 50)` | 0 | Arial 30, registered as `THERMO_UP`'s child so it shows with it |
 
 `CGUIRectangle::Draw` (`sub_45B820`) draws from the element's own `(x, y)` as the **top
 left**, and `+1140` is its alignment flag: `16` centres the sprite in the viewport, bit `4`
@@ -146,6 +147,7 @@ so the port's camera is unchanged and the console is drawn over the world.
 | Centre icon | `player+929 + player+920`, the selected entry's ACTICON, hidden at `player+920 == -1` |
 | Stopwatch | `player+992 * 100 / player+1000` — how far the running action has come, swept clockwise from `+1140` |
 | Lamps | `player+1008`: smoking needs slots 5 **and** 6, Matrix 14, urination 26 |
+| Aggression bar | `game+14728 * 1.42 + 46` pixels of its 188, never hidden |
 
 Both of those follow **`player+920`**, the selected menu slot, which outlives the ring: see
 [player-action-reference.md](player-action-reference.md). So the centre icon and the hover
@@ -157,8 +159,33 @@ begins empty-handed and every lamp is dark. That is why level 1's rows needing i
 
 `game+14724` is the widget at **(662, 536)** — the stopwatch, `CO_GUI_CONSOLE_CLOCK_FULL`,
 radius `+96 = 36.0` — so the running action sweeps around the stopwatch, not along the
-aggression bar at (410, 497). That one is `game+14732`, fed
-`188 - (game+14728 * 1.42 + 46)`, and stays dark until detection is implemented.
+aggression bar at (410, 497).
+
+## The aggression bar and its warning
+
+`game+14732` at (410, 497) is the one element `sub_405930` never hides, and `sub_403780`
+feeds it every frame by cropping its right edge:
+
+```text
+game+14732 +1144 = 0                                        crop nothing off the left
+game+14732 +1148 = 188 - (game+14728 * 1.42 + 46)           crop this much off the right
+```
+
+`CGUIRectangle::Draw` then sources `188 - (left + right)` pixels, so the width that survives
+is `game+14728 * 1.42 + 46` — **46 pixels even at zero**, which is exactly the thermometer's
+bulb, and the full 188 at 100. The crop is truncated rather than the fill, so the width is
+the complement of a truncation: at a mean of 50 the bar is 117 pixels, not 116.
+
+`game+14728` is the office-wide mean of every agent's own aggression, rebuilt each frame by
+`sub_402350`; see [npc-reference.md](npc-reference.md) for where an agent's own comes from.
+
+When that mean crosses into a higher band, `sub_402350` calls `sub_407960`, which shows
+`game+14740` — the 800 × 600 `THERMO_UP` banner at (5, 5), alpha 220 — and sets
+`game+14748` to 2.0. `sub_403780` counts that down by the frame delta and hides it at zero.
+The caption is a separate Arial 30 element at (240, 50) reading
+**`Uważaj! Twoi koledzy... ojej!`**, registered as the banner's child so the two rise and
+fall together. `AGGRO_UP` is the same shape but fires from a different game mode, which is
+not recovered.
 
 ## How the stopwatch is swept
 

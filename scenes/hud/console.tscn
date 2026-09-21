@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://images/gui/hud/lamp-matrix.png" id="5"]
 [ext_resource type="Texture2D" path="res://images/gui/hud/lamp-piss.png" id="6"]
 [ext_resource type="Texture2D" path="res://images/gui/hud/lamp-smoke.png" id="7"]
+[ext_resource type="Texture2D" path="res://images/gui/hud/thermo-up.png" id="8"]
 
 [node name="Console" type="CanvasLayer"]
 layer = 50
@@ -26,10 +27,11 @@ centered = false
 
 [node name="AggroBar" type="Sprite2D" parent="."]
 texture_filter = 1
-visible = false
 position = Vector2(410, 497)
 centered = false
 texture = ExtResource("3")
+region_enabled = true
+region_rect = Rect2(0, 0, 46, 40)
 
 [node name="ClockBar" type="Sprite2D" parent="."]
 texture_filter = 1
@@ -59,6 +61,22 @@ visible = false
 position = Vector2(754, 537)
 centered = false
 texture = ExtResource("5")
+
+[node name="ThermoUp" type="Sprite2D" parent="."]
+texture_filter = 1
+visible = false
+modulate = Color(1, 1, 1, 0.8627451)
+position = Vector2(5, 5)
+centered = false
+texture = ExtResource("8")
+
+[node name="ThermoUpText" type="Label" parent="ThermoUp"]
+offset_left = 235.0
+offset_top = 45.0
+offset_right = 795.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 30
+text = "Uważaj! Twoi koledzy... ojej!"
 
 [node name="Score" type="Label" parent="."]
 offset_left = 85.0

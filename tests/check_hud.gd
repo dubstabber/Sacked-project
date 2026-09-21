@@ -16,10 +16,12 @@ const ExpectedPositions := {
 	"LampSmoke": Vector2(717, 461),
 	"LampPiss": Vector2(756, 485),
 	"LampMatrix": Vector2(754, 537),
+	"ThermoUp": Vector2(5, 5),
 }
-# Each of these waits on something: an action running, an action highlighted, or an item
-# held. At rest, with an empty inventory, none of them may be drawn over the frame.
-const InertElements := ["ActionIcon", "AggroBar", "ClockBar", "LampSmoke", "LampPiss", "LampMatrix"]
+# Each of these waits on something: an action running, an action highlighted, an item held,
+# or the office souring. At rest, with an empty inventory, none may be drawn over the frame.
+# The aggression bar is not among them: sub_405930 never hides it, it just starts short.
+const InertElements := ["ActionIcon", "ClockBar", "LampSmoke", "LampPiss", "LampMatrix", "ThermoUp"]
 
 var _failures := 0
 
@@ -39,6 +41,7 @@ func _run() -> void:
 	_check_lamps(console)
 	_check_action_progress(console)
 	_check_the_stopwatch_sweeps_the_dial(console)
+	_check_the_aggression_bar(console)
 	_check_score_field(console)
 	_check_clock_field(console)
 	_check_hover_text(console)
@@ -147,6 +150,32 @@ func _check_the_stopwatch_sweeps_the_dial(console: Node) -> void:
 		bar.texture != null and bar.texture.get_width() >= 2 * radius and bar.texture.get_height() >= 2 * radius,
 		"the dial art covers the whole 2r x 2r window the fan samples"
 	)
+
+
+# game+14732 is fed `188 - (aggro * 1.42 + 46)` as the width to crop off its right edge.
+func _check_the_aggression_bar(console: Node) -> void:
+	var bar := console.get_node("AggroBar") as Sprite2D
+	_expect(bar.visible, "the aggression bar is on screen from the first frame")
+	_expect(bar.region_enabled, "the bar is cropped rather than scaled")
+	_expect(bar.texture != null and bar.texture.get_size() == Vector2(188, 40), "the bar art is the original 188x40")
+
+	console.set_aggression(0.0)
+	_expect(bar.region_rect.size == Vector2(46, 40), "a calm office still shows 46 pixels, got %s" % bar.region_rect.size)
+	console.set_aggression(100.0)
+	_expect(bar.region_rect.size == Vector2(188, 40), "a furious office fills the bar, got %s" % bar.region_rect.size)
+	console.set_aggression(50.0)
+	_expect(bar.region_rect.size == Vector2(117, 40), "half an office is 117 pixels, got %s" % bar.region_rect.size)
+	console.set_aggression(0.0)
+
+	# sub_407960 raises the warning for two seconds and sub_403780 counts it back down.
+	var thermo := console.get_node("ThermoUp") as Sprite2D
+	_expect(not thermo.visible, "the warning is down until the office crosses a band")
+	console.warn_of_aggravation()
+	_expect(thermo.visible, "crossing a band raises the warning")
+	console._process(1.9)
+	_expect(thermo.visible, "the warning holds for two seconds")
+	console._process(0.2)
+	_expect(not thermo.visible, "and goes down again after them")
 
 
 func _check_score_field(console: Node) -> void:
