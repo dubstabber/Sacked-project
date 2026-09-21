@@ -15,6 +15,7 @@ const DIRECTIONS := {
 const NPC_SPECS := [
 	{
 		"id": &"secretary",
+		"gender": 1,
 		"walk_speed_tiles": 1.8,
 		"resource_name": "secretary",
 		"idle_source": "SEKRETAERIN_IDLE#1#ATMEN",
@@ -24,6 +25,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"janitor",
+		"gender": 0,
 		"walk_speed_tiles": 1.2,
 		"resource_name": "janitor",
 		"idle_source": "HOUSEMEISTER_IDLE#1#ATMEN",
@@ -33,6 +35,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"male-employee-1",
+		"gender": 0,
 		"walk_speed_tiles": 1.5,
 		"resource_name": "male-employee-1",
 		"idle_source": "ANGESTELLTER#1_IDLE#1#ATMEN",
@@ -42,6 +45,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"male-employee-2",
+		"gender": 0,
 		"walk_speed_tiles": 1.6,
 		"resource_name": "male-employee-2",
 		"idle_source": "ANGESTELLTER#2_IDLE#1#ATMEN",
@@ -51,6 +55,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"female-employee-1",
+		"gender": 1,
 		"walk_speed_tiles": 1.7,
 		"resource_name": "female-employee-1",
 		"idle_source": "ANGESTELLTE#1_IDLE#1#ATMEN",
@@ -60,6 +65,7 @@ const NPC_SPECS := [
 	},
 	{
 		"id": &"female-employee-2",
+		"gender": 1,
 		"walk_speed_tiles": 1.5,
 		"resource_name": "female-employee-2",
 		"idle_source": "ANGESTELLTE#2_IDLE#1#ATMEN",
@@ -90,6 +96,7 @@ func _run() -> void:
 		var profile := PROFILE_SCRIPT.new()
 		profile.id = spec["id"]
 		profile.walk_speed_tiles = spec["walk_speed_tiles"]
+		profile.gender = spec["gender"]
 		var action_path := "res://scenes/npc/profiles/%s_actions.res" % resource_name
 		if ResourceLoader.exists(action_path):
 			profile.action_animation_library = load(action_path)

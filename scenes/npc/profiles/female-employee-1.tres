@@ -9,6 +9,7 @@
 [resource]
 script = ExtResource("3_uf1wv")
 id = &"female-employee-1"
+gender = 1
 walk_speed_tiles = 1.7
 action_animation_library = ExtResource("npc_actions")
 animation_library = ExtResource("1_lg7vg")

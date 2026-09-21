@@ -37,6 +37,7 @@ var _route: Node2D
 var _waypoint_index := 0
 var _route_done := false
 var _route_retry := 0.0
+var _warned_actions: Dictionary = {}
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -45,6 +46,7 @@ var _route_retry := 0.0
 
 func _ready() -> void:
 	add_to_group("depth_composited_characters")
+	add_to_group("npc_agents")
 	last_direction = IsoDirection.snap_to_8_directions(initial_direction)
 	_patrol_origin = global_position
 	_build_patrol_targets()
@@ -170,6 +172,9 @@ func navigate_to(target_global: Vector2) -> bool:
 		return false
 	_command = Command.TRAVEL
 	current_activity = &"walking"
+	# cancel_commands() above dropped to idle; a rebuilt route (social refresh) must
+	# not show that frame, so resume walking straight away.
+	animation_controller.play_walk(last_direction)
 	return true
 
 
@@ -224,10 +229,11 @@ func start_activity(animation: StringName, duration: float, facing: Vector2, anc
 	else:
 		var clip := _action_clip(animation)
 		if clip.is_empty():
-			push_warning("NPC action animation is not available: %s" % animation)
-			activity_finished.emit.call_deferred()
-			return false
-		animation_controller.play_animation(clip)
+			# sub_41A510 drops to the idle slot when an action has no clip at all.
+			_warn_missing_action(animation)
+			animation_controller.play_idle(last_direction)
+		else:
+			animation_controller.play_animation(clip)
 	if anchor != Vector2.INF:
 		global_position = anchor
 	_activity_return = return_position
@@ -247,6 +253,13 @@ func _action_clip(action: StringName) -> String:
 	# sub_41A510 falls back to view 000 when a seated action lacks the requested view.
 	clip = prefix + "up-right"
 	return clip if animation_player.has_animation(clip) else ""
+
+
+func _warn_missing_action(action: StringName) -> void:
+	if _warned_actions.has(action):
+		return
+	_warned_actions[action] = true
+	push_warning("NPC action animation is not available, using idle: %s" % action)
 
 
 func cancel_commands() -> void:

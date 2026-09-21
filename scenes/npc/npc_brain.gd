@@ -3,11 +3,19 @@ extends Node
 
 
 const GOAL_CATEGORIES := [4, 5, 9, 6, 8, 7, 1, 7]
+# sub_418BE0 maps goal 3 to its alternate work-equipment category.
+const ALTERNATE_WORK_CATEGORY := 2
 # sub_4187F0 only clears the item goals; the social and smoking goals stay enabled.
 const ITEM_GOALS := [0, 1, 2, 3, 4, 7]
-# Social and smoking need an agent target and a SPECIAL#2 clip the level's coworkers
-# do not ship, so the port leaves them off instead of guessing their behaviour.
-const SUPPORTED_GOALS := [0, 1, 2, 3, 4, 7]
+const SUPPORTED_GOALS := [0, 1, 2, 3, 4, 5, 6, 7]
+const SOCIAL_GOAL := 5
+const SMOKING_GOAL := 6
+# sub_416960 aims 1.2 tiles in front of the other agent and sub_417320 only
+# considers agents of the other gender within eight tiles.
+const SOCIAL_APPROACH_TILES := 1.2
+const SOCIAL_RANGE_TILES := 8.0
+# sub_416770 rebuilds a social route every three seconds while it is walking.
+const SOCIAL_REFRESH_SECONDS := 3.0
 # Verified ordinary goals and profile tables: docs/npc-reference.md.
 const PROFILES := {
 	&"boss": {
@@ -63,6 +71,9 @@ var _target: Node2D
 var _active: Node2D
 var _passive: Node2D
 var _claimed_seat: Node2D
+var _social_refresh := 0.0
+var _goal_candidates: Array = []
+var _alternate_candidates: Array[Node2D] = []
 var _has_claim := false
 var _initialized := false
 
@@ -94,10 +105,11 @@ func _initialize() -> void:
 		_rates.append(float(_configuration["rates"][goal]))
 		_goal_disabled.append(not SUPPORTED_GOALS.has(goal))
 	_needs[3] = 10.0
+	_build_candidates()
 	# sub_4187F0 disables an item goal whose candidate list came out empty and
 	# stops its need from decaying, so it never becomes the lowest again.
 	for goal in ITEM_GOALS:
-		if not _goal_disabled[goal] and _candidates(goal).is_empty():
+		if not _goal_disabled[goal] and _goal_candidates[goal].is_empty():
 			_goal_disabled[goal] = true
 	for goal in range(8):
 		if _goal_disabled[goal]:
@@ -118,6 +130,11 @@ func _physics_process(delta: float) -> void:
 			_stop()
 		return
 	if _state != State.IDLE:
+		if _state == State.NAVIGATING and _goal == SOCIAL_GOAL and is_instance_valid(_target):
+			_social_refresh -= delta
+			if _social_refresh <= 0.0:
+				_refresh_social_route()
+			return
 		if _state == State.NAVIGATING and not is_instance_valid(_target):
 			_actor.call("cancel_commands")
 			_on_navigation_failed()
@@ -164,6 +181,20 @@ func _attempt_goal(goal: int) -> void:
 	if selection.is_empty():
 		_fail_goal()
 		return
+	if goal == SOCIAL_GOAL:
+		var agent := selection.get("agent") as Node2D
+		if not _actor.call("navigate_to", _social_destination(agent)):
+			_fail_goal()
+			return
+		_goal = goal
+		_pending_goal = -1
+		_retries = 0
+		_state = State.NAVIGATING
+		_target = agent
+		_active = null
+		_passive = null
+		_social_refresh = SOCIAL_REFRESH_SECONDS
+		return
 	var active := selection.get("active") as Node2D
 	var passive := selection.get("passive") as Node2D
 	# sub_416D50 walks to the passive item when the pick produced one, else the active.
@@ -194,6 +225,9 @@ func _fail_goal() -> void:
 
 
 func _select_target(goal: int) -> Dictionary:
+	if goal == SOCIAL_GOAL:
+		var agent := _social_agent()
+		return {} if agent == null else {"agent": agent}
 	if goal == 3:
 		var workstation := get_node_or_null(assigned_workstation) as Node2D if not assigned_workstation.is_empty() else null
 		var chair := get_node_or_null(assigned_chair) as Node2D if not assigned_chair.is_empty() else null
@@ -225,20 +259,66 @@ func _select_target(goal: int) -> Dictionary:
 	return {"active": null, "passive": point}
 
 
-func _candidates(goal: int, alternate_work := false) -> Array[Node2D]:
+# sub_4187F0 scans the item list once at startup and keeps at most 64 matches per
+# goal; sub_417120 then picks at random from that list rather than rescanning.
+func _build_candidates() -> void:
+	_goal_candidates.clear()
+	for goal in range(8):
+		_goal_candidates.append(_scan_candidates(int(GOAL_CATEGORIES[goal]), goal))
+	_alternate_candidates = _scan_candidates(ALTERNATE_WORK_CATEGORY, 3)
+
+
+func _scan_candidates(category: int, goal: int) -> Array[Node2D]:
 	var result: Array[Node2D] = []
-	var category := 2 if alternate_work else int(GOAL_CATEGORIES[goal])
 	var room_mask := int(_configuration["rooms"][goal])
 	for point in _activity_points():
 		var room := int(point.get("room_id"))
 		if room < 0 or room >= 32 or room_mask & (1 << room) == 0:
 			continue
-		if int(point.get("category")) != category or not _available(point):
+		if int(point.get("category")) != category:
 			continue
 		result.append(point)
 		if result.size() == 64:
 			break
 	return result
+
+
+func _candidates(goal: int, alternate_work := false) -> Array[Node2D]:
+	var pool: Array = _alternate_candidates if alternate_work else _goal_candidates[goal]
+	var result: Array[Node2D] = []
+	for point in pool:
+		if _available(point):
+			result.append(point)
+	return result
+
+
+func _social_agent() -> Node2D:
+	# sub_417320 scans every agent and keeps the last match rather than the nearest.
+	var own_gender := int((_actor.get("profile") as Resource).get("gender"))
+	var world := _actor.get_parent()
+	var found: Node2D = null
+	for node in get_tree().get_nodes_in_group("npc_agents"):
+		if node == _actor or not node is Node2D or not world.is_ancestor_of(node):
+			continue
+		var profile := node.get("profile") as Resource
+		if profile == null or int(profile.get("gender")) == own_gender:
+			continue
+		var offset: Vector2 = node.global_position - _actor.global_position
+		if IsoDirection.screen_to_ground(offset).length() < SOCIAL_RANGE_TILES:
+			found = node
+	return found
+
+
+func _social_destination(agent: Node2D) -> Vector2:
+	var facing: Vector2 = agent.get("last_direction")
+	var ahead := IsoDirection.screen_to_ground(facing).normalized() * SOCIAL_APPROACH_TILES
+	return agent.global_position + IsoDirection.ground_to_screen(ahead)
+
+
+func _refresh_social_route() -> void:
+	_social_refresh = SOCIAL_REFRESH_SECONDS
+	if not _actor.call("navigate_to", _social_destination(_target)):
+		_on_navigation_failed()
 
 
 func _activity_points() -> Array[Node2D]:
@@ -248,6 +328,13 @@ func _activity_points() -> Array[Node2D]:
 		if node is Node2D and world.is_ancestor_of(node):
 			result.append(node)
 	return result
+
+
+func _focus_position(node: Node2D) -> Vector2:
+	# An activity point marks an offset on its object; a social target is its own anchor.
+	if node.is_in_group("npc_activity_points"):
+		return (node.get_parent() as Node2D).global_position
+	return node.global_position
 
 
 func _available(point: Node2D) -> bool:
@@ -313,6 +400,9 @@ func _on_destination_reached() -> void:
 		_claimed_seat = claim
 		_has_claim = true
 		claim.set("occupant", _actor)
+	if _goal == SMOKING_GOAL:
+		# sub_419CE0 plays slot 6 for goal 6; sub_41A510 drops to idle without it.
+		animation = &"special-2"
 	var placement := _placement(claim, seated, relaxed, focus)
 	if seated:
 		animation = &"sit-easy" if relaxed else (&"sit-idle" if _profile_id == &"boss" else &"sit-use")
@@ -348,7 +438,7 @@ func _placement(claim: Node2D, seated: bool, relaxed: bool, focus: Node2D) -> Di
 			if seated:
 				anchor += SEAT_LIFT
 	if facing == Vector2.ZERO and is_instance_valid(focus):
-		facing = (focus.get_parent() as Node2D).global_position - _actor.global_position
+		facing = _focus_position(focus) - _actor.global_position
 	if facing == Vector2.ZERO:
 		facing = _actor.get("last_direction")
 	return {"anchor": anchor, "facing": facing.normalized(), "return": return_position}

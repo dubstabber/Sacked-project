@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("2_profile")
 id = &"boss"
+gender = 0
 walk_speed_tiles = 1.8
 action_animation_library = ExtResource("npc_actions")
 animation_library = ExtResource("1_boss")

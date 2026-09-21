@@ -6,6 +6,11 @@ const POINT := preload("res://scenes/npc/npc_activity_point.gd")
 
 class TestProfile extends Resource:
 	var id: StringName = &"male-employee-1"
+	var gender: int = 0
+
+class AgentStub extends Node2D:
+	var profile: Resource
+	var last_direction := Vector2.RIGHT
 
 class Actor extends Node2D:
 	signal destination_reached
@@ -63,6 +68,7 @@ func _run() -> void:
 	_check_filters()
 	_check_cleanup()
 	_check_arrival_actions()
+	_check_social_target()
 	_check_interrupted_activity()
 	_check_routes_and_retry_limit()
 	if _failures == 0:
@@ -124,7 +130,7 @@ func _check_work_cycle() -> void:
 	for goal in [0, 1, 2, 4, 5, 6, 7]:
 		_expect(brain._needs[goal] >= 20.0 and brain._needs[goal] <= 100.0, "other original needs start between twenty and one hundred")
 	for goal in [5, 6]:
-		_expect(brain._goal_disabled[goal], "goal %d has no port implementation and stays disabled" % goal)
+		_expect(not brain._goal_disabled[goal], "sub_4187F0 never disables the social or smoking goal %d" % goal)
 	_expect(not brain._goal_disabled[3], "the assigned work goal stays enabled")
 	_expect(brain._rates[3] > 0.0, "an enabled goal keeps its original decay rate")
 	for goal in [0, 1, 2]:
@@ -159,6 +165,7 @@ func _check_filters() -> void:
 	var other_world := Node2D.new()
 	root.add_child(other_world)
 	_point(other_world, "ForeignPlant", Vector2(6, 5), Vector2.ZERO, 9, 30, 2, false)
+	brain._build_candidates()
 	_expect(brain._candidates(2) == [valid], "targets obey goal category, room mask and current world")
 	_expect(brain._candidates(0) == [fridge], "a special-action item is an ordinary candidate for its goal")
 	valid.set("occupant", other_world)
@@ -208,6 +215,50 @@ func _check_routes_and_retry_limit() -> void:
 	fixture["world"].free()
 
 
+func _check_social_target() -> void:
+	var fixture := _fixture()
+	var world: Node2D = fixture["world"]
+	var brain: Node = fixture["brain"]
+	var actor: Actor = fixture["actor"]
+	_expect(brain._select_target(5).is_empty(), "social needs another agent to walk to")
+	_agent(world, "SameGender", 0, Vector2(4, 2))
+	_expect(brain._select_target(5).is_empty(), "social ignores an agent of its own gender")
+	_agent(world, "FarAway", 1, Vector2(40, 40))
+	_expect(brain._select_target(5).is_empty(), "social ignores an agent beyond the original eight tiles")
+	_agent(world, "First", 1, Vector2(5, 2))
+	var partner := _agent(world, "Partner", 1, Vector2(4, 3))
+	_expect(brain._select_target(5).get("agent") == partner, "sub_417320 keeps the last matching agent, not the nearest")
+
+	brain._attempt_goal(5)
+	_expect(brain._state == BRAIN.State.NAVIGATING and brain._goal == 5, "social starts a route of its own")
+	var ahead := IsoDirection.screen_to_ground(partner.last_direction).normalized() * 1.2
+	_expect(actor.destination.is_equal_approx(partner.global_position + IsoDirection.ground_to_screen(ahead)), "social aims 1.2 tiles in front of the other agent")
+	actor.destination = Vector2.INF
+	brain._physics_process(1.0)
+	_expect(not actor.destination.is_finite(), "a social route holds for the original three seconds")
+	brain._physics_process(2.1)
+	_expect(actor.destination.is_finite(), "a social route is rebuilt once its refresh elapses")
+
+	actor.destination_reached.emit()
+	_expect(actor.activity.get("animation") == &"idle", "a social visit stands and talks")
+	_expect(float(actor.activity.get("duration", 0.0)) >= 10.0 and float(actor.activity.get("duration", 0.0)) <= 16.0, "a social visit keeps the default action timer")
+	_expect(actor.activity.get("facing") == (partner.global_position - actor.global_position).normalized(), "a social visit faces the other agent, not its parent")
+	world.free()
+
+
+func _agent(world: Node2D, label: String, gender: int, ground: Vector2) -> AgentStub:
+	var agent := AgentStub.new()
+	agent.name = label
+	agent.position = IsoDirection.ground_to_screen(ground)
+	var profile := TestProfile.new()
+	profile.gender = gender
+	agent.profile = profile
+	agent.last_direction = IsoDirection.get_screen_directions()[0]
+	agent.add_to_group("npc_agents")
+	world.add_child(agent)
+	return agent
+
+
 func _check_arrival_actions() -> void:
 	# sub_417B00 dispatch: the arrived item's type picks animation, duration and claim.
 	var cubicle := _arrive(_point_fixture(8, 173, 7, true))
@@ -233,6 +284,10 @@ func _check_arrival_actions() -> void:
 	_expect(is_equal_approx(copier["duration"], 20.0), "the copier runs for the original twenty seconds")
 	_expect(copier["claimed"], "using the copier claims it")
 
+	var ashtray := _arrive(_point_fixture(1, 234, 3, false), 6)
+	_expect(ashtray["animation"] == &"special-2", "smoking asks for slot 6 and falls back to idle without it")
+	_expect(ashtray["duration"] >= 10.0 and ashtray["duration"] <= 16.0, "smoking keeps the default action timer")
+
 	var plant := _arrive(_point_fixture(9, 30, 0, false))
 	_expect(plant["animation"] == &"idle", "an ordinary target keeps the standing idle")
 	_expect(plant["duration"] >= 10.0 and plant["duration"] <= 16.0, "an ordinary target keeps the default action timer")
@@ -241,11 +296,12 @@ func _check_arrival_actions() -> void:
 func _point_fixture(category: int, item_type: int, room: int, active: bool) -> Dictionary:
 	var fixture := _fixture()
 	var point := _point(fixture["world"], "Target", Vector2(6, 5), Vector2(1, 0), category, item_type, room, active)
+	fixture["brain"]._build_candidates()
 	fixture["point"] = point
 	return fixture
 
 
-func _arrive(fixture: Dictionary) -> Dictionary:
+func _arrive(fixture: Dictionary, goal := 2) -> Dictionary:
 	var brain: Node = fixture["brain"]
 	var actor: Actor = fixture["actor"]
 	var point: Node2D = fixture["point"]
@@ -255,7 +311,7 @@ func _arrive(fixture: Dictionary) -> Dictionary:
 	else:
 		brain._passive = point
 	brain._state = BRAIN.State.NAVIGATING
-	brain._goal = 2
+	brain._goal = goal
 	actor.destination_reached.emit()
 	var result := {
 		"animation": actor.activity.get("animation"),
