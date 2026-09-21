@@ -95,12 +95,14 @@ so the port's camera is unchanged and the console is drawn over the world.
 | Score, clock | `player+984`, `game+14708` |
 | Hover bar | the highlighted menu entry's name, `"..."` when none |
 | Centre icon | the highlighted entry's ACTICON, hidden when nothing is highlighted |
-| Round bar | `player+992 * 100 / player+1000` — how far the running action has come |
+| Stopwatch | `player+992 * 100 / player+1000` — how far the running action has come, swept from the top clockwise |
 | Lamps | `player+1008`: smoking needs slots 5 **and** 6, Matrix 14, urination 26 |
 
 `sub_41AF60` clears 28 bytes at `player+1008` when a level starts, so the player always
 begins empty-handed and every lamp is dark. That is why level 1's rows needing items 9, 10,
 22, 24 or 29 can never be reached: nothing on that level grants them.
 
-Still not recovered: which edge `CGUIRoundBarTex` clips `AGGRO_FULL` from. The port reveals
-it from the left.
+`game+14724` is the widget at **(662, 536)** — the stopwatch, `CO_GUI_CONSOLE_CLOCK_FULL`,
+radius `+96 = 36.0` — so the running action sweeps around the stopwatch, not along the
+aggression bar at (410, 497). That one is `game+14732`, fed
+`188 - (game+14728 * 1.42 + 46)`, and stays dark until detection is implemented.

@@ -108,17 +108,18 @@ func _check_lamps(console: Node) -> void:
 	console.set_inventory(PackedInt32Array())
 
 
-# game+14724 is fed player+992 * 100 / player+1000: the bar is action progress.
+# game+14724 sits at (662, 536), the stopwatch, and is fed player+992 * 100 / player+1000.
 func _check_action_progress(console: Node) -> void:
-	var bar := console.get_node("AggroBar") as Sprite2D
-	var full: float = bar.texture.get_size().x
+	var bar := console.get_node("ClockBar") as Sprite2D
 	console.set_action_progress(0.0, 0.0)
 	_expect(not bar.visible, "the progress bar is hidden while no action runs")
 	console.set_action_progress(2.5, 5.0)
 	_expect(bar.visible, "the progress bar shows while an action runs")
-	_expect(is_equal_approx(bar.region_rect.size.x, full * 0.5), "the bar is clipped to how far the action has come")
+	var swept: float = (bar.material as ShaderMaterial).get_shader_parameter("progress")
+	_expect(is_equal_approx(swept, 0.5), "the stopwatch is swept to how far the action has come, got %f" % swept)
 	console.set_action_progress(9.0, 5.0)
-	_expect(is_equal_approx(bar.region_rect.size.x, full), "the bar never clips past its own width")
+	swept = (bar.material as ShaderMaterial).get_shader_parameter("progress")
+	_expect(is_equal_approx(swept, 1.0), "the sweep never runs past a full turn, got %f" % swept)
 	console.set_action_progress(0.0, 0.0)
 
 

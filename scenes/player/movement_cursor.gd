@@ -3,6 +3,8 @@ extends Sprite2D
 
 const BUSY_CURSOR_TEXTURE := preload("res://images/gui/cursors/clock-000.png")
 const BUSY_CURSOR_HOTSPOT := Vector2(16, 16)
+# project.godot sets this as the cursor image, which a custom one has to be swapped back to.
+const POINTER_CURSOR_TEXTURE := preload("res://images/gui/cursors/pointer.png")
 
 const MOVEMENT_ARROW_DISTANCE := 40.0
 const MOVEMENT_ARROW_TEXTURES := {
@@ -67,6 +69,7 @@ func hide_main_cursor() -> void:
 
 
 func show_main_cursor() -> void:
+	Input.set_custom_mouse_cursor(POINTER_CURSOR_TEXTURE, Input.CURSOR_ARROW)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 

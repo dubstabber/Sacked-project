@@ -8,17 +8,19 @@ const CLOCK_OVERFLOW_SECONDS := 5940
 const IDLE_HOVER_TEXT := "..."
 
 # player+1008 slots each lamp watches; the smoking lamp needs both of its two.
+const PROGRESS_SHADER := preload("res://scenes/shared/round_bar.gdshader")
+
 const LAMP_SLOTS := {"LampSmoke": [5, 6], "LampMatrix": [14], "LampPiss": [26]}
 
 @onready var _score: Label = $Score
 @onready var _clock: Label = $Clock
 @onready var _hover: Label = $HoverText
 @onready var _action_icon: Sprite2D = $ActionIcon
-@onready var _progress: Sprite2D = $AggroBar
+@onready var _progress: Sprite2D = $ClockBar
 
 var _session: Node
 var _actions: Node
-var _progress_region: Rect2
+var _progress_material: ShaderMaterial
 
 
 func _ready() -> void:
@@ -30,11 +32,11 @@ func _ready() -> void:
 		_on_time_changed(int(_session.elapsed))
 	set_hover_text(IDLE_HOVER_TEXT)
 
-	# The round bar is the action's progress, not aggression: game+14724 is fed
-	# player+992 * 100 / player+1000. See docs/hud-reference.md.
-	if _progress.texture != null:
-		_progress_region = Rect2(Vector2.ZERO, _progress.texture.get_size())
-		_progress.region_enabled = true
+	# game+14724 sits at (662, 536) -- the stopwatch -- and is fed
+	# player+992 * 100 / player+1000, swept rather than clipped. See docs/hud-reference.md.
+	_progress_material = ShaderMaterial.new()
+	_progress_material.shader = PROGRESS_SHADER
+	_progress.material = _progress_material
 	set_action_progress(0.0, 0.0)
 
 	_actions = get_tree().get_first_node_in_group("player_actions")
@@ -58,11 +60,7 @@ func set_action_progress(elapsed: float, total: float) -> void:
 		return
 	var fraction := clampf(elapsed / total, 0.0, 1.0) if total > 0.0 else 0.0
 	_progress.visible = fraction > 0.0
-	# CGUIRoundBarTex clips AGGRO_FULL rather than sweeping it; which edge it clips from
-	# is not recovered, so the port reveals it from the left.
-	var region := _progress_region
-	region.size.x = _progress_region.size.x * fraction
-	_progress.region_rect = region
+	_progress_material.set_shader_parameter("progress", fraction)
 
 
 func set_inventory(inventory: PackedInt32Array) -> void:
