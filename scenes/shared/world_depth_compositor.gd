@@ -6,6 +6,7 @@ const COMPOSITOR := preload("res://scenes/shared/character_depth_compositor.gd")
 
 var depth_scores := PackedFloat32Array()
 var depth_bounds := Rect2()
+var depth_texture: ImageTexture
 var revision := 0
 
 var _composite: Sprite2D
@@ -16,7 +17,7 @@ var _regions: Dictionary = {}
 var _opaque_rects: Dictionary = {}
 var _hidden_items: Array[CanvasItem] = []
 var _signature := ""
-var _elapsed := 0.0
+var _dirty := true
 var _warned: Dictionary = {}
 
 
@@ -27,10 +28,19 @@ func _ready() -> void:
 		_composite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		add_child(_composite, false, Node.INTERNAL_MODE_BACK)
 	_image_compositor = COMPOSITOR.new()
+	if not Engine.is_editor_hint():
+		get_tree().node_added.connect(_on_tree_changed)
+		get_tree().node_removed.connect(_on_tree_changed)
+	_dirty = true
 	call_deferred("rebuild")
 
 
 func _exit_tree() -> void:
+	if not Engine.is_editor_hint() and get_tree() != null:
+		if get_tree().node_added.is_connected(_on_tree_changed):
+			get_tree().node_added.disconnect(_on_tree_changed)
+		if get_tree().node_removed.is_connected(_on_tree_changed):
+			get_tree().node_removed.disconnect(_on_tree_changed)
 	_restore_sources()
 	if is_instance_valid(_image_compositor):
 		_image_compositor.free()
@@ -38,21 +48,31 @@ func _exit_tree() -> void:
 	_composite.texture = null
 	depth_scores = PackedFloat32Array()
 	depth_bounds = Rect2()
+	depth_texture = null
 	_signature = ""
+	_dirty = true
 	request_ready()
 
 
-func _process(delta: float) -> void:
-	_elapsed += delta
-	if _elapsed < 0.2:
+func _process(_delta: float) -> void:
+	if not _dirty:
 		return
-	_elapsed = 0.0
 	rebuild()
+
+
+func _on_tree_changed(node: Node) -> void:
+	if node.is_in_group("depth_world_tiles") or node.is_in_group("depth_world_objects"):
+		_dirty = true
+
+
+func _mark_dirty() -> void:
+	_dirty = true
 
 
 func rebuild() -> void:
 	if not is_instance_valid(_composite):
 		return
+	_dirty = false
 	var sources: Array[CanvasItem] = []
 	var actors := _collect_actors(sources)
 	var signature := _actor_signature(actors)
@@ -64,11 +84,13 @@ func rebuild() -> void:
 		_composite.texture = null
 		depth_scores = PackedFloat32Array()
 		depth_bounds = Rect2()
+		depth_texture = null
 	else:
 		var result: Dictionary = _image_compositor.compose_images_for_test(actors)
 		depth_bounds = result.bounds
 		depth_scores = result.scores
 		_composite.texture = ImageTexture.create_from_image(result.image)
+		depth_texture = _score_texture(depth_bounds, depth_scores)
 		_composite.global_position = depth_bounds.position
 		for source in sources:
 			RenderingServer.canvas_item_set_visible(source.get_canvas_item(), false)
@@ -84,6 +106,8 @@ func _collect_actors(sources: Array[CanvasItem]) -> Array:
 		var layer := node as TileMapLayer
 		if layer == null or layer.tile_set == null:
 			continue
+		if not layer.changed.is_connected(_mark_dirty):
+			layer.changed.connect(_mark_dirty)
 		var layer_actors := _tile_actors(layer)
 		if not layer_actors.is_empty():
 			sources.append(layer)
@@ -91,6 +115,8 @@ func _collect_actors(sources: Array[CanvasItem]) -> Array:
 	for node in get_tree().get_nodes_in_group("depth_world_objects"):
 		if not _belongs_to_world(node) or not node.has_method("get_depth_actor"):
 			continue
+		if node.has_signal("changed") and not node.changed.is_connected(_mark_dirty):
+			node.changed.connect(_mark_dirty)
 		var actor: Dictionary = node.get_depth_actor()
 		if _prepare_actor(actor):
 			actors.append(actor)
@@ -100,8 +126,23 @@ func _collect_actors(sources: Array[CanvasItem]) -> Array:
 	return actors
 
 
+# The character shader samples these scores per pixel; R32F keeps the exact CPU value.
+func _score_texture(bounds: Rect2, scores: PackedFloat32Array) -> ImageTexture:
+	var width := int(bounds.size.x)
+	var height := int(bounds.size.y)
+	if width <= 0 or height <= 0 or scores.size() != width * height:
+		return null
+	return ImageTexture.create_from_image(
+		Image.create_from_data(width, height, false, Image.FORMAT_RF, scores.to_byte_array())
+	)
+
+
 func _belongs_to_world(node: Node) -> bool:
-	return node is Node2D and get_parent().is_ancestor_of(node) and node.is_visible_in_tree()
+	if not (node is Node2D and get_parent().is_ancestor_of(node) and node.is_visible_in_tree()):
+		return false
+	if not node.visibility_changed.is_connected(_mark_dirty):
+		node.visibility_changed.connect(_mark_dirty)
+	return true
 
 
 func _tile_actors(layer: TileMapLayer) -> Array:
@@ -185,7 +226,10 @@ func _invalidate_images() -> void:
 	_images.clear()
 	_regions.clear()
 	_opaque_rects.clear()
+	if is_instance_valid(_image_compositor):
+		_image_compositor.clear_image_caches()
 	_signature = ""
+	_dirty = true
 
 
 func _region(image: Image, region: Rect2i) -> Image:

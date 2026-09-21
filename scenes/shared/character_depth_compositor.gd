@@ -6,14 +6,22 @@ extends Sprite2D
 const GROUP_NAME := "depth_composited_characters"
 const DEPTH_SUFFIX := "-depth.png"
 const EMPTY_SCORE := -1.0e30
+const DEPTH_SHADER := preload("res://scenes/shared/character_depth.gdshader")
 
 var _color_images: Dictionary = {}
 var _depth_images: Dictionary = {}
+var _image_bytes: Dictionary = {}
 var _opaque_rects: Dictionary = {}
 var _warned_paths: Dictionary = {}
 var _hidden_sprites: Array[Sprite2D] = []
-var _composite_texture: ImageTexture
-var _last_composite_signature := ""
+var _surfaces: Array[Sprite2D] = []
+var _surface_textures: Array[ImageTexture] = []
+var _surface_signatures: Array[String] = []
+var _materials: Dictionary = {}
+var _material_depth_paths: Dictionary = {}
+var _depth_textures: Dictionary = {}
+var _environment_texture: Texture2D
+var _environment_applied := -1
 var composed_scores := PackedFloat32Array()
 var environment_scores := PackedFloat32Array()
 var environment_bounds := Rect2()
@@ -32,6 +40,13 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_restore_actor_sprites()
+	_clear_actor_materials()
+	for index in range(1, _surfaces.size()):
+		if is_instance_valid(_surfaces[index]):
+			_surfaces[index].queue_free()
+	_surfaces.clear()
+	_surface_textures.clear()
+	_surface_signatures.clear()
 
 
 func _process(_delta: float) -> void:
@@ -41,54 +56,107 @@ func _process(_delta: float) -> void:
 func update_composition() -> void:
 	_update_environment()
 	var actors := _collect_actors()
-	var uses_environment := not environment_scores.is_empty()
-	var composite_actors := actors if uses_environment else _filter_overlapping_actors(actors)
-	var minimum_count := 1 if uses_environment else 2
-	if composite_actors.size() < minimum_count:
-		_disable_composite()
-		return
-	composite_actors = _prepare_composite_actors(composite_actors)
-	if not uses_environment:
-		composite_actors = _filter_overlapping_actors(composite_actors)
-	if composite_actors.size() < minimum_count:
-		_disable_composite()
-		return
+	# Occlusion against the static world runs per pixel on the GPU; only characters
+	# that overlap each other still need a CPU composite to resolve mutual depth.
+	# Each connected overlap group composites on its own surface so two distant
+	# pairs never share one map-sized image.
+	var clusters: Array = []
+	for cluster in _overlap_clusters(actors):
+		var prepared := _prepare_composite_actors(cluster)
+		clusters.append_array(_overlap_clusters(prepared))
+	_render_clusters(clusters)
 
-	var bounds := _calculate_union_bounds(composite_actors)
-	if bounds.size.x <= 0 or bounds.size.y <= 0:
-		_disable_composite()
-		return
 
-	var signature := _composite_signature(composite_actors, bounds)
-	if visible and _composite_texture != null and signature == _last_composite_signature:
-		global_position = bounds.position
-		_hide_actor_sprites(composite_actors)
-		return
+func _overlap_clusters(actors: Array) -> Array:
+	var rects: Array[Rect2] = []
+	for actor in actors:
+		rects.append(_actor_rect(actor))
+	var visited: Array[bool] = []
+	visited.resize(actors.size())
+	var clusters: Array = []
+	for index in range(actors.size()):
+		if visited[index]:
+			continue
+		visited[index] = true
+		var cluster: Array = [actors[index]]
+		var frontier: Array[int] = [index]
+		while not frontier.is_empty():
+			var current: int = frontier.pop_back()
+			for other in range(actors.size()):
+				if visited[other] or not rects[current].intersects(rects[other]):
+					continue
+				visited[other] = true
+				cluster.append(actors[other])
+				frontier.append(other)
+		if cluster.size() >= 2:
+			clusters.append(cluster)
+	return clusters
 
-	var output := _compose_images(composite_actors, bounds)
-	_set_composite_image(output)
-	global_position = bounds.position
-	visible = true
-	_last_composite_signature = signature
-	_hide_actor_sprites(composite_actors)
+
+func _render_clusters(clusters: Array) -> void:
+	var sprites_to_hide: Array[Sprite2D] = []
+	var used := 0
+	for cluster in clusters:
+		var bounds := _calculate_union_bounds(cluster)
+		if bounds.size.x <= 0 or bounds.size.y <= 0:
+			continue
+		var surface := _surface(used)
+		var signature := _composite_signature(cluster, bounds)
+		if not surface.visible or surface.texture == null or _surface_signatures[used] != signature:
+			_set_surface_image(used, _compose_images(cluster, bounds))
+			_surface_signatures[used] = signature
+		surface.global_position = bounds.position
+		surface.visible = true
+		used += 1
+		for actor in cluster:
+			var actor_sprite := actor["sprite"] as Sprite2D
+			if actor_sprite != null:
+				sprites_to_hide.append(actor_sprite)
+	for index in range(used, _surfaces.size()):
+		_surfaces[index].visible = false
+		_surface_signatures[index] = ""
+	_hide_actor_sprites(sprites_to_hide)
+
+
+func _surface(index: int) -> Sprite2D:
+	while _surfaces.size() <= index:
+		var surface: Sprite2D = self
+		if not _surfaces.is_empty():
+			surface = Sprite2D.new()
+			surface.centered = false
+			surface.z_index = z_index
+			surface.texture_filter = texture_filter
+			get_parent().add_child(surface, false, Node.INTERNAL_MODE_BACK)
+		_surfaces.append(surface)
+		_surface_textures.append(null)
+		_surface_signatures.append("")
+	return _surfaces[index]
 
 
 func _update_environment() -> void:
 	var world_mask := get_node_or_null("../WorldDepthCompositor")
 	if world_mask == null:
 		if _environment_instance_id != 0:
-			_last_composite_signature = ""
+			_invalidate_surfaces()
 		environment_scores = PackedFloat32Array()
 		environment_bounds = Rect2()
+		_environment_texture = null
 		_environment_revision = -1
 		_environment_instance_id = 0
 		return
 	environment_scores = world_mask.depth_scores
 	environment_bounds = world_mask.depth_bounds
+	_environment_texture = world_mask.depth_texture
 	if _environment_revision != world_mask.revision or _environment_instance_id != world_mask.get_instance_id():
 		_environment_revision = world_mask.revision
 		_environment_instance_id = world_mask.get_instance_id()
-		_last_composite_signature = ""
+		_environment_applied = -1
+		_invalidate_surfaces()
+
+
+func _invalidate_surfaces() -> void:
+	for index in range(_surface_signatures.size()):
+		_surface_signatures[index] = ""
 
 
 func compose_images_for_test(actors: Array) -> Dictionary:
@@ -105,9 +173,17 @@ func overlapping_actors_for_test(actors: Array) -> Array:
 	return _filter_overlapping_actors(actors)
 
 
+func clear_image_caches() -> void:
+	_color_images.clear()
+	_depth_images.clear()
+	_image_bytes.clear()
+	_opaque_rects.clear()
+
+
 func _collect_actors() -> Array:
 	var actors: Array = []
 	var actor_index := 0
+	var live_sprites: Dictionary = {}
 	for node in get_tree().get_nodes_in_group(GROUP_NAME):
 		if not is_instance_valid(node) or not node is Node2D:
 			continue
@@ -121,12 +197,18 @@ func _collect_actors() -> Array:
 			continue
 
 		var actor := _make_actor(node, sprite, actor_index)
-		actor_index += 1
 		if actor.is_empty():
+			_clear_actor_material(sprite)
 			continue
+		actor_index += 1
 
+		live_sprites[sprite.get_instance_id()] = true
+		_apply_actor_material(actor)
 		actors.append(actor)
 
+	if _materials.size() > live_sprites.size():
+		_prune_actor_materials(live_sprites)
+	_environment_applied = _environment_revision
 	return actors
 
 
@@ -156,6 +238,79 @@ func _make_actor(node: Node2D, sprite: Sprite2D, actor_index: int) -> Dictionary
 	if _opaque_rects.has(color_path):
 		actor["opaque_rect"] = _opaque_rects[color_path]
 	return actor
+
+
+func _apply_actor_material(actor: Dictionary) -> void:
+	var sprite := actor["sprite"] as Sprite2D
+	var key := sprite.get_instance_id()
+	var material := _materials.get(key) as ShaderMaterial
+	if material == null or sprite.material != material:
+		material = ShaderMaterial.new()
+		material.shader = DEPTH_SHADER
+		sprite.material = material
+		_materials[key] = material
+		_material_depth_paths[key] = ""
+
+	# The world composite is a single sprite drawn after the characters, so a shaded
+	# character has to sit above it and let the shader decide the per-pixel result.
+	sprite.z_index = z_index
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var actor_position := actor["position"] as Vector2
+	material.set_shader_parameter("pixel_snap", actor_position.round() - actor_position)
+	var depth_path := String(actor["depth_path"])
+	if String(_material_depth_paths.get(key, "")) != depth_path:
+		_material_depth_paths[key] = depth_path
+		var depth_texture := _depth_texture(depth_path)
+		material.set_shader_parameter("depth_map", depth_texture)
+		material.set_shader_parameter("depth_map_enabled", depth_texture != null)
+
+	if _environment_applied != _environment_revision:
+		material.set_shader_parameter("world_depth", _environment_texture)
+		material.set_shader_parameter("world_depth_enabled", _environment_texture != null)
+		material.set_shader_parameter("world_depth_origin", environment_bounds.position)
+		material.set_shader_parameter("world_depth_size", environment_bounds.size)
+
+	material.set_shader_parameter("base_y", float(actor["base_y"]))
+
+
+func _depth_texture(path: String) -> Texture2D:
+	if not _depth_textures.has(path):
+		var texture: Texture2D = null
+		if ResourceLoader.exists(path):
+			texture = load(path) as Texture2D
+		if texture == null:
+			_warn_once(path, "Missing character depth map: %s" % path)
+		_depth_textures[path] = texture
+	return _depth_textures[path] as Texture2D
+
+
+func _clear_actor_material(sprite: Sprite2D) -> void:
+	var key := sprite.get_instance_id()
+	if not _materials.has(key):
+		return
+	if sprite.material == _materials[key]:
+		sprite.material = null
+		sprite.z_index = 0
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_PARENT_NODE
+	_materials.erase(key)
+	_material_depth_paths.erase(key)
+
+
+func _prune_actor_materials(live_sprites: Dictionary) -> void:
+	for key in _materials.keys():
+		if live_sprites.has(key):
+			continue
+		var sprite := instance_from_id(key) as Sprite2D
+		if is_instance_valid(sprite) and sprite.material == _materials[key]:
+			sprite.material = null
+			sprite.z_index = 0
+			sprite.texture_filter = CanvasItem.TEXTURE_FILTER_PARENT_NODE
+		_materials.erase(key)
+		_material_depth_paths.erase(key)
+
+
+func _clear_actor_materials() -> void:
+	_prune_actor_materials({})
 
 
 func _prepare_composite_actors(actors: Array) -> Array:
@@ -221,6 +376,19 @@ func _load_image(path: String, cache: Dictionary):
 
 	cache[path] = image
 	return image
+
+
+func _rgba8_bytes(image: Image) -> PackedByteArray:
+	var key := image.get_instance_id()
+	if _image_bytes.has(key):
+		return _image_bytes[key]
+	var source := image
+	if source.get_format() != Image.FORMAT_RGBA8:
+		source = Image.new()
+		source.copy_from(image)
+		source.convert(Image.FORMAT_RGBA8)
+	_image_bytes[key] = source.get_data()
+	return _image_bytes[key]
 
 
 func _depth_path_for_texture(texture_path: String) -> String:
@@ -306,78 +474,87 @@ func _calculate_union_bounds(actors: Array) -> Rect2:
 func _compose_images(actors: Array, bounds: Rect2) -> Image:
 	var width := int(bounds.size.x)
 	var height := int(bounds.size.y)
-	var output := Image.create(width, height, false, Image.FORMAT_RGBA8)
-	output.fill(Color(0.0, 0.0, 0.0, 0.0))
+	var pixels := PackedByteArray()
+	pixels.resize(width * height * 4)
 
 	var scores := PackedFloat32Array()
 	scores.resize(width * height)
-	for index in range(scores.size()):
-		scores[index] = EMPTY_SCORE
+	scores.fill(EMPTY_SCORE)
 
 	for actor in actors:
-		_compose_actor(output, scores, bounds.position, width, actor)
+		_compose_actor(pixels, scores, bounds.position, width, height, actor)
 
 	composed_scores = scores
-	return output
+	return Image.create_from_data(width, height, false, Image.FORMAT_RGBA8, pixels)
 
 
-func _compose_actor(output: Image, scores: PackedFloat32Array, bounds_position: Vector2, width: int, actor: Dictionary) -> void:
+func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_position: Vector2, width: int, height: int, actor: Dictionary) -> void:
 	var color_image := actor["color"] as Image
 	var depth_image := actor["depth"] as Image
+	var color_bytes := _rgba8_bytes(color_image)
+	var depth_bytes := _rgba8_bytes(depth_image)
+	var source_width := color_image.get_width()
 	var actor_position := actor["position"] as Vector2
 	var source_rect := _actor_source_rect(actor)
 	var source_min := source_rect.position
 	var source_max := source_rect.position + source_rect.size
 	var base_y := float(actor["base_y"])
-	var output_height := output.get_height()
-	var output_width := output.get_width()
 	var dst_origin := Vector2i(
 		int(round(actor_position.x - bounds_position.x)),
 		int(round(actor_position.y - bounds_position.y))
 	)
+	var bounds_x := int(bounds_position.x)
+	var bounds_y := int(bounds_position.y)
+	var has_environment := not environment_scores.is_empty()
+	var environment_width := int(environment_bounds.size.x)
+	var environment_height := int(environment_bounds.size.y)
+	var environment_x := int(environment_bounds.position.x)
+	var environment_y := int(environment_bounds.position.y)
 
 	for source_y in range(source_min.y, source_max.y):
 		var dst_y := dst_origin.y + source_y
-		if dst_y < 0 or dst_y >= output_height:
+		if dst_y < 0 or dst_y >= height:
 			continue
+		var source_row := source_y * source_width
+		var dst_row := dst_y * width
 
 		for source_x in range(source_min.x, source_max.x):
 			var dst_x := dst_origin.x + source_x
-			if dst_x < 0 or dst_x >= output_width:
+			if dst_x < 0 or dst_x >= width:
 				continue
 
-			var color := color_image.get_pixel(source_x, source_y)
-			if color.a <= 0.0:
+			var source_index := (source_row + source_x) * 4
+			if color_bytes[source_index + 3] == 0:
+				continue
+			if depth_bytes[source_index + 3] == 0:
 				continue
 
-			var depth_pixel := depth_image.get_pixel(source_x, source_y)
-			if depth_pixel.a <= 0.0:
-				continue
-
-			var score := base_y - float(_decode_depth(depth_pixel))
-			if not environment_scores.is_empty():
-				var world_pixel := Vector2i(bounds_position) + Vector2i(dst_x, dst_y) - Vector2i(environment_bounds.position)
-				if world_pixel.x >= 0 and world_pixel.y >= 0 and world_pixel.x < int(environment_bounds.size.x) and world_pixel.y < int(environment_bounds.size.y):
-					if score < environment_scores[world_pixel.y * int(environment_bounds.size.x) + world_pixel.x]:
+			var score := base_y - float(depth_bytes[source_index] | (depth_bytes[source_index + 1] << 8))
+			if has_environment:
+				var environment_column := bounds_x + dst_x - environment_x
+				var environment_row := bounds_y + dst_y - environment_y
+				if environment_column >= 0 and environment_row >= 0 and environment_column < environment_width and environment_row < environment_height:
+					if score < environment_scores[environment_row * environment_width + environment_column]:
 						continue
-			var dst_index := dst_y * width + dst_x
+
+			var dst_index := dst_row + dst_x
 			if score >= scores[dst_index]:
 				scores[dst_index] = score
-				output.set_pixel(dst_x, dst_y, color)
+				var output_index := dst_index * 4
+				pixels[output_index] = color_bytes[source_index]
+				pixels[output_index + 1] = color_bytes[source_index + 1]
+				pixels[output_index + 2] = color_bytes[source_index + 2]
+				pixels[output_index + 3] = color_bytes[source_index + 3]
 
 
-func _decode_depth(depth_pixel: Color) -> int:
-	var low := int(round(depth_pixel.r * 255.0))
-	var high := int(round(depth_pixel.g * 255.0))
-	return low | (high << 8)
-
-
-func _set_composite_image(image: Image) -> void:
-	if _composite_texture == null or _composite_texture.get_width() != image.get_width() or _composite_texture.get_height() != image.get_height():
-		_composite_texture = ImageTexture.create_from_image(image)
+func _set_surface_image(index: int, image: Image) -> void:
+	var composite_texture := _surface_textures[index]
+	if composite_texture == null or composite_texture.get_width() != image.get_width() or composite_texture.get_height() != image.get_height():
+		composite_texture = ImageTexture.create_from_image(image)
+		_surface_textures[index] = composite_texture
 	else:
-		_composite_texture.update(image)
-	texture = _composite_texture
+		composite_texture.update(image)
+	_surfaces[index].texture = composite_texture
 
 
 func _composite_signature(actors: Array, bounds: Rect2) -> String:
@@ -402,13 +579,7 @@ func _composite_signature(actors: Array, bounds: Rect2) -> String:
 	return ";".join(parts)
 
 
-func _hide_actor_sprites(actors: Array) -> void:
-	var sprites_to_hide: Array[Sprite2D] = []
-	for actor in actors:
-		var actor_sprite := actor["sprite"] as Sprite2D
-		if actor_sprite != null:
-			sprites_to_hide.append(actor_sprite)
-
+func _hide_actor_sprites(sprites_to_hide: Array[Sprite2D]) -> void:
 	for actor_sprite in _hidden_sprites:
 		if is_instance_valid(actor_sprite) and not sprites_to_hide.has(actor_sprite):
 			actor_sprite.visible = true
@@ -424,12 +595,6 @@ func _restore_actor_sprites() -> void:
 		if is_instance_valid(actor_sprite):
 			actor_sprite.visible = true
 	_hidden_sprites.clear()
-
-
-func _disable_composite() -> void:
-	_restore_actor_sprites()
-	_last_composite_signature = ""
-	visible = false
 
 
 func _warn_once(key: String, message: String) -> void:
