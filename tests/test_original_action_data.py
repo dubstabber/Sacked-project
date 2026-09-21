@@ -56,6 +56,15 @@ class TraceActionTableTest(unittest.TestCase):
         for action in self.table["actions"]:
             self.assertLess(action["icon"], ICON_COUNT, action["name"])
 
+    def test_every_icon_resolves_to_an_exported_image(self):
+        # The executable spells icon names in upper case and the sprite folders do not,
+        # so this only holds if the two exporters join case-insensitively.
+        self.assertEqual(len(self.table["icon_images"]), ICON_COUNT)
+        for index, path in enumerate(self.table["icon_images"]):
+            with self.subTest(icon=self.table["icons"][index]):
+                self.assertIsNotNone(path)
+                self.assertTrue((ROOT / path).is_file(), path)
+
     def test_copier_chain(self):
         # sub_410450: the continuous-copy action unlocks the breakage that then disables it.
         self.assertIn(82, self.actions[28]["unlocks"])

@@ -224,7 +224,7 @@ def trace_records(image: Image) -> tuple:
     return records, interpreter
 
 
-def decode(image: Image, index: int, raw: bytes, icons: list, states: list) -> dict:
+def decode(image: Image, index: int, raw: bytes, icons: list, images: list, states: list) -> dict:
     u8 = lambda offset: raw[offset]
     u16 = lambda offset: struct.unpack_from("<H", raw, offset)[0]
     u32 = lambda offset: struct.unpack_from("<I", raw, offset)[0]
@@ -240,6 +240,7 @@ def decode(image: Image, index: int, raw: bytes, icons: list, states: list) -> d
         "name": image.cstring(u32(0x00)),
         "icon": icon,
         "icon_sprite": icons[icon] if icon < len(icons) else None,
+        "icon_image": images[icon] if icon < len(images) else None,
         "score": u32(0x08),
         "duration_tenths": u32(0x0C),
         "player_animation": u8(0x18),
@@ -260,11 +261,32 @@ def decode(image: Image, index: int, raw: bytes, icons: list, states: list) -> d
     }
 
 
+def icon_images(root: Path, icons: list) -> list:
+    """Map each icon name onto the file tools/export_gui_assets.py exports for it.
+
+    The executable spells icon names in upper case while the sprite folders are mixed
+    case, so the two only join case-insensitively.
+    """
+    try:
+        from export_gui_assets import ACTICON_PREFIX, acticon_destination
+    except ImportError:  # imported as tools.export_action_table by the tests
+        from tools.export_gui_assets import ACTICON_PREFIX, acticon_destination
+
+    folders = {
+        path.name.lower(): path.name
+        for path in (root / ACTICON_DIR_REL).iterdir()
+        if path.is_dir() and path.name.startswith(ACTICON_PREFIX)
+    }
+    return [acticon_destination(folders[name.lower()]) if name and name.lower() in folders else None
+            for name in icons]
+
+
 def build(root: Path) -> dict:
     image = Image(root / EXE_REL)
     records, interpreter = trace_records(image)
 
     icons = [image.cstring(va) for va in image.pointers(ICON_TABLE_VA, ICON_COUNT)]
+    images = icon_images(root, icons)
     states = [image.cstring(va) for va in image.pointers(ITEM_STATE_TABLE_VA, ITEM_STATE_COUNT)]
     bubbles = [image.cstring(va) for va in image.pointers(BUBBLE_TABLE_VA, BUBBLE_COUNT)]
 
@@ -281,9 +303,10 @@ def build(root: Path) -> dict:
             "stores_replayed": interpreter.stores,
         },
         "icons": icons,
+        "icon_images": images,
         "item_states": states,
         "bubbles": bubbles,
-        "actions": [decode(image, index, raw, icons, states) for index, raw in enumerate(records)],
+        "actions": [decode(image, index, raw, icons, images, states) for index, raw in enumerate(records)],
     }
 
 
