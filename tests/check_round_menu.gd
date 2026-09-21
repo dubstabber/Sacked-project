@@ -194,6 +194,17 @@ func _check_the_ring_opens_and_shuts() -> void:
 	_expect(is_equal_approx(menu.ring_radius(), 0.0), "the ring shrinks away in 0.4 seconds, got %f" % menu.ring_radius())
 	menu.advance(0.016)
 	_expect(not menu.visible, "the ring hides once it has shrunk to nothing")
+
+	# sub_406510 rebuilds the menu from scratch, so catching it mid-shrink starts it over.
+	controller.open(2)
+	menu.advance(0.1)
+	controller.close()
+	menu.advance(0.1)
+	controller.open(2)
+	_expect(menu.visible, "reopening mid-shrink shows the ring again")
+	_expect(is_equal_approx(menu.ring_radius(), 0.0), "reopening mid-shrink starts the radius over")
+	menu.advance(0.1)
+	_expect(is_equal_approx(menu.ring_radius(), 15.0), "a reopened ring grows rather than carrying on shrinking")
 	_free(fixture)
 
 

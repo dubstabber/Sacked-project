@@ -116,7 +116,9 @@ button  = (menu+8 - 16 + sin theta * R, menu+12 + cos theta * R), layer menu+16
 
 - **The pitch between entries is a fixed 0.6 radians (~34.4°)**, not a share of a full turn,
   so the entries sit on an arc whose length grows with the entry count rather than spreading
-  around the circle. Eight entries cover 4.2 radians and still do not meet.
+  around the circle. Eight entries cover 4.2 radians and still do not meet. The two
+  constants cross-check each other: at radius 90 a 0.6 radian step puts neighbouring
+  entries `2 * 90 * sin(0.3) = 53.2` pixels apart, which clears a 48-pixel ACTICON by five.
 - **`menu+104` is an animated rotation, not a constant.** `sub_45BEC0(index)` stores the
   highlighted index at `+124` and its target angle `index * 0.6` at `+136`; the draw walks
   `+104` toward it by `frame_delta * menu+112` per frame and snaps once the gap is under
@@ -143,7 +145,8 @@ button  = (menu+8 - 16 + sin theta * R, menu+12 + cos theta * R), layer menu+16
   carries `(dx, dy)` — `sub_415400` adds them to the cursor, so they are relative — and
   `dx < -8` raises bit 0 while `dx > 8` raises bit 1. Two unidentified scancodes, 111 and
   112, raise the same bits. Commit is bit 4, which is **space (scancode 57) or the mouse
-  button**, or bit 2, scancode 109.
+  button**, or bit 2, scancode 109. The port's `interact` action is already space and the
+  left button, so committing needed no change.
 - **The highlight is a tint, not a dimming.** The draw writes `(255, 255, 128)` into the
   selected button's colour fields at `+1160..1162` and `(255, 255, 255)` into every other
   one. When the menu's byte at `+120` is not `0xFF` it writes `(0, 0, 0)` instead, which
