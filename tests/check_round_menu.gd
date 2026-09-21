@@ -42,8 +42,10 @@ func _init() -> void:
 func _run() -> void:
 	await _check_the_ring_opens_and_shuts()
 	_check_entry_geometry()
+	_check_stepping_through_the_entries()
+	_check_the_selected_entry_is_tinted()
 	if _failures == 0:
-		print("Round menu: the original pitch, radius ramp and rotation ease passed")
+		print("Round menu: the original pitch, radius ramp, rotation ease, stepping and tint passed")
 	quit(1 if _failures else 0)
 
 
@@ -64,6 +66,98 @@ func _fixture() -> Dictionary:
 func _free(fixture: Dictionary) -> void:
 	fixture["menu"].free()
 	fixture["controller"].free()
+
+
+# sub_45BC90 measures the gap before it moves, so the frame that lands on the target still
+# reports the ring as turning and only the one after it reports it settled.
+func _settle(menu: Node) -> void:
+	for step in range(200):
+		menu.advance(0.016)
+		if menu.is_settled():
+			return
+	_expect(false, "the ring settles within a couple of seconds")
+
+
+func _swipe(menu: Node, dx: float) -> void:
+	var motion := InputEventMouseMotion.new()
+	motion.relative = Vector2(dx, 0.0)
+	menu._unhandled_input(motion)
+
+
+# sub_403FB0 sets the step bits from a mouse motion past eight pixels, and sub_4066D0 takes
+# at most one step a frame and only once the ring has stopped turning.
+func _check_stepping_through_the_entries() -> void:
+	var fixture := _fixture()
+	var menu = fixture["menu"]
+	var controller = fixture["controller"]
+	controller.open(4)
+	menu.advance(1.0)
+	_expect(controller.highlighted == 0, "a fresh menu starts on its first entry")
+
+	_swipe(menu, MENU.STEP_THRESHOLD)
+	menu.advance(0.016)
+	_expect(controller.highlighted == 0, "a motion of exactly the threshold does not step")
+
+	_swipe(menu, MENU.STEP_THRESHOLD + 1.0)
+	menu.advance(0.016)
+	_expect(controller.highlighted == 1, "moving right steps to the next entry, got %d" % controller.highlighted)
+
+	# The ring is turning now, so further motion is dropped rather than queued.
+	_expect(not menu.is_settled(), "stepping sets the ring turning")
+	_swipe(menu, 40.0)
+	menu.advance(0.016)
+	_expect(controller.highlighted == 1, "a step is ignored while the ring is still turning")
+	_settle(menu)
+	_expect(controller.highlighted == 1, "the dropped step is not replayed once the ring settles")
+
+	_swipe(menu, -40.0)
+	menu.advance(0.016)
+	_expect(controller.highlighted == 0, "moving left steps back, got %d" % controller.highlighted)
+	_settle(menu)
+
+	# Both bits in one frame: sub_4066D0 tests the down bit first, so the ring steps back.
+	_swipe(menu, 40.0)
+	_swipe(menu, -40.0)
+	menu.advance(0.016)
+	_expect(controller.highlighted == 0, "a step off the first entry is clamped, not wrapped")
+	_settle(menu)
+
+	for i in range(6):
+		_swipe(menu, 40.0)
+		menu.advance(0.016)
+		_settle(menu)
+	_expect(controller.highlighted == 3, "stepping stops on the last entry rather than wrapping, got %d" % controller.highlighted)
+	_free(fixture)
+
+
+# The tint rides on this+120 == 255, which only happens at the full radius.
+func _check_the_selected_entry_is_tinted() -> void:
+	var fixture := _fixture()
+	var menu = fixture["menu"]
+	var controller = fixture["controller"]
+	controller.open(3)
+	menu.advance(0.2)
+	_expect(not menu.is_fully_open(), "a half-grown ring is not reported fully open")
+	_expect(_tint(menu, 0) == Color.WHITE, "an opening ring leaves even the selected entry plain")
+
+	menu.advance(1.0)
+	_expect(menu.is_fully_open(), "a ring at the full radius is reported fully open")
+	_expect(_tint(menu, 0) == MENU.SELECTED_TINT, "the selected entry takes the original tint, got %s" % _tint(menu, 0))
+	_expect(_tint(menu, 1) == Color.WHITE, "the other entries stay white")
+	_expect(_tint(menu, 2) == Color.WHITE, "the other entries stay white")
+
+	controller.set_highlighted(2)
+	_settle(menu)
+	_expect(_tint(menu, 2) == MENU.SELECTED_TINT, "the tint follows the selection")
+	_expect(_tint(menu, 0) == Color.WHITE, "the entry left behind goes back to white")
+	_free(fixture)
+
+
+func _tint(menu: Node, index: int) -> Color:
+	var icons: Array = menu.get("_icons")
+	if index < 0 or index >= icons.size():
+		return Color.TRANSPARENT
+	return (icons[index] as CanvasItem).modulate
 
 
 # sub_4066D0 runs the radius from 0 to 60 at 150 a second on the way in and back down on the
@@ -133,7 +227,7 @@ func _check_entry_geometry() -> void:
 	menu.advance(1.0)
 	_expect(is_equal_approx(menu.rotation_angle(), MENU.ENTRY_PITCH * 3.0), "the rotation stops on the selected entry, got %f" % menu.rotation_angle())
 	menu.advance(0.016)
-	_expect(menu.is_settled(), "the ring reports itself settled once it arrives")
+	_expect(menu.is_settled(), "the ring reports itself settled the frame after it arrives")
 	_expect(
 		menu.entry_position(3).is_equal_approx(MENU.CENTRE + MENU.ICON_OFFSET + Vector2(0.0, -drawn)),
 		"the selected entry ends up straight above the centre"

@@ -22,6 +22,13 @@ const RADIUS_RATE := 150.0
 # sub_405930 raises from the constructor's 0.1 to 5.0, and snaps inside this gap.
 const ROTATION_RATE := 5.0
 const SETTLED_EPSILON := 0.01
+# sub_403FB0 raises the ring's two step bits from a mouse motion whose dx runs past eight
+# pixels -- the ring turns under a fixed cursor rather than the cursor moving over it.
+const STEP_THRESHOLD := 8.0
+# sub_45BC90 tints the selected button and leaves the rest white, but only once this+120
+# reaches 255, and sub_4066D0 feeds that radius / 60 * 254 + 1. So the colour arrives with
+# the last pixel of the opening ring.
+const SELECTED_TINT := Color(1.0, 1.0, 128.0 / 255.0)
 
 var _controller: Node
 var _icons: Array[TextureRect] = []
@@ -30,6 +37,8 @@ var _rotation := 0.0
 var _target_index := 0
 var _settled := true
 var _closing := false
+var _step_down := false
+var _step_up := false
 
 
 func _ready() -> void:
@@ -50,6 +59,7 @@ func _process(delta: float) -> void:
 # Split out so a test can step the ring without a running tree. sub_4066D0 moves the radius
 # and then sub_45BC90 turns the ring and places the buttons, in that order.
 func advance(delta: float) -> void:
+	_apply_step()
 	_advance_radius(delta)
 	if _closing and _radius <= 0.0:
 		_clear()
@@ -65,6 +75,32 @@ func entry_position(index: int) -> Vector2:
 	var angle := _rotation - ENTRY_PITCH * float(index) + PI
 	var radius := _radius * RADIUS_SCALE
 	return CENTRE + ICON_OFFSET + Vector2(sin(angle), cos(angle)) * radius
+
+
+# sub_403FB0 rebuilds its input bits every frame, so a step the ring was too busy to take
+# is dropped rather than queued, and bit 0 is tested before bit 1.
+func _apply_step() -> void:
+	var down := _step_down
+	var up := _step_up
+	_step_down = false
+	_step_up = false
+	if _controller == null or not _settled or not (down or up):
+		return
+	var count := (_controller.entries as Array).size()
+	var step := -1 if down else 1
+	_controller.set_highlighted(clampi(int(_controller.highlighted) + step, 0, maxi(count - 1, 0)))
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or _closing:
+		return
+	var motion := event as InputEventMouseMotion
+	if motion == null:
+		return
+	if motion.relative.x < -STEP_THRESHOLD:
+		_step_down = true
+	elif motion.relative.x > STEP_THRESHOLD:
+		_step_up = true
 
 
 func is_settled() -> bool:
@@ -102,8 +138,16 @@ func _advance_rotation(delta: float) -> void:
 
 
 func _layout() -> void:
+	var lit := is_fully_open()
+	var highlighted := int(_controller.highlighted) if _controller != null else -1
 	for index in range(_icons.size()):
 		_icons[index].position = entry_position(index)
+		_icons[index].modulate = SELECTED_TINT if lit and index == highlighted else Color.WHITE
+
+
+# this+120, which the draw only ever compares against 255.
+func is_fully_open() -> bool:
+	return int(_radius / RADIUS_LIMIT * 254.0 + 1.0) >= 255
 
 
 func _on_menu_opened(entries: Array) -> void:
@@ -120,6 +164,8 @@ func _on_menu_opened(entries: Array) -> void:
 	_target_index = 0
 	_settled = true
 	_closing = false
+	_step_down = false
+	_step_up = false
 	visible = true
 	_layout()
 
