@@ -1,0 +1,210 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "WASSERKOCHER",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            14,
+            61
+          ],
+          "size": [
+            31,
+            22
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            6,
+            69
+          ],
+          "size": [
+            15,
+            23
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            11,
+            78
+          ],
+          "size": [
+            20,
+            31
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            14,
+            84
+          ],
+          "size": [
+            23,
+            38
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            16,
+            89
+          ],
+          "size": [
+            27,
+            44
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            18,
+            95
+          ],
+          "size": [
+            30,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            21,
+            100
+          ],
+          "size": [
+            34,
+            57
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            20,
+            99
+          ],
+          "size": [
+            34,
+            57
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            19,
+            96
+          ],
+          "size": [
+            35,
+            56
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-007.png"
+        },
+        {
+          "pivot": [
+            21,
+            94
+          ],
+          "size": [
+            38,
+            55
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-008.png"
+        },
+        {
+          "pivot": [
+            23,
+            92
+          ],
+          "size": [
+            40,
+            53
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-009.png"
+        },
+        {
+          "pivot": [
+            23,
+            90
+          ],
+          "size": [
+            40,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-010.png"
+        },
+        {
+          "pivot": [
+            23,
+            89
+          ],
+          "size": [
+            40,
+            50
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-011.png"
+        },
+        {
+          "pivot": [
+            23,
+            87
+          ],
+          "size": [
+            40,
+            48
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-012.png"
+        },
+        {
+          "pivot": [
+            18,
+            81
+          ],
+          "size": [
+            35,
+            42
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-013.png"
+        },
+        {
+          "pivot": [
+            14,
+            61
+          ],
+          "size": [
+            31,
+            22
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-014.png"
+        },
+        {
+          "pivot": [
+            14,
+            61
+          ],
+          "size": [
+            31,
+            22
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserkocher-000/aktiv-wasserkocher-000-destroy-1-015.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

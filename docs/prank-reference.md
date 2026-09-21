@@ -87,6 +87,42 @@ afterwards. `sub_4100B0` resets an object: each of its eight slots is enabled wh
 action id is non-zero, every id named in an enabled slot's **unlock** list is then disabled,
 and the object is put in state 0.
 
+### How a transition settles
+
+No action ever names a `DESTROYED_n`: across all 156 records `+0x40` only ever holds 2 to 7,
+so an action always asks for a `DESTROY_n`. The object advances itself. Its per-frame
+update, `sub_410290`, begins:
+
+```c
+n2 = *(_WORD *)(this + 124);                                  // current state
+if ( n2 >= 2 && n2 <= 8 && *(_DWORD *)(*(this + 116) + 556) == 1 )
+    sub_40FDA0(this, n2 + 7);                                 // DESTROY_n -> DESTROYED_n
+```
+
+so a finished transition steps forward by exactly seven into its matching damaged state.
+
+The object factory fills one animation slot per state at `item + 128 + 4*state`, naming
+each clip `CO_OBJECTS_<family>_<sprite>_<state>_<angle>`, and leaves the slot null when
+the container has no such clip. **Most objects ship no `DESTROY_n` at all**: of the 80
+state clips level 1 can reach, 30 are single frames, only 8 are real transitions, and 43
+are absent. `sub_40FDA0` stores the requested state regardless but keeps the previous clip
+when the slot is null, so those objects reach their damaged art without a transition. The
+port takes the same route explicitly, settling an unplayable `DESTROY_n` on its
+`DESTROYED_n`.
+
+The precise moment an absent clip settles depends on when the engine raises the finished
+flag at `anim+556` for the clip still playing, which is not recovered. It does not change
+where the object ends up, only whether a frame or two of the old art is shown first.
+
+### Cost of a state change in the port
+
+Measured on level 1: a full static recomposite takes **about 600 ms**, and changing an
+object's state triggers one, because `MapObject` publishes its texture into the world
+composite. That is fine for the dormant state machine but not for playing a seven frame
+transition, so the incremental recomposite has to land before any prank drives these
+states. The cheap path already exists for characters and is described in
+[map-rendering.md](map-rendering.md).
+
 ## Availability
 
 `sub_41D820(player, p_iact)` decides whether a slot appears in the round menu. In order:

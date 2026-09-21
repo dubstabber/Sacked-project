@@ -1,0 +1,26 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "STIFTHALTER01",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            12,
+            65
+          ],
+          "size": [
+            25,
+            22
+          ],
+          "texture": "res://images/objects/states/aktiv-stifthalter01-000/aktiv-stifthalter01-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "HANDY",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            10,
+            58
+          ],
+          "size": [
+            22,
+            14
+          ],
+          "texture": "res://images/objects/states/aktiv-handy-000/aktiv-handy-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

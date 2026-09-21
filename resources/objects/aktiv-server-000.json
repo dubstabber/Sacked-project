@@ -1,0 +1,149 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "SERVER",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            25,
+            103
+          ],
+          "size": [
+            55,
+            117
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            29,
+            73
+          ],
+          "size": [
+            128,
+            100
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROYED_6": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            25,
+            103
+          ],
+          "size": [
+            55,
+            116
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroyed-6-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 14
+    },
+    "DESTROY_2": {
+      "advances_to": 10,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            25,
+            103
+          ],
+          "size": [
+            55,
+            116
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroy-2-000.png"
+        },
+        {
+          "pivot": [
+            26,
+            103
+          ],
+          "size": [
+            57,
+            115
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroy-2-001.png"
+        },
+        {
+          "pivot": [
+            26,
+            104
+          ],
+          "size": [
+            59,
+            115
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroy-2-002.png"
+        },
+        {
+          "pivot": [
+            27,
+            106
+          ],
+          "size": [
+            64,
+            115
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroy-2-003.png"
+        },
+        {
+          "pivot": [
+            29,
+            107
+          ],
+          "size": [
+            73,
+            112
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroy-2-004.png"
+        },
+        {
+          "pivot": [
+            31,
+            109
+          ],
+          "size": [
+            84,
+            112
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroy-2-005.png"
+        },
+        {
+          "pivot": [
+            32,
+            109
+          ],
+          "size": [
+            99,
+            115
+          ],
+          "texture": "res://images/objects/states/aktiv-server-000/aktiv-server-000-destroy-2-006.png"
+        }
+      ],
+      "loop": false,
+      "state": 3
+    }
+  }
+}

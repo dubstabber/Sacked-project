@@ -1,0 +1,100 @@
+{
+  "angle": "270",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "KAFFEEMASCHI",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            65530,
+            83
+          ],
+          "size": [
+            40,
+            44
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-270/aktiv-kaffeemaschi-270-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_2": {
+      "advances_to": 10,
+      "fps": 1.0,
+      "frames": [
+        {
+          "pivot": [
+            65530,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-270/aktiv-kaffeemaschi-270-destroy-2-000.png"
+        },
+        {
+          "pivot": [
+            65530,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-270/aktiv-kaffeemaschi-270-destroy-2-001.png"
+        },
+        {
+          "pivot": [
+            65530,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-270/aktiv-kaffeemaschi-270-destroy-2-002.png"
+        },
+        {
+          "pivot": [
+            65530,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-270/aktiv-kaffeemaschi-270-destroy-2-003.png"
+        },
+        {
+          "pivot": [
+            65530,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-270/aktiv-kaffeemaschi-270-destroy-2-004.png"
+        },
+        {
+          "pivot": [
+            65530,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-270/aktiv-kaffeemaschi-270-destroy-2-005.png"
+        }
+      ],
+      "loop": false,
+      "state": 3
+    }
+  }
+}

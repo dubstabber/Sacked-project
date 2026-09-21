@@ -1,0 +1,26 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "HANDTUCHSPENDER",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            5,
+            75
+          ],
+          "size": [
+            52,
+            90
+          ],
+          "texture": "res://images/objects/states/aktiv-handtuchspender-000/aktiv-handtuchspender-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

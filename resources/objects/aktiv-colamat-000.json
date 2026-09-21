@@ -1,0 +1,363 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "COLAMAT",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            34,
+            98
+          ],
+          "size": [
+            116,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROYED_4": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            37,
+            114
+          ],
+          "size": [
+            77,
+            132
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroyed-4-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 12
+    },
+    "DESTROYED_6": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            119,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroyed-6-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 14
+    },
+    "DESTROY_2": {
+      "advances_to": 10,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-2-000.png"
+        },
+        {
+          "pivot": [
+            34,
+            113
+          ],
+          "size": [
+            73,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-2-001.png"
+        },
+        {
+          "pivot": [
+            34,
+            115
+          ],
+          "size": [
+            76,
+            129
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-2-002.png"
+        },
+        {
+          "pivot": [
+            34,
+            117
+          ],
+          "size": [
+            83,
+            125
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-2-003.png"
+        },
+        {
+          "pivot": [
+            35,
+            119
+          ],
+          "size": [
+            94,
+            118
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-2-004.png"
+        },
+        {
+          "pivot": [
+            36,
+            127
+          ],
+          "size": [
+            108,
+            126
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-2-005.png"
+        },
+        {
+          "pivot": [
+            35,
+            125
+          ],
+          "size": [
+            114,
+            131
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-2-006.png"
+        },
+        {
+          "pivot": [
+            34,
+            98
+          ],
+          "size": [
+            116,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-2-007.png"
+        }
+      ],
+      "loop": false,
+      "state": 3
+    },
+    "DESTROY_6": {
+      "advances_to": 14,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            75,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-000.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            79,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-001.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            82,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-002.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            85,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-003.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            87,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-004.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            89,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-005.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            89,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-006.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            95,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-007.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            105,
+            131
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-008.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            112,
+            135
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-009.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            117,
+            137
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-010.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            119,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-011.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            119,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-012.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            119,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-013.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            119,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-014.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            119,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-colamat-000/aktiv-colamat-000-destroy-6-015.png"
+        }
+      ],
+      "loop": false,
+      "state": 7
+    }
+  }
+}
