@@ -165,3 +165,39 @@ bubble already carries all ten.
 `sub_417460` also draws two things the port does not yet: the agent's name over its head
 while `agent+1788` marks it as the one the cursor selected, and three jittered green copies
 of the sprite while `agent+1792` is set.
+
+## Reacting to a sabotaged object (recovered, not yet implemented)
+
+`agent+1820` is the reaction flag, and `sub_416450` is the whole reaction:
+
+```c
+if ( !agent+1820 ) return 0;
+if ( agent+1124 > 0.0 )        // the ordinary busy timer
+    agent+1080 = 8;            // the ANGRY goal, so the ANGRY bubble
+else {
+    agent+1820 = 0;
+    for ( n = 0; n <= 7; n++ )
+        sub_415FD0(n, rand 60..100);   // every need reset, as if satisfied
+}
+```
+
+So the reaction runs for as long as the agent's own busy timer, shows goal 8 for that whole
+stretch, and ends by resetting **all eight needs** to a random 60–100 rather than only the
+one it was pursuing.
+
+`sub_416090` is a separate goal-8 case: an agent inside a cubicle whose `item+224` is set —
+the flag actions 110 and 112 apply — is angry for as long as it stays locked in.
+
+The arrival path in `sub_417B00` awards **25 points** through `sub_41DEA0(0x19, x, y)` at the
+agent's own position, which confirms the published walkthrough's "+25 when a colleague tries
+something you broke" against the executable.
+
+Still to recover before this can be built: the exact test that *sets* `agent+1820`. The
+region around `0x417C86` clears it on an ordinary arrival, so the setting branch is
+elsewhere in `sub_417B00`'s item-type switch. The reaction must not live in
+`is_available()`, which `_candidates()` calls when choosing a goal — an agent has to walk to
+a broken object before it can be angry about it.
+
+Assets: `PISSED` ships 8 views for all six coworker archetypes and `CHEF_STAND#EXPLODE` 8
+views for the boss; neither is imported yet. Both would go through
+`tools/character_action_clips.json`.
