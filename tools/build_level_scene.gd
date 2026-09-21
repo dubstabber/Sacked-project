@@ -13,6 +13,7 @@ const COLLISION_MAP_SCRIPT := "res://scenes/shared/collision_map_layer.gd"
 const COLLISION_TILESET := "res://resources/tilemaps/sacked-collision.tres"
 const NPC_SCENE := "res://scenes/npc/npc.tscn"
 const NPC_BRAIN_SCRIPT := "res://scenes/npc/npc_brain.gd"
+const THOUGHT_BUBBLE_SCRIPT := "res://scenes/npc/thought_bubble.gd"
 const ACTIVITY_POINT_SCRIPT := "res://scenes/npc/npc_activity_point.gd"
 const LEVEL_RUNTIME_SCENE := "res://scenes/level/level_runtime.tscn"
 
@@ -271,6 +272,10 @@ func _build_npcs(manifest: Dictionary, floor_layer: TileMapLayer, world: Node2D)
 			if instance_id != null:
 				brain.set(field, NodePath("../../Objects/%s/InteractionPoint" % object_names[int(instance_id)]))
 		npc.add_child(brain)
+		var bubble := Sprite2D.new()
+		bubble.name = "ThoughtBubble"
+		bubble.script = load(THOUGHT_BUBBLE_SCRIPT)
+		npc.add_child(bubble)
 		world.add_child(npc)
 
 

@@ -143,3 +143,25 @@ Two `LEVEL_00` targets cannot be reached, for different reasons. The toilet cubi
 Coworkers use `SIT#USE` throughout work instead of the original rare per-tick `SIT#IDLE` selection, because reproducing a per-tick clip swap needs the original's clock-driven action playback, which this port has not verified for action clips. The copier's own object animation state 9 is not modelled; only the agent side of that action is. Prank reactions, panic, cleanup, anger progression and the `+1064` speed increase remain unimplemented.
 
 The port additionally releases claims and restores standing positions when a brain is disabled, removed, or its activity target/seat disappears. An action with no clip at all plays the idle fallback and warns once, matching `sub_41A510` rather than failing the goal. These are authoring/runtime safety behavior, not claims about original object-deletion handling. The isolated `tests/check_npc_brain.gd` exercises target filters, goal disabling, the arrival dispatch for each item class, work startup, durations, occupation, need resets, retry bounds, authored-route override, and interrupted/missing-action cleanup with a stub actor. `tests/check_npc_level_runtime.gd` runs the three original agents on the imported map for two simulated minutes.
+
+## Thought bubbles
+
+`agent+1080` is the agent's **current goal**, not a separate bubble field: `sub_416570`
+clears it to `-1` along with the rest of the goal state, and `sub_4165D0` completes the goal
+it holds before queueing the next one into `+1082`. `sub_417460` draws
+`bubbleNames[agent+1080]` from the table at `0x46E7A8`, **135 pixels above** the agent at
+alpha 180, so a bubble is up for exactly as long as its goal is.
+
+The table's ten entries therefore line up with the goals one for one:
+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| FOOD | COFFEE | HAPPY | BACKTOWORK | TOILETT | SOCIAL | CIGARETTE | RELAX | ANGRY | REPAIR |
+
+Goals **8 and 9 are the reaction states**: `sub_416090` and `sub_416450` set goal 8, and
+`sub_4164E0` sets goal 9. The port's brain supports 0–7, so it raises the first eight; the
+bubble already carries all ten.
+
+`sub_417460` also draws two things the port does not yet: the agent's name over its head
+while `agent+1788` marks it as the one the cursor selected, and three jittered green copies
+of the sprite while `agent+1792` is set.

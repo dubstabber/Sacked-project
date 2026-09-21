@@ -2,6 +2,8 @@ class_name NPCBrain
 extends Node
 
 
+signal goal_changed(goal: int)
+
 const GOAL_CATEGORIES := [4, 5, 9, 6, 8, 7, 1, 7]
 # sub_418BE0 maps goal 3 to its alternate work-equipment category.
 const ALTERNATE_WORK_CATEGORY := 2
@@ -63,7 +65,11 @@ var _rates: Array[float] = []
 var _goal_disabled: Array[bool] = []
 var _random := RandomNumberGenerator.new()
 var _state := State.IDLE
-var _goal := -1
+var _goal := -1:
+	set(value):
+		if _goal != value:
+			_goal = value
+			goal_changed.emit(value)
 var _pending_goal := -1
 var _retries := 0
 var _retry_delay := 0.0
