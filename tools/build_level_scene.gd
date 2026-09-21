@@ -119,6 +119,8 @@ func _build_collision_layer(manifest: Dictionary) -> TileMapLayer:
 	layer.script = load(COLLISION_MAP_SCRIPT)
 	layer.tile_set = load(COLLISION_TILESET) as TileSet
 	layer.z_index = 10
+	# Locked so painting collision cells in the editor cannot drag the layer itself.
+	layer.set_meta("_edit_lock_", true)
 	var collision_grid: Dictionary = manifest.get("collision_grid", {})
 	for cell in collision_grid.get("blocked_cells", []):
 		layer.set_cell(_vector2i(cell), 0, Vector2i.ZERO)

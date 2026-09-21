@@ -7,6 +7,8 @@ import shutil
 import struct
 import zlib
 
+from PIL import Image
+
 
 DIRECTIONS = {
     "000": "up-right",
@@ -127,6 +129,8 @@ def export_spec(
     source_prefix: str,
     runtime_prefix: str,
     copy_runtime_pngs: bool,
+    check: bool,
+    failures: list,
 ) -> int:
     written = 0
     for angle, direction_name in DIRECTIONS.items():
@@ -145,15 +149,27 @@ def export_spec(
                 direction_name,
                 frame["sprite_name"],
             )
-            if copy_runtime_pngs:
+            if copy_runtime_pngs and not check:
                 runtime_path.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source_frame_dir(root, frame), runtime_path)
             if not runtime_path.is_file():
+                if check:
+                    failures.append(str(runtime_path.relative_to(root)))
+                    continue
                 raise FileNotFoundError(runtime_path)
 
             depth, mask = read_frame_depth(frame_dir, width, height)
             depth_path = runtime_path.with_name(f"{runtime_path.stem}-depth.png")
-            write_rgba_png(depth_path, width, height, encode_depth_rgba(depth, mask, width, height))
+            rgba = encode_depth_rgba(depth, mask, width, height)
+            if check:
+                if not depth_path.is_file():
+                    failures.append(str(depth_path.relative_to(root)))
+                else:
+                    with Image.open(depth_path) as actual:
+                        if actual.size != (width, height) or actual.convert("RGBA").tobytes() != rgba:
+                            failures.append(str(depth_path.relative_to(root)))
+            else:
+                write_rgba_png(depth_path, width, height, rgba)
             written += 1
 
     return written
@@ -169,14 +185,31 @@ def main() -> int:
         action="store_true",
         help="Copy source frame PNGs into images/characters before writing depth maps",
     )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Verify decoded depth pixels without writing files",
+    )
     args = parser.parse_args()
 
     root = pathlib.Path(args.root).resolve()
     total = 0
+    failures: list = []
     for character, source_prefix, runtime_prefix in SPECS:
-        total += export_spec(root, character, source_prefix, runtime_prefix, args.copy_runtime_pngs)
+        total += export_spec(
+            root,
+            character,
+            source_prefix,
+            runtime_prefix,
+            args.copy_runtime_pngs,
+            args.check,
+            failures,
+        )
 
-    print(f"Wrote {total} character depth maps")
+    if failures:
+        print("Missing or stale character depth maps:\n" + "\n".join(failures))
+        return 1
+    print(f"{'Verified' if args.check else 'Wrote'} {total} character depth maps")
     return 0
 
 

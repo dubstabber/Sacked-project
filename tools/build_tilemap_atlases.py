@@ -15,6 +15,8 @@ from typing import Callable, Dict, List, Tuple
 
 from PIL import Image
 
+from godot_binary import find_godot_binary
+
 
 SOURCE_ID = 3
 TILE_SIZE = (96, 48)
@@ -307,7 +309,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build deterministic TileMap atlases from extracted Sacked CO_BACKGROUND sprites.")
     parser.add_argument("--check", action="store_true", help="Build into a temporary directory and verify checked-in generated outputs are current.")
     parser.add_argument("--skip-godot", action="store_true", help="Only write atlas PNGs and manifest; do not regenerate TileSet resources.")
-    parser.add_argument("--godot-binary", default="./Godot_v4.6.2-stable_linux.x86_64", help="Godot binary used to serialize TileSet resources.")
+    parser.add_argument("--godot-binary", default=None, help="Godot binary used to serialize TileSet resources.")
     return parser.parse_args()
 
 
@@ -323,7 +325,7 @@ def main() -> int:
 
     build_outputs(root, root)
     if not args.skip_godot:
-        run_godot_tileset_builder(root, args.godot_binary)
+        run_godot_tileset_builder(root, args.godot_binary or find_godot_binary(root))
     return 0
 
 

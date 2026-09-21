@@ -29,6 +29,7 @@ OBJECT_IMAGE_DIR_REL = Path("images/objects")
 TILE_ATLAS_MANIFEST_REL = Path("resources/tilemaps/sacked-tile-atlases.json")
 LEVEL_MANIFEST_REL = Path("resources/levels/level_1.json")
 LEVEL_SCENE_REL = Path("scenes/level_1.tscn")
+OBJECT_PREFAB_DIR_REL = Path("scenes/objects")
 NPC_PROFILES = {
     1: "boss",
     2: "secretary",
@@ -875,6 +876,10 @@ def run_godot_scene_builder(root: Path, godot_binary: str) -> None:
         check=True,
     )
     normalize_scene_file(root / LEVEL_SCENE_REL)
+    # The builder re-saves every object prefab with a fresh random unique_id, so without
+    # the same normalization each regeneration churns all of scenes/objects/.
+    for prefab in sorted((root / OBJECT_PREFAB_DIR_REL).glob("*.tscn")):
+        normalize_scene_file(prefab)
 
 
 def normalize_scene_file(path: Path) -> None:
@@ -928,7 +933,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Import original Sacked first playable level data into the Godot project.")
     parser.add_argument("--check", action="store_true", help="Verify copied object textures and level manifest are current.")
     parser.add_argument("--skip-godot", action="store_true", help="Write manifest and object textures without regenerating the scene.")
-    parser.add_argument("--godot-binary", default="./Godot_v4.6.2-stable_linux.x86_64", help="Godot binary used to serialize the level scene.")
+    parser.add_argument("--godot-binary", default=None, help="Godot binary used to serialize the level scene.")
     return parser.parse_args()
 
 
@@ -941,7 +946,11 @@ def main() -> int:
 
     write_outputs(root, manifest, source_to_dest)
     if not args.skip_godot:
-        run_godot_scene_builder(root, args.godot_binary)
+        # Imported here, not at module scope: the tests import this file as
+        # tools.import_original_level, where sibling modules are not on sys.path.
+        from godot_binary import find_godot_binary
+
+        run_godot_scene_builder(root, args.godot_binary or find_godot_binary(root))
     return 0
 
 
