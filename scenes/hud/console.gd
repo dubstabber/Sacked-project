@@ -7,9 +7,13 @@ extends CanvasLayer
 const CLOCK_OVERFLOW_SECONDS := 5940
 const IDLE_HOVER_TEXT := "..."
 
-# player+1008 slots each lamp watches; the smoking lamp needs both of its two.
 const PROGRESS_SHADER := preload("res://scenes/shared/round_bar.gdshader")
+# CGUIRoundBarTex's own fields: +96 is the fan radius and +1140 the angle its sweep starts
+# at, which is short of the top because the painted dial is tilted.
+const CLOCK_BAR_RADIUS := 36.0
+const CLOCK_BAR_START_ANGLE := 0.5
 
+# player+1008 slots each lamp watches; the smoking lamp needs both of its two.
 const LAMP_SLOTS := {"LampSmoke": [5, 6], "LampMatrix": [14], "LampPiss": [26]}
 
 @onready var _score: Label = $Score
@@ -33,9 +37,13 @@ func _ready() -> void:
 	set_hover_text(IDLE_HOVER_TEXT)
 
 	# game+14724 sits at (662, 536) -- the stopwatch -- and is fed
-	# player+992 * 100 / player+1000, swept rather than clipped. See docs/hud-reference.md.
+	# player+992 * 100 / player+1000, swept rather than clipped. That position is the centre
+	# of the sweep, not the texture's corner, which is why the sprite hangs a radius up and
+	# left of it. See docs/hud-reference.md.
 	_progress_material = ShaderMaterial.new()
 	_progress_material.shader = PROGRESS_SHADER
+	_progress_material.set_shader_parameter("radius", CLOCK_BAR_RADIUS)
+	_progress_material.set_shader_parameter("start_angle", CLOCK_BAR_START_ANGLE)
 	_progress.material = _progress_material
 	set_action_progress(0.0, 0.0)
 

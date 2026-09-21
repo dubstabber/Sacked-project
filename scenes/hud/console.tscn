@@ -36,6 +36,7 @@ texture_filter = 1
 visible = false
 position = Vector2(662, 536)
 centered = false
+offset = Vector2(-36, -36)
 texture = ExtResource("4")
 
 [node name="LampSmoke" type="Sprite2D" parent="."]

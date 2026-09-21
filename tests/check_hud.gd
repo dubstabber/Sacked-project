@@ -38,6 +38,7 @@ func _run() -> void:
 	_check_inert_elements(console)
 	_check_lamps(console)
 	_check_action_progress(console)
+	_check_the_stopwatch_sweeps_the_dial(console)
 	_check_score_field(console)
 	_check_clock_field(console)
 	_check_hover_text(console)
@@ -121,6 +122,31 @@ func _check_action_progress(console: Node) -> void:
 	swept = (bar.material as ShaderMaterial).get_shader_parameter("progress")
 	_expect(is_equal_approx(swept, 1.0), "the sweep never runs past a full turn, got %f" % swept)
 	console.set_action_progress(0.0, 0.0)
+
+
+# CGUIRoundBarTex fans out *from* (662, 536): every vertex is r away from it and the texel
+# it samples is the same offset from the texture's own centre, so the 72 x 72 texels the fan
+# can reach are painted a radius up and left of the element. Its sweep starts at +1140
+# rather than at the top, which is the tilt of the painted dial. See docs/hud-reference.md.
+func _check_the_stopwatch_sweeps_the_dial(console: Node) -> void:
+	var bar := console.get_node("ClockBar") as Sprite2D
+	_expect(not bar.centered, "the stopwatch texture is placed from its top left")
+	_expect(
+		bar.offset == Vector2(-36, -36),
+		"the sweep hangs a radius up and left of the element, got %s" % bar.offset
+	)
+	var material := bar.material as ShaderMaterial
+	_expect(material != null, "the stopwatch carries the sweep shader")
+	if material == null:
+		return
+	var radius: float = material.get_shader_parameter("radius")
+	var start: float = material.get_shader_parameter("start_angle")
+	_expect(is_equal_approx(radius, 36.0), "the fan keeps the original radius, got %f" % radius)
+	_expect(is_equal_approx(start, 0.5), "the sweep starts at the original angle, got %f" % start)
+	_expect(
+		bar.texture != null and bar.texture.get_width() >= 2 * radius and bar.texture.get_height() >= 2 * radius,
+		"the dial art covers the whole 2r x 2r window the fan samples"
+	)
 
 
 func _check_score_field(console: Node) -> void:

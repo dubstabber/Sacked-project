@@ -15,13 +15,19 @@ are absolute screen coordinates in the 800 × 600 viewport.
 | Score field | `(85, 500)` | 0 | Arial 22, weight 100 |
 | Clock field | `(250, 500)` | 0 | Arial 22, weight 100 |
 | Hover text | `(135, 556)` | 100 | Arial 22, colour `(250, 250, 250)`, initially `...` |
-| Action icon | `(170, 477)` | 100 | a `CGUIActionIcon` over the ACTICON set |
+| Action icon | `(170, 477)` | 100 | a `CGUIRectangle` over the ACTICON set, `+1163 = 255` |
 | Aggression bar | `(410, 497)` | 100 | `CO_GUI_CONSOLE_AGGRO_FULL` |
-| Clock bar | `(662, 536)` | 0x8000 | `CO_GUI_CONSOLE_CLOCK_FULL`, `+96 = 36.0`, `+1140 = 0.5` |
-| Matrix lamp | `(754, 537)` | 1 | `CO_GUI_CONSOLE_MATRIX_ACT` |
-| Urination lamp | `(756, 485)` | 1 | `CO_GUI_CONSOLE_PISS_ACT` |
-| Smoking lamp | `(717, 461)` | 1 | `CO_GUI_CONSOLE_SMOKE_ACT` |
+| Clock bar | `(662, 536)` (its **centre**) | 0x8000 | `CO_GUI_CONSOLE_CLOCK_FULL`, radius `+96 = 36.0`, start angle `+1140 = 0.5` |
+| Matrix lamp | `(754, 537)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_MATRIX_ACT` |
+| Urination lamp | `(756, 485)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_PISS_ACT` |
+| Smoking lamp | `(717, 461)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_SMOKE_ACT` |
 | `THERMO_UP`, `AGGRO_UP` | `(5, 5)` | 100 | both created hidden, `+1163 = -36` |
+
+`CGUIRectangle::Draw` (`sub_45B820`) draws from the element's own `(x, y)` as the **top
+left**, and `+1140` is its alignment flag: `16` centres the sprite in the viewport, bit `4`
+right-aligns it, bit `8` bottom-aligns it, and `0` — what every element but the frame uses —
+means "place it where it says". `CGUIActionIcon` inherits that draw unchanged, so the
+lamps follow the same rule. `CGUIRoundBarTex` is the exception and is described below.
 
 The frame's own position is `(0, 0)` while every other element sits between y 461 and 556,
 so `+1140 = 8` docks it to the bottom and its 200 pixels occupy **y 400 to 600**. Matching
@@ -95,7 +101,7 @@ so the port's camera is unchanged and the console is drawn over the world.
 | Score, clock | `player+984`, `game+14708` |
 | Hover bar | the highlighted menu entry's name, `"..."` when none |
 | Centre icon | the highlighted entry's ACTICON, hidden when nothing is highlighted |
-| Stopwatch | `player+992 * 100 / player+1000` — how far the running action has come, swept from the top clockwise |
+| Stopwatch | `player+992 * 100 / player+1000` — how far the running action has come, swept clockwise from `+1140` |
 | Lamps | `player+1008`: smoking needs slots 5 **and** 6, Matrix 14, urination 26 |
 
 `sub_41AF60` clears 28 bytes at `player+1008` when a level starts, so the player always
@@ -106,3 +112,31 @@ begins empty-handed and every lamp is dark. That is why level 1's rows needing i
 radius `+96 = 36.0` — so the running action sweeps around the stopwatch, not along the
 aggression bar at (410, 497). That one is `game+14732`, fed
 `188 - (game+14728 * 1.42 + 46)`, and stays dark until detection is implemented.
+
+## How the stopwatch is swept
+
+`CGUIRoundBarTex::Draw` is `sub_45AEE0`. It emits a gouraud-textured **triangle fan**, one
+triangle per angular step, each sharing the element's own position as its apex:
+
+```text
+vertex at angle a:  x = cx + r * sin a          u = (sin a + 1) * r
+                    y = cy - r * cos a          v = r - r * cos a
+apex:               x = cx, y = cy              u = r, v = r
+sweep:              a from  this+1140  to  this+1140 + progress * 6.28 + 0.01
+```
+
+Three consequences the port has to honour:
+
+- **`(662, 536)` is the centre of the disc, not the corner of the texture.** `cx` and `cy`
+  are integers and the vertex coordinates are truncated, so texel `(u, v)` lands on screen
+  pixel `(cx - r + u, cy - r + v)` exactly: the texture's top-left `2r × 2r = 72 × 72`
+  texels are painted over `(626, 500)`–`(698, 572)`. Sampling the exported art against the
+  console frame agrees — the dial correlates best with its top-left texel at `(625, 499)`.
+- **Only the disc is drawn.** The fan never covers the texture's corners, so the 75 × 77
+  sprite's last three columns and five rows are never sampled.
+- **The sweep does not start at the top.** `+1140 = 0.5` radians ≈ 28.6°, which is the angle
+  the painted dial is tilted by: starting there puts angle zero on the dial's own `60` mark
+  and 45% of a turn on its `27`.
+
+The port reproduces this in `scenes/shared/round_bar.gdshader`, with the sprite offset by
+`-radius` on both axes so its node still sits at the original element position.
