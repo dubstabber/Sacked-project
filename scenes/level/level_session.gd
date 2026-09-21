@@ -32,8 +32,13 @@ var _elapsed_seconds := -1
 var _warned := false
 
 
-func _ready() -> void:
+# Joined here rather than in _ready: children are made ready before their parent, and the
+# console looks the session up by group while it becomes ready.
+func _enter_tree() -> void:
 	add_to_group("level_session")
+
+
+func _ready() -> void:
 	# Resolved by path, not by the autoload name: the level tests load this scene from a
 	# SceneTree script where the autoloads do not exist.
 	var screen_manager := get_node_or_null("/root/ScreenManager")

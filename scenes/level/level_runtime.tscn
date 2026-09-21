@@ -2,9 +2,12 @@
 
 [ext_resource type="Script" path="res://scenes/level/level_session.gd" id="1"]
 [ext_resource type="Script" path="res://scenes/level/level_status_readout.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/hud/console.tscn" id="3"]
 
 [node name="LevelRuntime" type="Node"]
 script = ExtResource("1")
+
+[node name="Console" parent="." instance=ExtResource("3")]
 
 [node name="StatusLayer" type="CanvasLayer" parent="."]
 layer = 99
