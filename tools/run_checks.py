@@ -16,6 +16,7 @@ EXTRACTION_REL = Path("extract-sacked-assets")
 # Exporters and importers whose --check mode re-derives their outputs from the reference
 # extraction and compares them against the checked-in files. They are skipped without it.
 REFERENCE_CHECKS = [
+    ["tools/export_action_table.py", "--check"],
     ["tools/export_character_depth_maps.py", "--check"],
     ["tools/export_npc_action_assets.py", "--check"],
     ["tools/export_world_depth_maps.py", "--check"],
