@@ -65,7 +65,15 @@ def main() -> int:
         steps.append(("godot --import", [godot, "--headless", "--path", ".", "--import"]))
 
     for script in sorted((ROOT / "tests").glob("check_*.gd")):
-        steps.append((script.name, [godot, "--headless", "--script", f"tests/{script.name}"]))
+        command = [godot, "--headless"]
+        # A check that simulates an office advances on the wall clock, so two simulated
+        # minutes cost two real ones. A fixed 10 fps frame still runs six 1/60 physics
+        # ticks, under max_physics_steps_per_frame, so every decision is unchanged while
+        # the run takes seconds. Verified identical on check_npc_level_2_runtime.gd, down
+        # to the secretary's 292 and the janitor's 1143 navigation retries.
+        if "runtime" in script.name:
+            command += ["--fixed-fps", "10"]
+        steps.append((script.name, command + ["--script", f"tests/{script.name}"]))
 
     # Discovery roots at tests/ because it is not a package; cwd still puts tools/ on sys.path.
     steps.append(("python unittest", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "tests"]))
