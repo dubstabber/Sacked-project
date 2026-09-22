@@ -19,6 +19,7 @@ REFERENCE_CHECKS = [
     ["tools/export_action_table.py", "--check"],
     ["tools/export_strings.py", "--check"],
     ["tools/export_repairable_types.py", "--check"],
+    ["tools/export_level_index.py", "--check"],
     ["tools/export_npc_profiles.py", "--check"],
     ["tools/export_gui_assets.py", "--check"],
     ["tools/export_sounds.py", "--check"],
