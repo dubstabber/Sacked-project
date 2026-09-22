@@ -1,0 +1,103 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "RADIO",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            17,
+            90
+          ],
+          "size": [
+            29,
+            45
+          ],
+          "texture": "res://images/objects/states/aktiv-radio-000/aktiv-radio-000-destroyed-1-000.png"
+        },
+        {
+          "pivot": [
+            20,
+            92
+          ],
+          "size": [
+            32,
+            49
+          ],
+          "texture": "res://images/objects/states/aktiv-radio-000/aktiv-radio-000-destroyed-1-001.png"
+        },
+        {
+          "pivot": [
+            19,
+            86
+          ],
+          "size": [
+            29,
+            43
+          ],
+          "texture": "res://images/objects/states/aktiv-radio-000/aktiv-radio-000-destroyed-1-002.png"
+        },
+        {
+          "pivot": [
+            19,
+            90
+          ],
+          "size": [
+            30,
+            47
+          ],
+          "texture": "res://images/objects/states/aktiv-radio-000/aktiv-radio-000-destroyed-1-003.png"
+        },
+        {
+          "pivot": [
+            19,
+            94
+          ],
+          "size": [
+            32,
+            50
+          ],
+          "texture": "res://images/objects/states/aktiv-radio-000/aktiv-radio-000-destroyed-1-004.png"
+        },
+        {
+          "pivot": [
+            18,
+            94
+          ],
+          "size": [
+            31,
+            48
+          ],
+          "texture": "res://images/objects/states/aktiv-radio-000/aktiv-radio-000-destroyed-1-005.png"
+        },
+        {
+          "pivot": [
+            17,
+            91
+          ],
+          "size": [
+            30,
+            44
+          ],
+          "texture": "res://images/objects/states/aktiv-radio-000/aktiv-radio-000-destroyed-1-006.png"
+        },
+        {
+          "pivot": [
+            17,
+            91
+          ],
+          "size": [
+            29,
+            45
+          ],
+          "texture": "res://images/objects/states/aktiv-radio-000/aktiv-radio-000-destroyed-1-007.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

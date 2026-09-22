@@ -29,6 +29,32 @@ In the running game, with those uploads included, a transition does not change t
 
 Level 2 is the first map large enough to test that scaling. It is 17 × 32 tiles against level 1's 16 × 16, so its composite spans 2256 × 1128 px — **2.54 MP against 1.04 MP** — and it carries 167 objects rather than 71. Both images are still far inside the 4096 px limit; the widest map in the campaign reaches 2880 px. Measured over 600 frames with the brains running, level 2 holds **98.7 fps with an 11.1 ms worst frame**, against level 1's 107.6 fps and 14.2 ms, so the larger composite costs startup time rather than frame time.
 
+Levels 3 to 8 confirm that on six more maps. Each was loaded in a 1067 x 600 window and
+left running for eight seconds with its whole cast awake:
+
+| Level | Tiles | Objects | Agents | Load to first frame | Mean frame |
+| --- | --- | --- | --- | --- | --- |
+| 1 | 16 x 16 | 71 | 3 | 1.37 s | 8.33 ms |
+| 2 | 17 x 32 | 167 | 6 | 2.31 s | 8.36 ms |
+| 3 | 26 x 16 | 123 | 5 | 1.85 s | 8.32 ms |
+| 4 | 22 x 24 | 157 | 9 | 2.27 s | 8.36 ms |
+| 5 | 20 x 20 | 123 | 5 | 1.94 s | 8.33 ms |
+| 6 | 32 x 12 | 130 | 11 | 2.02 s | 8.39 ms |
+| 7 | 29 x 22 | 148 | 7 | 2.27 s | 8.33 ms |
+| 8 | 25 x 25 | 258 | 8 | 2.70 s | 9.53 ms |
+
+The load figure is the bake, and it tracks the composite's area rather than the object
+count: level 8 carries 258 objects against level 3's 123 and costs 0.85 s more because its
+map is larger, not because of them. **Frame time is flat across all of them** at about
+8.3 ms, which is the 120 fps the display is capped to, and level 8 is the only map that
+measurably exceeds it.
+
+Every map also throws occasional long frames, between 10 and 47 ms, and **they are not a
+property of the map**: the same level measures 10 ms on one run and 43 ms on the next, and
+level 1 does it too. They are not confined to start-up either. They are sporadic, they do
+not accumulate, and nothing here has tied them to the depth pipeline, so they are recorded
+rather than explained.
+
 ### Clips that never stop
 
 Level 2 is the first map with **looping** object states. Four of them ship real frames — the copier's `DESTROYED_1` (25 frames at 16 fps), the aquarium's `DESTROYED_2` (25 at 16), the projector screen's `DESTROYED_1` (17 at 16) and the stove's `DESTROYED_1` (9 at 8) — and every `DESTROYED_n` in the container carries a loop flag where no `DESTROY_n` does. The copier matters most: `sub_417B00` puts it into state 9 whenever an NPC photocopies something, so it loops in ordinary play with no prank involved.

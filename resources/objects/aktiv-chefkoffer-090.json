@@ -1,0 +1,67 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "CHEFKOFFER",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            29,
+            47
+          ],
+          "size": [
+            52,
+            60
+          ],
+          "texture": "res://images/objects/states/aktiv-chefkoffer-090/aktiv-chefkoffer-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 1.0,
+      "frames": [
+        {
+          "pivot": [
+            2,
+            2
+          ],
+          "size": [
+            4,
+            4
+          ],
+          "texture": "res://images/objects/states/aktiv-chefkoffer-090/aktiv-chefkoffer-090-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            2,
+            2
+          ],
+          "size": [
+            4,
+            4
+          ],
+          "texture": "res://images/objects/states/aktiv-chefkoffer-090/aktiv-chefkoffer-090-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            2,
+            2
+          ],
+          "size": [
+            4,
+            4
+          ],
+          "texture": "res://images/objects/states/aktiv-chefkoffer-090/aktiv-chefkoffer-090-destroy-1-002.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

@@ -1,0 +1,397 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "PAPIERKORB02",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            7,
+            26
+          ],
+          "size": [
+            16,
+            30
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            7,
+            26
+          ],
+          "size": [
+            16,
+            30
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            8,
+            26
+          ],
+          "size": [
+            18,
+            30
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            9,
+            27
+          ],
+          "size": [
+            19,
+            31
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            10,
+            33
+          ],
+          "size": [
+            21,
+            37
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            12,
+            38
+          ],
+          "size": [
+            24,
+            42
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            12,
+            43
+          ],
+          "size": [
+            24,
+            47
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            11,
+            46
+          ],
+          "size": [
+            23,
+            50
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            11,
+            46
+          ],
+          "size": [
+            24,
+            50
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-007.png"
+        },
+        {
+          "pivot": [
+            11,
+            47
+          ],
+          "size": [
+            24,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-008.png"
+        },
+        {
+          "pivot": [
+            12,
+            47
+          ],
+          "size": [
+            26,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-009.png"
+        },
+        {
+          "pivot": [
+            12,
+            47
+          ],
+          "size": [
+            26,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-010.png"
+        },
+        {
+          "pivot": [
+            12,
+            49
+          ],
+          "size": [
+            26,
+            53
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-011.png"
+        },
+        {
+          "pivot": [
+            13,
+            50
+          ],
+          "size": [
+            27,
+            54
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-012.png"
+        },
+        {
+          "pivot": [
+            13,
+            52
+          ],
+          "size": [
+            26,
+            56
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-013.png"
+        },
+        {
+          "pivot": [
+            13,
+            52
+          ],
+          "size": [
+            26,
+            56
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-014.png"
+        },
+        {
+          "pivot": [
+            12,
+            54
+          ],
+          "size": [
+            25,
+            58
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-015.png"
+        },
+        {
+          "pivot": [
+            13,
+            54
+          ],
+          "size": [
+            26,
+            58
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-016.png"
+        },
+        {
+          "pivot": [
+            13,
+            55
+          ],
+          "size": [
+            27,
+            59
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-017.png"
+        },
+        {
+          "pivot": [
+            12,
+            58
+          ],
+          "size": [
+            26,
+            62
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-018.png"
+        },
+        {
+          "pivot": [
+            13,
+            59
+          ],
+          "size": [
+            25,
+            63
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-019.png"
+        },
+        {
+          "pivot": [
+            12,
+            60
+          ],
+          "size": [
+            25,
+            64
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-020.png"
+        },
+        {
+          "pivot": [
+            12,
+            60
+          ],
+          "size": [
+            25,
+            64
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-021.png"
+        },
+        {
+          "pivot": [
+            12,
+            62
+          ],
+          "size": [
+            25,
+            66
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-022.png"
+        },
+        {
+          "pivot": [
+            13,
+            62
+          ],
+          "size": [
+            25,
+            66
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-023.png"
+        },
+        {
+          "pivot": [
+            13,
+            62
+          ],
+          "size": [
+            27,
+            66
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-024.png"
+        },
+        {
+          "pivot": [
+            13,
+            62
+          ],
+          "size": [
+            27,
+            66
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-025.png"
+        },
+        {
+          "pivot": [
+            12,
+            62
+          ],
+          "size": [
+            26,
+            66
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-026.png"
+        },
+        {
+          "pivot": [
+            13,
+            65
+          ],
+          "size": [
+            25,
+            69
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-027.png"
+        },
+        {
+          "pivot": [
+            12,
+            65
+          ],
+          "size": [
+            24,
+            69
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-028.png"
+        },
+        {
+          "pivot": [
+            11,
+            61
+          ],
+          "size": [
+            22,
+            65
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-029.png"
+        },
+        {
+          "pivot": [
+            7,
+            61
+          ],
+          "size": [
+            18,
+            65
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-030.png"
+        },
+        {
+          "pivot": [
+            7,
+            26
+          ],
+          "size": [
+            16,
+            30
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-031.png"
+        },
+        {
+          "pivot": [
+            7,
+            26
+          ],
+          "size": [
+            16,
+            30
+          ],
+          "texture": "res://images/objects/states/aktiv-papierkorb02-000/aktiv-papierkorb02-000-destroy-1-032.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

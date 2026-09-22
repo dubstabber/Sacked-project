@@ -1,0 +1,100 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "KAFFEEMASCHI",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            23,
+            83
+          ],
+          "size": [
+            39,
+            45
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-000/aktiv-kaffeemaschi-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_2": {
+      "advances_to": 10,
+      "fps": 1.0,
+      "frames": [
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-000/aktiv-kaffeemaschi-000-destroy-2-000.png"
+        },
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-000/aktiv-kaffeemaschi-000-destroy-2-001.png"
+        },
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-000/aktiv-kaffeemaschi-000-destroy-2-002.png"
+        },
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-000/aktiv-kaffeemaschi-000-destroy-2-003.png"
+        },
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-000/aktiv-kaffeemaschi-000-destroy-2-004.png"
+        },
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            29,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-kaffeemaschi-000/aktiv-kaffeemaschi-000-destroy-2-005.png"
+        }
+      ],
+      "loop": false,
+      "state": 3
+    }
+  }
+}

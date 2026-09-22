@@ -1,0 +1,883 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "AQUARIUM",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-000.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-001.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-002.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-003.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-004.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-005.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-006.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-007.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-008.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-009.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-010.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-011.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-012.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-013.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-014.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-015.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-016.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-017.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-018.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-019.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-020.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-021.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-022.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-023.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-2-024.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROYED_3": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroyed-3-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 11
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            54,
+            105
+          ],
+          "size": [
+            92,
+            131
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            75,
+            105
+          ],
+          "size": [
+            113,
+            141
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-007.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-008.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-009.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-010.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-011.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-012.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-013.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-014.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-015.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-016.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-017.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-018.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-019.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-020.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-021.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-022.png"
+        },
+        {
+          "pivot": [
+            132,
+            105
+          ],
+          "size": [
+            181,
+            170
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-1-023.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    },
+    "DESTROY_3": {
+      "advances_to": 11,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-000.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-001.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-002.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-003.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-004.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-005.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-006.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-007.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-008.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-009.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-010.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-011.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-012.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-013.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-014.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-015.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-016.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-017.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-018.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-019.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-020.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-021.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-022.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-023.png"
+        },
+        {
+          "pivot": [
+            37,
+            105
+          ],
+          "size": [
+            75,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-aquarium-090/aktiv-aquarium-090-destroy-3-024.png"
+        }
+      ],
+      "loop": false,
+      "state": 4
+    }
+  }
+}

@@ -1,0 +1,416 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "CHEFGLOBUS",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            31,
+            36
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            31,
+            36
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROY_2": {
+      "advances_to": 10,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            31,
+            36
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-000.png"
+        },
+        {
+          "pivot": [
+            16,
+            83
+          ],
+          "size": [
+            34,
+            36
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-001.png"
+        },
+        {
+          "pivot": [
+            17,
+            83
+          ],
+          "size": [
+            36,
+            36
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-002.png"
+        },
+        {
+          "pivot": [
+            17,
+            89
+          ],
+          "size": [
+            37,
+            42
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-003.png"
+        },
+        {
+          "pivot": [
+            18,
+            94
+          ],
+          "size": [
+            39,
+            47
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-004.png"
+        },
+        {
+          "pivot": [
+            19,
+            100
+          ],
+          "size": [
+            40,
+            53
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-005.png"
+        },
+        {
+          "pivot": [
+            20,
+            105
+          ],
+          "size": [
+            41,
+            58
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-006.png"
+        },
+        {
+          "pivot": [
+            21,
+            107
+          ],
+          "size": [
+            42,
+            60
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-007.png"
+        },
+        {
+          "pivot": [
+            21,
+            107
+          ],
+          "size": [
+            44,
+            60
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-008.png"
+        },
+        {
+          "pivot": [
+            20,
+            109
+          ],
+          "size": [
+            43,
+            62
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-009.png"
+        },
+        {
+          "pivot": [
+            19,
+            110
+          ],
+          "size": [
+            40,
+            63
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-010.png"
+        },
+        {
+          "pivot": [
+            20,
+            114
+          ],
+          "size": [
+            42,
+            67
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-011.png"
+        },
+        {
+          "pivot": [
+            20,
+            114
+          ],
+          "size": [
+            43,
+            67
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-012.png"
+        },
+        {
+          "pivot": [
+            20,
+            115
+          ],
+          "size": [
+            43,
+            68
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-013.png"
+        },
+        {
+          "pivot": [
+            20,
+            119
+          ],
+          "size": [
+            42,
+            72
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-014.png"
+        },
+        {
+          "pivot": [
+            21,
+            119
+          ],
+          "size": [
+            44,
+            72
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-015.png"
+        },
+        {
+          "pivot": [
+            21,
+            119
+          ],
+          "size": [
+            44,
+            72
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-016.png"
+        },
+        {
+          "pivot": [
+            20,
+            121
+          ],
+          "size": [
+            44,
+            74
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-017.png"
+        },
+        {
+          "pivot": [
+            19,
+            122
+          ],
+          "size": [
+            43,
+            75
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-018.png"
+        },
+        {
+          "pivot": [
+            19,
+            123
+          ],
+          "size": [
+            42,
+            76
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-019.png"
+        },
+        {
+          "pivot": [
+            18,
+            126
+          ],
+          "size": [
+            42,
+            79
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-020.png"
+        },
+        {
+          "pivot": [
+            19,
+            127
+          ],
+          "size": [
+            44,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-021.png"
+        },
+        {
+          "pivot": [
+            20,
+            127
+          ],
+          "size": [
+            46,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-022.png"
+        },
+        {
+          "pivot": [
+            20,
+            131
+          ],
+          "size": [
+            46,
+            84
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-023.png"
+        },
+        {
+          "pivot": [
+            18,
+            132
+          ],
+          "size": [
+            41,
+            85
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-024.png"
+        },
+        {
+          "pivot": [
+            17,
+            132
+          ],
+          "size": [
+            40,
+            85
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-025.png"
+        },
+        {
+          "pivot": [
+            17,
+            134
+          ],
+          "size": [
+            41,
+            87
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-026.png"
+        },
+        {
+          "pivot": [
+            18,
+            134
+          ],
+          "size": [
+            42,
+            87
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-027.png"
+        },
+        {
+          "pivot": [
+            19,
+            132
+          ],
+          "size": [
+            43,
+            85
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-028.png"
+        },
+        {
+          "pivot": [
+            19,
+            131
+          ],
+          "size": [
+            39,
+            84
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-029.png"
+        },
+        {
+          "pivot": [
+            16,
+            129
+          ],
+          "size": [
+            34,
+            82
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-030.png"
+        },
+        {
+          "pivot": [
+            16,
+            128
+          ],
+          "size": [
+            34,
+            81
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-031.png"
+        },
+        {
+          "pivot": [
+            13,
+            83
+          ],
+          "size": [
+            31,
+            36
+          ],
+          "texture": "res://images/objects/states/aktiv-chefglobus-000/aktiv-chefglobus-000-destroy-2-032.png"
+        }
+      ],
+      "loop": false,
+      "state": 3
+    }
+  }
+}

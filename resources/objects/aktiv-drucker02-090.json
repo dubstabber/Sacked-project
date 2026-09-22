@@ -1,0 +1,26 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "DRUCKER02",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            21,
+            76
+          ],
+          "size": [
+            42,
+            34
+          ],
+          "texture": "res://images/objects/states/aktiv-drucker02-090/aktiv-drucker02-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

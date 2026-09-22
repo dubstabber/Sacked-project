@@ -1,0 +1,3209 @@
+[gd_scene format=4]
+
+[ext_resource type="PackedScene" path="res://scenes/level/level_runtime.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-aquarium-090.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-aushang-000.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-chefkoffer-000.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-chefurkunde-000.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-drucker01-000.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-fenster04-000.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-fenster05-000.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-feuerzeug-000.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-flipchart-090.tscn" id="11"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-generalschluessel-000.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-handtuchspender-090.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-handy-000.tscn" id="14"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-herd-090.tscn" id="15"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-k-hlschrank-000.tscn" id="16"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-ketchup-000.tscn" id="17"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-microwave-090.tscn" id="18"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-monitor-tastatur-frontal-000.tscn" id="19"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-monitor-tastatur-frontal-180.tscn" id="20"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-monitor-tastatur-frontal-270.tscn" id="21"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-monitor-tastatur-links-090.tscn" id="22"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-monitor-tastatur-rechts-090.tscn" id="23"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-monitor-tastatur-rechts-180.tscn" id="24"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-pappaufsteller01-090.tscn" id="25"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-pappaufsteller02-000.tscn" id="26"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-pappaufsteller03-000.tscn" id="27"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-pappaufsteller04-270.tscn" id="28"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-poster01-000.tscn" id="29"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-poster02-090.tscn" id="30"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-poster03-000.tscn" id="31"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-poster04-090.tscn" id="32"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-salz-zucker-090.tscn" id="33"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-schwarzbrett-090.tscn" id="34"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-server-000.tscn" id="35"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-sp-ltabs-000.tscn" id="36"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-spiegel-090.tscn" id="37"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-spuele-090.tscn" id="38"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-spuelmaschine-000.tscn" id="39"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-tafel-090.tscn" id="40"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-tesafilm-090.tscn" id="41"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-toikabine-000.tscn" id="42"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-toikabine-eimer-000.tscn" id="43"]
+[ext_resource type="PackedScene" path="res://scenes/objects/aktiv-waschbecken-090.tscn" id="44"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-b-cher01-000.tscn" id="45"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-b-cher02-180.tscn" id="46"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-b-cher04-000.tscn" id="47"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-b-cher04-090.tscn" id="48"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-cornflakes-000.tscn" id="49"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-heizk-rper-000.tscn" id="50"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-joghurt-000.tscn" id="51"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-k-ks-000.tscn" id="52"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-k-ks-090.tscn" id="53"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-obst-000.tscn" id="54"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-pflanzegross01-000.tscn" id="55"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-pflanzegross02-090.tscn" id="56"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-pflanzegross03-090.tscn" id="57"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-pflanzeklein01-000.tscn" id="58"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-pflanzeklein02-000.tscn" id="59"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-pflanzeklein04-090.tscn" id="60"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-photoaufsteller01-270.tscn" id="61"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-photoaufsteller03-180.tscn" id="62"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-schrank01hoch-000.tscn" id="63"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-schrank01hoch-090.tscn" id="64"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-schrank02-090.tscn" id="65"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-schrank02hoch-090.tscn" id="66"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-stehlampe01-000.tscn" id="67"]
+[ext_resource type="PackedScene" path="res://scenes/objects/allgemein-stehlampe03-000.tscn" id="68"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-drehstuhl01-090.tscn" id="69"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-drehstuhl01-180.tscn" id="70"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-drehstuhl03-090.tscn" id="71"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-drehstuhl03-180.tscn" id="72"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-drehstuhl04-000.tscn" id="73"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-fahrschublade01-000.tscn" id="74"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-fahrschublade02-000.tscn" id="75"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-fahrschublade02-090.tscn" id="76"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-komode01-090.tscn" id="77"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-komode02-000.tscn" id="78"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-komode02-090.tscn" id="79"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-komode03-000.tscn" id="80"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-komode04-000.tscn" id="81"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-komodeecke-090.tscn" id="82"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-papier02-090.tscn" id="83"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-papier03-000.tscn" id="84"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-pctower-000.tscn" id="85"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-pctower-090.tscn" id="86"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-pctower-180.tscn" id="87"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-regal01-090.tscn" id="88"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-regal02-000.tscn" id="89"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-regal03-090.tscn" id="90"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch01-000.tscn" id="91"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch01-270.tscn" id="92"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch02-090.tscn" id="93"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch02-180.tscn" id="94"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch03-000.tscn" id="95"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch03-090.tscn" id="96"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtisch05-000.tscn" id="97"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-schreibtischunterlage02-270.tscn" id="98"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-stuhl02-270.tscn" id="99"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-tischdeko-car-000.tscn" id="100"]
+[ext_resource type="PackedScene" path="res://scenes/objects/b-ro-tischdeko-cat-090.tscn" id="101"]
+[ext_resource type="PackedScene" path="res://scenes/objects/chef-komode-000.tscn" id="102"]
+[ext_resource type="PackedScene" path="res://scenes/objects/chef-schrankhoch-000.tscn" id="103"]
+[ext_resource type="PackedScene" path="res://scenes/objects/chef-schreibtisch02-270.tscn" id="104"]
+[ext_resource type="PackedScene" path="res://scenes/objects/chef-sessel01-270.tscn" id="105"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-hmregal01-270.tscn" id="106"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-hmregal02-270.tscn" id="107"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-kabeltrommel-180.tscn" id="108"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-karton01-090.tscn" id="109"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-karton02-090.tscn" id="110"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-openpc-180.tscn" id="111"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-staubsauger-270.tscn" id="112"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-werkbank-090.tscn" id="113"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-werkzeugkasten-000.tscn" id="114"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hausmeister-werkzeugwand-090.tscn" id="115"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-geschirrdreckig-180.tscn" id="116"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-geschirrtasse-000.tscn" id="117"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-geschirrteller-000.tscn" id="118"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenrolle-000.tscn" id="119"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenschrank01-000.tscn" id="120"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenschrank01-090.tscn" id="121"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenschrank02-000.tscn" id="122"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenschrank03-090.tscn" id="123"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenschrankecke-090.tscn" id="124"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenstuhl02-000.tscn" id="125"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chenstuhl02-090.tscn" id="126"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-k-chentisch02-000.tscn" id="127"]
+[ext_resource type="PackedScene" path="res://scenes/objects/k-che-kaffeedose-000.tscn" id="128"]
+[ext_resource type="PackedScene" path="res://scenes/objects/wc-putzwagen-000.tscn" id="129"]
+[ext_resource type="PackedScene" path="res://scenes/objects/wc-schrubber-090.tscn" id="130"]
+[ext_resource type="PackedScene" path="res://scenes/objects/wc-seifenspender01-090.tscn" id="131"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="132"]
+[ext_resource type="Resource" path="res://scenes/npc/profiles/boss.tres" id="133"]
+[ext_resource type="Resource" path="res://scenes/npc/profiles/female-employee-1.tres" id="134"]
+[ext_resource type="Resource" path="res://scenes/npc/profiles/female-employee-2.tres" id="135"]
+[ext_resource type="Resource" path="res://scenes/npc/profiles/janitor.tres" id="136"]
+[ext_resource type="Resource" path="res://scenes/npc/profiles/male-employee-1.tres" id="137"]
+[ext_resource type="Resource" path="res://scenes/npc/profiles/male-employee-2.tres" id="138"]
+[ext_resource type="Script" path="res://scenes/debug/fps_counter.gd" id="139"]
+[ext_resource type="Script" path="res://scenes/npc/npc_activity_point.gd" id="140"]
+[ext_resource type="Script" path="res://scenes/npc/npc_brain.gd" id="141"]
+[ext_resource type="Script" path="res://scenes/npc/thought_bubble.gd" id="142"]
+[ext_resource type="Script" path="res://scenes/shared/character_depth_compositor.gd" id="143"]
+[ext_resource type="Script" path="res://scenes/shared/collision_map_layer.gd" id="144"]
+[ext_resource type="Script" path="res://scenes/shared/map_tile_layer.gd" id="145"]
+[ext_resource type="Script" path="res://scenes/shared/world_depth_compositor.gd" id="146"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-collision.tres" id="147"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-floor.tres" id="148"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-glass.tres" id="149"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-walls.tres" id="150"]
+
+[node name="Main" type="Node"]
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="FloorTileMapLayer" type="TileMapLayer" parent="World"]
+z_index = -20
+tile_map_data = PackedByteArray("AAAAAAAAAwACAAAAAAABAAAAAwACAAAAAAACAAAAAwACAAAAAAADAAAAAwACAAAAAAAEAAAAAwACAAAAAAAFAAAAAwACAAAAAAAGAAAAAwABAAAAAAAHAAAAAwABAAAAAAAIAAAAAwABAAAAAAAJAAAAAwABAAAAAAAKAAAAAwABAAAAAAALAAAAAwABAAAAAAAMAAAAAwABAAAAAAANAAAAAwABAAAAAAAOAAAAAwAGAAAAAAAPAAAAAwAGAAAAAAAQAAAAAwAGAAAAAAARAAAAAwAGAAAAAAASAAAAAwAGAAAAAAATAAAAAwAGAAAAAAAUAAAAAwAGAAAAAAAAAAEAAwACAAAAAAABAAEAAwACAAAAAAACAAEAAwACAAAAAAADAAEAAwACAAAAAAAEAAEAAwACAAAAAAAFAAEAAwACAAAAAAAGAAEAAwABAAAAAAAHAAEAAwABAAAAAAAIAAEAAwABAAAAAAAJAAEAAwABAAAAAAAKAAEAAwABAAAAAAALAAEAAwABAAAAAAAMAAEAAwABAAAAAAANAAEAAwABAAAAAAAOAAEAAwAGAAAAAAAPAAEAAwAGAAAAAAAQAAEAAwAGAAAAAAARAAEAAwAGAAAAAAASAAEAAwAGAAAAAAATAAEAAwAGAAAAAAAUAAEAAwAGAAAAAAAAAAIAAwACAAAAAAABAAIAAwACAAAAAAACAAIAAwACAAAAAAADAAIAAwACAAAAAAAEAAIAAwACAAAAAAAFAAIAAwACAAAAAAAGAAIAAwABAAAAAAAHAAIAAwABAAAAAAAIAAIAAwABAAAAAAAJAAIAAwABAAAAAAAKAAIAAwABAAAAAAALAAIAAwABAAAAAAAMAAIAAwABAAAAAAANAAIAAwABAAAAAAAOAAIAAwAGAAAAAAAPAAIAAwAGAAAAAAAQAAIAAwAGAAAAAAARAAIAAwAGAAAAAAASAAIAAwAGAAAAAAATAAIAAwAGAAAAAAAUAAIAAwAGAAAAAAAAAAMAAwACAAAAAAABAAMAAwACAAAAAAACAAMAAwACAAAAAAADAAMAAwACAAAAAAAEAAMAAwACAAAAAAAFAAMAAwACAAAAAAAGAAMAAwABAAAAAAAHAAMAAwABAAAAAAAIAAMAAwABAAAAAAAJAAMAAwABAAAAAAAKAAMAAwABAAAAAAALAAMAAwABAAAAAAAMAAMAAwABAAAAAAANAAMAAwABAAAAAAAOAAMAAwAGAAAAAAAPAAMAAwAGAAAAAAAQAAMAAwAGAAAAAAARAAMAAwAGAAAAAAASAAMAAwAGAAAAAAATAAMAAwAGAAAAAAAUAAMAAwAGAAAAAAAAAAQAAwACAAAAAAABAAQAAwACAAAAAAACAAQAAwACAAAAAAADAAQAAwACAAAAAAAEAAQAAwACAAAAAAAFAAQAAwACAAAAAAAGAAQAAwABAAAAAAAHAAQAAwABAAAAAAAIAAQAAwABAAAAAAAJAAQAAwABAAAAAAAKAAQAAwABAAAAAAALAAQAAwABAAAAAAAMAAQAAwABAAAAAAANAAQAAwABAAAAAAAOAAQAAwAGAAAAAAAPAAQAAwAGAAAAAAAQAAQAAwAGAAAAAAARAAQAAwAGAAAAAAASAAQAAwAGAAAAAAATAAQAAwAGAAAAAAAUAAQAAwAGAAAAAAAAAAUAAwACAAAAAAABAAUAAwACAAAAAAACAAUAAwACAAAAAAADAAUAAwACAAAAAAAEAAUAAwACAAAAAAAFAAUAAwACAAAAAAAGAAUAAwABAAQAAAAHAAUAAwABAAIAAAAIAAUAAwABAAIAAAAJAAUAAwABAAIAAAAKAAUAAwAEAAMAAAALAAUAAwAEAAMAAAAMAAUAAwAEAAMAAAANAAUAAwABAAIAAAAOAAUAAwADAAEAAAAPAAUAAwAGAAAAAAAQAAUAAwAGAAAAAAARAAUAAwAGAAAAAAASAAUAAwAGAAAAAAATAAUAAwAGAAAAAAAUAAUAAwAGAAAAAAAAAAYAAwACAAAAAAABAAYAAwACAAAAAAACAAYAAwACAAAAAAADAAYAAwACAAAAAAAEAAYAAwACAAAAAAAFAAYAAwACAAAAAAAGAAYAAwABAAQAAAAHAAYAAwABAAIAAAAIAAYAAwABAAIAAAAJAAYAAwABAAIAAAAKAAYAAwABAAIAAAALAAYAAwABAAIAAAAMAAYAAwABAAIAAAANAAYAAwABAAIAAAAOAAYAAwADAAEAAAAPAAYAAwAGAAAAAAAQAAYAAwAGAAAAAAARAAYAAwAGAAAAAAASAAYAAwAGAAAAAAATAAYAAwAGAAAAAAAUAAYAAwAGAAAAAAAAAAcAAwACAAAAAAABAAcAAwACAAAAAAACAAcAAwACAAAAAAADAAcAAwACAAAAAAAEAAcAAwACAAAAAAAFAAcAAwACAAAAAAAGAAcAAwABAAQAAAAHAAcAAwABAAIAAAAIAAcAAwABAAIAAAAJAAcAAwABAAIAAAAKAAcAAwABAAIAAAALAAcAAwABAAIAAAAMAAcAAwABAAIAAAANAAcAAwABAAIAAAAOAAcAAwADAAEAAAAPAAcAAwAGAAAAAAAQAAcAAwAGAAAAAAARAAcAAwAGAAAAAAASAAcAAwAGAAAAAAATAAcAAwAGAAAAAAAUAAcAAwAGAAAAAAAAAAgAAwABAAAAAAABAAgAAwABAAAAAAACAAgAAwABAAAAAAADAAgAAwABAAAAAAAEAAgAAwABAAAAAAAFAAgAAwABAAAAAAAGAAgAAwABAAIAAAAHAAgAAwABAAIAAAAIAAgAAwABAAIAAAAJAAgAAwABAAAAAAAKAAgAAwABAAAAAAALAAgAAwABAAAAAAAMAAgAAwABAAAAAAANAAgAAwABAAAAAAAOAAgAAwABAAAAAAAPAAgAAwABAAAAAAAQAAgAAwABAAAAAAARAAgAAwABAAAAAAASAAgAAwABAAAAAAATAAgAAwABAAAAAAAUAAgAAwABAAAAAAAAAAkAAwABAAAAAAABAAkAAwABAAAAAAACAAkAAwABAAAAAAADAAkAAwABAAAAAAAEAAkAAwABAAAAAAAFAAkAAwABAAAAAAAGAAkAAwAHAAMAAAAHAAkAAwABAAIAAAAIAAkAAwABAAIAAAAJAAkAAwAFAAMAAAAKAAkAAwABAAAAAAALAAkAAwABAAAAAAAMAAkAAwABAAAAAAANAAkAAwABAAAAAAAOAAkAAwABAAAAAAAPAAkAAwABAAAAAAAQAAkAAwABAAAAAAARAAkAAwABAAAAAAASAAkAAwABAAAAAAATAAkAAwABAAAAAAAUAAkAAwABAAAAAAAAAAoAAwABAAAAAAABAAoAAwABAAAAAAACAAoAAwABAAAAAAADAAoAAwABAAAAAAAEAAoAAwABAAAAAAAFAAoAAwABAAAAAAAGAAoAAwAHAAMAAAAHAAoAAwABAAIAAAAIAAoAAwABAAIAAAAJAAoAAwAFAAMAAAAKAAoAAwABAAAAAAALAAoAAwABAAAAAAAMAAoAAwABAAAAAAANAAoAAwABAAAAAAAOAAoAAwABAAAAAAAPAAoAAwABAAAAAAAQAAoAAwABAAAAAAARAAoAAwABAAAAAAASAAoAAwABAAAAAAATAAoAAwABAAAAAAAUAAoAAwABAAAAAAAAAAsAAwABAAAAAAABAAsAAwABAAAAAAACAAsAAwABAAAAAAADAAsAAwABAAAAAAAEAAsAAwABAAAAAAAFAAsAAwABAAAAAAAGAAsAAwAHAAMAAAAHAAsAAwABAAIAAAAIAAsAAwABAAIAAAAJAAsAAwAFAAMAAAAKAAsAAwABAAAAAAALAAsAAwABAAAAAAAMAAsAAwABAAAAAAANAAsAAwABAAAAAAAOAAsAAwABAAAAAAAPAAsAAwABAAAAAAAQAAsAAwABAAAAAAARAAsAAwABAAAAAAASAAsAAwABAAAAAAATAAsAAwABAAAAAAAUAAsAAwABAAAAAAAAAAwAAwABAAAAAAABAAwAAwABAAAAAAACAAwAAwABAAAAAAADAAwAAwABAAAAAAAEAAwAAwABAAAAAAAFAAwAAwABAAAAAAAGAAwAAwABAAIAAAAHAAwAAwABAAIAAAAIAAwAAwABAAIAAAAJAAwAAwABAAAAAAAKAAwAAwABAAAAAAALAAwAAwABAAAAAAAMAAwAAwABAAAAAAANAAwAAwABAAAAAAAOAAwAAwABAAAAAAAPAAwAAwABAAAAAAAQAAwAAwABAAAAAAARAAwAAwABAAAAAAASAAwAAwABAAAAAAATAAwAAwABAAAAAAAUAAwAAwABAAAAAAAAAA0AAwABAAAAAAABAA0AAwABAAAAAAACAA0AAwABAAAAAAADAA0AAwABAAAAAAAEAA0AAwABAAAAAAAFAA0AAwABAAAAAAAGAA0AAwABAAIAAAAHAA0AAwABAAIAAAAIAA0AAwABAAIAAAAJAA0AAwABAAAAAAAKAA0AAwABAAAAAAALAA0AAwABAAAAAAAMAA0AAwABAAAAAAANAA0AAwABAAAAAAAOAA0AAwABAAAAAAAPAA0AAwABAAAAAAAQAA0AAwABAAAAAAARAA0AAwABAAAAAAASAA0AAwABAAAAAAATAA0AAwABAAAAAAAUAA0AAwABAAAAAAAAAA4AAwABAAAAAAABAA4AAwABAAAAAAACAA4AAwABAAAAAAADAA4AAwABAAAAAAAEAA4AAwABAAAAAAAFAA4AAwABAAAAAAAGAA4AAwABAAIAAAAHAA4AAwABAAIAAAAIAA4AAwABAAIAAAAJAA4AAwABAAAAAAAKAA4AAwABAAAAAAALAA4AAwABAAAAAAAMAA4AAwABAAAAAAANAA4AAwABAAAAAAAOAA4AAwABAAAAAAAPAA4AAwABAAAAAAAQAA4AAwABAAAAAAARAA4AAwABAAAAAAASAA4AAwABAAAAAAATAA4AAwABAAAAAAAUAA4AAwABAAAAAAAAAA8AAwABAAAAAAABAA8AAwABAAAAAAACAA8AAwABAAAAAAADAA8AAwABAAAAAAAEAA8AAwABAAAAAAAFAA8AAwABAAAAAAAGAA8AAwAHAAMAAAAHAA8AAwABAAIAAAAIAA8AAwABAAIAAAAJAA8AAwAHAAEAAAAKAA8AAwAHAAAAAAALAA8AAwAHAAAAAAAMAA8AAwAHAAAAAAANAA8AAwAHAAAAAAAOAA8AAwAHAAAAAAAPAA8AAwABAAAAAAAQAA8AAwABAAAAAAARAA8AAwABAAAAAAASAA8AAwABAAAAAAATAA8AAwABAAAAAAAUAA8AAwABAAAAAAAAABAAAwABAAAAAAABABAAAwABAAAAAAACABAAAwABAAAAAAADABAAAwABAAAAAAAEABAAAwABAAAAAAAFABAAAwABAAAAAAAGABAAAwAHAAMAAAAHABAAAwABAAIAAAAIABAAAwABAAIAAAAJABAAAwAHAAEAAAAKABAAAwAHAAAAAAALABAAAwAHAAAAAAAMABAAAwAHAAAAAAANABAAAwAHAAAAAAAOABAAAwAHAAAAAAAPABAAAwABAAAAAAAQABAAAwABAAAAAAARABAAAwABAAAAAAASABAAAwABAAAAAAATABAAAwABAAAAAAAUABAAAwABAAAAAAAAABEAAwABAAAAAAABABEAAwABAAAAAAACABEAAwABAAAAAAADABEAAwABAAAAAAAEABEAAwABAAAAAAAFABEAAwABAAAAAAAGABEAAwAHAAMAAAAHABEAAwABAAIAAAAIABEAAwABAAIAAAAJABEAAwAHAAEAAAAKABEAAwAHAAAAAAALABEAAwAHAAAAAAAMABEAAwAHAAAAAAANABEAAwAHAAAAAAAOABEAAwAHAAAAAAAPABEAAwABAAAAAAAQABEAAwABAAAAAAARABEAAwABAAAAAAASABEAAwABAAAAAAATABEAAwABAAAAAAAUABEAAwABAAAAAAAAABIAAwABAAAAAAABABIAAwABAAAAAAACABIAAwABAAAAAAADABIAAwABAAAAAAAEABIAAwABAAAAAAAFABIAAwABAAAAAAAGABIAAwAGAAMAAAAHABIAAwAGAAMAAAAIABIAAwAGAAMAAAAJABIAAwAHAAAAAAAKABIAAwAHAAAAAAALABIAAwAHAAAAAAAMABIAAwAHAAAAAAANABIAAwAHAAAAAAAOABIAAwAHAAAAAAAPABIAAwABAAAAAAAQABIAAwABAAAAAAARABIAAwABAAAAAAASABIAAwABAAAAAAATABIAAwABAAAAAAAUABIAAwABAAAAAAAAABMAAwABAAAAAAABABMAAwABAAAAAAACABMAAwABAAAAAAADABMAAwABAAAAAAAEABMAAwABAAAAAAAFABMAAwABAAAAAAAGABMAAwABAAAAAAAHABMAAwABAAAAAAAIABMAAwABAAAAAAAJABMAAwAHAAAAAAAKABMAAwAHAAAAAAALABMAAwAHAAAAAAAMABMAAwAHAAAAAAANABMAAwAHAAAAAAAOABMAAwAHAAAAAAAPABMAAwABAAAAAAAQABMAAwABAAAAAAARABMAAwABAAAAAAASABMAAwABAAAAAAATABMAAwABAAAAAAAUABMAAwABAAAAAAAAABQAAwABAAAAAAABABQAAwABAAAAAAACABQAAwABAAAAAAADABQAAwABAAAAAAAEABQAAwABAAAAAAAFABQAAwABAAAAAAAGABQAAwABAAAAAAAHABQAAwABAAAAAAAIABQAAwABAAAAAAAJABQAAwAHAAAAAAAKABQAAwAHAAAAAAALABQAAwAHAAAAAAAMABQAAwAHAAAAAAANABQAAwAHAAAAAAAOABQAAwAHAAAAAAAPABQAAwABAAAAAAAQABQAAwABAAAAAAARABQAAwABAAAAAAASABQAAwABAAAAAAATABQAAwABAAAAAAAUABQAAwABAAAAAAAAABUAAwABAAAAAAABABUAAwABAAAAAAACABUAAwABAAAAAAADABUAAwABAAAAAAAEABUAAwABAAAAAAAFABUAAwABAAAAAAAGABUAAwABAAAAAAAHABUAAwABAAAAAAAIABUAAwABAAAAAAAJABUAAwAHAAAAAAAKABUAAwAHAAAAAAALABUAAwAHAAAAAAAMABUAAwAHAAAAAAANABUAAwAHAAAAAAAOABUAAwAHAAAAAAAPABUAAwABAAAAAAAQABUAAwABAAAAAAARABUAAwABAAAAAAASABUAAwABAAAAAAATABUAAwABAAAAAAAUABUAAwABAAAAAAAAABYAAwABAAAAAAABABYAAwABAAAAAAACABYAAwABAAAAAAADABYAAwABAAAAAAAEABYAAwABAAAAAAAFABYAAwABAAAAAAAGABYAAwABAAAAAAAHABYAAwABAAAAAAAIABYAAwABAAAAAAAJABYAAwAHAAAAAAAKABYAAwAHAAAAAAALABYAAwAHAAAAAAAMABYAAwAHAAAAAAANABYAAwAHAAAAAAAOABYAAwAHAAAAAAAPABYAAwABAAAAAAAQABYAAwABAAAAAAARABYAAwABAAAAAAASABYAAwABAAAAAAATABYAAwABAAAAAAAUABYAAwABAAAAAAA=")
+tile_set = ExtResource("148")
+
+[node name="WallTileMapLayer" type="TileMapLayer" parent="World"]
+z_index = -5
+tile_map_data = PackedByteArray("AAAAAAAAAwAHAAEAAAABAAAAAwAFAAEAAAACAAAAAwAFAAEAAAADAAAAAwAFAAEAAAAEAAAAAwAFAAEAAAAFAAAAAwAFAAEAAAAGAAAAAwAFAAIAAAAHAAAAAwAFAAEAAAAIAAAAAwAFAAEAAAAJAAAAAwAFAAEAAAAKAAAAAwAFAAEAAAALAAAAAwAFAAEAAAAMAAAAAwAFAAEAAAANAAAAAwAFAAEAAAAOAAAAAwAFAAIAAAAPAAAAAwAFAAEAAAAQAAAAAwAFAAEAAAARAAAAAwAFAAEAAAASAAAAAwAFAAEAAAATAAAAAwAFAAEAAAAUAAAAAwAAAAIAAAAAAAEAAwADAAEAAAAGAAEAAwAAAAAAAAAOAAEAAwAAAAAAAAAUAAEAAwAEAAEAAAAAAAIAAwADAAEAAAAGAAIAAwAAAAAAAAAOAAIAAwAAAAAAAAAUAAIAAwAEAAEAAAAAAAMAAwADAAEAAAAGAAMAAwAAAAAAAAAOAAMAAwAAAAAAAAAUAAMAAwAEAAEAAAAAAAQAAwADAAEAAAAGAAQAAwAAAAAAAAAOAAQAAwAAAAAAAAAUAAQAAwAEAAEAAAAAAAUAAwADAAEAAAAGAAUAAwAGAAAAAAAHAAUAAwABAAAAAAAIAAUAAwABAAAAAAAJAAUAAwABAAAAAAAKAAUAAwABAAAAAAANAAUAAwABAAAAAAAOAAUAAwAHAAAAAAAUAAUAAwAEAAEAAAAAAAYAAwADAAEAAAAUAAYAAwAEAAEAAAAAAAcAAwADAAEAAAAUAAcAAwAEAAEAAAAAAAgAAwADAAIAAAABAAgAAwABAAAAAAACAAgAAwABAAAAAAADAAgAAwABAAAAAAAEAAgAAwABAAAAAAAFAAgAAwABAAAAAAAGAAgAAwAHAAAAAAAJAAgAAwACAAAAAAAKAAgAAwABAAAAAAALAAgAAwABAAAAAAAMAAgAAwABAAAAAAANAAgAAwABAAAAAAAOAAgAAwABAAEAAAAPAAgAAwAAAAEAAAAQAAgAAwABAAAAAAARAAgAAwABAAAAAAASAAgAAwABAAAAAAATAAgAAwABAAAAAAAUAAgAAwAEAAIAAAAAAAkAAwADAAEAAAAGAAkAAwAAAAAAAAAJAAkAAwAAAAAAAAAUAAkAAwAEAAEAAAAAAAoAAwADAAEAAAAUAAoAAwAEAAEAAAAAAAsAAwADAAEAAAAPAAsAAwAAAAAAAAAUAAsAAwAEAAEAAAAAAAwAAwADAAEAAAAGAAwAAwAAAAAAAAAJAAwAAwAAAAAAAAAPAAwAAwAEAAAAAAAQAAwAAwABAAAAAAARAAwAAwABAAAAAAASAAwAAwABAAAAAAATAAwAAwABAAAAAAAUAAwAAwAEAAIAAAAAAA0AAwADAAEAAAAGAA0AAwAAAAAAAAAJAA0AAwAAAAAAAAAUAA0AAwAEAAEAAAAAAA4AAwADAAEAAAAGAA4AAwAAAAAAAAAJAA4AAwAAAAAAAAAUAA4AAwAEAAEAAAAAAA8AAwADAAIAAAABAA8AAwABAAAAAAACAA8AAwABAAAAAAADAA8AAwABAAAAAAAGAA8AAwAHAAAAAAAJAA8AAwAGAAAAAAAKAA8AAwABAAAAAAALAA8AAwABAAAAAAAMAA8AAwABAAAAAAANAA8AAwABAAAAAAAOAA8AAwABAAAAAAAPAA8AAwAAAAEAAAASAA8AAwABAAAAAAATAA8AAwABAAAAAAAUAA8AAwAEAAIAAAAAABAAAwADAAEAAAAPABAAAwAAAAAAAAAUABAAAwAEAAEAAAAAABEAAwADAAEAAAAPABEAAwAAAAAAAAAUABEAAwAEAAEAAAAAABIAAwADAAEAAAAGABIAAwAGAAAAAAAJABIAAwAHAAAAAAAPABIAAwAAAAAAAAAUABIAAwAEAAEAAAAAABMAAwADAAEAAAAGABMAAwAAAAAAAAAJABMAAwAAAAAAAAAPABMAAwAAAAAAAAAUABMAAwAEAAEAAAAAABQAAwADAAEAAAAGABQAAwAAAAAAAAAJABQAAwAAAAAAAAAPABQAAwAAAAAAAAAUABQAAwAEAAEAAAAAABUAAwADAAEAAAAGABUAAwAAAAAAAAAJABUAAwAAAAAAAAAPABUAAwAAAAAAAAAUABUAAwAEAAEAAAAAABYAAwABAAIAAAABABYAAwAGAAEAAAACABYAAwAGAAEAAAADABYAAwAGAAEAAAAEABYAAwAGAAEAAAAFABYAAwAGAAEAAAAGABYAAwAGAAIAAAAHABYAAwAGAAEAAAAIABYAAwAGAAEAAAAJABYAAwAGAAIAAAAKABYAAwAGAAEAAAALABYAAwAGAAEAAAAMABYAAwAGAAEAAAANABYAAwAGAAEAAAAOABYAAwAGAAEAAAAPABYAAwAGAAIAAAAQABYAAwAGAAEAAAARABYAAwAGAAEAAAASABYAAwAGAAEAAAATABYAAwAGAAEAAAAUABYAAwACAAIAAAA=")
+tile_set = ExtResource("150")
+script = ExtResource("145")
+
+[node name="GlassTileMapLayer" type="TileMapLayer" parent="World"]
+z_index = -4
+tile_set = ExtResource("149")
+
+[node name="Objects" type="Node2D" parent="World"]
+
+[node name="Object008Werkbank" parent="World/Objects" instance=ExtResource("113")]
+position = Vector2(518, 695)
+metadata/original_kind = "0x02000da1"
+metadata/original_object_id = "0x02000da0"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "WERKBANK"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_WERKBANK_IDLE_090_Werkbank#Idle#090#"
+metadata/original_tile_position = Vector2(18.875, 9.083333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 8
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object008Werkbank"]
+script = ExtResource("140")
+item_type = 218
+room_id = 5
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object009Werkzeugkasten" parent="World/Objects" instance=ExtResource("114")]
+position = Vector2(455, 646)
+metadata/original_kind = "0x00000db0"
+metadata/original_object_id = "0x00000db0"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "WERKZEUGKASTEN"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_WERKZEUGKASTEN_IDLE_000_Werkzeugkasten#Idle#000#"
+metadata/original_tile_position = Vector2(17.197916, 8.71875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 9
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object009Werkzeugkasten"]
+script = ExtResource("140")
+item_type = 219
+room_id = 5
+action_ids = PackedInt32Array()
+
+[node name="Object010Staubsauger" parent="World/Objects" instance=ExtResource("112")]
+position = Vector2(251, 666)
+metadata/original_kind = "0x00000d93"
+metadata/original_object_id = "0x00000d90"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "STAUBSAUGER"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_STAUBSAUGER_IDLE_270_Staubsauger#Idle#270#"
+metadata/original_tile_position = Vector2(15.489583, 11.260417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 10
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object010Staubsauger"]
+script = ExtResource("140")
+item_type = 217
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object011Karton01" parent="World/Objects" instance=ExtResource("109")]
+position = Vector2(423, 623)
+metadata/original_kind = "0x00000d11"
+metadata/original_object_id = "0x00000d10"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "KARTON01"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_KARTON01_IDLE_090_Karton01#Idle#090#"
+metadata/original_tile_position = Vector2(16.385416, 8.572917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 11
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object011Karton01"]
+script = ExtResource("140")
+item_type = 209
+room_id = 5
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object012Kabeltrommel" parent="World/Objects" instance=ExtResource("108")]
+position = Vector2(464, 670)
+metadata/original_kind = "0x00000d02"
+metadata/original_object_id = "0x00000d00"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "KABELTROMMEL"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_KABELTROMMEL_IDLE_180_Kabeltrommel01#Idle#180#"
+metadata/original_tile_position = Vector2(17.791666, 9.125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 12
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object012Kabeltrommel"]
+script = ExtResource("140")
+item_type = 208
+room_id = 5
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object013Hmregal02" parent="World/Objects" instance=ExtResource("107")]
+position = Vector2(346, 737)
+metadata/original_kind = "0x00000cf3"
+metadata/original_object_id = "0x00000cf0"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "HMREGAL02"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_HMREGAL02_IDLE_270_HMRegal02#Idle#270#"
+metadata/original_tile_position = Vector2(17.958334, 11.75)
+metadata/original_height = 0.0
+metadata/original_instance_id = 13
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object013Hmregal02"]
+script = ExtResource("140")
+item_type = 207
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object014Hmregal01" parent="World/Objects" instance=ExtResource("106")]
+position = Vector2(423, 775)
+metadata/original_kind = "0x00000ce3"
+metadata/original_object_id = "0x00000ce0"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "HMREGAL01"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_HMREGAL01_IDLE_270_HMRegal01#Idle#270#"
+metadata/original_tile_position = Vector2(19.552084, 11.739583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 14
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object014Hmregal01"]
+script = ExtResource("140")
+item_type = 206
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object015Openpc" parent="World/Objects" instance=ExtResource("111")]
+position = Vector2(534, 714)
+metadata/original_kind = "0x00000ca2"
+metadata/original_object_id = "0x00000ca0"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "OPENPC"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_OPENPC_IDLE_180_AuferPC#Idle#180#"
+metadata/original_tile_position = Vector2(19.4375, 9.3125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 15
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object015Openpc"]
+script = ExtResource("140")
+item_type = 202
+room_id = 5
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object016Karton02" parent="World/Objects" instance=ExtResource("110")]
+position = Vector2(394, 608)
+metadata/original_kind = "0x00000d21"
+metadata/original_object_id = "0x00000d20"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "KARTON02"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_KARTON02_IDLE_090_Karton02#Idle#090#"
+metadata/original_tile_position = Vector2(15.770833, 8.5625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 16
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object016Karton02"]
+script = ExtResource("140")
+item_type = 210
+room_id = 5
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object017Server" parent="World/Objects" instance=ExtResource("35")]
+position = Vector2(-653, 705)
+metadata/original_kind = "0x00020f80"
+metadata/original_object_id = "0x00020f80"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "SERVER"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SERVER_IDLE_000_Server#Idle#000#"
+metadata/original_tile_position = Vector2(6.885417, 21.489584)
+metadata/original_height = 0.0
+metadata/original_instance_id = 17
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object017Server"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 2
+item_type = 248
+room_id = 4
+active = true
+action_ids = PackedInt32Array(96, 97, 98, 99)
+
+[node name="Object018Generalschluessel" parent="World/Objects" instance=ExtResource("12")]
+position = Vector2(-12, 605)
+metadata/original_kind = "0x00000f60"
+metadata/original_object_id = "0x00000f60"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "GENERALSCHLUESSEL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_GENERALSCHLUESSEL_IDLE_000_GeneralSchl_ssel#Idle#000#"
+metadata/original_tile_position = Vector2(11.479167, 12.729167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 18
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object018Generalschluessel"]
+script = ExtResource("140")
+item_type = 246
+room_id = 2
+active = true
+action_ids = PackedInt32Array(92)
+
+[node name="Object019Werkzeugwand" parent="World/Objects" instance=ExtResource("115")]
+position = Vector2(484, 627)
+metadata/original_kind = "0x05000dc1"
+metadata/original_object_id = "0x05000dc0"
+metadata/original_object_category = 8
+metadata/original_sprite_name = "WERKZEUGWAND"
+metadata/original_source_sprite = "CO_OBJECTS_HAUSMEISTER_WERKZEUGWAND_IDLE_090_Werkzeugwand#Idle#090#"
+metadata/original_tile_position = Vector2(17.104166, 8.020833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 19
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object019Werkzeugwand"]
+script = ExtResource("140")
+item_type = 220
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object020Schreibtisch02" parent="World/Objects" instance=ExtResource("104")]
+position = Vector2(72, 180.99998)
+metadata/original_kind = "0x07000783"
+metadata/original_object_id = "0x07000780"
+metadata/original_object_category = 4
+metadata/original_sprite_name = "SCHREIBTISCH02"
+metadata/original_source_sprite = "CO_OBJECTS_CHEF_SCHREIBTISCH02_IDLE_270_ChefSchreibtisch02#270"
+metadata/original_tile_position = Vector2(3.520833, 3.020833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 20
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object020Schreibtisch02"]
+script = ExtResource("140")
+item_type = 120
+room_id = 8
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object021Sessel01" parent="World/Objects" instance=ExtResource("105")]
+position = Vector2(93.999985, 142)
+metadata/original_kind = "0x01060793"
+metadata/original_object_id = "0x01060790"
+metadata/original_object_category = 4
+metadata/original_sprite_name = "SESSEL01"
+metadata/original_source_sprite = "CO_OBJECTS_CHEF_SESSEL01_IDLE_270_ChefSessel01#270#"
+metadata/original_tile_position = Vector2(2.9375, 1.979167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 21
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object021Sessel01"]
+position = Vector2(48, -23.999992)
+script = ExtResource("140")
+category = 6
+item_type = 121
+room_id = 8
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object022Schrankhoch" parent="World/Objects" instance=ExtResource("103")]
+position = Vector2(-290, 213)
+metadata/original_kind = "0x07000760"
+metadata/original_object_id = "0x07000760"
+metadata/original_object_category = 4
+metadata/original_sprite_name = "SCHRANKHOCH"
+metadata/original_source_sprite = "CO_OBJECTS_CHEF_SCHRANKHOCH_IDLE_000_ChefSchrankhoch#000"
+metadata/original_tile_position = Vector2(0.416667, 7.458333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 22
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object022Schrankhoch"]
+script = ExtResource("140")
+item_type = 118
+action_ids = PackedInt32Array()
+
+[node name="Object023Schrankhoch" parent="World/Objects" instance=ExtResource("103")]
+position = Vector2(-150, 144.99998)
+metadata/original_kind = "0x07000760"
+metadata/original_object_id = "0x07000760"
+metadata/original_object_category = 4
+metadata/original_sprite_name = "SCHRANKHOCH"
+metadata/original_source_sprite = "CO_OBJECTS_CHEF_SCHRANKHOCH_IDLE_000_ChefSchrankhoch#000"
+metadata/original_tile_position = Vector2(0.458333, 4.583333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 23
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object023Schrankhoch"]
+script = ExtResource("140")
+item_type = 118
+action_ids = PackedInt32Array()
+
+[node name="Object024Komode" parent="World/Objects" instance=ExtResource("102")]
+position = Vector2(-220.99998, 180)
+metadata/original_kind = "0x07000720"
+metadata/original_object_id = "0x07000720"
+metadata/original_object_category = 4
+metadata/original_sprite_name = "KOMODE"
+metadata/original_source_sprite = "CO_OBJECTS_CHEF_KOMODE_IDLE_000_ChefKomode#000"
+metadata/original_tile_position = Vector2(0.447917, 6.052083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 24
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object024Komode"]
+script = ExtResource("140")
+item_type = 114
+action_ids = PackedInt32Array()
+
+[node name="Object025Aquarium" parent="World/Objects" instance=ExtResource("3")]
+position = Vector2(272, 160)
+metadata/original_kind = "0x000907c1"
+metadata/original_object_id = "0x000907c0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "AQUARIUM"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_AQUARIUM_IDLE_090_Aquarium#090#Idle"
+metadata/original_tile_position = Vector2(5.166667, 0.5)
+metadata/original_height = 0.0
+metadata/original_instance_id = 25
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object025Aquarium"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 124
+room_id = 8
+orientation = 1
+active = true
+action_ids = PackedInt32Array(4, 5, 6)
+
+[node name="Object026Aushang" parent="World/Objects" instance=ExtResource("4")]
+position = Vector2(-76.99997, 376)
+metadata/original_kind = "0x000907d0"
+metadata/original_object_id = "0x000907d0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "AUSHANG"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_AUSHANG_IDLE_000_Aushang#Idle#000#"
+metadata/original_tile_position = Vector2(6.03125, 8.635416)
+metadata/original_height = 0.0
+metadata/original_instance_id = 26
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object026Aushang"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 125
+active = true
+action_ids = PackedInt32Array(7)
+
+[node name="Object027Chefkoffer" parent="World/Objects" instance=ExtResource("5")]
+position = Vector2(108.999985, 205)
+metadata/original_kind = "0x000008a0"
+metadata/original_object_id = "0x000008a0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "CHEFKOFFER"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_CHEFKOFFER_IDLE_000_ChefKoffer#000#"
+metadata/original_tile_position = Vector2(4.40625, 3.135417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 27
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object027Chefkoffer"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+item_type = 138
+room_id = 8
+active = true
+action_ids = PackedInt32Array(3, 119, 54, 81)
+
+[node name="Object028Chefurkunde" parent="World/Objects" instance=ExtResource("6")]
+position = Vector2(-222.00002, 157)
+metadata/original_kind = "0x05090b10"
+metadata/original_object_id = "0x05090b10"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "CHEFURKUNDE"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_CHEFURKUNDE_IDLE_000_Urkunde01#Idle#000#"
+metadata/original_tile_position = Vector2(-0.041667, 5.583333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 28
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object028Chefurkunde"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 177
+active = true
+action_ids = PackedInt32Array(8)
+
+[node name="Object029Flipchart" parent="World/Objects" instance=ExtResource("11")]
+position = Vector2(75, 54)
+metadata/original_kind = "0x05020f01"
+metadata/original_object_id = "0x05020f00"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "FLIPCHART"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FLIPCHART_IDLE_090_Flipchart#Idle#090#"
+metadata/original_tile_position = Vector2(0.90625, 0.34375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 29
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object029Flipchart"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 2
+item_type = 240
+orientation = 1
+active = true
+action_ids = PackedInt32Array(64)
+
+[node name="Object030Schwarzbrett" parent="World/Objects" instance=ExtResource("34")]
+position = Vector2(189, 95.000015)
+metadata/original_kind = "0x05090f71"
+metadata/original_object_id = "0x05090f70"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "SCHWARZBRETT"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SCHWARZBRETT_IDLE_090_Schwarzbrett#Idle#090#"
+metadata/original_tile_position = Vector2(2.947917, 0.010417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 30
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object030Schwarzbrett"]
+position = Vector2(-33.600006, 16.800003)
+script = ExtResource("140")
+category = 9
+item_type = 247
+orientation = 1
+active = true
+action_ids = PackedInt32Array(93, 94, 95)
+
+[node name="Object031Kuchenschrankecke" parent="World/Objects" instance=ExtResource("124")]
+position = Vector2(719, 409)
+metadata/original_kind = "0x07000c11"
+metadata/original_object_id = "0x07000c10"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENSCHRANKECKE"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSCHRANKECKE_IDLE_090_K_chenschrankEcke#Idle#090#"
+metadata/original_tile_position = Vector2(15.010417, 1.03125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 31
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object031Kuchenschrankecke"]
+script = ExtResource("140")
+item_type = 193
+room_id = 1
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object032Kuchenschrank01" parent="World/Objects" instance=ExtResource("120")]
+position = Vector2(659, 439)
+metadata/original_kind = "0x070005a0"
+metadata/original_object_id = "0x070005a0"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENSCHRANK01"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSCHRANK01_IDLE_000_K_chenschrank01#000"
+metadata/original_tile_position = Vector2(15.010417, 2.28125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 32
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object032Kuchenschrank01"]
+script = ExtResource("140")
+item_type = 90
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object033Kuchenschrank01" parent="World/Objects" instance=ExtResource("121")]
+position = Vector2(781, 439)
+metadata/original_kind = "0x070005a1"
+metadata/original_object_id = "0x070005a0"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENSCHRANK01"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSCHRANK01_IDLE_090_K_chenschrank01#090"
+metadata/original_tile_position = Vector2(16.28125, 1.010417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 33
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object033Kuchenschrank01"]
+script = ExtResource("140")
+item_type = 90
+room_id = 1
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object034Kuchenschrank02" parent="World/Objects" instance=ExtResource("122")]
+position = Vector2(574, 484)
+metadata/original_kind = "0x070005b0"
+metadata/original_object_id = "0x070005b0"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENSCHRANK02"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSCHRANK02_IDLE_000_K_chenschrank02#000"
+metadata/original_tile_position = Vector2(15.0625, 4.104167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 34
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object034Kuchenschrank02"]
+script = ExtResource("140")
+item_type = 91
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object035Spuele" parent="World/Objects" instance=ExtResource("38")]
+position = Vector2(859, 477)
+metadata/original_kind = "0x07040c51"
+metadata/original_object_id = "0x07040c50"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "SPUELE"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SPUELE_IDLE_090_Sp_le#Idle#090#"
+metadata/original_tile_position = Vector2(17.885416, 0.989583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 35
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object035Spuele"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 4
+item_type = 197
+room_id = 1
+orientation = 1
+active = true
+action_ids = PackedInt32Array(135)
+
+[node name="Object036Kuhlschrank" parent="World/Objects" instance=ExtResource("16")]
+position = Vector2(604, 465)
+metadata/original_kind = "0x08040960"
+metadata/original_object_id = "0x08040960"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "KÜHLSCHRANK"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_K_HLSCHRANK_IDLE_000_K_hlschrank#Idle#000#"
+metadata/original_tile_position = Vector2(14.979167, 3.395833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 36
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object036Kuhlschrank"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 4
+item_type = 150
+room_id = 1
+active = true
+action_ids = PackedInt32Array(30, 31, 84, 128, 83)
+
+[node name="Object037Herd" parent="World/Objects" instance=ExtResource("15")]
+position = Vector2(825, 460)
+metadata/original_kind = "0x080408d1"
+metadata/original_object_id = "0x080408d0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "HERD"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_HERD_IDLE_090_Herd#Idle#090#"
+metadata/original_tile_position = Vector2(17.177084, 0.989583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 37
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object037Herd"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 4
+item_type = 141
+room_id = 1
+orientation = 1
+active = true
+action_ids = PackedInt32Array(21)
+
+[node name="Object038Microwave" parent="World/Objects" instance=ExtResource("18")]
+position = Vector2(926, 514)
+metadata/original_kind = "0x08040971"
+metadata/original_object_id = "0x08040970"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MICROWAVE"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MICROWAVE_IDLE_090_Microwave#Idle#090#"
+metadata/original_tile_position = Vector2(19.354166, 1.0625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 38
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object038Microwave"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 4
+item_type = 151
+room_id = 1
+orientation = 1
+active = true
+action_ids = PackedInt32Array(32, 86)
+
+[node name="Object039Spultabs" parent="World/Objects" instance=ExtResource("36")]
+position = Vector2(768, 432)
+metadata/original_kind = "0x00000aa0"
+metadata/original_object_id = "0x00000aa0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "SPÜLTABS"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SP_LTABS_IDLE_000_Sp_ltabs#Idle#000#"
+metadata/original_tile_position = Vector2(16, 1)
+metadata/original_height = 0.0
+metadata/original_instance_id = 39
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object039Spultabs"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+item_type = 170
+room_id = 1
+active = true
+action_ids = PackedInt32Array(41)
+
+[node name="Object040Spuelmaschine" parent="World/Objects" instance=ExtResource("39")]
+position = Vector2(540, 501)
+metadata/original_kind = "0x07040c40"
+metadata/original_object_id = "0x07040c40"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "SPUELMASCHINE"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SPUELMASCHINE_IDLE_000_Sp_lmaschine#Idle#000#"
+metadata/original_tile_position = Vector2(15.0625, 4.8125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 40
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object040Spuelmaschine"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 4
+item_type = 196
+room_id = 1
+active = true
+action_ids = PackedInt32Array(102)
+
+[node name="Object041Kuchentisch02" parent="World/Objects" instance=ExtResource("127")]
+position = Vector2(681, 625)
+metadata/original_kind = "0x01000600"
+metadata/original_object_id = "0x01000600"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENTISCH02"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENTISCH02_IDLE_000_K_chentisch02#000"
+metadata/original_tile_position = Vector2(19.114584, 5.927083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 41
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object041Kuchentisch02"]
+script = ExtResource("140")
+item_type = 96
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object042Kuchentisch02" parent="World/Objects" instance=ExtResource("127")]
+position = Vector2(737, 597)
+metadata/original_kind = "0x01000600"
+metadata/original_object_id = "0x01000600"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENTISCH02"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENTISCH02_IDLE_000_K_chentisch02#000"
+metadata/original_tile_position = Vector2(19.114584, 4.760417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 42
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object042Kuchentisch02"]
+script = ExtResource("140")
+item_type = 96
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object043Kuchenstuhl02" parent="World/Objects" instance=ExtResource("126")]
+position = Vector2(814, 558)
+metadata/original_kind = "0x010005e1"
+metadata/original_object_id = "0x010005e0"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENSTUHL02"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSTUHL02_IDLE_090_K_chenstuhl02#090#"
+metadata/original_tile_position = Vector2(19.104166, 3.145833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 43
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object043Kuchenstuhl02"]
+script = ExtResource("140")
+item_type = 94
+room_id = 1
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object044Kuchenstuhl02" parent="World/Objects" instance=ExtResource("125")]
+position = Vector2(629, 604)
+metadata/original_kind = "0x010005e0"
+metadata/original_object_id = "0x010005e0"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENSTUHL02"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSTUHL02_IDLE_000_K_chenstuhl02#000#"
+metadata/original_tile_position = Vector2(18.135416, 6.03125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 44
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object044Kuchenstuhl02"]
+script = ExtResource("140")
+item_type = 94
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object045Kuchenstuhl02" parent="World/Objects" instance=ExtResource("125")]
+position = Vector2(719, 562)
+metadata/original_kind = "0x010005e0"
+metadata/original_object_id = "0x010005e0"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENSTUHL02"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSTUHL02_IDLE_000_K_chenstuhl02#000#"
+metadata/original_tile_position = Vector2(18.197916, 4.21875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 45
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object045Kuchenstuhl02"]
+script = ExtResource("140")
+item_type = 94
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object046Schreibtisch02" parent="World/Objects" instance=ExtResource("94")]
+position = Vector2(267, 347)
+metadata/original_kind = "0x020003d2"
+metadata/original_object_id = "0x020003d0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_180_Schreibtisch02#180"
+metadata/original_tile_position = Vector2(9.010417, 4.447917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 46
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object046Schreibtisch02"]
+script = ExtResource("140")
+item_type = 61
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object047Drehstuhl01" parent="World/Objects" instance=ExtResource("70")]
+position = Vector2(285, 289)
+metadata/original_kind = "0x01060442"
+metadata/original_object_id = "0x01060440"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "DREHSTUHL01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL01_IDLE_180_DREHSTUHL01#180#"
+metadata/original_tile_position = Vector2(7.989583, 3.052083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 47
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object047Drehstuhl01"]
+position = Vector2(-47.999985, -24)
+script = ExtResource("140")
+category = 6
+item_type = 68
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object048Regal01" parent="World/Objects" instance=ExtResource("88")]
+position = Vector2(343, 199)
+metadata/original_kind = "0x07000371"
+metadata/original_object_id = "0x07000370"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "REGAL01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_REGAL01_IDLE_090_Regal01#090"
+metadata/original_tile_position = Vector2(6.71875, 0.572917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 48
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object048Regal01"]
+script = ExtResource("140")
+item_type = 55
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object049Regal01" parent="World/Objects" instance=ExtResource("88")]
+position = Vector2(484, 269)
+metadata/original_kind = "0x07000371"
+metadata/original_object_id = "0x07000370"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "REGAL01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_REGAL01_IDLE_090_Regal01#090"
+metadata/original_tile_position = Vector2(9.645833, 0.5625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 49
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object049Regal01"]
+script = ExtResource("140")
+item_type = 55
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object050Regal03" parent="World/Objects" instance=ExtResource("90")]
+position = Vector2(421, 237)
+metadata/original_kind = "0x07000391"
+metadata/original_object_id = "0x07000390"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "REGAL03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_REGAL03_IDLE_090_Regal03#090"
+metadata/original_tile_position = Vector2(8.322917, 0.552083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 50
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object050Regal03"]
+script = ExtResource("140")
+item_type = 57
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object051Komode01" parent="World/Objects" instance=ExtResource("77")]
+position = Vector2(563, 306)
+metadata/original_kind = "0x070002d1"
+metadata/original_object_id = "0x070002d0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODE01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE01_IDLE_090_Komode01#090"
+metadata/original_tile_position = Vector2(11.239583, 0.510417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 51
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object051Komode01"]
+script = ExtResource("140")
+item_type = 45
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object052Komode01" parent="World/Objects" instance=ExtResource("77")]
+position = Vector2(619, 333)
+metadata/original_kind = "0x070002d1"
+metadata/original_object_id = "0x070002d0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODE01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE01_IDLE_090_Komode01#090"
+metadata/original_tile_position = Vector2(12.385417, 0.489583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 52
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object052Komode01"]
+script = ExtResource("140")
+item_type = 45
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object053Fahrschublade01" parent="World/Objects" instance=ExtResource("74")]
+position = Vector2(334, 369)
+metadata/original_kind = "0x070002b0"
+metadata/original_object_id = "0x070002b0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "FAHRSCHUBLADE01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_FAHRSCHUBLADE01_IDLE_000_Fahrschublade01#000"
+metadata/original_tile_position = Vector2(10.166667, 4.208333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 53
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object053Fahrschublade01"]
+script = ExtResource("140")
+item_type = 43
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object054Schreibtisch03" parent="World/Objects" instance=ExtResource("95")]
+position = Vector2(-281, 338)
+metadata/original_kind = "0x020003e0"
+metadata/original_object_id = "0x020003e0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH03_IDLE_000_Schreibtisch03#000"
+metadata/original_tile_position = Vector2(3.114583, 9.96875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 54
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object054Schreibtisch03"]
+script = ExtResource("140")
+item_type = 62
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object055Schreibtisch03" parent="World/Objects" instance=ExtResource("95")]
+position = Vector2(-479, 437)
+metadata/original_kind = "0x020003e0"
+metadata/original_object_id = "0x020003e0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH03_IDLE_000_Schreibtisch03#000"
+metadata/original_tile_position = Vector2(3.114583, 14.09375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 55
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object055Schreibtisch03"]
+script = ExtResource("140")
+item_type = 62
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object056Drehstuhl01" parent="World/Objects" instance=ExtResource("70")]
+position = Vector2(-288, 289)
+metadata/original_kind = "0x01060442"
+metadata/original_object_id = "0x01060440"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "DREHSTUHL01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL01_IDLE_180_DREHSTUHL01#180#"
+metadata/original_tile_position = Vector2(2.020833, 9.020833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 56
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object056Drehstuhl01"]
+position = Vector2(-48, -24)
+script = ExtResource("140")
+category = 6
+item_type = 68
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object057Drehstuhl03" parent="World/Objects" instance=ExtResource("72")]
+position = Vector2(-485, 394)
+metadata/original_kind = "0x01060462"
+metadata/original_object_id = "0x01060460"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "DREHSTUHL03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL03_IDLE_180_DREHSTUHL03#180#"
+metadata/original_tile_position = Vector2(2.15625, 13.260417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 57
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object057Drehstuhl03"]
+position = Vector2(-48, -24)
+script = ExtResource("140")
+category = 6
+item_type = 70
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object058Pctower" parent="World/Objects" instance=ExtResource("87")]
+position = Vector2(-493, 440)
+metadata/original_kind = "0x00000862"
+metadata/original_object_id = "0x00000860"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PCTOWER"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_180_PCTower#Idle#180#"
+metadata/original_tile_position = Vector2(3.03125, 14.302083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 58
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object058Pctower"]
+script = ExtResource("140")
+item_type = 134
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object059Pctower" parent="World/Objects" instance=ExtResource("87")]
+position = Vector2(-225.00002, 313)
+metadata/original_kind = "0x00000862"
+metadata/original_object_id = "0x00000860"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PCTOWER"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_180_PCTower#Idle#180#"
+metadata/original_tile_position = Vector2(3.177083, 8.864583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 59
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object059Pctower"]
+script = ExtResource("140")
+item_type = 134
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object060MonitorTastaturRechts" parent="World/Objects" instance=ExtResource("24")]
+position = Vector2(-239.00002, 320)
+metadata/original_kind = "0x000609a2"
+metadata/original_object_id = "0x000609a0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#RECHTS"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#RECHTS_IDLE_180_MonitorRechts#Idle#180#"
+metadata/original_tile_position = Vector2(3.177083, 9.15625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 60
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object060MonitorTastaturRechts"]
+position = Vector2(-47.999985, -24)
+script = ExtResource("140")
+category = 6
+item_type = 154
+room_id = 2
+orientation = 2
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object061MonitorTastaturFrontal" parent="World/Objects" instance=ExtResource("20")]
+position = Vector2(-440, 421)
+metadata/original_kind = "0x00060982"
+metadata/original_object_id = "0x00060980"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#FRONTAL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_180_MonitorFrontal#Idle#180#"
+metadata/original_tile_position = Vector2(3.1875, 13.354167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 61
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object061MonitorTastaturFrontal"]
+position = Vector2(-48, -24)
+script = ExtResource("140")
+category = 6
+item_type = 152
+room_id = 2
+orientation = 2
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object062Komode02" parent="World/Objects" instance=ExtResource("78")]
+position = Vector2(-455, 299)
+metadata/original_kind = "0x070002e0"
+metadata/original_object_id = "0x070002e0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODE02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE02_IDLE_000_Komode02#000"
+metadata/original_tile_position = Vector2(0.489583, 10.96875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 62
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object062Komode02"]
+script = ExtResource("140")
+item_type = 46
+action_ids = PackedInt32Array()
+
+[node name="Object063Komode03" parent="World/Objects" instance=ExtResource("80")]
+position = Vector2(-395, 268)
+metadata/original_kind = "0x070002f0"
+metadata/original_object_id = "0x070002f0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODE03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE03_IDLE_000_Komode03#000"
+metadata/original_tile_position = Vector2(0.46875, 9.697917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 63
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object063Komode03"]
+script = ExtResource("140")
+item_type = 47
+action_ids = PackedInt32Array()
+
+[node name="Object064Komode04" parent="World/Objects" instance=ExtResource("81")]
+position = Vector2(-515, 328)
+metadata/original_kind = "0x07000300"
+metadata/original_object_id = "0x07000300"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODE04"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE04_IDLE_000_Komode04#000"
+metadata/original_tile_position = Vector2(0.46875, 12.197917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 64
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object064Komode04"]
+script = ExtResource("140")
+item_type = 48
+action_ids = PackedInt32Array()
+
+[node name="Object065Komode02" parent="World/Objects" instance=ExtResource("79")]
+position = Vector2(-298, 260)
+metadata/original_kind = "0x070002e1"
+metadata/original_object_id = "0x070002e0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODE02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE02_IDLE_090_Komode02#090"
+metadata/original_tile_position = Vector2(1.3125, 8.520833)
+metadata/original_height = 0.0
+metadata/original_instance_id = 65
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object065Komode02"]
+script = ExtResource("140")
+item_type = 46
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object066Komodeecke" parent="World/Objects" instance=ExtResource("82")]
+position = Vector2(-338, 242)
+metadata/original_kind = "0x07000c21"
+metadata/original_object_id = "0x07000c20"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODEECKE"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODEECKE_IDLE_090_KomodenEcke#Idle#090#"
+metadata/original_tile_position = Vector2(0.520833, 8.5625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 66
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object066Komodeecke"]
+script = ExtResource("140")
+item_type = 194
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object067Bucher01" parent="World/Objects" instance=ExtResource("45")]
+position = Vector2(-437, 291)
+metadata/original_kind = "0x00000010"
+metadata/original_object_id = "0x00000010"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "BÜCHER01"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_B_CHER01_IDLE_000_B_cher01#000"
+metadata/original_tile_position = Vector2(0.510417, 10.614583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 67
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object067Bucher01"]
+script = ExtResource("140")
+item_type = 1
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object068Regal02" parent="World/Objects" instance=ExtResource("89")]
+position = Vector2(-612, 376)
+metadata/original_kind = "0x07000380"
+metadata/original_object_id = "0x07000380"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "REGAL02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_REGAL02_IDLE_000_Regal02#000"
+metadata/original_tile_position = Vector2(0.458333, 14.208333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 68
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object068Regal02"]
+script = ExtResource("140")
+item_type = 56
+action_ids = PackedInt32Array()
+
+[node name="Object069Pflanzeklein04" parent="World/Objects" instance=ExtResource("60")]
+position = Vector2(-341, 248)
+metadata/original_kind = "0x03000171"
+metadata/original_object_id = "0x03000170"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PFLANZEKLEIN04"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEKLEIN04_IDLE_090_PFLANZEKLEIN04#090"
+metadata/original_tile_position = Vector2(0.614583, 8.71875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 69
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object069Pflanzeklein04"]
+script = ExtResource("140")
+item_type = 23
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object070Photoaufsteller03" parent="World/Objects" instance=ExtResource("62")]
+position = Vector2(-477, 447)
+metadata/original_kind = "0x040001b2"
+metadata/original_object_id = "0x040001b0"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PHOTOAUFSTELLER03"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PHOTOAUFSTELLER03_IDLE_180_Photoaufsteller03#180"
+metadata/original_tile_position = Vector2(3.34375, 14.28125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 70
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object070Photoaufsteller03"]
+script = ExtResource("140")
+item_type = 27
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object071Schrank01Hoch" parent="World/Objects" instance=ExtResource("64")]
+position = Vector2(-115, 349)
+metadata/original_kind = "0x070001d1"
+metadata/original_object_id = "0x070001d0"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "SCHRANK01HOCH"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SCHRANK01HOCH_IDLE_090_Schrank01hoch#090"
+metadata/original_tile_position = Vector2(5.072917, 8.46875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 71
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object071Schrank01Hoch"]
+script = ExtResource("140")
+item_type = 29
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object072Joghurt" parent="World/Objects" instance=ExtResource("51")]
+position = Vector2(-405, 417)
+metadata/original_kind = "0x00000070"
+metadata/original_object_id = "0x00000070"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "JOGHURT"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_JOGHURT_IDLE_000_Joghurt#000"
+metadata/original_tile_position = Vector2(3.46875, 12.90625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 72
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object072Joghurt"]
+script = ExtResource("140")
+item_type = 7
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object073Kaksa" parent="World/Objects" instance=ExtResource("53")]
+position = Vector2(-461, 434)
+metadata/original_kind = "0x00000081"
+metadata/original_object_id = "0x00000080"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "KÄKSÄ"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_K_KS__IDLE_090_K_ks_#075"
+metadata/original_tile_position = Vector2(3.239583, 13.84375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 73
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object073Kaksa"]
+script = ExtResource("140")
+item_type = 8
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object074Papier03" parent="World/Objects" instance=ExtResource("84")]
+position = Vector2(-481, 437)
+metadata/original_kind = "0x04000330"
+metadata/original_object_id = "0x04000330"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PAPIER03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PAPIER03_IDLE_000_Papier03#000"
+metadata/original_tile_position = Vector2(3.09375, 14.114584)
+metadata/original_height = 0.0
+metadata/original_instance_id = 74
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object074Papier03"]
+script = ExtResource("140")
+item_type = 51
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object075Papier02" parent="World/Objects" instance=ExtResource("83")]
+position = Vector2(-498, 442)
+metadata/original_kind = "0x04000321"
+metadata/original_object_id = "0x04000320"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PAPIER02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PAPIER02_IDLE_090_Papier02#045"
+metadata/original_tile_position = Vector2(3.020833, 14.395834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 75
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object075Papier02"]
+script = ExtResource("140")
+item_type = 50
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object076Geschirrteller" parent="World/Objects" instance=ExtResource("118")]
+position = Vector2(862, 483)
+metadata/original_kind = "0x00000550"
+metadata/original_object_id = "0x00000550"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "GESCHIRRTELLER"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_GESCHIRRTELLER_IDLE_000_GeschirrTeller#000"
+metadata/original_tile_position = Vector2(18.041666, 1.083333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 76
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object076Geschirrteller"]
+script = ExtResource("140")
+item_type = 85
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object077Geschirrteller" parent="World/Objects" instance=ExtResource("118")]
+position = Vector2(661, 627)
+metadata/original_kind = "0x00000550"
+metadata/original_object_id = "0x00000550"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "GESCHIRRTELLER"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_GESCHIRRTELLER_IDLE_000_GeschirrTeller#000"
+metadata/original_tile_position = Vector2(18.947916, 6.177083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 77
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object077Geschirrteller"]
+script = ExtResource("140")
+item_type = 85
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object078Geschirrdreckig" parent="World/Objects" instance=ExtResource("116")]
+position = Vector2(758, 598)
+metadata/original_kind = "0x00000532"
+metadata/original_object_id = "0x00000530"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "GESCHIRRDRECKIG"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_GESCHIRRDRECKIG_IDLE_180_GeschirrDreckig#180"
+metadata/original_tile_position = Vector2(19.354166, 4.5625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 78
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object078Geschirrdreckig"]
+script = ExtResource("140")
+item_type = 83
+room_id = 1
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object079Geschirrtasse" parent="World/Objects" instance=ExtResource("117")]
+position = Vector2(682, 625)
+metadata/original_kind = "0x00000540"
+metadata/original_object_id = "0x00000540"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "GESCHIRRTASSE"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_GESCHIRRTASSE_IDLE_000_GeschirrTasse#045"
+metadata/original_tile_position = Vector2(19.125, 5.916667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 79
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object079Geschirrtasse"]
+script = ExtResource("140")
+item_type = 84
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object080Kaffeedose" parent="World/Objects" instance=ExtResource("128")]
+position = Vector2(672, 444)
+metadata/original_kind = "0x00000570"
+metadata/original_object_id = "0x00000570"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KAFFEEDOSE"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_KAFFEEDOSE_IDLE_000_Kaffeedose#000"
+metadata/original_tile_position = Vector2(15.25, 2.25)
+metadata/original_height = 0.0
+metadata/original_instance_id = 80
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object080Kaffeedose"]
+script = ExtResource("140")
+item_type = 87
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object081Kuchenrolle" parent="World/Objects" instance=ExtResource("119")]
+position = Vector2(796, 445)
+metadata/original_kind = "0x00000590"
+metadata/original_object_id = "0x00000590"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENROLLE"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENROLLE_IDLE_000_K_chenrolle#000"
+metadata/original_tile_position = Vector2(16.5625, 0.979167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 81
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object081Kuchenrolle"]
+script = ExtResource("140")
+item_type = 89
+room_id = 1
+action_ids = PackedInt32Array()
+
+[node name="Object082MonitorTastaturFrontal" parent="World/Objects" instance=ExtResource("20")]
+position = Vector2(336, 318)
+metadata/original_kind = "0x00060982"
+metadata/original_object_id = "0x00060980"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#FRONTAL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_180_MonitorFrontal#Idle#180#"
+metadata/original_tile_position = Vector2(9.125, 3.125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 82
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object082MonitorTastaturFrontal"]
+position = Vector2(-48, -24)
+script = ExtResource("140")
+category = 6
+item_type = 152
+room_id = 2
+orientation = 2
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object083Schreibtischunterlage02" parent="World/Objects" instance=ExtResource("98")]
+position = Vector2(231, 327)
+metadata/original_kind = "0x04000423"
+metadata/original_object_id = "0x04000420"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCHUNTERLAGE02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCHUNTERLAGE02_IDLE_270_SCHREIBTISCHUNTERLAGE02#270"
+metadata/original_tile_position = Vector2(8.21875, 4.40625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 83
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object083Schreibtischunterlage02"]
+script = ExtResource("140")
+item_type = 66
+room_id = 2
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object084Pappaufsteller02" parent="World/Objects" instance=ExtResource("26")]
+position = Vector2(229, 245)
+metadata/original_kind = "0x050900e0"
+metadata/original_object_id = "0x050900e0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "PAPPAUFSTELLER02"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPPAUFSTELLER02_IDLE_000_Pappaufsteller02#Idle#000#"
+metadata/original_tile_position = Vector2(6.489583, 2.71875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 84
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object084Pappaufsteller02"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 14
+active = true
+action_ids = PackedInt32Array(145)
+
+[node name="Object085ToikabineEimer" parent="World/Objects" instance=ExtResource("43")]
+position = Vector2(-319, 732)
+metadata/original_kind = "0x00081060"
+metadata/original_object_id = "0x00081060"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "TOIKABINE&EIMER"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TOIKABINE_EIMER_IDLE_000_ToiKabine_Eimer#IdleGreen#000#"
+metadata/original_tile_position = Vector2(10.927083, 18.572916)
+metadata/original_height = 0.0
+metadata/original_instance_id = 85
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object085ToikabineEimer"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 8
+item_type = 262
+room_id = 7
+active = true
+action_ids = PackedInt32Array(43, 44, 109, 110, 151, 112, 113, 153)
+
+[node name="Object086Toikabine" parent="World/Objects" instance=ExtResource("42")]
+position = Vector2(-375, 760)
+metadata/original_kind = "0x00080ad0"
+metadata/original_object_id = "0x00080ad0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "TOIKABINE"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TOIKABINE_IDLE_000_ToiKabine#IdleGreen#000#"
+metadata/original_tile_position = Vector2(10.927083, 19.739584)
+metadata/original_height = 0.0
+metadata/original_instance_id = 86
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object086Toikabine"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 8
+item_type = 173
+room_id = 7
+active = true
+action_ids = PackedInt32Array(43, 44, 109, 110, 112, 113)
+
+[node name="Object087Toikabine" parent="World/Objects" instance=ExtResource("42")]
+position = Vector2(-433, 788)
+metadata/original_kind = "0x00080ad0"
+metadata/original_object_id = "0x00080ad0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "TOIKABINE"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TOIKABINE_IDLE_000_ToiKabine#IdleGreen#000#"
+metadata/original_tile_position = Vector2(10.90625, 20.927084)
+metadata/original_height = 0.0
+metadata/original_instance_id = 87
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object087Toikabine"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 8
+item_type = 173
+room_id = 7
+active = true
+action_ids = PackedInt32Array(43, 44, 109, 110, 112, 113)
+
+[node name="Object088Spiegel" parent="World/Objects" instance=ExtResource("37")]
+position = Vector2(-52, 702)
+metadata/original_kind = "0x05090a91"
+metadata/original_object_id = "0x05090a90"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "SPIEGEL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SPIEGEL_IDLE_090_Spiegel#Idle#090#"
+metadata/original_tile_position = Vector2(13.083333, 15.166667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 88
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object088Spiegel"]
+position = Vector2(-48.00006, 24)
+script = ExtResource("140")
+category = 9
+item_type = 169
+orientation = 1
+active = true
+action_ids = PackedInt32Array(40)
+
+[node name="Object089Spiegel" parent="World/Objects" instance=ExtResource("37")]
+position = Vector2(-3, 726)
+metadata/original_kind = "0x05090a91"
+metadata/original_object_id = "0x05090a90"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "SPIEGEL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SPIEGEL_IDLE_090_Spiegel#Idle#090#"
+metadata/original_tile_position = Vector2(14.09375, 15.15625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 89
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object089Spiegel"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 169
+orientation = 1
+active = true
+action_ids = PackedInt32Array(40)
+
+[node name="Object090SalzZucker" parent="World/Objects" instance=ExtResource("33")]
+position = Vector2(710, 615)
+metadata/original_kind = "0x00040a71"
+metadata/original_object_id = "0x00040a70"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "SALZ&ZUCKER"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_SALZ_ZUCKER_IDLE_090_Salz_Zucker#Idle#090#"
+metadata/original_tile_position = Vector2(19.208334, 5.416667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 90
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object090SalzZucker"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 4
+item_type = 167
+room_id = 1
+orientation = 1
+active = true
+action_ids = PackedInt32Array(49)
+
+[node name="Object091Stuhl02" parent="World/Objects" instance=ExtResource("99")]
+position = Vector2(-47.000015, 218)
+metadata/original_kind = "0x01000493"
+metadata/original_object_id = "0x01000490"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "STUHL02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_STUHL02_IDLE_270_STUHL02#270#"
+metadata/original_tile_position = Vector2(3.052083, 5.03125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 91
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object091Stuhl02"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+item_type = 73
+room_id = 8
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object092Schreibtisch01" parent="World/Objects" instance=ExtResource("91")]
+position = Vector2(-567, 663)
+metadata/original_kind = "0x020003c0"
+metadata/original_object_id = "0x020003c0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH01_IDLE_000_Schreibtisch01#000"
+metadata/original_tile_position = Vector2(6.90625, 19.71875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 92
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object092Schreibtisch01"]
+script = ExtResource("140")
+item_type = 60
+room_id = 4
+action_ids = PackedInt32Array()
+
+[node name="Object093MonitorTastaturFrontal" parent="World/Objects" instance=ExtResource("19")]
+position = Vector2(-570, 662)
+metadata/original_kind = "0x00060980"
+metadata/original_object_id = "0x00060980"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#FRONTAL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_000_MonitorFrontal#Idle#000#"
+metadata/original_tile_position = Vector2(6.854167, 19.729166)
+metadata/original_height = 0.0
+metadata/original_instance_id = 93
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object093MonitorTastaturFrontal"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 6
+item_type = 152
+room_id = 4
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object094MonitorTastaturFrontal" parent="World/Objects" instance=ExtResource("19")]
+position = Vector2(-526, 638)
+metadata/original_kind = "0x00060980"
+metadata/original_object_id = "0x00060980"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#FRONTAL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_000_MonitorFrontal#Idle#000#"
+metadata/original_tile_position = Vector2(6.8125, 18.770834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 94
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object094MonitorTastaturFrontal"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 6
+item_type = 152
+room_id = 4
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object095Pctower" parent="World/Objects" instance=ExtResource("85")]
+position = Vector2(-556, 660)
+metadata/original_kind = "0x00000860"
+metadata/original_object_id = "0x00000860"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PCTOWER"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_000_PCTower#Idle#000#"
+metadata/original_tile_position = Vector2(6.958333, 19.541666)
+metadata/original_height = 0.0
+metadata/original_instance_id = 95
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object095Pctower"]
+script = ExtResource("140")
+item_type = 134
+room_id = 4
+action_ids = PackedInt32Array()
+
+[node name="Object096Pctower" parent="World/Objects" instance=ExtResource("85")]
+position = Vector2(-569, 667)
+metadata/original_kind = "0x00000860"
+metadata/original_object_id = "0x00000860"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PCTOWER"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_000_PCTower#Idle#000#"
+metadata/original_tile_position = Vector2(6.96875, 19.822916)
+metadata/original_height = 0.0
+metadata/original_instance_id = 96
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object096Pctower"]
+script = ExtResource("140")
+item_type = 134
+room_id = 4
+action_ids = PackedInt32Array()
+
+[node name="Object097Waschbecken" parent="World/Objects" instance=ExtResource("44")]
+position = Vector2(-60, 692)
+metadata/original_kind = "0x000006e1"
+metadata/original_object_id = "0x000006e0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "WASCHBECKEN"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_WASCHBECKEN_IDLE_090_Waschbecken#Idle#090#"
+metadata/original_tile_position = Vector2(12.791667, 15.041667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 97
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object097Waschbecken"]
+position = Vector2(-48.00006, 24)
+script = ExtResource("140")
+item_type = 110
+orientation = 1
+active = true
+action_ids = PackedInt32Array(136)
+
+[node name="Object098Waschbecken" parent="World/Objects" instance=ExtResource("44")]
+position = Vector2(-9, 720)
+metadata/original_kind = "0x000006e1"
+metadata/original_object_id = "0x000006e0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "WASCHBECKEN"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_WASCHBECKEN_IDLE_090_Waschbecken#Idle#090#"
+metadata/original_tile_position = Vector2(13.90625, 15.09375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 98
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object098Waschbecken"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+item_type = 110
+orientation = 1
+active = true
+action_ids = PackedInt32Array(136)
+
+[node name="Object099Handtuchspender" parent="World/Objects" instance=ExtResource("13")]
+position = Vector2(-117, 671)
+metadata/original_kind = "0x00000661"
+metadata/original_object_id = "0x00000660"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "HANDTUCHSPENDER"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_HANDTUCHSPENDER_IDLE_090_Handtuchspender#Idle#090#"
+metadata/original_tile_position = Vector2(11.760417, 15.197917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 99
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object099Handtuchspender"]
+position = Vector2(-48.00006, 24)
+script = ExtResource("140")
+item_type = 102
+orientation = 1
+active = true
+action_ids = PackedInt32Array(146)
+
+[node name="Object100Seifenspender01" parent="World/Objects" instance=ExtResource("131")]
+position = Vector2(-36, 702)
+metadata/original_kind = "0x000006c1"
+metadata/original_object_id = "0x000006c0"
+metadata/original_object_category = 3
+metadata/original_sprite_name = "SEIFENSPENDER01"
+metadata/original_source_sprite = "CO_OBJECTS_WC_SEIFENSPENDER01_IDLE_090_Seifenspender01#090"
+metadata/original_tile_position = Vector2(13.25, 15)
+metadata/original_height = 0.0
+metadata/original_instance_id = 100
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object100Seifenspender01"]
+script = ExtResource("140")
+item_type = 108
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object101Schreibtisch02" parent="World/Objects" instance=ExtResource("94")]
+position = Vector2(-628, 508)
+metadata/original_kind = "0x020003d2"
+metadata/original_object_id = "0x020003d0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_180_Schreibtisch02#180"
+metadata/original_tile_position = Vector2(3.041667, 17.125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 101
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object101Schreibtisch02"]
+script = ExtResource("140")
+item_type = 61
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object102Drehstuhl03" parent="World/Objects" instance=ExtResource("72")]
+position = Vector2(-620, 460)
+metadata/original_kind = "0x01060462"
+metadata/original_object_id = "0x01060460"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "DREHSTUHL03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL03_IDLE_180_DREHSTUHL03#180#"
+metadata/original_tile_position = Vector2(2.125, 16.041666)
+metadata/original_height = 0.0
+metadata/original_instance_id = 102
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object102Drehstuhl03"]
+position = Vector2(-48, -24)
+script = ExtResource("140")
+category = 6
+item_type = 70
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object103Schreibtisch01" parent="World/Objects" instance=ExtResource("92")]
+position = Vector2(-821, 604)
+metadata/original_kind = "0x020003c3"
+metadata/original_object_id = "0x020003c0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH01_IDLE_270_Schreibtisch01#270"
+metadata/original_tile_position = Vector2(3.03125, 21.135416)
+metadata/original_height = 0.0
+metadata/original_instance_id = 103
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object103Schreibtisch01"]
+script = ExtResource("140")
+item_type = 60
+room_id = 2
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object104Fenster04" parent="World/Objects" instance=ExtResource("8")]
+position = Vector2(-773, 435)
+metadata/original_kind = "0x050910b0"
+metadata/original_object_id = "0x050910b0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "FENSTER04"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FENSTER04_IDLE_000_Fenster04#Idle#000#"
+metadata/original_tile_position = Vector2(0.010417, 17.114584)
+metadata/original_height = 0.0
+metadata/original_instance_id = 104
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object104Fenster04"]
+position = Vector2(33.600037, 16.800018)
+script = ExtResource("140")
+category = 9
+item_type = 267
+active = true
+action_ids = PackedInt32Array(120)
+
+[node name="Object105Fenster05" parent="World/Objects" instance=ExtResource("9")]
+position = Vector2(-49.00003, 72)
+metadata/original_kind = "0x050910c0"
+metadata/original_object_id = "0x050910c0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "FENSTER05"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FENSTER05_IDLE_000_Fenster05#Idle#000#"
+metadata/original_tile_position = Vector2(-0.010417, 2.010417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 105
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object105Fenster05"]
+position = Vector2(33.6, 16.800003)
+script = ExtResource("140")
+category = 9
+item_type = 268
+active = true
+action_ids = PackedInt32Array(120)
+
+[node name="Object106Schrank01Hoch" parent="World/Objects" instance=ExtResource("63")]
+position = Vector2(-961, 546)
+metadata/original_kind = "0x070001d0"
+metadata/original_object_id = "0x070001d0"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "SCHRANK01HOCH"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SCHRANK01HOCH_IDLE_000_Schrank01hoch#000"
+metadata/original_tile_position = Vector2(0.364583, 21.385416)
+metadata/original_height = 0.0
+metadata/original_instance_id = 106
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object106Schrank01Hoch"]
+script = ExtResource("140")
+item_type = 29
+action_ids = PackedInt32Array()
+
+[node name="Object107Schrank01Hoch" parent="World/Objects" instance=ExtResource("63")]
+position = Vector2(-903, 518)
+metadata/original_kind = "0x070001d0"
+metadata/original_object_id = "0x070001d0"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "SCHRANK01HOCH"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SCHRANK01HOCH_IDLE_000_Schrank01hoch#000"
+metadata/original_tile_position = Vector2(0.385417, 20.197916)
+metadata/original_height = 0.0
+metadata/original_instance_id = 107
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object107Schrank01Hoch"]
+script = ExtResource("140")
+item_type = 29
+action_ids = PackedInt32Array()
+
+[node name="Object108Pappaufsteller03" parent="World/Objects" instance=ExtResource("27")]
+position = Vector2(-824, 489)
+metadata/original_kind = "0x050900f0"
+metadata/original_object_id = "0x050900f0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "PAPPAUFSTELLER03"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPPAUFSTELLER03_IDLE_000_Pappaufsteller03#Idle#000#"
+metadata/original_tile_position = Vector2(0.604167, 18.770834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 108
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object108Pappaufsteller03"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 15
+room_id = 2
+active = true
+action_ids = PackedInt32Array(145)
+
+[node name="Object109Fahrschublade02" parent="World/Objects" instance=ExtResource("75")]
+position = Vector2(-670, 536)
+metadata/original_kind = "0x070002c0"
+metadata/original_object_id = "0x070002c0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "FAHRSCHUBLADE02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_FAHRSCHUBLADE02_IDLE_000_Fahrschublade02#000"
+metadata/original_tile_position = Vector2(3.1875, 18.145834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 109
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object109Fahrschublade02"]
+script = ExtResource("140")
+item_type = 44
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object110Fahrschublade02" parent="World/Objects" instance=ExtResource("76")]
+position = Vector2(-715, 514)
+metadata/original_kind = "0x070002c1"
+metadata/original_object_id = "0x070002c0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "FAHRSCHUBLADE02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_FAHRSCHUBLADE02_IDLE_090_Fahrschublade02#090"
+metadata/original_tile_position = Vector2(2.260417, 18.15625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 110
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object110Fahrschublade02"]
+script = ExtResource("140")
+item_type = 44
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object111Pappaufsteller04" parent="World/Objects" instance=ExtResource("28")]
+position = Vector2(-464, 621)
+metadata/original_kind = "0x05090103"
+metadata/original_object_id = "0x05090100"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "PAPPAUFSTELLER04"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPPAUFSTELLER04_IDLE_270_Pappaufsteller04#Idle#270#"
+metadata/original_tile_position = Vector2(7.104167, 17.770834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 111
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object111Pappaufsteller04"]
+position = Vector2(48, -24)
+script = ExtResource("140")
+category = 9
+item_type = 16
+orientation = 3
+active = true
+action_ids = PackedInt32Array(145)
+
+[node name="Object112Schreibtisch02" parent="World/Objects" instance=ExtResource("93")]
+position = Vector2(2, 581)
+metadata/original_kind = "0x020003d1"
+metadata/original_object_id = "0x020003d0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_090_Schreibtisch02#090"
+metadata/original_tile_position = Vector2(11.125, 12.083333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 112
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object112Schreibtisch02"]
+script = ExtResource("140")
+item_type = 61
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object113Schreibtisch05" parent="World/Objects" instance=ExtResource("97")]
+position = Vector2(-169, 898)
+metadata/original_kind = "0x02000400"
+metadata/original_object_id = "0x02000400"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH05"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH05_IDLE_000_Schreibtisch05#000"
+metadata/original_tile_position = Vector2(15.947917, 20.46875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 113
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object113Schreibtisch05"]
+script = ExtResource("140")
+item_type = 64
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object114Schreibtisch03" parent="World/Objects" instance=ExtResource("96")]
+position = Vector2(153, 846)
+metadata/original_kind = "0x020003e1"
+metadata/original_object_id = "0x020003e0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "SCHREIBTISCH03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH03_IDLE_090_Schreibtisch03#090"
+metadata/original_tile_position = Vector2(18.21875, 16.03125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 114
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object114Schreibtisch03"]
+script = ExtResource("140")
+item_type = 62
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object115Drehstuhl01" parent="World/Objects" instance=ExtResource("69")]
+position = Vector2(-96, 578)
+metadata/original_kind = "0x01060441"
+metadata/original_object_id = "0x01060440"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "DREHSTUHL01"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL01_IDLE_090_DREHSTUHL01#090#"
+metadata/original_tile_position = Vector2(10.041667, 13.041667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 115
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object115Drehstuhl01"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 6
+item_type = 68
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object116Drehstuhl03" parent="World/Objects" instance=ExtResource("71")]
+position = Vector2(141, 891)
+metadata/original_kind = "0x01060461"
+metadata/original_object_id = "0x01060460"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "DREHSTUHL03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL03_IDLE_090_DREHSTUHL03#090#"
+metadata/original_tile_position = Vector2(19.03125, 17.09375)
+metadata/original_height = 0.0
+metadata/original_instance_id = 116
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object116Drehstuhl03"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 6
+item_type = 70
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object117Drehstuhl04" parent="World/Objects" instance=ExtResource("73")]
+position = Vector2(-99, 919)
+metadata/original_kind = "0x01060470"
+metadata/original_object_id = "0x01060470"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "DREHSTUHL04"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL04_IDLE_000_DREHSTUHL04#000#"
+metadata/original_tile_position = Vector2(17.114584, 20.177084)
+metadata/original_height = 0.0
+metadata/original_instance_id = 117
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object117Drehstuhl04"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 6
+item_type = 71
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object118MonitorTastaturFrontal" parent="World/Objects" instance=ExtResource("19")]
+position = Vector2(-148, 893)
+metadata/original_kind = "0x00060980"
+metadata/original_object_id = "0x00060980"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#FRONTAL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_000_MonitorFrontal#Idle#000#"
+metadata/original_tile_position = Vector2(16.0625, 20.145834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 118
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object118MonitorTastaturFrontal"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 6
+item_type = 152
+room_id = 2
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object119MonitorTastaturLinks" parent="World/Objects" instance=ExtResource("22")]
+position = Vector2(203, 871)
+metadata/original_kind = "0x00060991"
+metadata/original_object_id = "0x00060990"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#LINKS"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#LINKS_IDLE_090_MonitorLinks#Idle#090#"
+metadata/original_tile_position = Vector2(19.260416, 16.03125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 119
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object119MonitorTastaturLinks"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 6
+item_type = 153
+room_id = 2
+orientation = 1
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object120MonitorTastaturRechts" parent="World/Objects" instance=ExtResource("23")]
+position = Vector2(-51, 553)
+metadata/original_kind = "0x000609a1"
+metadata/original_object_id = "0x000609a0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#RECHTS"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#RECHTS_IDLE_090_MonitorRechts#Idle#090#"
+metadata/original_tile_position = Vector2(9.989583, 12.052083)
+metadata/original_height = 0.0
+metadata/original_instance_id = 120
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object120MonitorTastaturRechts"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 6
+item_type = 154
+room_id = 2
+orientation = 1
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object121Stehlampe03" parent="World/Objects" instance=ExtResource("68")]
+position = Vector2(495, 493)
+metadata/original_kind = "0x06000280"
+metadata/original_object_id = "0x06000280"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "STEHLAMPE03"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_STEHLAMPE03_IDLE_000_Stehlampe03#000"
+metadata/original_tile_position = Vector2(14.427083, 5.114583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 121
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object121Stehlampe03"]
+script = ExtResource("140")
+item_type = 40
+action_ids = PackedInt32Array()
+
+[node name="Object122Putzwagen" parent="World/Objects" instance=ExtResource("129")]
+position = Vector2(-289, 874)
+metadata/original_kind = "0x000006a0"
+metadata/original_object_id = "0x000006a0"
+metadata/original_object_category = 3
+metadata/original_sprite_name = "PUTZWAGEN"
+metadata/original_source_sprite = "CO_OBJECTS_WC_PUTZWAGEN_IDLE_000_Putzwagen#000"
+metadata/original_tile_position = Vector2(14.197917, 21.21875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 122
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object122Putzwagen"]
+script = ExtResource("140")
+item_type = 106
+room_id = 7
+action_ids = PackedInt32Array()
+
+[node name="Object123Schrank02Hoch" parent="World/Objects" instance=ExtResource("66")]
+position = Vector2(308, 754)
+metadata/original_kind = "0x070001f1"
+metadata/original_object_id = "0x070001f0"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "SCHRANK02HOCH"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SCHRANK02HOCH_IDLE_090_Schrank02hoch#090"
+metadata/original_tile_position = Vector2(17.916666, 12.5)
+metadata/original_height = 0.0
+metadata/original_instance_id = 123
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object123Schrank02Hoch"]
+script = ExtResource("140")
+item_type = 31
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object124Schrank02Hoch" parent="World/Objects" instance=ExtResource("66")]
+position = Vector2(366, 782)
+metadata/original_kind = "0x070001f1"
+metadata/original_object_id = "0x070001f0"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "SCHRANK02HOCH"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SCHRANK02HOCH_IDLE_090_Schrank02hoch#090"
+metadata/original_tile_position = Vector2(19.104166, 12.479167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 124
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object124Schrank02Hoch"]
+script = ExtResource("140")
+item_type = 31
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object125Schrank02" parent="World/Objects" instance=ExtResource("65")]
+position = Vector2(249, 725)
+metadata/original_kind = "0x070001e1"
+metadata/original_object_id = "0x070001e0"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "SCHRANK02"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SCHRANK02_IDLE_090_Schrank02#090"
+metadata/original_tile_position = Vector2(16.697916, 12.510417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 125
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object125Schrank02"]
+script = ExtResource("140")
+item_type = 30
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object126Pappaufsteller01" parent="World/Objects" instance=ExtResource("25")]
+position = Vector2(193, 700)
+metadata/original_kind = "0x050900d1"
+metadata/original_object_id = "0x050900d0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "PAPPAUFSTELLER01"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPPAUFSTELLER01_IDLE_090_Pappaufsteller01#Idle#090#"
+metadata/original_tile_position = Vector2(15.59375, 12.572917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 126
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object126Pappaufsteller01"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 13
+room_id = 2
+orientation = 1
+active = true
+action_ids = PackedInt32Array(145)
+
+[node name="Object127Komode02" parent="World/Objects" instance=ExtResource("78")]
+position = Vector2(-27, 806)
+metadata/original_kind = "0x070002e0"
+metadata/original_object_id = "0x070002e0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODE02"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE02_IDLE_000_Komode02#000"
+metadata/original_tile_position = Vector2(15.510417, 17.072916)
+metadata/original_height = 0.0
+metadata/original_instance_id = 127
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object127Komode02"]
+script = ExtResource("140")
+item_type = 46
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object128Komode03" parent="World/Objects" instance=ExtResource("80")]
+position = Vector2(-87, 835)
+metadata/original_kind = "0x070002f0"
+metadata/original_object_id = "0x070002f0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "KOMODE03"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE03_IDLE_000_Komode03#000"
+metadata/original_tile_position = Vector2(15.489583, 18.302084)
+metadata/original_height = 0.0
+metadata/original_instance_id = 128
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object128Komode03"]
+script = ExtResource("140")
+item_type = 47
+action_ids = PackedInt32Array()
+
+[node name="Object129TischdekoCat" parent="World/Objects" instance=ExtResource("101")]
+position = Vector2(15, 583)
+metadata/original_kind = "0x040004c1"
+metadata/original_object_id = "0x040004c0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "TISCHDEKO#CAT"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_TISCHDEKO#CAT_IDLE_090_Tischdeko#CaT#090"
+metadata/original_tile_position = Vector2(11.302083, 11.989583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 129
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object129TischdekoCat"]
+script = ExtResource("140")
+item_type = 76
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object130TischdekoCar" parent="World/Objects" instance=ExtResource("100")]
+position = Vector2(-75, 832)
+metadata/original_kind = "0x040004b0"
+metadata/original_object_id = "0x040004b0"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "TISCHDEKO#CAR"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_TISCHDEKO#CAR_IDLE_000_Tischdeko#Car#000"
+metadata/original_tile_position = Vector2(15.552083, 18.114584)
+metadata/original_height = 0.0
+metadata/original_instance_id = 130
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object130TischdekoCar"]
+script = ExtResource("140")
+item_type = 75
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object131Pctower" parent="World/Objects" instance=ExtResource("86")]
+position = Vector2(142, 842)
+metadata/original_kind = "0x00000861"
+metadata/original_object_id = "0x00000860"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PCTOWER"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_090_PCTower#Idle#090#"
+metadata/original_tile_position = Vector2(18.020834, 16.0625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 131
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object131Pctower"]
+script = ExtResource("140")
+item_type = 134
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object132Pctower" parent="World/Objects" instance=ExtResource("85")]
+position = Vector2(-76, 865)
+metadata/original_kind = "0x00000860"
+metadata/original_object_id = "0x00000860"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PCTOWER"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_000_PCTower#Idle#000#"
+metadata/original_tile_position = Vector2(16.229166, 18.8125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 132
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object132Pctower"]
+script = ExtResource("140")
+item_type = 134
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object133Pctower" parent="World/Objects" instance=ExtResource("87")]
+position = Vector2(-619, 508)
+metadata/original_kind = "0x00000862"
+metadata/original_object_id = "0x00000860"
+metadata/original_object_category = 1
+metadata/original_sprite_name = "PCTOWER"
+metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_180_PCTower#Idle#180#"
+metadata/original_tile_position = Vector2(3.135417, 17.03125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 133
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object133Pctower"]
+script = ExtResource("140")
+item_type = 134
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object134MonitorTastaturRechts" parent="World/Objects" instance=ExtResource("24")]
+position = Vector2(-568, 485)
+metadata/original_kind = "0x000609a2"
+metadata/original_object_id = "0x000609a0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#RECHTS"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#RECHTS_IDLE_180_MonitorRechts#Idle#180#"
+metadata/original_tile_position = Vector2(3.1875, 16.020834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 134
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object134MonitorTastaturRechts"]
+position = Vector2(-48, -24)
+script = ExtResource("140")
+category = 6
+item_type = 154
+room_id = 2
+orientation = 2
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object135Tesafilm" parent="World/Objects" instance=ExtResource("41")]
+position = Vector2(-44, 616)
+metadata/original_kind = "0x04000fb1"
+metadata/original_object_id = "0x04000fb0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "TESAFILM"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TESAFILM_IDLE_090_Tesa#Idle#045#"
+metadata/original_tile_position = Vector2(11.375, 13.291667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 135
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object135Tesafilm"]
+script = ExtResource("140")
+item_type = 251
+room_id = 2
+orientation = 1
+active = true
+action_ids = PackedInt32Array(107)
+
+[node name="Object136Tafel" parent="World/Objects" instance=ExtResource("40")]
+position = Vector2(213, 491)
+metadata/original_kind = "0x05090fa1"
+metadata/original_object_id = "0x05090fa0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "TAFEL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TAFEL_IDLE_090_Tafel#Idle#090#"
+metadata/original_tile_position = Vector2(11.447917, 8.010417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 136
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object136Tafel"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 250
+orientation = 1
+active = true
+action_ids = PackedInt32Array(103)
+
+[node name="Object137Ketchup" parent="World/Objects" instance=ExtResource("17")]
+position = Vector2(739, 586)
+metadata/original_kind = "0x00000f30"
+metadata/original_object_id = "0x00000f30"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "KETCHUP"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_KETCHUP_IDLE_000_Ketchup#Idle#000#"
+metadata/original_tile_position = Vector2(18.90625, 4.510417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 137
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object137Ketchup"]
+script = ExtResource("140")
+item_type = 243
+room_id = 1
+active = true
+action_ids = PackedInt32Array(78)
+
+[node name="Object138Handy" parent="World/Objects" instance=ExtResource("14")]
+position = Vector2(-91, 877)
+metadata/original_kind = "0x04020f10"
+metadata/original_object_id = "0x04020f10"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "HANDY"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_HANDY_IDLE_000_Handy#Idle#000#"
+metadata/original_tile_position = Vector2(16.322916, 19.21875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 138
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object138Handy"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 2
+item_type = 241
+room_id = 2
+active = true
+action_ids = PackedInt32Array(66, 67, 68)
+
+[node name="Object139Poster01" parent="World/Objects" instance=ExtResource("29")]
+position = Vector2(-520, 308)
+metadata/original_kind = "0x05090a10"
+metadata/original_object_id = "0x05090a10"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "POSTER01"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_POSTER01_IDLE_000_Poster01#Idle#000#"
+metadata/original_tile_position = Vector2(0, 11.833333)
+metadata/original_height = 0.0
+metadata/original_instance_id = 139
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object139Poster01"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 161
+active = true
+action_ids = PackedInt32Array(35)
+
+[node name="Object140Poster03" parent="World/Objects" instance=ExtResource("31")]
+position = Vector2(-200, 580)
+metadata/original_kind = "0x05090a30"
+metadata/original_object_id = "0x05090a30"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "POSTER03"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_POSTER03_IDLE_000_Poster03#Idle#000#"
+metadata/original_tile_position = Vector2(9, 14.166667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 140
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object140Poster03"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 163
+active = true
+action_ids = PackedInt32Array(35)
+
+[node name="Object141Stehlampe01" parent="World/Objects" instance=ExtResource("67")]
+position = Vector2(164, 672)
+metadata/original_kind = "0x06000260"
+metadata/original_object_id = "0x06000260"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "STEHLAMPE01"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_STEHLAMPE01_IDLE_000_Stehlampe01#000"
+metadata/original_tile_position = Vector2(14.708333, 12.291667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 141
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object141Stehlampe01"]
+script = ExtResource("140")
+item_type = 38
+action_ids = PackedInt32Array()
+
+[node name="Object142Schrubber" parent="World/Objects" instance=ExtResource("130")]
+position = Vector2(-465, 810)
+metadata/original_kind = "0x000006b1"
+metadata/original_object_id = "0x000006b0"
+metadata/original_object_category = 3
+metadata/original_sprite_name = "SCHRUBBER"
+metadata/original_source_sprite = "CO_OBJECTS_WC_SCHRUBBER_IDLE_090_Schrubber#090"
+metadata/original_tile_position = Vector2(11.03125, 21.71875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 142
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object142Schrubber"]
+script = ExtResource("140")
+item_type = 107
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object143Bucher04" parent="World/Objects" instance=ExtResource("47")]
+position = Vector2(-293, 345)
+metadata/original_kind = "0x00000040"
+metadata/original_object_id = "0x00000040"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "BÜCHER04"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_B_CHER04_IDLE_000_B_cher04#000"
+metadata/original_tile_position = Vector2(3.135417, 10.239583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 143
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object143Bucher04"]
+script = ExtResource("140")
+item_type = 4
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object144Joghurt" parent="World/Objects" instance=ExtResource("51")]
+position = Vector2(-385, 267)
+metadata/original_kind = "0x00000070"
+metadata/original_object_id = "0x00000070"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "JOGHURT"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_JOGHURT_IDLE_000_Joghurt#000"
+metadata/original_tile_position = Vector2(0.552083, 9.572917)
+metadata/original_height = 0.0
+metadata/original_instance_id = 144
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object144Joghurt"]
+script = ExtResource("140")
+item_type = 7
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object145Obst" parent="World/Objects" instance=ExtResource("54")]
+position = Vector2(-15, 593)
+metadata/original_kind = "0x00000090"
+metadata/original_object_id = "0x00000090"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "OBST"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_OBST_IDLE_000_Obst#000"
+metadata/original_tile_position = Vector2(11.197917, 12.510417)
+metadata/original_height = 0.0
+metadata/original_instance_id = 145
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object145Obst"]
+script = ExtResource("140")
+item_type = 9
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object146Pflanzeklein01" parent="World/Objects" instance=ExtResource("58")]
+position = Vector2(-714, 514)
+metadata/original_kind = "0x03000140"
+metadata/original_object_id = "0x03000140"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PFLANZEKLEIN01"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEKLEIN01_IDLE_000_PFLANZEKLEIN01#000"
+metadata/original_tile_position = Vector2(2.270833, 18.145834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 146
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object146Pflanzeklein01"]
+script = ExtResource("140")
+item_type = 20
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object147Pflanzeklein02" parent="World/Objects" instance=ExtResource("59")]
+position = Vector2(-6, 802)
+metadata/original_kind = "0x03000150"
+metadata/original_object_id = "0x03000150"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PFLANZEKLEIN02"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEKLEIN02_IDLE_000_PFLANZEKLEIN02#000"
+metadata/original_tile_position = Vector2(15.645833, 16.770834)
+metadata/original_height = 0.0
+metadata/original_instance_id = 147
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object147Pflanzeklein02"]
+script = ExtResource("140")
+item_type = 21
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object148Photoaufsteller01" parent="World/Objects" instance=ExtResource("61")]
+position = Vector2(-667, 497)
+metadata/original_kind = "0x04000193"
+metadata/original_object_id = "0x04000190"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PHOTOAUFSTELLER01"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PHOTOAUFSTELLER01_IDLE_270_Photoaufsteller01#270"
+metadata/original_tile_position = Vector2(2.40625, 17.302084)
+metadata/original_height = 0.0
+metadata/original_instance_id = 148
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object148Photoaufsteller01"]
+script = ExtResource("140")
+item_type = 25
+room_id = 2
+orientation = 3
+action_ids = PackedInt32Array()
+
+[node name="Object149MonitorTastaturFrontal" parent="World/Objects" instance=ExtResource("21")]
+position = Vector2(42, 174)
+metadata/original_kind = "0x00060983"
+metadata/original_object_id = "0x00060980"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "MONITOR&TASTATUR#FRONTAL"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_270_MonitorFrontal#Idle#270#"
+metadata/original_tile_position = Vector2(3.0625, 3.1875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 149
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object149MonitorTastaturFrontal"]
+position = Vector2(48, -24)
+script = ExtResource("140")
+category = 6
+item_type = 152
+room_id = 8
+orientation = 3
+active = true
+action_ids = PackedInt32Array(13, 14, 15, 58)
+
+[node name="Object150Poster04" parent="World/Objects" instance=ExtResource("32")]
+position = Vector2(310, 538)
+metadata/original_kind = "0x05090c61"
+metadata/original_object_id = "0x05090c60"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "POSTER04"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_POSTER04_IDLE_090_Poster4#Idle#090#"
+metadata/original_tile_position = Vector2(13.4375, 7.979167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 150
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object150Poster04"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 198
+orientation = 1
+active = true
+action_ids = PackedInt32Array(35)
+
+[node name="Object151Poster02" parent="World/Objects" instance=ExtResource("30")]
+position = Vector2(624, 314)
+metadata/original_kind = "0x05090a21"
+metadata/original_object_id = "0x05090a20"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "POSTER02"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_POSTER02_IDLE_090_Poster02#Idle#090#"
+metadata/original_tile_position = Vector2(12.041667, 0.041667)
+metadata/original_height = 0.0
+metadata/original_instance_id = 151
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object151Poster02"]
+position = Vector2(-48, 24)
+script = ExtResource("140")
+category = 9
+item_type = 162
+orientation = 1
+active = true
+action_ids = PackedInt32Array(35)
+
+[node name="Object152Bucher04" parent="World/Objects" instance=ExtResource("48")]
+position = Vector2(-816, 609)
+metadata/original_kind = "0x00000041"
+metadata/original_object_id = "0x00000040"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "BÜCHER04"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_B_CHER04_IDLE_090_B_cher04#135"
+metadata/original_tile_position = Vector2(3.1875, 21.1875)
+metadata/original_height = 0.0
+metadata/original_instance_id = 152
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object152Bucher04"]
+script = ExtResource("140")
+item_type = 4
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object153Heizkorper" parent="World/Objects" instance=ExtResource("50")]
+position = Vector2(-814, 457)
+metadata/original_kind = "0x090000a0"
+metadata/original_object_id = "0x090000a0"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "HEIZKÖRPER"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_000_Heizk_rper#000"
+metadata/original_tile_position = Vector2(0.041667, 18)
+metadata/original_height = 0.0
+metadata/original_instance_id = 153
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object153Heizkorper"]
+script = ExtResource("140")
+item_type = 10
+action_ids = PackedInt32Array()
+
+[node name="Object154Cornflakes" parent="World/Objects" instance=ExtResource("49")]
+position = Vector2(-847, 610)
+metadata/original_kind = "0x00000050"
+metadata/original_object_id = "0x00000050"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "CORNFLAKES"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_CORNFLAKES_IDLE_000_Cornflakes#020"
+metadata/original_tile_position = Vector2(2.885417, 21.53125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 154
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object154Cornflakes"]
+script = ExtResource("140")
+item_type = 5
+action_ids = PackedInt32Array()
+
+[node name="Object155Bucher02" parent="World/Objects" instance=ExtResource("46")]
+position = Vector2(-835, 593)
+metadata/original_kind = "0x00000022"
+metadata/original_object_id = "0x00000020"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "BÜCHER02"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_B_CHER02_IDLE_180_B_cher02#180"
+metadata/original_tile_position = Vector2(2.65625, 21.052084)
+metadata/original_height = 0.0
+metadata/original_instance_id = 155
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object155Bucher02"]
+script = ExtResource("140")
+item_type = 2
+room_id = 2
+orientation = 2
+action_ids = PackedInt32Array()
+
+[node name="Object156Joghurt" parent="World/Objects" instance=ExtResource("51")]
+position = Vector2(-831, 623)
+metadata/original_kind = "0x00000070"
+metadata/original_object_id = "0x00000070"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "JOGHURT"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_JOGHURT_IDLE_000_Joghurt#000"
+metadata/original_tile_position = Vector2(3.322917, 21.635416)
+metadata/original_height = 0.0
+metadata/original_instance_id = 156
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object156Joghurt"]
+script = ExtResource("140")
+item_type = 7
+action_ids = PackedInt32Array()
+
+[node name="Object157Kaksa" parent="World/Objects" instance=ExtResource("52")]
+position = Vector2(-791, 609)
+metadata/original_kind = "0x00000080"
+metadata/original_object_id = "0x00000080"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "KÄKSÄ"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_K_KS__IDLE_000_K_ks_#015"
+metadata/original_tile_position = Vector2(3.447917, 20.927084)
+metadata/original_height = 0.0
+metadata/original_instance_id = 157
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object157Kaksa"]
+script = ExtResource("140")
+item_type = 8
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object158Pflanzeklein02" parent="World/Objects" instance=ExtResource("59")]
+position = Vector2(-874, 601)
+metadata/original_kind = "0x03000150"
+metadata/original_object_id = "0x03000150"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PFLANZEKLEIN02"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEKLEIN02_IDLE_000_PFLANZEKLEIN02#000"
+metadata/original_tile_position = Vector2(2.416667, 21.625)
+metadata/original_height = 0.0
+metadata/original_instance_id = 158
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object158Pflanzeklein02"]
+script = ExtResource("140")
+item_type = 21
+action_ids = PackedInt32Array()
+
+[node name="Object159Pflanzegross01" parent="World/Objects" instance=ExtResource("55")]
+position = Vector2(96, 480)
+metadata/original_kind = "0x03090110"
+metadata/original_object_id = "0x03090110"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PFLANZEGROSS01"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEGROSS01_IDLE_000_PFLANZEGROSS01#Idle#000#"
+metadata/original_tile_position = Vector2(10, 9)
+metadata/original_height = 0.0
+metadata/original_instance_id = 159
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object159Pflanzegross01"]
+position = Vector2(0, 33.599976)
+script = ExtResource("140")
+category = 9
+item_type = 17
+room_id = 2
+action_ids = PackedInt32Array()
+
+[node name="Object160Pflanzegross02" parent="World/Objects" instance=ExtResource("56")]
+position = Vector2(-187, 242)
+metadata/original_kind = "0x03090121"
+metadata/original_object_id = "0x03090120"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PFLANZEGROSS02"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEGROSS02_IDLE_090_PFLANZEGROSS02#Idle#090#"
+metadata/original_tile_position = Vector2(2.09375, 6.989583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 160
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object160Pflanzegross02"]
+position = Vector2(3.0517578e-05, 33.599976)
+script = ExtResource("140")
+category = 9
+item_type = 18
+room_id = 8
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object161Pflanzegross03" parent="World/Objects" instance=ExtResource("57")]
+position = Vector2(479, 433)
+metadata/original_kind = "0x03090131"
+metadata/original_object_id = "0x03090130"
+metadata/original_object_category = 0
+metadata/original_sprite_name = "PFLANZEGROSS03"
+metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEGROSS03_IDLE_090_PFLANZEGROSS03#Idle#090#"
+metadata/original_tile_position = Vector2(13.010417, 4.03125)
+metadata/original_height = 0.0
+metadata/original_instance_id = 161
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object161Pflanzegross03"]
+position = Vector2(0, 33.599976)
+script = ExtResource("140")
+category = 9
+item_type = 19
+room_id = 2
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="Object162Drucker01" parent="World/Objects" instance=ExtResource("7")]
+position = Vector2(333, 376)
+metadata/original_kind = "0x000208f0"
+metadata/original_object_id = "0x000208f0"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "DRUCKER01"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_DRUCKER01_IDLE_000_Drucker01#Idle#000#"
+metadata/original_tile_position = Vector2(10.302083, 4.364583)
+metadata/original_height = 0.0
+metadata/original_instance_id = 162
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object162Drucker01"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+category = 2
+item_type = 143
+room_id = 2
+active = true
+action_ids = PackedInt32Array(17, 18)
+
+[node name="Object163Feuerzeug" parent="World/Objects" instance=ExtResource("10")]
+position = Vector2(-802, 599)
+metadata/original_kind = "0x00000910"
+metadata/original_object_id = "0x00000910"
+metadata/original_object_category = 5
+metadata/original_sprite_name = "FEUERZEUG"
+metadata/original_source_sprite = "CO_OBJECTS_AKTIV_FEUERZEUG_IDLE_000_Feuerzeug#000#"
+metadata/original_tile_position = Vector2(3.125, 20.833334)
+metadata/original_height = 0.0
+metadata/original_instance_id = 163
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object163Feuerzeug"]
+position = Vector2(48, 24)
+script = ExtResource("140")
+item_type = 145
+room_id = 2
+active = true
+action_ids = PackedInt32Array(19)
+
+[node name="Object164Kuchenschrank03" parent="World/Objects" instance=ExtResource("123")]
+position = Vector2(936, 515)
+metadata/original_kind = "0x070005c1"
+metadata/original_object_id = "0x070005c0"
+metadata/original_object_category = 2
+metadata/original_sprite_name = "KÜCHENSCHRANK03"
+metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENSCHRANK03_IDLE_090_K_chenschrank03#090"
+metadata/original_tile_position = Vector2(19.479166, 0.979167)
+metadata/original_height = 0.0
+metadata/original_instance_id = 164
+
+[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object164Kuchenschrank03"]
+script = ExtResource("140")
+item_type = 92
+room_id = 1
+orientation = 1
+action_ids = PackedInt32Array()
+
+[node name="CollisionTileMapLayer" type="TileMapLayer" parent="World"]
+z_index = 10
+tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAALAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAANAAAAAAAAAAAAAAAOAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAARAAAAAAAAAAAAAAASAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAGAAEAAAAAAAAAAAAOAAEAAAAAAAAAAAAPAAEAAAAAAAAAAAAQAAEAAAAAAAAAAAARAAEAAAAAAAAAAAASAAEAAAAAAAAAAAATAAEAAAAAAAAAAAAUAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAADAAIAAAAAAAAAAAAGAAIAAAAAAAAAAAAOAAIAAAAAAAAAAAAPAAIAAAAAAAAAAAAUAAIAAAAAAAAAAAAAAAMAAAAAAAAAAAACAAMAAAAAAAAAAAADAAMAAAAAAAAAAAAEAAMAAAAAAAAAAAAGAAMAAAAAAAAAAAAIAAMAAAAAAAAAAAAJAAMAAAAAAAAAAAAOAAMAAAAAAAAAAAAPAAMAAAAAAAAAAAATAAMAAAAAAAAAAAAUAAMAAAAAAAAAAAAAAAQAAAAAAAAAAAAGAAQAAAAAAAAAAAAIAAQAAAAAAAAAAAAJAAQAAAAAAAAAAAAKAAQAAAAAAAAAAAANAAQAAAAAAAAAAAAOAAQAAAAAAAAAAAAPAAQAAAAAAAAAAAASAAQAAAAAAAAAAAATAAQAAAAAAAAAAAAUAAQAAAAAAAAAAAAAAAUAAAAAAAAAAAADAAUAAAAAAAAAAAAGAAUAAAAAAAAAAAAHAAUAAAAAAAAAAAAIAAUAAAAAAAAAAAAJAAUAAAAAAAAAAAAKAAUAAAAAAAAAAAANAAUAAAAAAAAAAAAOAAUAAAAAAAAAAAAPAAUAAAAAAAAAAAATAAUAAAAAAAAAAAAUAAUAAAAAAAAAAAAAAAYAAAAAAAAAAAASAAYAAAAAAAAAAAATAAYAAAAAAAAAAAAUAAYAAAAAAAAAAAAVAAYAAAAAAAAAAAAAAAcAAAAAAAAAAAACAAcAAAAAAAAAAAAUAAcAAAAAAAAAAAAVAAcAAAAAAAAAAAAAAAgAAAAAAAAAAAABAAgAAAAAAAAAAAACAAgAAAAAAAAAAAADAAgAAAAAAAAAAAAEAAgAAAAAAAAAAAAFAAgAAAAAAAAAAAAGAAgAAAAAAAAAAAAJAAgAAAAAAAAAAAAKAAgAAAAAAAAAAAALAAgAAAAAAAAAAAAMAAgAAAAAAAAAAAANAAgAAAAAAAAAAAAOAAgAAAAAAAAAAAAPAAgAAAAAAAAAAAAQAAgAAAAAAAAAAAARAAgAAAAAAAAAAAASAAgAAAAAAAAAAAATAAgAAAAAAAAAAAAUAAgAAAAAAAAAAAAAAAkAAAAAAAAAAAACAAkAAAAAAAAAAAADAAkAAAAAAAAAAAAGAAkAAAAAAAAAAAAJAAkAAAAAAAAAAAAKAAkAAAAAAAAAAAASAAkAAAAAAAAAAAATAAkAAAAAAAAAAAAUAAkAAAAAAAAAAAAAAAoAAAAAAAAAAAADAAoAAAAAAAAAAAAUAAoAAAAAAAAAAAAAAAsAAAAAAAAAAAAPAAsAAAAAAAAAAAAUAAsAAAAAAAAAAAAVAAsAAAAAAAAAAAAAAAwAAAAAAAAAAAAGAAwAAAAAAAAAAAAJAAwAAAAAAAAAAAAKAAwAAAAAAAAAAAALAAwAAAAAAAAAAAAPAAwAAAAAAAAAAAAQAAwAAAAAAAAAAAARAAwAAAAAAAAAAAASAAwAAAAAAAAAAAATAAwAAAAAAAAAAAAUAAwAAAAAAAAAAAAVAAwAAAAAAAAAAAAAAA0AAAAAAAAAAAACAA0AAAAAAAAAAAADAA0AAAAAAAAAAAAGAA0AAAAAAAAAAAAJAA0AAAAAAAAAAAAKAA0AAAAAAAAAAAALAA0AAAAAAAAAAAAUAA0AAAAAAAAAAAAVAA0AAAAAAAAAAAAAAA4AAAAAAAAAAAADAA4AAAAAAAAAAAAGAA4AAAAAAAAAAAAJAA4AAAAAAAAAAAAUAA4AAAAAAAAAAAAAAA8AAAAAAAAAAAABAA8AAAAAAAAAAAACAA8AAAAAAAAAAAADAA8AAAAAAAAAAAAGAA8AAAAAAAAAAAAJAA8AAAAAAAAAAAAKAA8AAAAAAAAAAAALAA8AAAAAAAAAAAAMAA8AAAAAAAAAAAANAA8AAAAAAAAAAAAOAA8AAAAAAAAAAAAPAA8AAAAAAAAAAAASAA8AAAAAAAAAAAATAA8AAAAAAAAAAAAUAA8AAAAAAAAAAAAVAA8AAAAAAAAAAAAAABAAAAAAAAAAAAACABAAAAAAAAAAAAADABAAAAAAAAAAAAAPABAAAAAAAAAAAAASABAAAAAAAAAAAAATABAAAAAAAAAAAAAUABAAAAAAAAAAAAAAABEAAAAAAAAAAAACABEAAAAAAAAAAAADABEAAAAAAAAAAAAPABEAAAAAAAAAAAATABEAAAAAAAAAAAAUABEAAAAAAAAAAAAAABIAAAAAAAAAAAACABIAAAAAAAAAAAADABIAAAAAAAAAAAAGABIAAAAAAAAAAAAHABIAAAAAAAAAAAAJABIAAAAAAAAAAAAKABIAAAAAAAAAAAALABIAAAAAAAAAAAAPABIAAAAAAAAAAAAUABIAAAAAAAAAAAAAABMAAAAAAAAAAAAGABMAAAAAAAAAAAAHABMAAAAAAAAAAAAJABMAAAAAAAAAAAAKABMAAAAAAAAAAAALABMAAAAAAAAAAAAPABMAAAAAAAAAAAAQABMAAAAAAAAAAAAUABMAAAAAAAAAAAAAABQAAAAAAAAAAAAGABQAAAAAAAAAAAAHABQAAAAAAAAAAAAJABQAAAAAAAAAAAAKABQAAAAAAAAAAAALABQAAAAAAAAAAAAPABQAAAAAAAAAAAAQABQAAAAAAAAAAAARABQAAAAAAAAAAAAUABQAAAAAAAAAAAAAABUAAAAAAAAAAAACABUAAAAAAAAAAAADABUAAAAAAAAAAAAGABUAAAAAAAAAAAAHABUAAAAAAAAAAAAJABUAAAAAAAAAAAAKABUAAAAAAAAAAAALABUAAAAAAAAAAAAOABUAAAAAAAAAAAAPABUAAAAAAAAAAAAQABUAAAAAAAAAAAAUABUAAAAAAAAAAAAAABYAAAAAAAAAAAABABYAAAAAAAAAAAACABYAAAAAAAAAAAADABYAAAAAAAAAAAAEABYAAAAAAAAAAAAFABYAAAAAAAAAAAAGABYAAAAAAAAAAAAHABYAAAAAAAAAAAAIABYAAAAAAAAAAAAJABYAAAAAAAAAAAAKABYAAAAAAAAAAAALABYAAAAAAAAAAAAMABYAAAAAAAAAAAANABYAAAAAAAAAAAAOABYAAAAAAAAAAAAPABYAAAAAAAAAAAAQABYAAAAAAAAAAAARABYAAAAAAAAAAAASABYAAAAAAAAAAAATABYAAAAAAAAAAAAUABYAAAAAAAAAAAACABcAAAAAAAAAAAADABcAAAAAAAAAAAAEABcAAAAAAAAAAAAFABcAAAAAAAAAAAAJABcAAAAAAAAAAAAKABcAAAAAAAAAAAALABcAAAAAAAAAAAAMABcAAAAAAAAAAAANABcAAAAAAAAAAAAOABcAAAAAAAAAAAA=")
+tile_set = ExtResource("147")
+script = ExtResource("144")
+sight_blocked_cells = PackedVector2Array(0, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 0, 10, 0, 11, 0, 12, 0, 13, 0, 14, 0, 15, 0, 16, 0, 17, 0, 18, 0, 19, 0, 20, 0, 0, 1, 6, 1, 14, 1, 20, 1, 0, 2, 6, 2, 14, 2, 20, 2, 0, 3, 6, 3, 14, 3, 20, 3, 0, 4, 6, 4, 14, 4, 20, 4, 0, 5, 6, 5, 7, 5, 8, 5, 9, 5, 10, 5, 13, 5, 14, 5, 20, 5, 0, 6, 20, 6, 21, 6, 0, 7, 20, 7, 21, 7, 0, 8, 1, 8, 2, 8, 3, 8, 4, 8, 5, 8, 6, 8, 9, 8, 10, 8, 11, 8, 12, 8, 13, 8, 14, 8, 15, 8, 16, 8, 17, 8, 18, 8, 19, 8, 20, 8, 0, 9, 6, 9, 9, 9, 20, 9, 0, 10, 20, 10, 0, 11, 15, 11, 20, 11, 21, 11, 0, 12, 6, 12, 9, 12, 15, 12, 16, 12, 17, 12, 18, 12, 19, 12, 20, 12, 21, 12, 0, 13, 6, 13, 9, 13, 20, 13, 21, 13, 0, 14, 6, 14, 9, 14, 20, 14, 0, 15, 1, 15, 2, 15, 3, 15, 6, 15, 9, 15, 10, 15, 11, 15, 12, 15, 13, 15, 14, 15, 15, 15, 18, 15, 19, 15, 20, 15, 21, 15, 0, 16, 15, 16, 20, 16, 0, 17, 15, 17, 20, 17, 0, 18, 6, 18, 9, 18, 10, 18, 11, 18, 15, 18, 20, 18, 0, 19, 6, 19, 9, 19, 10, 19, 11, 19, 15, 19, 20, 19, 0, 20, 6, 20, 9, 20, 10, 20, 11, 20, 15, 20, 20, 20, 0, 21, 6, 21, 9, 21, 10, 21, 11, 21, 15, 21, 20, 21, 0, 22, 1, 22, 2, 22, 3, 22, 4, 22, 5, 22, 6, 22, 7, 22, 8, 22, 9, 22, 10, 22, 11, 22, 12, 22, 13, 22, 14, 22, 15, 22, 16, 22, 17, 22, 18, 22, 19, 22, 20, 22, 2, 23, 3, 23, 4, 23, 5, 23, 9, 23, 10, 23, 11, 23, 12, 23, 13, 23, 14, 23)
+metadata/_edit_lock_ = true
+
+[node name="Player" parent="World" instance=ExtResource("132")]
+position = Vector2(96, 336)
+metadata/original_spawn_id = 0
+
+[node name="Npc166Boss" parent="World" instance=ExtResource("2")]
+position = Vector2(144, 120)
+profile = ExtResource("133")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 1
+metadata/original_instance_id = 166
+
+[node name="Brain" type="Node" parent="World/Npc166Boss"]
+script = ExtResource("141")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc166Boss"]
+script = ExtResource("142")
+
+[node name="Npc169Janitor" parent="World" instance=ExtResource("2")]
+position = Vector2(384, 672)
+profile = ExtResource("136")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 3
+metadata/original_instance_id = 169
+
+[node name="Brain" type="Node" parent="World/Npc169Janitor"]
+script = ExtResource("141")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc169Janitor"]
+script = ExtResource("142")
+
+[node name="Npc167MaleEmployee1" parent="World" instance=ExtResource("2")]
+position = Vector2(-336, 264)
+profile = ExtResource("137")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 4
+metadata/original_instance_id = 167
+
+[node name="Brain" type="Node" parent="World/Npc167MaleEmployee1"]
+script = ExtResource("141")
+assigned_workstation = NodePath("../../Objects/Object060MonitorTastaturRechts/InteractionPoint")
+assigned_chair = NodePath("../../Objects/Object056Drehstuhl01/InteractionPoint")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc167MaleEmployee1"]
+script = ExtResource("142")
+
+[node name="Npc168MaleEmployee1" parent="World" instance=ExtResource("2")]
+position = Vector2(96, 912)
+profile = ExtResource("137")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 4
+metadata/original_instance_id = 168
+
+[node name="Brain" type="Node" parent="World/Npc168MaleEmployee1"]
+script = ExtResource("141")
+assigned_workstation = NodePath("../../Objects/Object119MonitorTastaturLinks/InteractionPoint")
+assigned_chair = NodePath("../../Objects/Object116Drehstuhl03/InteractionPoint")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc168MaleEmployee1"]
+script = ExtResource("142")
+
+[node name="Npc170MaleEmployee2" parent="World" instance=ExtResource("2")]
+position = Vector2(-144, 600)
+profile = ExtResource("138")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 5
+metadata/original_instance_id = 170
+
+[node name="Brain" type="Node" parent="World/Npc170MaleEmployee2"]
+script = ExtResource("141")
+assigned_workstation = NodePath("../../Objects/Object120MonitorTastaturRechts/InteractionPoint")
+assigned_chair = NodePath("../../Objects/Object115Drehstuhl01/InteractionPoint")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc170MaleEmployee2"]
+script = ExtResource("142")
+
+[node name="Npc173MaleEmployee2" parent="World" instance=ExtResource("2")]
+position = Vector2(-528, 360)
+profile = ExtResource("138")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 5
+metadata/original_instance_id = 173
+
+[node name="Brain" type="Node" parent="World/Npc173MaleEmployee2"]
+script = ExtResource("141")
+assigned_workstation = NodePath("../../Objects/Object061MonitorTastaturFrontal/InteractionPoint")
+assigned_chair = NodePath("../../Objects/Object057Drehstuhl03/InteractionPoint")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc173MaleEmployee2"]
+script = ExtResource("142")
+
+[node name="Npc171FemaleEmployee1" parent="World" instance=ExtResource("2")]
+position = Vector2(-48, 936)
+profile = ExtResource("134")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 6
+metadata/original_instance_id = 171
+
+[node name="Brain" type="Node" parent="World/Npc171FemaleEmployee1"]
+script = ExtResource("141")
+assigned_workstation = NodePath("../../Objects/Object118MonitorTastaturFrontal/InteractionPoint")
+assigned_chair = NodePath("../../Objects/Object117Drehstuhl04/InteractionPoint")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc171FemaleEmployee1"]
+script = ExtResource("142")
+
+[node name="Npc174FemaleEmployee1" parent="World" instance=ExtResource("2")]
+position = Vector2(240, 264)
+profile = ExtResource("134")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 6
+metadata/original_instance_id = 174
+
+[node name="Brain" type="Node" parent="World/Npc174FemaleEmployee1"]
+script = ExtResource("141")
+assigned_workstation = NodePath("../../Objects/Object082MonitorTastaturFrontal/InteractionPoint")
+assigned_chair = NodePath("../../Objects/Object047Drehstuhl01/InteractionPoint")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc174FemaleEmployee1"]
+script = ExtResource("142")
+
+[node name="Npc172FemaleEmployee2" parent="World" instance=ExtResource("2")]
+position = Vector2(-672, 432)
+profile = ExtResource("135")
+initial_direction = Vector2(0.8944272, -0.4472136)
+metadata/original_spawn_id = 7
+metadata/original_instance_id = 172
+
+[node name="Brain" type="Node" parent="World/Npc172FemaleEmployee2"]
+script = ExtResource("141")
+assigned_workstation = NodePath("../../Objects/Object134MonitorTastaturRechts/InteractionPoint")
+assigned_chair = NodePath("../../Objects/Object102Drehstuhl03/InteractionPoint")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="World/Npc172FemaleEmployee2"]
+script = ExtResource("142")
+
+[node name="WorldDepthCompositor" type="Node2D" parent="World"]
+script = ExtResource("146")
+
+[node name="CharacterDepthCompositor" type="Sprite2D" parent="World"]
+script = ExtResource("143")
+
+[node name="LevelRuntime" parent="." instance=ExtResource("1")]
+time_mode_limit_seconds = 480.0
+time_mode_score_target = 9000
+points_mode_limit_seconds = 420.0
+points_mode_score_target = 7000
+
+[node name="DebugOverlay" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="FPSCounter" type="Label" parent="DebugOverlay"]
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 108.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.85)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+text = "FPS: --"
+script = ExtResource("139")

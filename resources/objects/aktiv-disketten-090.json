@@ -1,0 +1,26 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "DISKETTEN",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            8,
+            61
+          ],
+          "size": [
+            27,
+            17
+          ],
+          "texture": "res://images/objects/states/aktiv-disketten-090/aktiv-disketten-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

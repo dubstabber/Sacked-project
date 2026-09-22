@@ -1,0 +1,333 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "TRESOR",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            40,
+            81
+          ],
+          "size": [
+            125,
+            121
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROYED_4": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            161
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroyed-4-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 12
+    },
+    "DESTROY_2": {
+      "advances_to": 10,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-2-000.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            88,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-2-001.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            91,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-2-002.png"
+        },
+        {
+          "pivot": [
+            42,
+            130
+          ],
+          "size": [
+            98,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-2-003.png"
+        },
+        {
+          "pivot": [
+            43,
+            129
+          ],
+          "size": [
+            111,
+            147
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-2-004.png"
+        },
+        {
+          "pivot": [
+            44,
+            119
+          ],
+          "size": [
+            127,
+            133
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-2-005.png"
+        },
+        {
+          "pivot": [
+            42,
+            90
+          ],
+          "size": [
+            136,
+            98
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-2-006.png"
+        },
+        {
+          "pivot": [
+            40,
+            81
+          ],
+          "size": [
+            125,
+            121
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-2-007.png"
+        }
+      ],
+      "loop": false,
+      "state": 3
+    },
+    "DESTROY_4": {
+      "advances_to": 12,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-000.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-001.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-002.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-003.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-004.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-005.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-006.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-007.png"
+        },
+        {
+          "pivot": [
+            47,
+            129
+          ],
+          "size": [
+            91,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-008.png"
+        },
+        {
+          "pivot": [
+            52,
+            129
+          ],
+          "size": [
+            96,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-009.png"
+        },
+        {
+          "pivot": [
+            54,
+            129
+          ],
+          "size": [
+            98,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-010.png"
+        },
+        {
+          "pivot": [
+            52,
+            129
+          ],
+          "size": [
+            96,
+            150
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-011.png"
+        },
+        {
+          "pivot": [
+            49,
+            129
+          ],
+          "size": [
+            93,
+            156
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-012.png"
+        },
+        {
+          "pivot": [
+            44,
+            129
+          ],
+          "size": [
+            88,
+            160
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-013.png"
+        },
+        {
+          "pivot": [
+            42,
+            129
+          ],
+          "size": [
+            86,
+            161
+          ],
+          "texture": "res://images/objects/states/aktiv-tresor-090/aktiv-tresor-090-destroy-4-014.png"
+        }
+      ],
+      "loop": false,
+      "state": 5
+    }
+  }
+}

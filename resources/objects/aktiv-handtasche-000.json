@@ -1,0 +1,45 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "HANDTASCHE",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            18,
+            21
+          ],
+          "size": [
+            52,
+            33
+          ],
+          "texture": "res://images/objects/states/aktiv-handtasche-000/aktiv-handtasche-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            2,
+            2
+          ],
+          "size": [
+            4,
+            4
+          ],
+          "texture": "res://images/objects/states/aktiv-handtasche-000/aktiv-handtasche-000-destroy-1-000.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

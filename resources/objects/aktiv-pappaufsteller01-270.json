@@ -1,0 +1,397 @@
+{
+  "angle": "270",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "PAPPAUFSTELLER01",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            14,
+            28
+          ],
+          "size": [
+            18,
+            35
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            21,
+            48
+          ],
+          "size": [
+            36,
+            59
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            21,
+            48
+          ],
+          "size": [
+            39,
+            59
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            21,
+            48
+          ],
+          "size": [
+            42,
+            59
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            22,
+            48
+          ],
+          "size": [
+            45,
+            59
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            24,
+            55
+          ],
+          "size": [
+            50,
+            66
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            27,
+            64
+          ],
+          "size": [
+            56,
+            75
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            29,
+            73
+          ],
+          "size": [
+            60,
+            84
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            31,
+            82
+          ],
+          "size": [
+            62,
+            93
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-007.png"
+        },
+        {
+          "pivot": [
+            34,
+            89
+          ],
+          "size": [
+            68,
+            100
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-008.png"
+        },
+        {
+          "pivot": [
+            37,
+            96
+          ],
+          "size": [
+            73,
+            107
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-009.png"
+        },
+        {
+          "pivot": [
+            40,
+            97
+          ],
+          "size": [
+            76,
+            108
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-010.png"
+        },
+        {
+          "pivot": [
+            40,
+            101
+          ],
+          "size": [
+            76,
+            112
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-011.png"
+        },
+        {
+          "pivot": [
+            36,
+            103
+          ],
+          "size": [
+            72,
+            114
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-012.png"
+        },
+        {
+          "pivot": [
+            38,
+            108
+          ],
+          "size": [
+            73,
+            119
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-013.png"
+        },
+        {
+          "pivot": [
+            39,
+            110
+          ],
+          "size": [
+            74,
+            121
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-014.png"
+        },
+        {
+          "pivot": [
+            39,
+            112
+          ],
+          "size": [
+            74,
+            119
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-015.png"
+        },
+        {
+          "pivot": [
+            37,
+            119
+          ],
+          "size": [
+            72,
+            126
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-016.png"
+        },
+        {
+          "pivot": [
+            39,
+            120
+          ],
+          "size": [
+            74,
+            127
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-017.png"
+        },
+        {
+          "pivot": [
+            39,
+            123
+          ],
+          "size": [
+            73,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-018.png"
+        },
+        {
+          "pivot": [
+            39,
+            123
+          ],
+          "size": [
+            73,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-019.png"
+        },
+        {
+          "pivot": [
+            39,
+            125
+          ],
+          "size": [
+            75,
+            132
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-020.png"
+        },
+        {
+          "pivot": [
+            38,
+            127
+          ],
+          "size": [
+            77,
+            134
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-021.png"
+        },
+        {
+          "pivot": [
+            37,
+            129
+          ],
+          "size": [
+            76,
+            136
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-022.png"
+        },
+        {
+          "pivot": [
+            37,
+            137
+          ],
+          "size": [
+            74,
+            144
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-023.png"
+        },
+        {
+          "pivot": [
+            37,
+            138
+          ],
+          "size": [
+            74,
+            145
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-024.png"
+        },
+        {
+          "pivot": [
+            38,
+            138
+          ],
+          "size": [
+            75,
+            145
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-025.png"
+        },
+        {
+          "pivot": [
+            38,
+            142
+          ],
+          "size": [
+            72,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-026.png"
+        },
+        {
+          "pivot": [
+            36,
+            142
+          ],
+          "size": [
+            70,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-027.png"
+        },
+        {
+          "pivot": [
+            35,
+            141
+          ],
+          "size": [
+            68,
+            148
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-028.png"
+        },
+        {
+          "pivot": [
+            33,
+            141
+          ],
+          "size": [
+            64,
+            148
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-029.png"
+        },
+        {
+          "pivot": [
+            35,
+            139
+          ],
+          "size": [
+            63,
+            146
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-030.png"
+        },
+        {
+          "pivot": [
+            35,
+            139
+          ],
+          "size": [
+            57,
+            146
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-031.png"
+        },
+        {
+          "pivot": [
+            14,
+            28
+          ],
+          "size": [
+            18,
+            35
+          ],
+          "texture": "res://images/objects/states/aktiv-pappaufsteller01-270/aktiv-pappaufsteller01-270-destroy-1-032.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

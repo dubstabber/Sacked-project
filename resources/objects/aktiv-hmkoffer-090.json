@@ -1,0 +1,45 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "HMKOFFER",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            25,
+            44
+          ],
+          "size": [
+            51,
+            58
+          ],
+          "texture": "res://images/objects/states/aktiv-hmkoffer-090/aktiv-hmkoffer-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            8,
+            8
+          ],
+          "size": [
+            16,
+            16
+          ],
+          "texture": "res://images/objects/states/aktiv-hmkoffer-090/aktiv-hmkoffer-090-destroy-1-000.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

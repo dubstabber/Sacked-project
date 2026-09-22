@@ -1,0 +1,122 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "FAX",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            23,
+            76
+          ],
+          "size": [
+            45,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 4.0,
+      "frames": [
+        {
+          "pivot": [
+            16,
+            84
+          ],
+          "size": [
+            38,
+            43
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            16,
+            81
+          ],
+          "size": [
+            38,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            16,
+            78
+          ],
+          "size": [
+            38,
+            37
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            16,
+            76
+          ],
+          "size": [
+            38,
+            35
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            16,
+            76
+          ],
+          "size": [
+            38,
+            35
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            18,
+            76
+          ],
+          "size": [
+            40,
+            37
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            20,
+            76
+          ],
+          "size": [
+            42,
+            38
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            23,
+            76
+          ],
+          "size": [
+            45,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-fax-090/aktiv-fax-090-destroy-1-007.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

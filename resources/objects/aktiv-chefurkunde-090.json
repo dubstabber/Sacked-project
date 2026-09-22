@@ -1,0 +1,26 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "CHEFURKUNDE",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            26,
+            87
+          ],
+          "size": [
+            21,
+            35
+          ],
+          "texture": "res://images/objects/states/aktiv-chefurkunde-090/aktiv-chefurkunde-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}
