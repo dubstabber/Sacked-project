@@ -207,9 +207,14 @@ neither tracked nor ignored by this repo.
 3. `OS.get_locale_language()`
 4. Polish
 
-There is no language screen yet. It belongs on the original's sound-setup screen, which is
-the first item of the backlog. In a debug build **F2** cycles the languages, which is the
-only way to watch a running level change language.
+Step 2 is written by `autoloads/settings_store.gd`, which owns that file; `I18n` asks the
+store where it is, so a check that points the store at a temporary file is followed here
+too. The language row that writes it lives on the port's version of the original's
+sound-setup screen, a row the original itself has no equivalent for.
+
+In a debug build **F2** still cycles the languages, which is the quickest way to watch a
+running level change language. It deliberately writes nothing: it is a debug shortcut
+rather than a choice.
 
 ### Fonts are not a constraint
 

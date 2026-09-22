@@ -27,15 +27,12 @@ func _expect(condition: bool, label: String) -> void:
 		push_error(label)
 
 
-# The sound setup screen defaults to music 75 and effects 65 out of 100.
+# What a level plays through. The volumes themselves now come from the player's own
+# settings file rather than the bus layout, so check_settings_store.gd pins the original's
+# 75 and 65 against a temporary file instead of whatever this machine last chose.
 func _check_buses() -> void:
 	for bus in ["Master", "Music", "SFX"]:
 		_expect(AudioServer.get_bus_index(bus) >= 0, "the %s bus exists" % bus)
-	var music := AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music"))
-	var sfx := AudioServer.get_bus_volume_db(AudioServer.get_bus_index("SFX"))
-	# The layout stores decibels, so the round trip lands a hair off the original's 0..100.
-	_expect(absf(db_to_linear(music) - 0.75) < 0.001, "music starts at 75 of 100, got %f" % db_to_linear(music))
-	_expect(absf(db_to_linear(sfx) - 0.65) < 0.001, "effects start at 65 of 100, got %f" % db_to_linear(sfx))
 
 
 func _check_manifest() -> void:

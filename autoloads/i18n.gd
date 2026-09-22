@@ -5,7 +5,9 @@ extends Node
 # authored, along with the handful of strings neither build has wording for.
 # See docs/strings-reference.md.
 #
-# There is no in-game language screen yet, so the language is resolved once at boot.
+# The language is resolved once at boot. SettingsStore owns the file the second candidate
+# comes from and writes it when the player picks a language; the resolution order itself
+# stays here.
 
 signal language_changed(language: StringName)
 
@@ -23,7 +25,9 @@ var _loaded := false
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_translations()
-	set_language(resolve_language(OS.get_cmdline_user_args(), SETTINGS_PATH, OS.get_locale_language()))
+	var settings := get_node_or_null("/root/SettingsStore")
+	var settings_path: String = settings.path if settings != null else SETTINGS_PATH
+	set_language(resolve_language(OS.get_cmdline_user_args(), settings_path, OS.get_locale_language()))
 
 
 # Command line first, then whatever the player last chose, then the machine, then Polish.
@@ -98,6 +102,7 @@ func current_language() -> StringName:
 
 # Cycling the language exercises every NOTIFICATION_TRANSLATION_CHANGED handler in the game,
 # which is the only way to see a running level change language. F1 is already fullscreen.
+# Deliberately not written to the settings file: this is a debug shortcut, not a choice.
 func _input(event: InputEvent) -> void:
 	if not OS.is_debug_build():
 		return

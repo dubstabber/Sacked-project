@@ -242,6 +242,12 @@ func _on_menu_music_finished() -> void:
 
 
 func toggle_window_mode() -> void:
+	# SettingsStore remembers the choice; the branch below is the fallback for a scene
+	# loaded without the autoloads, which is how the screen checks run.
+	var settings := get_node_or_null("/root/SettingsStore")
+	if settings != null:
+		settings.toggle_fullscreen()
+		return
 	var mode := DisplayServer.window_get_mode()
 	if mode == DisplayServer.WINDOW_MODE_FULLSCREEN or mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)

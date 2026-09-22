@@ -55,8 +55,26 @@ that slot; everything else plays at the full effects volume from `handler+3892`.
 ## In the port
 
 `tools/export_sounds.py --check` copies the 94 shipped effects and all five music tracks
-into `audio/`, writing `resources/original/sounds.json` beside them. `default_bus_layout.tres`
-carries the Music and SFX buses at the sound-setup screen's defaults of 75 and 65 out of 100;
-the menu music and the footsteps were previously unrouted and now sit on them.
+into `audio/`, writing `resources/original/sounds.json` beside them. The menu music and the
+footsteps sit on the Music and SFX buses along with everything else.
+
+### The two volumes
+
+`sub_4261A0` restores the original's music and effects volumes from the registry
+(`game+20690`, `game+20692`), and its sound-setup screen moves each by 5 and clamps it to
+0..100, starting from 75 and 65. `autoloads/settings_store.gd` keeps those numbers and that
+rule, in `user://settings.cfg` rather than the registry, and applies them to the two buses
+as `linear_to_db(value / 100)`. `default_bus_layout.tres` still carries 75 and 65 in
+decibels, which is what plays for the instant before the store is ready; from then on the
+store is the source of truth.
+
+**One port decision.** `linear_to_db(0)` is negative infinity, so a volume of 0 mutes its
+bus instead of being handed to it. The original's own mixer is not recovered; silence at
+the bottom of a slider the screen lets you take all the way down is this port's reading.
+
+The store also holds the language the player picked and whether the window is full screen.
+Neither is the original's: it ships one language per build and has no display option. So
+the sound-setup screen's `Domyślne` puts only the two volumes back, and deliberately leaves
+those two rows alone.
 `scenes/level/level_audio.gd` picks the theme, starts the warning loop, plays the win cue and
 plays each action's sound at the end the record asks for.
