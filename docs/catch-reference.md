@@ -322,9 +322,8 @@ Sizing, for the tasks that follow:
   point. The 30 types are a switch, not a table, so they want a Python exporter that reads
   the case values out of the binary rather than a transcription into GDScript.
 - **The minigame is the large one** and is untouched here: 48 sprites, fourteen paired
-  `ICON`/`SPELL` entries, two bars and four state overlays, all of whose rules live behind
-  `sub_406430` and `sub_415010`. It deserves its own RE sitting, which is how the plan
-  already schedules it.
+  `ICON`/`SPELL` entries, two bars and four state overlays. That sitting has since happened
+  and its results are in [minigame-reference.md](minigame-reference.md).
 
 ## What screen 5 looks like
 
