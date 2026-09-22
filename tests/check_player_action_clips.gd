@@ -30,8 +30,9 @@ func _run() -> void:
 		return
 	_check_libraries(spec)
 	_check_every_reachable_selector_has_a_clip(spec)
+	_check_the_two_view_clip_is_asked_for_a_view_it_has()
 	if _failures == 0:
-		print("Player action clips: both characters carry every clip level 1 can reach, matching their source")
+		print("Player action clips: both characters carry every clip the imported levels reach, matching their source")
 	quit(1 if _failures else 0)
 
 
@@ -95,16 +96,29 @@ func _check_frames_match_source(animation: Animation, source: String, angle: Str
 
 func _check_every_reachable_selector_has_a_clip(spec: Dictionary) -> void:
 	var actions = JSON.parse_string(FileAccess.get_file_as_string("res://resources/original/actions.json"))
-	var manifest = JSON.parse_string(FileAccess.get_file_as_string("res://resources/levels/level_1.json"))
 	var placed := {}
-	for item in manifest["objects"]:
-		for action_id in item["action_ids"]:
-			if int(action_id) > 0:
-				placed[int(actions["actions"][int(action_id)]["player_animation"])] = int(action_id)
+	var dir := DirAccess.open("res://resources/levels")
+	if dir != null:
+		for file in dir.get_files():
+			var name := file.trim_suffix(".remap")
+			if not (name.begins_with("level_") and name.ends_with(".json")):
+				continue
+			var manifest = JSON.parse_string(FileAccess.get_file_as_string("res://resources/levels/" + name))
+			if manifest == null:
+				continue
+			for item in manifest["objects"]:
+				for action_id in item["action_ids"]:
+					if int(action_id) > 0:
+						placed[int(actions["actions"][int(action_id)]["player_animation"])] = int(action_id)
+	_expect(not placed.is_empty(), "the imported levels place actions")
 
 	for selector in placed:
-		# Rows needing an item nothing on this level grants stay unreachable, and their
-		# selectors are deliberately not imported.
+		# Every selector the imported levels place must now resolve to a clip. Selector 13,
+		# BUCKET, is the one the slot table names that no imported level reaches.
+		_expect(
+			CONTROLLER.SELECTOR_CLIPS.has(selector),
+			"selector %d, placed by action %d, has no imported clip" % [selector, placed[selector]]
+		)
 		if not CONTROLLER.SELECTOR_CLIPS.has(selector):
 			continue
 		var clip: String = String(CONTROLLER.SELECTOR_CLIPS[selector])
@@ -118,3 +132,32 @@ func _check_every_reachable_selector_has_a_clip(spec: Dictionary) -> void:
 					found = true
 					break
 			_expect(found, "%s can play selector %d (%s), used by action %d" % [character, selector, clip, placed[selector]])
+
+
+# ASSCOPY is the one clip that does not ship eight views, so the controller snaps to the
+# nearer of the two it has. Those two vectors have to name animations that exist: the clip
+# name is resolved from a screen angle, and getting that wrong leaves the player standing
+# still through the prank with nothing failing.
+func _check_the_two_view_clip_is_asked_for_a_view_it_has() -> void:
+	var controller_facings: Array = CONTROLLER.ASSCOPY_FACINGS
+	_expect(controller_facings.size() == 2, "the two-view clip offers two facings")
+	var scene := load("res://scenes/player/player.tscn") as PackedScene
+	for character in PROFILES:
+		var player := scene.instantiate()
+		player.profile = load(PROFILES[character])
+		root.add_child(player)
+		for facing: Vector2 in controller_facings:
+			_expect(
+				player.play_action_animation("asscopy", facing),
+				"%s has an asscopy view for the facing %s the controller snaps to" % [character, facing]
+			)
+		# Every other facing must land on one of those two rather than on a missing clip.
+		for angle in range(8):
+			var arbitrary := Vector2.RIGHT.rotated(float(angle) * PI / 4.0)
+			var snapped: Vector2 = CONTROLLER.new()._nearest_asscopy_facing(arbitrary)
+			_expect(
+				controller_facings.has(snapped),
+				"an arbitrary facing snaps onto a view the clip has, got %s" % snapped
+			)
+		root.remove_child(player)
+		player.free()

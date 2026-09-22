@@ -8,34 +8,15 @@
     "8": "PISS#2",
     "9": "STEAL",
     "10": "DRINK",
+    "13": "SPRAY",
+    "14": "PHONE#CALL",
     "15": "PHONE#TYPE",
-    "16": "KETCHUP"
+    "16": "KETCHUP",
+    "17": "ASSCOPY",
+    "19": "FLIPBAG",
+    "20": "FLIPBAG2"
   },
   "clips": [
-    {
-      "character": "boss",
-      "library": "npc",
-      "source": "CHEF_SIT#IDLE",
-      "action": "sit-idle",
-      "angles": [
-        "000",
-        "090",
-        "180",
-        "270"
-      ]
-    },
-    {
-      "character": "boss",
-      "library": "npc",
-      "source": "CHEF_SIT#EASY",
-      "action": "sit-easy",
-      "angles": [
-        "000",
-        "090",
-        "180",
-        "270"
-      ]
-    },
     {
       "character": "boss",
       "library": "npc",
@@ -53,33 +34,9 @@
       ]
     },
     {
-      "character": "male-employee-1",
+      "character": "boss",
       "library": "npc",
-      "source": "ANGESTELLTER#1_SIT#IDLE",
-      "action": "sit-idle",
-      "angles": [
-        "000",
-        "090",
-        "180",
-        "270"
-      ]
-    },
-    {
-      "character": "male-employee-1",
-      "library": "npc",
-      "source": "ANGESTELLTER#1_SIT#USE",
-      "action": "sit-use",
-      "angles": [
-        "000",
-        "090",
-        "180",
-        "270"
-      ]
-    },
-    {
-      "character": "male-employee-1",
-      "library": "npc",
-      "source": "ANGESTELLTER#1_SIT#EASY",
+      "source": "CHEF_SIT#EASY",
       "action": "sit-easy",
       "angles": [
         "000",
@@ -89,25 +46,21 @@
       ]
     },
     {
-      "character": "male-employee-1",
+      "character": "boss",
       "library": "npc",
-      "source": "ANGESTELLTER#1_SPECIAL#1",
-      "action": "special-1",
+      "source": "CHEF_SIT#IDLE",
+      "action": "sit-idle",
       "angles": [
         "000",
-        "045",
         "090",
-        "135",
         "180",
-        "225",
-        "270",
-        "315"
+        "270"
       ]
     },
     {
-      "character": "male-employee-1",
+      "character": "female-employee-1",
       "library": "npc",
-      "source": "ANGESTELLTER#1_PISSED",
+      "source": "ANGESTELLTE#1_PISSED",
       "action": "pissed",
       "angles": [
         "000",
@@ -118,6 +71,18 @@
         "225",
         "270",
         "315"
+      ]
+    },
+    {
+      "character": "female-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTE#1_SIT#EASY",
+      "action": "sit-easy",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
       ]
     },
     {
@@ -147,18 +112,6 @@
     {
       "character": "female-employee-1",
       "library": "npc",
-      "source": "ANGESTELLTE#1_SIT#EASY",
-      "action": "sit-easy",
-      "angles": [
-        "000",
-        "090",
-        "180",
-        "270"
-      ]
-    },
-    {
-      "character": "female-employee-1",
-      "library": "npc",
       "source": "ANGESTELLTE#1_SPECIAL#1",
       "action": "special-1",
       "angles": [
@@ -173,9 +126,9 @@
       ]
     },
     {
-      "character": "female-employee-1",
+      "character": "janitor",
       "library": "npc",
-      "source": "ANGESTELLTE#1_PISSED",
+      "source": "HOUSEMEISTER_PISSED",
       "action": "pissed",
       "angles": [
         "000",
@@ -189,11 +142,22 @@
       ]
     },
     {
-      "character": "jobless",
-      "library": "player",
-      "source": "JOBLESS_STAND#USE",
-      "action": "stand-use",
-      "slot": 3,
+      "character": "janitor",
+      "library": "npc",
+      "source": "HOUSEMEISTER_SIT#EASY",
+      "action": "sit-easy",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "janitor",
+      "library": "npc",
+      "source": "HOUSEMEISTER_SPECIAL#1",
+      "action": "special-1",
       "angles": [
         "000",
         "045",
@@ -206,11 +170,10 @@
       ]
     },
     {
-      "character": "jobless",
-      "library": "player",
-      "source": "JOBLESS_KNEE#USE",
-      "action": "knee-use",
-      "slot": 4,
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_PISSED",
+      "action": "pissed",
       "angles": [
         "000",
         "045",
@@ -223,11 +186,46 @@
       ]
     },
     {
-      "character": "jobless",
-      "library": "player",
-      "source": "JOBLESS_KICK",
-      "action": "kick",
-      "slot": 5,
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_SIT#EASY",
+      "action": "sit-easy",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_SIT#IDLE",
+      "action": "sit-idle",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_SIT#USE",
+      "action": "sit-use",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-1",
+      "library": "npc",
+      "source": "ANGESTELLTER#1_SPECIAL#1",
+      "action": "special-1",
       "angles": [
         "000",
         "045",
@@ -240,11 +238,10 @@
       ]
     },
     {
-      "character": "jobless",
-      "library": "player",
-      "source": "JOBLESS_PUNCH",
-      "action": "punch",
-      "slot": 6,
+      "character": "male-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTER#2_PISSED",
+      "action": "pissed",
       "angles": [
         "000",
         "045",
@@ -257,23 +254,46 @@
       ]
     },
     {
-      "character": "jobless",
-      "library": "player",
-      "source": "JOBLESS_PISS#2",
-      "action": "piss-2",
-      "slot": 8,
+      "character": "male-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTER#2_SIT#EASY",
+      "action": "sit-easy",
       "angles": [
         "000",
-        "270",
-        "315"
+        "090",
+        "180",
+        "270"
       ]
     },
     {
-      "character": "jobless",
-      "library": "player",
-      "source": "JOBLESS_STEAL",
-      "action": "steal",
-      "slot": 9,
+      "character": "male-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTER#2_SIT#IDLE",
+      "action": "sit-idle",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTER#2_SIT#USE",
+      "action": "sit-use",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "male-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTER#2_SPECIAL#2",
+      "action": "special-2",
       "angles": [
         "000",
         "045",
@@ -286,9 +306,72 @@
       ]
     },
     {
-      "character": "jobless",
+      "character": "secretary",
+      "library": "npc",
+      "source": "SEKRETAERIN_SIT#EASY",
+      "action": "sit-easy",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "secretary",
+      "library": "npc",
+      "source": "SEKRETAERIN_SIT#IDLE",
+      "action": "sit-idle",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "secretary",
+      "library": "npc",
+      "source": "SEKRETAERIN_SIT#USE",
+      "action": "sit-use",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "secretary",
+      "library": "npc",
+      "source": "SEKRETAERIN_SPECIAL#1",
+      "action": "special-1",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
       "library": "player",
-      "source": "JOBLESS_DRINK",
+      "source": "ANNE_ASSCOPY",
+      "action": "asscopy",
+      "slot": 17,
+      "angles": [
+        "090",
+        "180"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_DRINK",
       "action": "drink",
       "slot": 10,
       "angles": [
@@ -303,11 +386,11 @@
       ]
     },
     {
-      "character": "jobless",
+      "character": "anne",
       "library": "player",
-      "source": "JOBLESS_PHONE#TYPE",
-      "action": "phone-type",
-      "slot": 15,
+      "source": "ANNE_FLIPBAG",
+      "action": "flipbag",
+      "slot": 19,
       "angles": [
         "000",
         "045",
@@ -320,45 +403,28 @@
       ]
     },
     {
-      "character": "jobless",
+      "character": "anne",
       "library": "player",
-      "source": "JOBLESS_KETCHUP",
+      "source": "ANNE_FLIPBAG2",
+      "action": "flipbag2",
+      "slot": 20,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_KETCHUP",
       "action": "ketchup",
       "slot": 16,
-      "angles": [
-        "000",
-        "045",
-        "090",
-        "135",
-        "180",
-        "225",
-        "270",
-        "315"
-      ]
-    },
-    {
-      "character": "anne",
-      "library": "player",
-      "source": "ANNE_STAND#USE",
-      "action": "stand-use",
-      "slot": 3,
-      "angles": [
-        "000",
-        "045",
-        "090",
-        "135",
-        "180",
-        "225",
-        "270",
-        "315"
-      ]
-    },
-    {
-      "character": "anne",
-      "library": "player",
-      "source": "ANNE_KNEE#USE",
-      "action": "knee-use",
-      "slot": 4,
       "angles": [
         "000",
         "045",
@@ -390,9 +456,9 @@
     {
       "character": "anne",
       "library": "player",
-      "source": "ANNE_PUNCH",
-      "action": "punch",
-      "slot": 6,
+      "source": "ANNE_KNEE#USE",
+      "action": "knee-use",
+      "slot": 4,
       "angles": [
         "000",
         "045",
@@ -407,38 +473,9 @@
     {
       "character": "anne",
       "library": "player",
-      "source": "ANNE_PISS#2",
-      "action": "piss-2",
-      "slot": 8,
-      "angles": [
-        "090",
-        "135",
-        "180"
-      ]
-    },
-    {
-      "character": "anne",
-      "library": "player",
-      "source": "ANNE_STEAL",
-      "action": "steal",
-      "slot": 9,
-      "angles": [
-        "000",
-        "045",
-        "090",
-        "135",
-        "180",
-        "225",
-        "270",
-        "315"
-      ]
-    },
-    {
-      "character": "anne",
-      "library": "player",
-      "source": "ANNE_DRINK",
-      "action": "drink",
-      "slot": 10,
+      "source": "ANNE_PHONE#CALL",
+      "action": "phone-call",
+      "slot": 14,
       "angles": [
         "000",
         "045",
@@ -470,9 +507,299 @@
     {
       "character": "anne",
       "library": "player",
-      "source": "ANNE_KETCHUP",
+      "source": "ANNE_PISS#2",
+      "action": "piss-2",
+      "slot": 8,
+      "angles": [
+        "090",
+        "135",
+        "180"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_PUNCH",
+      "action": "punch",
+      "slot": 6,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_SPRAY",
+      "action": "spray",
+      "slot": 13,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_STAND#USE",
+      "action": "stand-use",
+      "slot": 3,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
+      "source": "ANNE_STEAL",
+      "action": "steal",
+      "slot": 9,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_ASSCOPY",
+      "action": "asscopy",
+      "slot": 17,
+      "angles": [
+        "090",
+        "180"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_DRINK",
+      "action": "drink",
+      "slot": 10,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_FLIPBAG",
+      "action": "flipbag",
+      "slot": 19,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_FLIPBAG2",
+      "action": "flipbag2",
+      "slot": 20,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_KETCHUP",
       "action": "ketchup",
       "slot": 16,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_KICK",
+      "action": "kick",
+      "slot": 5,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_KNEE#USE",
+      "action": "knee-use",
+      "slot": 4,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_PHONE#CALL",
+      "action": "phone-call",
+      "slot": 14,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_PHONE#TYPE",
+      "action": "phone-type",
+      "slot": 15,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_PISS#2",
+      "action": "piss-2",
+      "slot": 8,
+      "angles": [
+        "000",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_PUNCH",
+      "action": "punch",
+      "slot": 6,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_SPRAY",
+      "action": "spray",
+      "slot": 13,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_STAND#USE",
+      "action": "stand-use",
+      "slot": 3,
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_STEAL",
+      "action": "steal",
+      "slot": 9,
       "angles": [
         "000",
         "045",

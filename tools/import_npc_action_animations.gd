@@ -83,9 +83,8 @@ func _build_animation(character: String, source_prefix: String, action: String, 
 		if texture == null:
 			_fail("Missing NPC action frame: %s" % path)
 			return null
-		var offset: Dictionary = frame["offset"]
 		animation.track_insert_key(texture_track, time, texture)
-		animation.track_insert_key(offset_track, time, Vector2(float(offset["x"]), float(offset["y"])))
+		animation.track_insert_key(offset_track, time, _frame_offset(frame))
 		time += float(frame["duration_sec"])
 	if absf(time - animation.length) > 0.00001:
 		_fail("Frame durations do not match clip length in %s" % source_path)
@@ -108,3 +107,27 @@ func _read_source(path: String) -> Dictionary:
 func _fail(message: String) -> void:
 	_failed = true
 	push_error(message)
+
+
+# SPRITEHDR stores the pivot as a signed 16-bit pair, but the extraction helper read it
+# unsigned, so a pivot just left of the sprite comes through as a number near 65536 --
+# ANNE_ASSCOPY_090 has pivot_x 65531, which is -5. Sign-extending here rather than in the
+# reference data keeps the extraction untouched. Anything still absurd afterwards is a
+# decode this has not seen, so it fails rather than placing a sprite a screen away.
+const PIVOT_WRAP := 65536
+const PIVOT_SIGN_LIMIT := 32768
+const PIVOT_SANITY_LIMIT := 4096
+
+
+func _signed_pivot(value: float) -> float:
+	return value - PIVOT_WRAP if value >= PIVOT_SIGN_LIMIT else value
+
+
+func _frame_offset(frame: Dictionary) -> Vector2:
+	var offset := Vector2(
+		-_signed_pivot(float(frame["pivot_x"])),
+		-_signed_pivot(float(frame["pivot_y"]))
+	)
+	if absf(offset.x) > PIVOT_SANITY_LIMIT or absf(offset.y) > PIVOT_SANITY_LIMIT:
+		_fail("Frame %s has an implausible pivot offset %s" % [frame.get("sprite_name", "?"), offset])
+	return offset

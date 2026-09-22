@@ -232,9 +232,51 @@ Composed with the selector map in `sub_41B240`, a record's `+0x18` therefore cho
 Selector 5 being `ASSCOPY` explains the reposition it carries: the player steps onto the
 copier before photocopying himself.
 
-Level 1 can reach selectors 0, 1, 2, 3, 6, 7, 8, 9 and 12, so the port imports those nine
-clips for both characters — 67 views each, listed in `tools/character_action_clips.json`,
-which the frame exporter and the library importer both read.
+### The reposition, recovered
+
+`sub_41B240`'s selector-5 branch at `0x41B484` reads the focused item's orientation, a signed
+16-bit quarter-turn index at `item+196`, multiplies it by 90.0 and compares the result with
+90.0 again. Orientation 0 takes one branch and everything else the other:
+
+| Orientation | Facing set | Offset added to the player |
+| --- | --- | --- |
+| 0 | 2, the `090` view | `(+0.80, +0.85)` |
+| 1, 2, 3 | 4, the `180` view | `(+0.85, +0.80)` |
+
+The two facings are exactly the two views `ASSCOPY` ships, which is why it has two rather
+than eight. The move itself is a third call taking the new x, the new y and **1.8**, and the
+branch ends by pushing animation slot 17. The constants are at `0x4658F4` (90.0), `0x4658F0`
+(0.8) and `0x4658EC` (0.85), with 1.8 as an immediate.
+
+The port's level manifests already carry each object's orientation as its `variant` field,
+and level 2's single copier is orientation 0, so it takes the first row.
+
+Levels 1 and 2 between them reach selectors 0–12 and 14, so the port imports those fourteen
+clips for both characters — 101 views each, listed in `tools/character_action_clips.json`,
+which the frame exporter and the library importer both read. Selector 13, `BUCKET`, is the
+one the slot table names that no imported level places, and `check_player_action_clips.gd`
+now fails on any placed selector without a clip rather than skipping it.
+
+Two things in the source needed care:
+
+- **`ASSCOPY` ships only two views**, `090` and `180`, because the original repositions the
+  player onto the copier and so only ever shows it from the two sides it can be stepped onto
+  from. Until that reposition is implemented the controller snaps the facing to the nearer
+  of the two.
+- **`ANNE_ASSCOPY_090`'s pivot is negative.** `SPRITEHDR` stores it as a signed 16-bit pair,
+  but the extraction helper read it unsigned, so `pivot_x` comes through as 65531 where it
+  means −5, and the reference JSON's `offset.x` carries −65531 to match. The library importer
+  sign-extends it and rejects anything still beyond ±4096, which would otherwise place a
+  sprite most of a screen away. Every one of the 6903 extracted frames has
+  `offset == -pivot`, so the importer reads the pivot and negates it rather than trusting the
+  precomputed offset.
+- **Eleven frames ship no Z plane.** They are the even-numbered frames of
+  `ANNE_PHONE#CALL_135`, which have no `SPRITEZB.bin`. The exporter already draws such a
+  frame without a depth mask, reproducing the engine's own untested blit, so the five clips
+  land as 728 colour frames and 717 masks.
+
+Together the five clips add about 12 MB to LFS, rather more than the 3.6 MB estimated before
+they were exported.
 
 ## While an action runs
 
