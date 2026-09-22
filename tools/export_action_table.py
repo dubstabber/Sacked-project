@@ -18,9 +18,9 @@ import sys
 from pathlib import Path
 
 try:
-    from import_original_level import imported_level_numbers, level_paths
+    from import_original_level import imported_level_numbers, imported_manifest_paths, level_paths
 except ImportError:  # imported as tools.export_action_table by the tests
-    from tools.import_original_level import imported_level_numbers, level_paths
+    from tools.import_original_level import imported_level_numbers, imported_manifest_paths, level_paths
 
 
 EXE_REL = Path("extract-sacked-assets/sacked/sacked.exe")
@@ -423,11 +423,9 @@ def placed_special_ids(root: Path) -> frozenset:
     definitions = object_action_ids(root)
     watched = GLOBAL_CONSEQUENCE_IDS | CUBICLE_GATED_IDS
     placed = set()
-    for number in imported_level_numbers(root):
-        manifest_path = root / level_paths(number).manifest_rel
-        if not manifest_path.is_file():
-            continue
-        manifest = json.loads(manifest_path.read_text())
+    # Variants count too: level 11's points-mode file carries an item its own does not.
+    for manifest_rel in imported_manifest_paths(root):
+        manifest = json.loads((root / manifest_rel).read_text())
         for item in manifest["objects"]:
             item_type = (int(item["kind"], 16) >> 4) & 0xFFF
             definition = definitions.get(item_type)

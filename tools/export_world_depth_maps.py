@@ -10,9 +10,9 @@ from PIL import Image
 from export_character_depth_maps import encode_depth_rgba, read_frame_depth
 
 try:
-    from tools.import_original_level import imported_level_numbers, level_paths
+    from tools.import_original_level import imported_manifest_paths
 except ImportError:
-    from import_original_level import imported_level_numbers, level_paths
+    from import_original_level import imported_manifest_paths
 
 
 def depth_image(folder: Path, size: tuple[int, int]) -> Image.Image:
@@ -21,11 +21,13 @@ def depth_image(folder: Path, size: tuple[int, int]) -> Image.Image:
 
 
 def level_manifests(root: Path):
-    """Every imported level, in numeric order so first-seen fields never reshuffle."""
-    for number in imported_level_numbers(root):
-        path = root / level_paths(number).manifest_rel
-        if path.is_file():
-            yield json.loads(path.read_text())
+    """Every imported manifest, each level then its points variant, in a fixed order.
+
+    The order matters because a texture is only exported once, under the fields of
+    whichever manifest names it first.
+    """
+    for manifest_rel in imported_manifest_paths(root):
+        yield json.loads((root / manifest_rel).read_text())
 
 
 def outputs(root: Path):

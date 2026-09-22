@@ -22,18 +22,20 @@ from PIL import Image
 
 try:
     from export_character_depth_maps import encode_depth_rgba, read_frame_depth, write_rgba_png
-    from import_original_level import imported_level_numbers, level_paths
+    from import_original_level import imported_manifest_paths
 except ImportError:  # imported as tools.export_object_state_assets by the tests
     from tools.export_character_depth_maps import encode_depth_rgba, read_frame_depth, write_rgba_png
-    from tools.import_original_level import imported_level_numbers, level_paths
+    from tools.import_original_level import imported_manifest_paths
 
 
 def level_manifests(root: Path):
-    """Every imported level, in numeric order so first-seen fields never reshuffle."""
-    for number in imported_level_numbers(root):
-        path = root / level_paths(number).manifest_rel
-        if path.is_file():
-            yield json.loads(path.read_text())
+    """Every imported manifest, each level then its points variant, in a fixed order.
+
+    The order matters because a texture is only exported once, under the fields of
+    whichever manifest names it first.
+    """
+    for manifest_rel in imported_manifest_paths(root):
+        yield json.loads((root / manifest_rel).read_text())
 
 
 EXTRACTION_TOOLS_REL = Path("extract-sacked-assets/tools")

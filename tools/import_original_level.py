@@ -13,7 +13,7 @@ import tempfile
 import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, Iterator, List, Optional, Tuple
 
 
 SOURCE_ID = 3
@@ -47,31 +47,49 @@ class LevelPaths:
 
     number: int
     index: int
+    points: bool
     source_rel: Path
     points_source_rel: Path
     text_rel: Path
     manifest_rel: Path
     scene_rel: Path
 
+    @property
+    def label(self) -> str:
+        """How this build is named in messages: "5" for the level, "5s" for its variant."""
+        return "%d%s" % (self.number, "s" if self.points else "")
 
-def level_paths(number: int) -> LevelPaths:
+
+def level_paths(number: int, points: bool = False) -> LevelPaths:
+    """Where one build reads from and writes to.
+
+    sub_408D00 picks the plain file for the time game and the S file for the points game.
+    Where the two differ only in CONDITION one scene serves both, so only the divergent
+    levels get a second, "s"-suffixed build whose layout comes from the S file.
+    """
     if not 1 <= number <= LEVEL_COUNT:
         raise ValueError(f"level {number} is outside the original's 1..{LEVEL_COUNT} range")
     index = number - 1
+    points_source_rel = LEVELS_DIR_REL / ("LEVEL_%02ds.col" % index)
+    suffix = "s" if points else ""
     return LevelPaths(
         number=number,
         index=index,
-        source_rel=LEVELS_DIR_REL / ("LEVEL_%02d.col" % index),
-        # sub_408D00 picks the plain file for the time game and the S file for the points game.
-        points_source_rel=LEVELS_DIR_REL / ("LEVEL_%02ds.col" % index),
+        points=points,
+        source_rel=points_source_rel if points else LEVELS_DIR_REL / ("LEVEL_%02d.col" % index),
+        points_source_rel=points_source_rel,
         text_rel=LEVELS_DIR_REL / ("Level_%02d.txt" % index),
-        manifest_rel=LEVEL_MANIFEST_DIR_REL / ("level_%d.json" % number),
-        scene_rel=Path("scenes/level_%d.tscn" % number),
+        manifest_rel=LEVEL_MANIFEST_DIR_REL / ("level_%d%s.json" % (number, suffix)),
+        scene_rel=Path("scenes/level_%d%s.tscn" % (number, suffix)),
     )
 
 
 def imported_level_numbers(root: Path) -> List[int]:
-    """The levels this checkout has already imported, in numeric order."""
+    """The levels this checkout has already imported, in numeric order.
+
+    Points-mode variants are named level_<n>s.json and are deliberately not matched: they
+    belong to a level rather than being one.
+    """
     numbers = []
     for path in (root / LEVEL_MANIFEST_DIR_REL).glob("level_*.json"):
         match = re.fullmatch(r"level_(\d+)", path.stem)
@@ -82,13 +100,38 @@ def imported_level_numbers(root: Path) -> List[int]:
     return sorted(numbers) or [1]
 
 
+def imported_manifest_paths(root: Path) -> List[Path]:
+    """Every imported manifest, each level followed by its points variant if it has one.
+
+    The order is fixed so the exporters that read manifests can never reshuffle which
+    level a shared texture is first seen in.
+    """
+    paths: List[Path] = []
+    for number in imported_level_numbers(root):
+        for points in (False, True):
+            manifest_rel = level_paths(number, points=points).manifest_rel
+            if (root / manifest_rel).is_file():
+                paths.append(manifest_rel)
+    return paths
+
+
 @dataclass(frozen=True)
 class LevelBuild:
-    """One level's computed manifest, before anything is written."""
+    """One build's computed manifest, before anything is written."""
 
     paths: LevelPaths
     manifest: Dict[str, object]
     source_to_dest: Dict[Path, Path]
+    points_variant: Optional["LevelBuild"] = None
+
+
+def every_build(builds: Dict[int, "LevelBuild"]) -> Iterator["LevelBuild"]:
+    """Every build in a fixed order: each level, then the points variant it may have."""
+    for number in sorted(builds):
+        build = builds[number]
+        yield build
+        if build.points_variant is not None:
+            yield build.points_variant
 
 
 @dataclass(frozen=True)
@@ -716,25 +759,40 @@ def load_import_context(root: Path) -> ImportContext:
     )
 
 
-def check_points_file_matches(paths: LevelPaths, level: Dict[str, object], points_level: Dict[str, object]) -> None:
-    """The importer takes only CONDITION from the S file, so everything else has to agree.
+def points_file_differences(level: Dict[str, object], points_level: Dict[str, object]) -> List[str]:
+    """Which chunks the points-mode S file changes beyond CONDITION.
 
-    Across the campaign the S files of six levels also move items, spawns or layers; those
-    need a second scene rather than a shared one, so refuse them loudly instead of quietly
-    rendering the time game's layout in the points game.
+    Most levels change nothing else, and one scene then serves both game modes because it
+    carries both CONDITIONs. Six of the campaign's levels (5, 8, 11, 12, 19 and 20) also
+    move items or floor tiles, and those get a second scene built from the S file rather
+    than quietly rendering the time game's layout in the points game.
     """
-    differing = [key for key in sorted(level) if key != "condition" and level[key] != points_level.get(key)]
-    if differing:
-        raise ValueError(
-            "%s differs from %s beyond CONDITION (%s); the points game needs its own scene"
-            % (paths.points_source_rel.name, paths.source_rel.name, ", ".join(differing))
-        )
+    return [key for key in sorted(level) if key != "condition" and level[key] != points_level.get(key)]
 
 
-def build_manifest(root: Path, paths: LevelPaths, context: ImportContext) -> Tuple[Dict[str, object], Dict[Path, Path]]:
+def build_level(root: Path, number: int, context: ImportContext) -> LevelBuild:
+    """One level, plus the second build its points-mode file earns when it diverges."""
+    paths = level_paths(number)
     level = parse_level_file(root / paths.source_rel)
     points_level = parse_level_file(root / paths.points_source_rel)
-    check_points_file_matches(paths, level, points_level)
+    # Both builds carry both CONDITIONs, so LevelSession picks by mode either way and a
+    # restart in the points game keeps its own target.
+    conditions = {"time": level["condition"], "points": points_level["condition"]}
+    manifest, source_to_dest = manifest_from_level(paths, level, conditions, context)
+    variant: Optional[LevelBuild] = None
+    if points_file_differences(level, points_level):
+        variant_paths = level_paths(number, points=True)
+        variant_manifest, variant_sources = manifest_from_level(variant_paths, points_level, conditions, context)
+        variant = LevelBuild(paths=variant_paths, manifest=variant_manifest, source_to_dest=variant_sources)
+    return LevelBuild(paths=paths, manifest=manifest, source_to_dest=source_to_dest, points_variant=variant)
+
+
+def manifest_from_level(
+    paths: LevelPaths,
+    level: Dict[str, object],
+    conditions: Dict[str, object],
+    context: ImportContext,
+) -> Tuple[Dict[str, object], Dict[Path, Path]]:
     object_db = context.object_db
     texture_candidates = context.texture_candidates
     atlases = context.atlases
@@ -815,6 +873,8 @@ def build_manifest(root: Path, paths: LevelPaths, context: ImportContext) -> Tup
     manifest = {
         "generated_by": "tools/import_original_level.py",
         "source": paths.source_rel.as_posix(),
+        # Only a points-mode variant carries this, so a level's own manifest is unchanged.
+        **({"game_mode": "points"} if paths.points else {}),
         "original_level_index": paths.index,
         "playable_level_number": paths.number,
         "original_level_text": paths.text_rel.as_posix(),
@@ -829,10 +889,7 @@ def build_manifest(root: Path, paths: LevelPaths, context: ImportContext) -> Tup
             "visible_height": visible_height,
             "layer_count": int(level["layer_count"]),
         },
-        "conditions": {
-            "time": level["condition"],
-            "points": points_level["condition"],
-        },
+        "conditions": conditions,
         "collision_grid": build_collision_grid(level["info_data"], width, height),
         "tile_layers": [
             {
@@ -918,18 +975,19 @@ def check_texture_union(builds: Dict[int, "LevelBuild"]) -> None:
     prefab. Its own -pivot-X-Y fallback only sees one level per process, which is why this
     has to be caught here.
     """
-    seen: Dict[str, Tuple[int, Tuple[object, ...]]] = {}
+    seen: Dict[str, Tuple[str, Tuple[object, ...]]] = {}
     conflicts: List[str] = []
-    for number in sorted(builds):
-        for entry in builds[number].manifest["objects"]:
+    for build in every_build(builds):
+        for entry in build.manifest["objects"]:
             slug = Path(str(entry["texture"])).stem
             signature = (entry["source_sprite"], tuple(entry["pivot"]), tuple(entry["texture_size"]))
             first = seen.get(slug)
             if first is None:
-                seen[slug] = (number, signature)
+                seen[slug] = (build.paths.label, signature)
             elif first[1] != signature:
                 conflicts.append(
-                    "%s: level %d has %s but level %d has %s" % (slug, first[0], first[1], number, signature)
+                    "%s: level %s has %s but level %s has %s"
+                    % (slug, first[0], first[1], build.paths.label, signature)
                 )
     if conflicts:
         raise ValueError("object texture slugs disagree between levels:\n  " + "\n  ".join(sorted(set(conflicts))))
@@ -940,8 +998,14 @@ def write_outputs(root: Path, builds: Dict[int, "LevelBuild"], targets: Iterable
     for number in sorted(targets):
         build = builds[number]
         write_atomic_text(manifest_text(build.manifest), root / build.paths.manifest_rel)
+        if build.points_variant is not None:
+            variant = build.points_variant
+            write_atomic_text(manifest_text(variant.manifest), root / variant.paths.manifest_rel)
+        else:
+            # A level whose S file has stopped diverging must not keep a second build.
+            remove_points_variant_outputs(root, number)
     remove_stale_object_textures(root, union)
-    for build in (builds[number] for number in sorted(builds)):
+    for build in every_build(builds):
         for source_rel, dest_rel in sorted(build.source_to_dest.items(), key=lambda item: item[1].as_posix()):
             source = root / source_rel
             target = root / dest_rel
@@ -953,9 +1017,15 @@ def write_outputs(root: Path, builds: Dict[int, "LevelBuild"], targets: Iterable
 
 def union_destinations(builds: Dict[int, "LevelBuild"]) -> Dict[Path, Path]:
     union: Dict[Path, Path] = {}
-    for number in sorted(builds):
-        union.update(builds[number].source_to_dest)
+    for build in every_build(builds):
+        union.update(build.source_to_dest)
     return union
+
+
+def remove_points_variant_outputs(root: Path, number: int) -> None:
+    variant = level_paths(number, points=True)
+    for rel in (variant.manifest_rel, variant.scene_rel):
+        (root / rel).unlink(missing_ok=True)
 
 
 def remove_stale_object_textures(root: Path, union: Dict[Path, Path]) -> None:
@@ -980,8 +1050,8 @@ def remove_stale_object_textures(root: Path, union: Dict[Path, Path]) -> None:
 
 def compare_outputs(root: Path, builds: Dict[int, "LevelBuild"]) -> int:
     failures: List[str] = []
-    for number in sorted(builds):
-        build = builds[number]
+    expected_variants: set = set()
+    for build in every_build(builds):
         manifest_path = root / build.paths.manifest_rel
         if not manifest_path.is_file():
             failures.append(f"missing {build.paths.manifest_rel}")
@@ -989,6 +1059,18 @@ def compare_outputs(root: Path, builds: Dict[int, "LevelBuild"]) -> int:
             failures.append(f"stale {build.paths.manifest_rel}")
         if not (root / build.paths.scene_rel).is_file():
             failures.append(f"missing {build.paths.scene_rel}")
+        if build.paths.points:
+            expected_variants |= {build.paths.manifest_rel, build.paths.scene_rel}
+
+    # A variant on disk for a level whose S file matches is as stale as a missing one.
+    for pattern_dir, pattern in ((LEVEL_MANIFEST_DIR_REL, "level_*s.json"), (Path("scenes"), "level_*s.tscn")):
+        directory = root / pattern_dir
+        if not directory.is_dir():
+            continue
+        for path in sorted(directory.glob(pattern)):
+            rel = path.relative_to(root)
+            if rel not in expected_variants:
+                failures.append(f"stale {rel}")
 
     union = union_destinations(builds)
     for source_rel, dest_rel in sorted(union.items(), key=lambda item: item[1].as_posix()):
@@ -1018,7 +1100,7 @@ def compare_outputs(root: Path, builds: Dict[int, "LevelBuild"]) -> int:
         for stem in sorted(actual_prefabs - expected_prefabs):
             failures.append(f"stale {OBJECT_PREFAB_DIR_REL / (stem + '.tscn')}")
 
-    levels = ", ".join(str(number) for number in sorted(builds))
+    levels = ", ".join(build.paths.label for build in every_build(builds))
     if failures:
         print(f"Level import outputs are stale (levels {levels}):", file=sys.stderr)
         for failure in failures:
@@ -1036,24 +1118,28 @@ def run_godot_scene_builder(root: Path, godot_binary: str, builds: Dict[int, "Le
 
     subprocess.run([godot_binary, "--headless", "--path", ".", "--import"], cwd=root, env=env, check=True)
     for number in sorted(targets):
-        paths = builds[number].paths
-        subprocess.run(
-            [
-                godot_binary,
-                "--headless",
-                "--path",
-                ".",
-                "--script",
-                "tools/build_level_scene.gd",
-                "--",
-                "res://%s" % paths.manifest_rel.as_posix(),
-                "res://%s" % paths.scene_rel.as_posix(),
-            ],
-            cwd=root,
-            env=env,
-            check=True,
-        )
-        normalize_scene_file(root / paths.scene_rel)
+        build = builds[number]
+        for target in (build, build.points_variant):
+            if target is None:
+                continue
+            paths = target.paths
+            subprocess.run(
+                [
+                    godot_binary,
+                    "--headless",
+                    "--path",
+                    ".",
+                    "--script",
+                    "tools/build_level_scene.gd",
+                    "--",
+                    "res://%s" % paths.manifest_rel.as_posix(),
+                    "res://%s" % paths.scene_rel.as_posix(),
+                ],
+                cwd=root,
+                env=env,
+                check=True,
+            )
+            normalize_scene_file(root / paths.scene_rel)
     remove_stale_object_prefabs(root, union_destinations(builds))
     # The builder re-saves every object prefab with a fresh random unique_id, so without
     # the same normalization each regeneration churns all of scenes/objects/.
@@ -1143,9 +1229,7 @@ def build_levels(root: Path, numbers: Iterable[int]) -> Dict[int, LevelBuild]:
     context = load_import_context(root)
     builds: Dict[int, LevelBuild] = {}
     for number in sorted(set(numbers)):
-        paths = level_paths(number)
-        manifest, source_to_dest = build_manifest(root, paths, context)
-        builds[number] = LevelBuild(paths=paths, manifest=manifest, source_to_dest=source_to_dest)
+        builds[number] = build_level(root, number, context)
     check_texture_union(builds)
     return builds
 

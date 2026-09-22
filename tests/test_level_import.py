@@ -6,11 +6,14 @@ from tools.import_original_level import (
     LEVEL_COUNT,
     LevelBuild,
     LevelPaths,
-    build_manifest,
+    build_level,
     check_texture_union,
+    every_build,
     imported_level_numbers,
+    imported_manifest_paths,
     level_paths,
     load_import_context,
+    points_file_differences,
     remove_stale_object_prefabs,
     remove_stale_object_textures,
     union_destinations,
@@ -20,14 +23,24 @@ from tools.import_original_level import (
 ROOT = Path(__file__).resolve().parents[1]
 
 # The S files of these levels move items, spawns or layers as well as CONDITION, so one
-# scene cannot serve both game modes. Numbers are playable levels, not original indices.
+# scene cannot serve both game modes and each gets a second build from its S file.
+# Numbers are playable levels, not original indices, and the values are the chunks that
+# differ, measured from the shipped files.
 DIVERGENT_POINTS_LEVELS = (5, 8, 11, 12, 19, 20)
+DIVERGENT_POINTS_KEYS = {
+    5: ["items"],
+    8: ["layers"],
+    11: ["items", "spawns"],
+    12: ["items"],
+    19: ["items", "spawns"],
+    20: ["items"],
+}
+# Only two of the six change how many objects the map holds; the rest move them.
+DIVERGENT_OBJECT_COUNTS = {11: (190, 191), 19: (407, 406)}
 
 
 def build(number: int, context) -> LevelBuild:
-    paths = level_paths(number)
-    manifest, source_to_dest = build_manifest(ROOT, paths, context)
-    return LevelBuild(paths=paths, manifest=manifest, source_to_dest=source_to_dest)
+    return build_level(ROOT, number, context)
 
 
 _CAMPAIGN = None
@@ -38,13 +51,9 @@ def campaign():
     global _CAMPAIGN
     if _CAMPAIGN is None:
         context = load_import_context(ROOT)
-        builds, refused = {}, []
-        for number in range(1, LEVEL_COUNT + 1):
-            try:
-                builds[number] = build(number, context)
-            except ValueError:
-                refused.append(number)
-        _CAMPAIGN = (builds, tuple(refused))
+        builds = {number: build(number, context) for number in range(1, LEVEL_COUNT + 1)}
+        divergent = tuple(number for number in sorted(builds) if builds[number].points_variant is not None)
+        _CAMPAIGN = (builds, divergent)
     return _CAMPAIGN
 
 
@@ -52,11 +61,26 @@ class LevelPathTests(unittest.TestCase):
     def test_maps_a_playable_level_onto_its_original_index(self):
         paths = level_paths(1)
         self.assertEqual(paths.index, 0)
+        self.assertFalse(paths.points)
+        self.assertEqual(paths.label, "1")
         self.assertEqual(paths.source_rel.name, "LEVEL_00.col")
         self.assertEqual(paths.points_source_rel.name, "LEVEL_00s.col")
         self.assertEqual(paths.text_rel.name, "Level_00.txt")
         self.assertEqual(paths.manifest_rel.as_posix(), "resources/levels/level_1.json")
         self.assertEqual(paths.scene_rel.as_posix(), "scenes/level_1.tscn")
+
+    def test_a_points_variant_reads_the_s_file_and_writes_beside_its_level(self):
+        paths = level_paths(5, points=True)
+        self.assertEqual(paths.index, 4)
+        self.assertTrue(paths.points)
+        self.assertEqual(paths.label, "5s")
+        # The variant's layout comes from the S file, which is also where its own
+        # CONDITION comes from.
+        self.assertEqual(paths.source_rel.name, "LEVEL_04s.col")
+        self.assertEqual(paths.points_source_rel.name, "LEVEL_04s.col")
+        self.assertEqual(paths.text_rel.name, "Level_04.txt")
+        self.assertEqual(paths.manifest_rel.as_posix(), "resources/levels/level_5s.json")
+        self.assertEqual(paths.scene_rel.as_posix(), "scenes/level_5s.tscn")
 
     def test_every_level_the_tree_accepts_exists_on_disk(self):
         for number in range(1, LEVEL_COUNT + 1):
@@ -91,6 +115,18 @@ class ImportedLevelDiscoveryTests(unittest.TestCase):
                 (root / "resources/levels" / noise).write_text("{}")
             self.assertEqual(imported_level_numbers(root), [1])
 
+    def test_a_points_variant_belongs_to_a_level_rather_than_being_one(self):
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name)
+            (root / "resources/levels").mkdir(parents=True)
+            for leaf in ("level_1.json", "level_5.json", "level_5s.json"):
+                (root / "resources/levels" / leaf).write_text("{}")
+            self.assertEqual(imported_level_numbers(root), [1, 5])
+            self.assertEqual(
+                [path.name for path in imported_manifest_paths(root)],
+                ["level_1.json", "level_5.json", "level_5s.json"],
+            )
+
     def test_falls_back_to_level_one_when_nothing_is_imported(self):
         with tempfile.TemporaryDirectory() as name:
             root = Path(name)
@@ -98,27 +134,76 @@ class ImportedLevelDiscoveryTests(unittest.TestCase):
             self.assertEqual(imported_level_numbers(root), [1])
 
 
-class PointsFileGuardTests(unittest.TestCase):
-    """The importer takes only CONDITION from the S file, so the rest has to agree."""
+class PointsVariantTests(unittest.TestCase):
+    """A level whose S file moves the map gets a second build, and no other level does."""
 
     @classmethod
     def setUpClass(cls):
         cls.context = load_import_context(ROOT)
 
-    def test_accepts_the_levels_whose_s_file_only_changes_condition(self):
+    def test_a_level_whose_s_file_only_changes_condition_keeps_one_build(self):
         for number in (1, 2):
             with self.subTest(number=number):
-                manifest, _ = build_manifest(ROOT, level_paths(number), self.context)
-                self.assertNotEqual(manifest["conditions"]["time"], manifest["conditions"]["points"])
+                built = build(number, self.context)
+                self.assertIsNone(built.points_variant)
+                self.assertNotIn("game_mode", built.manifest)
+                self.assertNotEqual(built.manifest["conditions"]["time"], built.manifest["conditions"]["points"])
 
-    def test_refuses_every_level_whose_s_file_moves_more_than_condition(self):
+    def test_only_the_six_measured_levels_diverge(self):
+        self.assertEqual(campaign()[1], DIVERGENT_POINTS_LEVELS)
+
+    def test_each_divergent_level_names_the_chunks_it_moves(self):
+        builds = campaign()[0]
+        for number, keys in DIVERGENT_POINTS_KEYS.items():
+            with self.subTest(number=number):
+                paths = builds[number].paths
+                from tools.import_original_level import parse_level_file
+
+                level = parse_level_file(ROOT / paths.source_rel)
+                points = parse_level_file(ROOT / paths.points_source_rel)
+                self.assertEqual(points_file_differences(level, points), keys)
+
+    def test_a_variant_is_built_from_the_s_file_and_shares_its_level_conditions(self):
+        builds = campaign()[0]
         for number in DIVERGENT_POINTS_LEVELS:
             with self.subTest(number=number):
-                with self.assertRaisesRegex(ValueError, "beyond CONDITION"):
-                    build_manifest(ROOT, level_paths(number), self.context)
+                built = builds[number]
+                variant = built.points_variant
+                self.assertIsNotNone(variant)
+                self.assertEqual(variant.manifest["game_mode"], "points")
+                self.assertEqual(Path(variant.manifest["source"]).name, "LEVEL_%02ds.col" % (number - 1))
+                # Both builds carry both CONDITIONs, so a restart keeps the mode's target.
+                self.assertEqual(variant.manifest["conditions"], built.manifest["conditions"])
+                self.assertEqual(variant.paths.manifest_rel.name, "level_%ds.json" % number)
+                # The map really differs, which is the whole reason for the second scene.
+                # Level 8 moves floor tiles and the other five move objects.
+                self.assertNotEqual(
+                    (variant.manifest["objects"], variant.manifest["tile_layers"]),
+                    (built.manifest["objects"], built.manifest["tile_layers"]),
+                )
 
-    def test_refuses_no_other_level(self):
-        self.assertEqual(campaign()[1], DIVERGENT_POINTS_LEVELS)
+    def test_the_two_levels_that_change_their_object_count(self):
+        builds = campaign()[0]
+        for number, (plain, points) in DIVERGENT_OBJECT_COUNTS.items():
+            with self.subTest(number=number):
+                self.assertEqual(len(builds[number].manifest["objects"]), plain)
+                self.assertEqual(len(builds[number].points_variant.manifest["objects"]), points)
+
+    def test_level_8_moves_floor_tiles_rather_than_objects(self):
+        built = campaign()[0][8]
+        variant = built.points_variant
+        self.assertEqual(len(variant.manifest["objects"]), len(built.manifest["objects"]))
+        floors = [layer for layer in built.manifest["tile_layers"] if layer["name"] == "FloorTileMapLayer"]
+        variant_floors = [layer for layer in variant.manifest["tile_layers"] if layer["name"] == "FloorTileMapLayer"]
+        self.assertNotEqual(floors[0]["cells"], variant_floors[0]["cells"])
+
+    def test_every_build_yields_each_level_then_its_variant(self):
+        builds = campaign()[0]
+        labels = [built.paths.label for built in every_build(builds)]
+        self.assertEqual(labels[:3], ["1", "2", "3"])
+        for number in DIVERGENT_POINTS_LEVELS:
+            index = labels.index(str(number))
+            self.assertEqual(labels[index + 1], "%ds" % number)
 
 
 class TextureUnionTests(unittest.TestCase):

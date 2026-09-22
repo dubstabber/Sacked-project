@@ -39,6 +39,26 @@ This is what the `S` variants are for. They are not a second campaign: across al
 levels they differ from the plain files only in `CONDITION`, except for six levels that
 also move a handful of items.
 
+The port follows the same split. One imported scene normally serves both modes, because
+`tools/build_level_scene.gd` writes both `CONDITION`s onto the level's `LevelSession` and
+`level_session.gd` picks between them by mode. Where the `S` file also moves the map the
+importer emits a second scene from it — `scenes/level_Ns.tscn`, from
+`resources/levels/level_Ns.json`, which carries `"game_mode": "points"` — and
+`ScreenManager.level_scene_path` asks for that one in the points game. Measured against the
+shipped files, the six divergences are:
+
+| Level | `S` file changes | What moved |
+| --- | --- | --- |
+| 5 | `items` | three items nudged inside their own tile |
+| 8 | `layers` | three `LAYER0` floor cells |
+| 11 | `items`, `spawns` | 190 objects become 191: one parked off the map's left edge and a replacement added |
+| 12 | `items` | three items nudged |
+| 19 | `items`, `spawns` | 407 objects become 406, and the tail of the item list reindexes |
+| 20 | `items` | one item nudged |
+
+The `spawns` difference on 11 and 19 is only the chunk trailer's instance ids shifting by
+one behind the inserted or removed item; the spawn records themselves are identical.
+
 ## Winning and losing
 
 The in-level tick is `sub_403780`. It returns immediately when the pause bit

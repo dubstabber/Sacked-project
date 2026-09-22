@@ -83,15 +83,24 @@ func scene_path(screen: Screen) -> String:
 	return String(_SCENE_PATHS[screen])
 
 
-func level_scene_path(level: int) -> String:
+# sub_408D00 builds LEVELS\LEVEL_%02dS.col for the points game and the plain file for the
+# time game. Where the two differ only in CONDITION one scene serves both, and the importer
+# emits a second scene only for the six levels whose S file also moves the map.
+func level_scene_path(level: int, game_mode: StringName = selected_game_mode) -> String:
+	if game_mode == &"points":
+		var variant := "res://scenes/level_%ds.tscn" % level
+		if ResourceLoader.exists(variant):
+			return variant
 	return "res://scenes/level_%d.tscn" % level
 
 
 # ResourceLoader rather than a directory listing, so this also answers in an exported build.
+# A variant never exists without the level it belongs to, so the time-mode path answers for
+# both modes.
 func is_level_available(level: int) -> bool:
 	if level < 1 or level > LEVEL_COUNT:
 		return false
-	return ResourceLoader.exists(level_scene_path(level))
+	return ResourceLoader.exists(level_scene_path(level, &"time"))
 
 
 func available_levels() -> Array[int]:

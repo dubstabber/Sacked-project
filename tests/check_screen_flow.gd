@@ -27,6 +27,7 @@ func _run() -> void:
 	_check_player_name_rules()
 	_check_result_routing()
 	_check_the_tree_reaches_a_level_through_its_description()
+	_check_points_mode_takes_the_variant_scene()
 	_check_each_screen_asks_for_its_own_music()
 	await _check_result_screen_shows_the_outcome()
 	await _check_lost_level_returns_to_a_fresh_run()
@@ -63,7 +64,7 @@ func _check_level_selection() -> void:
 	_expect(int(levels[0]) == 1, "the imported levels are listed in order")
 	for level: int in levels:
 		_expect(
-			String(_manager.level_scene_path(level)) == "res://scenes/level_%d.tscn" % level,
+			String(_manager.level_scene_path(level, &"time")) == "res://scenes/level_%d.tscn" % level,
 			"level %d resolves to its own scene" % level
 		)
 
@@ -243,3 +244,39 @@ func _check_the_name_box_carries_the_original_caption() -> void:
 	screen.free()
 	i18n.set_language(restore)
 
+
+# sub_408D00 loads LEVEL_%02dS.col in the points game. The importer only emits a second
+# scene where that file moves more than CONDITION, so the points game asks for a variant
+# and falls back to the level's own scene when there is none.
+func _check_points_mode_takes_the_variant_scene() -> void:
+	var restore_mode: StringName = _manager.selected_game_mode
+	var restore_level: int = _manager.selected_level
+	for level: int in _manager.available_levels():
+		var plain := "res://scenes/level_%d.tscn" % level
+		var variant := "res://scenes/level_%ds.tscn" % level
+		var expected := variant if ResourceLoader.exists(variant) else plain
+		_expect(
+			String(_manager.level_scene_path(level, &"points")) == expected,
+			"level %d in the points game loads %s" % [level, expected]
+		)
+		_expect(
+			String(_manager.level_scene_path(level, &"time")) == plain,
+			"level %d in the time game loads its own scene" % level
+		)
+		# A variant never stands alone, so availability must not depend on the mode.
+		_expect(
+			_manager.is_level_available(level),
+			"level %d is available whichever mode is selected" % level
+		)
+
+	# start_level and restart_level both resolve through scene_path, so the mode still
+	# decides after the level has been entered.
+	var first: int = int(_manager.available_levels()[0])
+	_manager.selected_game_mode = &"points"
+	_manager.start_level(first)
+	_expect(
+		String(_manager.scene_path(ScreenManagerScript.Screen.LEVEL)) == String(_manager.level_scene_path(first, &"points")),
+		"the entered level keeps the scene its mode asked for"
+	)
+	_manager.selected_game_mode = restore_mode
+	_manager.selected_level = restore_level
