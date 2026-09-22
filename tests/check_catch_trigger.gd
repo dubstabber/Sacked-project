@@ -1,0 +1,174 @@
+extends SceneTree
+
+# sub_418310 and sub_402470, on the real level-2 map: an agent notices the player only
+# mid-prank, inside its own radius, inside its cone unless the player is within two tiles,
+# and only with a clear sight ray. See docs/catch-reference.md.
+
+const LEVEL_SCENE := preload("res://scenes/level_2.tscn")
+const PrankController := preload("res://scenes/player/prank_controller.gd")
+
+var _failures := 0
+var _level: Node
+
+
+func _init() -> void:
+	call_deferred("_run")
+
+
+func _run() -> void:
+	_level = LEVEL_SCENE.instantiate()
+	var world := _level.get_node("World")
+	for child in world.get_children():
+		if child is CharacterBody2D and child.has_node("Brain"):
+			child.get_node("Brain").enabled = false
+	root.add_child(_level)
+	await process_frame
+	world.get_node("WorldDepthCompositor").set_process(false)
+	world.get_node("CharacterDepthCompositor").set_process(false)
+
+	var player := world.get_node("Player") as Node2D
+	player.set_physics_process(false)
+	player.get_node("FootstepPlayer").stop_footsteps()
+	player.get_node("FootstepPlayer").stream = null
+
+	var agent := _first_agent(world)
+	var brain = agent.get_node("Brain")
+	var layer := _collision_layer(player)
+	if agent == null or layer == null:
+		_expect(false, "level 2 carries an agent and a collision layer")
+		_finish()
+		return
+
+	_check_constants(brain)
+	await _check_notice_geometry(agent, brain, player, layer)
+	await _check_only_mid_prank(world, player)
+	_finish()
+
+
+func _finish() -> void:
+	if is_instance_valid(_level):
+		_level.free()
+	if _failures == 0:
+		print("Catch trigger: notice radius, cone, the two-tile bypass, sight and the mid-prank gate passed")
+	quit(1 if _failures else 0)
+
+
+func _first_agent(world: Node) -> CharacterBody2D:
+	for child in world.get_children():
+		if child is CharacterBody2D and child.has_node("Brain") and String(child.profile.id) == "male-employee-1":
+			return child
+	return null
+
+
+func _collision_layer(player: Node2D) -> Node:
+	for layer in get_nodes_in_group("collision_maps"):
+		if layer.has_method("has_line_of_sight") and layer.get_parent().is_ancestor_of(player):
+			return layer
+	return null
+
+
+func _check_constants(brain) -> void:
+	# The exported table, not a transcription: male employee 1 is 5.2 tiles and 60 degrees.
+	_expect(is_equal_approx(brain.notice_radius_tiles(), 5.2), "the notice radius comes from the profile table, got %f" % brain.notice_radius_tiles())
+	_expect(is_equal_approx(brain.notice_cone_degrees(), 60.0), "the notice cone comes from the profile table, got %f" % brain.notice_cone_degrees())
+
+	# Three of the four ticks widen both with the aggression band; the boss applies neither.
+	brain._actor.aggression_band = 3
+	_expect(is_equal_approx(brain.notice_radius_tiles(), 5.2 + 0.6), "band 3 adds 0.6 tiles of reach, got %f" % brain.notice_radius_tiles())
+	_expect(is_equal_approx(brain.notice_cone_degrees(), 75.0), "band 3 adds 15 degrees of cone, got %f" % brain.notice_cone_degrees())
+	brain._actor.aggression_band = 0
+
+
+# Place the player at a known offset in logical tiles and ask whether the agent sees them.
+func _place(player: Node2D, agent: Node2D, layer: Node, offset: Vector2) -> void:
+	var origin: Vector2 = layer.to_grid_position(agent.global_position)
+	player.global_position = layer.from_grid_position(origin + offset) \
+		if layer.has_method("from_grid_position") else agent.global_position + _to_screen(offset)
+
+
+func _to_screen(tiles: Vector2) -> Vector2:
+	return Vector2(48.0 * (tiles.x - tiles.y), 24.0 * (tiles.x + tiles.y))
+
+
+func _check_notice_geometry(agent: CharacterBody2D, brain, player: Node2D, layer: Node) -> void:
+	# An open stretch of floor, so the sight ray never decides these cases for us.
+	var spot := _open_ground(agent, layer)
+	if spot == Vector2.INF:
+		_expect(false, "level 2 has an agent with open ground around it")
+		return
+	agent.global_position = spot
+	await process_frame
+
+	agent.facing_screen = _to_screen(Vector2(1, 0)).normalized()
+	_place(player, agent, layer, Vector2(1.0, 0.0))
+	_expect(brain.notices(player, layer), "an agent sees the player straight ahead")
+
+	_place(player, agent, layer, Vector2(7.0, 0.0))
+	_expect(not brain.notices(player, layer), "the player beyond the notice radius is not seen")
+
+	# Facing away: outside the cone, but inside the two-tile bypass the level hint promises.
+	agent.facing_screen = _to_screen(Vector2(-1, 0)).normalized()
+	_place(player, agent, layer, Vector2(1.5, 0.0))
+	_expect(brain.notices(player, layer), "a prank within two tiles is noticed with the agent's back turned")
+
+	_place(player, agent, layer, Vector2(3.0, 0.0))
+	_expect(not brain.notices(player, layer), "past two tiles an agent facing away notices nothing")
+
+	agent.facing_screen = _to_screen(Vector2(1, 0)).normalized()
+	_expect(brain.notices(player, layer), "turning back around brings the same spot into the cone")
+
+	# A cubicle blinds its occupant for as long as it holds them.
+	brain._inside_cubicle = true
+	_expect(brain.is_blind(), "an agent inside a cubicle reports itself blind")
+	brain._inside_cubicle = false
+	_expect(not brain.is_blind(), "stepping back out restores it")
+
+
+# Somewhere the agent can stand with eight tiles of clear sight in the test directions.
+func _open_ground(agent: CharacterBody2D, layer: Node) -> Vector2:
+	var start: Vector2 = layer.to_grid_position(agent.global_position)
+	for radius in range(0, 12):
+		for dy in range(-radius, radius + 1):
+			for dx in range(-radius, radius + 1):
+				var tile := start + Vector2(dx, dy)
+				var here := _from_tiles(agent, layer, tile)
+				var clear := true
+				for step in [Vector2(7.5, 0.0), Vector2(-7.5, 0.0), Vector2(3.0, 0.0), Vector2(1.5, 0.0)]:
+					if not layer.has_line_of_sight(here, _from_tiles(agent, layer, tile + step)):
+						clear = false
+						break
+				if clear:
+					return here
+	return Vector2.INF
+
+
+func _from_tiles(agent: Node2D, layer: Node, tile: Vector2) -> Vector2:
+	var origin: Vector2 = layer.to_grid_position(agent.global_position)
+	return agent.global_position + _to_screen(tile - origin)
+
+
+func _check_only_mid_prank(world: Node, player: Node2D) -> void:
+	var watch := _level.get_node_or_null("LevelRuntime/CatchWatch")
+	var prank = get_first_node_in_group("player_actions")
+	if watch == null or prank == null:
+		_expect(false, "the level runtime carries the catch watch and the player's actions")
+		return
+	_expect(not watch.hands_off_to_minigame, "the hand-off stays off until the minigame screen exists")
+	_expect(watch.caught_by == null, "nothing is caught before a prank starts")
+
+	# Standing next to a colleague is safe; only performing an action is not.
+	prank.state = PrankController.State.FREE
+	_expect(not watch._is_mid_prank(), "walking about is not a prank")
+	prank.state = PrankController.State.MENU
+	_expect(not watch._is_mid_prank(), "an open ring menu is not a prank either")
+	prank.state = PrankController.State.ACTING
+	_expect(watch._is_mid_prank(), "performing an action is what can be caught")
+	prank.state = PrankController.State.FREE
+
+	_expect(watch.EXCLAMATIONS.size() == 4, "sub_407990 picks one of four exclamations")
+
+
+func _expect(condition: bool, message: String) -> void:
+	if not condition:
+		_failures += 1
+		push_error(message)

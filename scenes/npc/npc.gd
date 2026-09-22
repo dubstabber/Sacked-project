@@ -28,6 +28,11 @@ enum Command { NONE, TRAVEL, ACTIVITY }
 # agent+1064, which sub_402350 writes from the office-wide mean every frame.
 var aggression_band := 0
 var last_direction: Vector2 = Vector2.RIGHT
+# The unsnapped heading behind last_direction. sub_4179B0 turns agent+1848 smoothly
+# toward its target and sub_41A400 quantises that into the eight-way sprite index; the
+# turn rate is not recovered, so this follows the heading directly. The notice cone in
+# sub_418310 reads the continuous value, not the index. See docs/catch-reference.md.
+var facing_screen: Vector2 = Vector2.RIGHT
 var _patrol_origin := Vector2.ZERO
 var _patrol_targets: Array[Vector2] = []
 var _target_index := 0
@@ -55,6 +60,7 @@ func _ready() -> void:
 	add_to_group("depth_composited_characters")
 	add_to_group("npc_agents")
 	last_direction = IsoDirection.snap_to_8_directions(initial_direction)
+	facing_screen = initial_direction.normalized() if initial_direction != Vector2.ZERO else facing_screen
 	_patrol_origin = global_position
 	_build_patrol_targets()
 	apply_profile(profile)
@@ -109,6 +115,7 @@ func _physics_process(delta: float) -> void:
 
 	var snapped_direction := IsoDirection.snap_to_8_directions(to_target.normalized())
 	last_direction = snapped_direction
+	facing_screen = to_target.normalized()
 	velocity = IsoDirection.screen_velocity(to_target, get_move_speed_tiles())
 	animation_controller.play_walk(snapped_direction)
 	velocity = MAP_COLLISION.constrain_body_motion(self, velocity * delta) / delta
@@ -218,6 +225,7 @@ func _follow_navigation(delta: float) -> void:
 			destination_reached.emit()
 		return
 	last_direction = IsoDirection.snap_to_8_directions(to_target.normalized())
+	facing_screen = to_target.normalized()
 	animation_controller.play_walk(last_direction)
 	var motion := IsoDirection.screen_velocity(to_target, get_move_speed_tiles()) * delta
 	if motion.length_squared() > to_target.length_squared():
@@ -234,6 +242,7 @@ func start_activity(animation: StringName, duration: float, facing: Vector2, anc
 	cancel_commands()
 	if facing != Vector2.ZERO:
 		last_direction = IsoDirection.snap_to_8_directions(facing.normalized())
+		facing_screen = facing.normalized()
 	if animation == &"idle" or animation == &"":
 		animation_controller.play_idle(last_direction)
 	else:

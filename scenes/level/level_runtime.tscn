@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/hud/console.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/hud/round_menu.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/hud/level_prompts.tscn" id="5"]
+[ext_resource type="Script" path="res://scenes/level/catch_watch.gd" id="8"]
 
 [node name="LevelRuntime" type="Node"]
 script = ExtResource("1")
@@ -25,3 +26,6 @@ script = ExtResource("7")
 
 [node name="DebugKeys" type="Node" parent="."]
 script = ExtResource("2")
+
+[node name="CatchWatch" type="Node" parent="."]
+script = ExtResource("8")

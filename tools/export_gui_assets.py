@@ -43,6 +43,9 @@ CONSOLE = [
     ("CO_GUI_CONSOLE_MATRIX_ACT", "images/gui/hud/lamp-matrix.png"),
     # Shown for two seconds whenever the office crosses into a higher aggression band.
     ("CO_GUI_CONSOLE_THERMO_UP", "images/gui/hud/thermo-up.png"),
+    # The same shape, raised by sub_407990 the moment an agent catches the player, and taken
+    # down when the minigame opens two seconds later. See docs/catch-reference.md.
+    ("CO_GUI_CONSOLE_AGGRO_UP", "images/gui/hud/aggro-up.png"),
 ]
 
 SCREENS = [
@@ -67,6 +70,28 @@ COLOUR_KEYS = {}
 ACTICON_PREFIX = "CO_GUI_ACTICON_"
 BUBBLE_PREFIX = "CO_EFFECT_Bubbles_"
 
+# The console art has the words "czas" and "wynik" painted into it, over the wrong fields --
+# the original's own mistake, which the port keeps. They are the only Polish text baked into
+# a sprite the port ships, so a second copy is derived with them painted out and the port
+# draws Labels there in every other language. The boxes are the lettering's measured bounds
+# padded by two pixels, and they contain nothing but the lettering and the frame's flat blue.
+# See docs/strings-reference.md.
+CONSOLE_LABEL_BOXES = ((91, 72, 134, 88), (236, 67, 293, 98))
+CONSOLE_FILL = (74, 109, 230, 255)
+UNLABELLED_CONSOLE = "images/gui/hud/console-unlabelled.png"
+
+
+def unlabelled_console(image):
+    """Paint the two words out of the console frame, leaving everything else untouched."""
+    result = image.convert("RGBA").copy()
+    pixels = result.load()
+    for x0, y0, x1, y1 in CONSOLE_LABEL_BOXES:
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                if pixels[x, y][3] != 0:
+                    pixels[x, y] = CONSOLE_FILL
+    return result
+
 
 def slug(name: str) -> str:
     # The archive names are CamelCase runs; split them so the exported files stay readable.
@@ -80,20 +105,21 @@ def acticon_destination(sprite: str) -> str:
 
 
 def specs(root: Path) -> list:
-    """Every (archive, sprite, destination) this tool owns, in a stable order."""
+    """Every (archive, sprite, destination, derive) this tool owns, in a stable order."""
     result = []
     for sprite, destination in CONSOLE + SCREENS:
-        result.append((GUI, sprite, destination))
+        result.append((GUI, sprite, destination, None))
+    result.append(("CO_GUI", "CO_GUI_CONSOLE_CONSOLE", UNLABELLED_CONSOLE, unlabelled_console))
     for sprite, destination in FONTS:
-        result.append((EFFECT, sprite, destination))
+        result.append((EFFECT, sprite, destination, None))
 
     for sprite in SpriteSource(root, GUI).names(ACTICON_PREFIX):
-        result.append((GUI, sprite, acticon_destination(sprite)))
+        result.append((GUI, sprite, acticon_destination(sprite), None))
 
     for sprite in SpriteSource(root, EFFECT).names(BUBBLE_PREFIX):
-        result.append((EFFECT, sprite, f"images/effects/bubbles/{slug(sprite[len(BUBBLE_PREFIX):])}.png"))
+        result.append((EFFECT, sprite, f"images/effects/bubbles/{slug(sprite[len(BUBBLE_PREFIX):])}.png", None))
 
-    destinations = [destination for _, _, destination in result]
+    destinations = [destination for _, _, destination, _ in result]
     duplicates = {path for path in destinations if destinations.count(path) > 1}
     if duplicates:
         raise SystemExit(f"Destination collision: {sorted(duplicates)}")
@@ -103,9 +129,11 @@ def specs(root: Path) -> list:
 def export(root: Path, check: bool) -> int:
     failures = []
     count = 0
-    for archive, sprite, destination in specs(root):
+    for archive, sprite, destination, derive in specs(root):
         source = SpriteSource(root, archive)
         image = source.decode(sprite, colour_key=COLOUR_KEYS.get(sprite))
+        if derive is not None:
+            image = derive(image)
         path = root / destination
         count += 1
         if check:
@@ -137,8 +165,9 @@ def main() -> int:
 
     root = args.root.resolve()
     if args.list:
-        for archive, sprite, destination in specs(root):
-            print(f"{archive:10} {sprite:44} -> {destination}")
+        for archive, sprite, destination, derive in specs(root):
+            suffix = "  (derived)" if derive is not None else ""
+            print(f"{archive:10} {sprite:44} -> {destination}{suffix}")
         return 0
     return export(root, args.check)
 
