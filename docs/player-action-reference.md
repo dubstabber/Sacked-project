@@ -251,11 +251,12 @@ branch ends by pushing animation slot 17. The constants are at `0x4658F4` (90.0)
 The port's level manifests already carry each object's orientation as its `variant` field,
 and level 2's single copier is orientation 0, so it takes the first row.
 
-Levels 1 and 2 between them reach selectors 0–12 and 14, so the port imports those fourteen
-clips for both characters — 101 views each, listed in `tools/character_action_clips.json`,
-which the frame exporter and the library importer both read. Selector 13, `BUCKET`, is the
-one the slot table names that no imported level places, and `check_player_action_clips.gd`
-now fails on any placed selector without a clip rather than skipping it.
+The campaign reaches selectors 0–14, and the port imports all fifteen clips for both
+characters — 109 views each, listed in `tools/character_action_clips.json`, which the frame
+exporter and the library importer both read. Selector 13, `BUCKET` at slot 18, is carried by
+action 151 `Wlej wodę do kabiny` on one `TOIKABINE&EIMER` per level on levels 4, 6, 9, 12,
+13, 14, 20 and 21, so levels 1 and 2 alone never show it. `check_player_action_clips.gd`
+fails on any placed selector without a clip rather than skipping it.
 
 Two things in the source needed care:
 

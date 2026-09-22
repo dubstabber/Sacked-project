@@ -13,6 +13,7 @@
     "15": "PHONE#TYPE",
     "16": "KETCHUP",
     "17": "ASSCOPY",
+    "18": "BUCKET",
     "19": "FLIPBAG",
     "20": "FLIPBAG2"
   },
@@ -120,6 +121,73 @@
         "090",
         "135",
         "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "female-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTE#2_PISSED",
+      "action": "pissed",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "female-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTE#2_SIT#EASY",
+      "action": "sit-easy",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "female-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTE#2_SIT#IDLE",
+      "action": "sit-idle",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "female-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTE#2_SIT#USE",
+      "action": "sit-use",
+      "angles": [
+        "000",
+        "090",
+        "180",
+        "270"
+      ]
+    },
+    {
+      "character": "female-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTE#2_SPECIAL#2",
+      "action": "special-2",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
         "225",
         "270",
         "315"
@@ -371,6 +439,22 @@
     {
       "character": "anne",
       "library": "player",
+      "source": "ANNE_BUCKET",
+      "action": "bucket",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ]
+    },
+    {
+      "character": "anne",
+      "library": "player",
       "source": "ANNE_DRINK",
       "action": "drink",
       "slot": 10,
@@ -593,6 +677,22 @@
       "angles": [
         "090",
         "180"
+      ]
+    },
+    {
+      "character": "jobless",
+      "library": "player",
+      "source": "JOBLESS_BUCKET",
+      "action": "bucket",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
       ]
     },
     {

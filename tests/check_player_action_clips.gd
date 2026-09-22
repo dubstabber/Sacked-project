@@ -113,8 +113,7 @@ func _check_every_reachable_selector_has_a_clip(spec: Dictionary) -> void:
 	_expect(not placed.is_empty(), "the imported levels place actions")
 
 	for selector in placed:
-		# Every selector the imported levels place must now resolve to a clip. Selector 13,
-		# BUCKET, is the one the slot table names that no imported level reaches.
+		# Every selector the imported levels place must resolve to a clip.
 		_expect(
 			CONTROLLER.SELECTOR_CLIPS.has(selector),
 			"selector %d, placed by action %d, has no imported clip" % [selector, placed[selector]]

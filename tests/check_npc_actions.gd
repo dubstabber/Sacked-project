@@ -59,9 +59,34 @@ func _run() -> void:
 		for angle in spec[3]:
 			_check_clip(library, spec, angle)
 			total_clips += 1
+	_check_profiles_link_their_library(specs)
 	if _failures == 0:
 		print("Action assets: %d clips and %d frame textures, masks, durations and pivots match extracted source JSON" % [total_clips, _frames_checked])
 	quit(1 if _failures else 0)
+
+
+# The library importer writes the .res, but a character's profile has to point at it by
+# hand. A profile that never got that edit fails at runtime as a warning and nowhere else,
+# which is how female-employee-2 shipped without her actions.
+func _check_profiles_link_their_library(specs: Array) -> void:
+	var seen := {}
+	for spec in specs:
+		if seen.has(spec[0]):
+			continue
+		seen[spec[0]] = true
+		var folder := "player" if String(spec[4]) == "player" else "npc"
+		var profile_path := "res://scenes/%s/profiles/%s.tres" % [folder, spec[0]]
+		var profile := load(profile_path) as Resource
+		if profile == null:
+			_expect(false, "%s has a character profile" % spec[0])
+			continue
+		var library := profile.get("action_animation_library") as AnimationLibrary
+		_expect(library != null, "%s's profile links an action library" % spec[0])
+		if library != null:
+			_expect(
+				library.resource_path == _library_path(spec),
+				"%s's profile links the action library the importer wrote" % spec[0]
+			)
 
 
 func _check_clip(library: AnimationLibrary, spec: Array, angle: String) -> void:

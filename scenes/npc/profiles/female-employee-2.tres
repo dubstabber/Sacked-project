@@ -4,11 +4,14 @@
 [ext_resource type="Texture2D" path="res://images/characters/female-employee-2/female-employee-2-idle1-atmen-right/female-employee-2-idle1-atmen-right-000.png" id="2_yipux"]
 [ext_resource type="Script" path="res://scenes/player/character_profile.gd" id="3_nq26w"]
 
+[ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/female-employee-2_actions.res" id="npc_actions"]
+
 [resource]
 script = ExtResource("3_nq26w")
 id = &"female-employee-2"
 gender = 1
 walk_speed_tiles = 1.5
+action_animation_library = ExtResource("npc_actions")
 animation_library = ExtResource("1_hc1eg")
 idle_animation_prefix = "female-employee-2-idle1-atmen-"
 walk_animation_prefix = "female-employee-2-walk-"

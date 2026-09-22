@@ -53,17 +53,16 @@ const BOSS_PROFILE: StringName = &"boss"
 const PULSE_SWING := 80.0 / 255.0
 const PULSE_RATE := 2.5
 # sub_41A510 maps a record's animation selector (+0x18) to a slot in the player's animation
-# table at 0x46EC04. Every selector the imported levels place is here; selector 13, BUCKET,
-# is the one the table names that no imported level reaches. See
+# table at 0x46EC04. These are every selector the campaign places. See
 # tools/character_action_clips.json and docs/player-action-reference.md.
 const SELECTOR_CLIPS := {
 	0: "stand-use", 1: "knee-use", 2: "kick", 3: "punch", 4: "flipbag",
 	5: "asscopy", 6: "steal", 7: "drink", 8: "ketchup", 9: "phone-type",
-	10: "spray", 11: "phone-call", 12: "piss-2", 14: "flipbag2",
+	10: "spray", 11: "phone-call", 12: "piss-2", 13: "bucket", 14: "flipbag2",
 }
-# ASSCOPY ships only the two views the copier can be stepped onto from, so until the
-# reposition that comes with it picks a side, the snapped facing takes the nearer one.
-# Clip names resolve by screen angle, so view 090 is down-right and 180 is down-left.
+# ASSCOPY ships only the two views the copier can be stepped onto from, and
+# _step_onto_object picks which of them by the object's own orientation. Clip names resolve
+# by screen angle, so view 090 is down-right and 180 is down-left.
 const ASSCOPY_FACINGS := [Vector2(1, 1), Vector2(-1, 1)]
 # Selector 12 picks its facing at random from the three views its clip ships.
 const PISS_FACINGS := {
