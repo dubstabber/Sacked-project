@@ -69,112 +69,33 @@ PIVOT_SANITY_LIMIT = 4096
 # regardless and keeps the previous clip, so the object reaches its damaged look without a
 # transition; the port settles an unplayable DESTROY_n on its DESTROYED_n instead. Listing
 # them keeps the gap from growing silently -- a state that stops resolving fails the check.
-KNOWN_MISSING_STATES = {
-    "aktiv-aktenablage-180 DESTROY_1 (no clip in the container)",
-    "aktiv-aquarium-000 DESTROY_2 (no clip in the container)",
-    "aktiv-aushang-090 DESTROY_1 (no clip in the container)",
-    "aktiv-aushang2-000 DESTROY_1 (no clip in the container)",
-    "aktiv-beamer-270 DESTROYED_1 (no clip in the container)",
-    "aktiv-beamer-270 DESTROY_1 (no clip in the container)",
-    "aktiv-chefbild01-090 DESTROY_1 (no clip in the container)",
-    "aktiv-chefbild02-090 DESTROY_1 (no clip in the container)",
-    "aktiv-chefbild03-000 DESTROY_1 (no clip in the container)",
-    "aktiv-chefvitrine-000 DESTROY_1 (no clip in the container)",
-    "aktiv-coffeemat-090 DESTROY_1 (no clip in the container)",
-    "aktiv-coffeemat-090 DESTROY_4 (no clip in the container)",
-    "aktiv-colamat-000 DESTROY_1 (no clip in the container)",
-    "aktiv-colamat-000 DESTROY_4 (no clip in the container)",
-    "aktiv-disketten-000 DESTROY_1 (no clip in the container)",
-    "aktiv-drucker01-000 DESTROY_1 (no clip in the container)",
-    "aktiv-drucker01-180 DESTROY_1 (no clip in the container)",
-    "aktiv-fenster01-000 DESTROY_1 (no clip in the container)",
-    "aktiv-fenster01-090 DESTROY_1 (no clip in the container)",
-    "aktiv-fenster02-000 DESTROY_1 (no clip in the container)",
-    "aktiv-fenster02-090 DESTROY_1 (no clip in the container)",
-    "aktiv-fenster03-000 DESTROY_1 (no clip in the container)",
-    "aktiv-fenster03-090 DESTROY_1 (no clip in the container)",
-    "aktiv-flipchart-000 DESTROY_1 (no clip in the container)",
-    "aktiv-flipchart-090 DESTROY_1 (no clip in the container)",
-    "aktiv-handtuchspender-000 DESTROY_1 (no clip in the container)",
-    "aktiv-handy-000 DESTROY_1 (no clip in the container)",
-    "aktiv-heizungssteuerung-090 DESTROYED_1 (no clip in the container)",
-    "aktiv-heizungssteuerung-090 DESTROY_1 (no clip in the container)",
-    "aktiv-k-hlschrank-000 DESTROYED_1 (no clip in the container)",
-    "aktiv-k-hlschrank-000 DESTROYED_2 (no clip in the container)",
-    "aktiv-k-hlschrank-000 DESTROYED_3 (no clip in the container)",
-    "aktiv-k-hlschrank-000 DESTROY_1 (no clip in the container)",
-    "aktiv-k-hlschrank-000 DESTROY_2 (no clip in the container)",
-    "aktiv-k-hlschrank-000 DESTROY_3 (no clip in the container)",
-    "aktiv-kaffeemaschi-270 DESTROYED_2 (no clip in the container)",
-    "aktiv-kaffeemaschi-270 DESTROY_1 (no clip in the container)",
-    "aktiv-kopierer-000 DESTROY_1 (no clip in the container)",
-    "aktiv-kopierer-000 DESTROY_2 (no clip in the container)",
-    "aktiv-monitor-kaffee-000 DESTROYED_1 (no clip in the container)",
-    "aktiv-monitor-kaffee-000 DESTROYED_2 (no clip in the container)",
-    "aktiv-monitor-kaffee-000 DESTROYED_3 (no clip in the container)",
-    "aktiv-monitor-kaffee-000 DESTROYED_4 (no clip in the container)",
-    "aktiv-monitor-kaffee-000 DESTROY_1 (no clip in the container)",
-    "aktiv-monitor-kaffee-000 DESTROY_2 (no clip in the container)",
-    "aktiv-monitor-kaffee-000 DESTROY_3 (no clip in the container)",
-    "aktiv-monitor-kaffee-000 DESTROY_4 (no clip in the container)",
-    "aktiv-monitor-tastatur-frontal-000 DESTROYED_1 (no clip in the container)",
-    "aktiv-monitor-tastatur-frontal-000 DESTROYED_2 (no clip in the container)",
-    "aktiv-monitor-tastatur-frontal-000 DESTROYED_3 (no clip in the container)",
-    "aktiv-monitor-tastatur-frontal-000 DESTROY_1 (no clip in the container)",
-    "aktiv-monitor-tastatur-frontal-000 DESTROY_2 (no clip in the container)",
-    "aktiv-monitor-tastatur-frontal-000 DESTROY_3 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-000 DESTROYED_1 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-000 DESTROYED_2 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-000 DESTROYED_3 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-000 DESTROY_1 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-000 DESTROY_2 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-000 DESTROY_3 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-180 DESTROYED_1 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-180 DESTROYED_2 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-180 DESTROYED_3 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-180 DESTROY_1 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-180 DESTROY_2 (no clip in the container)",
-    "aktiv-monitor-tastatur-links-180 DESTROY_3 (no clip in the container)",
-    "aktiv-monitor-tastatur-rechts-000 DESTROYED_1 (no clip in the container)",
-    "aktiv-monitor-tastatur-rechts-000 DESTROYED_2 (no clip in the container)",
-    "aktiv-monitor-tastatur-rechts-000 DESTROYED_3 (no clip in the container)",
-    "aktiv-monitor-tastatur-rechts-000 DESTROY_1 (no clip in the container)",
-    "aktiv-monitor-tastatur-rechts-000 DESTROY_2 (no clip in the container)",
-    "aktiv-monitor-tastatur-rechts-000 DESTROY_3 (no clip in the container)",
-    "aktiv-poster01-090 DESTROY_1 (no clip in the container)",
-    "aktiv-poster03-000 DESTROY_1 (no clip in the container)",
-    "aktiv-poster04-090 DESTROY_1 (no clip in the container)",
-    "aktiv-putzeimer-000 DESTROY_1 (no clip in the container)",
-    "aktiv-salz-zucker-090 DESTROYED_1 (no clip in the container)",
-    "aktiv-salz-zucker-090 DESTROY_1 (no clip in the container)",
-    "aktiv-schwarzbrett-000 DESTROY_1 (no clip in the container)",
-    "aktiv-schwarzbrett-000 DESTROY_2 (no clip in the container)",
-    "aktiv-schwarzbrett-000 DESTROY_3 (no clip in the container)",
-    "aktiv-server-000 DESTROY_1 (no clip in the container)",
-    "aktiv-server-000 DESTROY_6 (no clip in the container)",
-    "aktiv-spiegel-000 DESTROY_1 (no clip in the container)",
-    "aktiv-spiegel-090 DESTROY_1 (no clip in the container)",
-    "aktiv-spuele-000 DESTROYED_1 (frames missing on disk)",
-    "aktiv-spuele-000 DESTROY_1 (no clip in the container)",
-    "aktiv-spuele-090 DESTROYED_1 (frames missing on disk)",
-    "aktiv-spuele-090 DESTROY_1 (no clip in the container)",
-    "aktiv-spuelmaschine-000 DESTROYED_1 (frames missing on disk)",
-    "aktiv-spuelmaschine-000 DESTROY_1 (no clip in the container)",
-    "aktiv-stifthalter01-000 DESTROY_1 (no clip in the container)",
-    "aktiv-tafel-090 DESTROY_1 (no clip in the container)",
-    "aktiv-teddy-180 DESTROY_1 (no clip in the container)",
-    "aktiv-telefon01-180 DESTROYED_1 (no clip in the container)",
-    "aktiv-telefon01-180 DESTROY_2 (no clip in the container)",
-    "aktiv-tischlampe2-270 DESTROY_1 (no clip in the container)",
-    "aktiv-toikabine-000 DESTROY_1 (no clip in the container)",
-    "aktiv-toikabine-000 DESTROY_2 (no clip in the container)",
-    "aktiv-toikabine-000 DESTROY_3 (no clip in the container)",
-    "aktiv-toikabine-090 DESTROY_1 (no clip in the container)",
-    "aktiv-toikabine-090 DESTROY_2 (no clip in the container)",
-    "aktiv-toikabine-090 DESTROY_3 (no clip in the container)",
-    "aktiv-waschbecken-000 DESTROY_1 (no clip in the container)",
-    "aktiv-waschbecken-090 DESTROY_1 (no clip in the container)",
-}
+MISSING_STATES_REL = Path("resources/objects/missing_states.json")
+
+
+def load_missing_states(root: Path) -> set:
+    path = root / MISSING_STATES_REL
+    if not path.is_file():
+        return set()
+    return set(json.loads(path.read_text())["states"])
+
+
+def missing_states_text(states) -> str:
+    return json.dumps(
+        {
+            "generated_by": "tools/export_object_state_assets.py",
+            "comment": (
+                "States a level asks an object for that ship no art at all. sub_40FDA0 "
+                "stores the state regardless and keeps the previous clip, so the object "
+                "reaches its damaged look without a transition; the port settles an "
+                "unplayable DESTROY_n on its DESTROYED_n instead. The list is generated so "
+                "a batch of new levels does not have to be transcribed, and --check diffs "
+                "it both ways, so a state that stops resolving still fails."
+            ),
+            "states": sorted(states),
+        },
+        ensure_ascii=False,
+        indent=2,
+    ) + "\n"
 
 
 def load_container(root: Path):
@@ -340,15 +261,21 @@ def export(root: Path, check: bool) -> int:
         print("Object state assets out of date:\n" + "\n".join(f"  {line}" for line in failures[:20]))
         return 1
 
-    appeared = sorted(set(unresolved) - KNOWN_MISSING_STATES)
-    resolved = sorted(KNOWN_MISSING_STATES - set(unresolved))
-    if appeared or resolved:
-        print("KNOWN_MISSING_STATES no longer matches the container:")
-        for line in appeared:
-            print(f"  now missing, not listed: {line}")
-        for line in resolved:
-            print(f"  listed, but resolves now: {line}")
-        return 1
+    listed = load_missing_states(root)
+    appeared = sorted(set(unresolved) - listed)
+    resolved = sorted(listed - set(unresolved))
+    if check:
+        if appeared or resolved:
+            print(f"{MISSING_STATES_REL} no longer matches the container:")
+            for line in appeared:
+                print(f"  now missing, not listed: {line}")
+            for line in resolved:
+                print(f"  listed, but resolves now: {line}")
+            return 1
+    else:
+        path = root / MISSING_STATES_REL
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(missing_states_text(unresolved))
 
     print(
         f"{'Verified' if check else 'Exported'} {written} frames across {clips} state clips. "
