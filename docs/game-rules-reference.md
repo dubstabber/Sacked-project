@@ -109,8 +109,9 @@ and `_LOCKED`, that is played, playable and locked, with the yellow frontier sit
 where the green ends. The title `Wybór poziomu` (slot 190) sits along the top and a single
 `Główne menu` button (slot 191) in the bottom-left corner, which confirms both keys. The
 linking bars are drawn in the same two colours as the nodes they join, so the path already
-taken is lit differently from the path ahead. The node coordinates themselves still have to
-come out of the binary.
+taken is lit differently from the path ahead. The node coordinates, the unlock rule behind
+the three colours and the per-level difficulty index are all recovered in
+[shell-reference.md](shell-reference.md).
 
 ### What the description screen draws
 
@@ -128,14 +129,14 @@ settles almost all of its layout:
 - The **right panel** (`_INFO`, 256 × 392) is four label/value pairs, each label left-aligned
   with its value right-aligned on the following line: `Najlepszy czas` `02:54`,
   `Najlepszy wynik` `---`, `Rozmiar` `16 x 16`, `Poziom trudności` `Początkujący`. That is
-  slots 194–197, the `---` sentinel of slot 163, level 1's MAPINFO width and height formatted
-  `%d x %d`, and difficulty index 0.
+  slots 194–197, a `---` sentinel that is a C literal rather than slot 163, level 1's MAPINFO
+  width and height formatted `%d x %d`, and difficulty index 0.
 - **`Wróć` bottom-left and `Kontynuuj` bottom-right** (slots 198 and 193), on the same button
   art the rest of the shell uses.
 - The backdrop is the blue vortex the tree also uses.
 
-What is still missing is the per-level difficulty index — the screen shows level 1 as
-`Początkujący`, but where the other twenty come from is a table yet to be found. Sound setup moves each
+The per-level difficulty index is `byte_465270`, which is the level tree's own column minus
+one; see [shell-reference.md](shell-reference.md). Sound setup moves each
 volume by 5 and clamps to 0–100, with defaults of 75 for music and 65 for effects.
 
 Pause is `game+12740` bit `0x20`, toggled by **scancode 121** and refused while the screen
