@@ -186,16 +186,16 @@ func _check_action_applies() -> void:
 	var console := session.get_node_or_null("Console")
 	_expect(console != null, "the level carries its console")
 	_controller.open_menu()
-	_expect(console == null or console.get_node("ActionIcon").visible, "opening the ring shows the highlighted action's icon")
+	_expect(console == null or console.get_node("Band/ActionIcon").visible, "opening the ring shows the highlighted action's icon")
 	_controller.confirm()
 	_expect(_controller.state == 2, "confirming an entry starts the action")
 	_expect(not _controller.menu_open, "committing closes the ring")
 	# sub_41B240 only clears player+920 once the action applies, so the console keeps the
 	# chosen action's icon and name up for as long as it runs.
 	_expect(_controller.highlighted == 0, "committing keeps the chosen entry selected")
-	_expect(console == null or console.get_node("ActionIcon").visible, "the icon stays up while the action runs")
+	_expect(console == null or console.get_node("Band/ActionIcon").visible, "the icon stays up while the action runs")
 	_expect(
-		console == null or console.get_node("HoverText").text == String(entry["name"]),
+		console == null or console.get_node("Band/HoverText").text == String(entry["name"]),
 		"the hover bar keeps the running action's name"
 	)
 	_expect(_player.input_locked, "the player is held still while the action runs")
@@ -217,8 +217,8 @@ func _check_action_applies() -> void:
 	_expect(not point.is_action_enabled(int(entry["slot"])), "a used slot is not offered again")
 	# ... and sub_41B0C0, the tick that is not an action session, puts it back to "...".
 	_expect(_controller.highlighted == -1, "the selection is dropped once the action applies")
-	_expect(console == null or not console.get_node("ActionIcon").visible, "the icon goes once the action applies")
-	_expect(console == null or console.get_node("HoverText").text == "...", "the hover bar goes back to its placeholder")
+	_expect(console == null or not console.get_node("Band/ActionIcon").visible, "the icon goes once the action applies")
+	_expect(console == null or console.get_node("Band/HoverText").text == "...", "the hover bar goes back to its placeholder")
 	# sub_41B240 writes the slot flag and item+228 together, whatever the action did.
 	_expect(point.tampered, "finishing an action leaves the object tampered with")
 	var remaining: Array = _controller.build_entries(point).map(func(e): return int(e["action_id"]))

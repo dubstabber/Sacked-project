@@ -1,19 +1,21 @@
 extends Control
 
-const _BUTTON_LABELS := [
-	"Gra na czas",
-	"Gra na punkty",
-	"Najlepsze wyniki",
-	"Imiona",
-	"Dźwięk i muzyka",
-	"Wyjście",
+# The six entries sub_407370's screen 3 builds, in its own order. A Label translates its
+# own text, so the key goes in as-is and follows the language live.
+const _BUTTON_KEYS := [
+	"menu.time_game",
+	"menu.points_game",
+	"menu.highscores",
+	"menu.names",
+	"menu.sound",
+	"menu.quit",
 ]
 
 
 func _ready() -> void:
-	for i in _BUTTON_LABELS.size():
-		var btn: TextureButton = get_node("Buttons/Button%d" % (i + 1))
-		btn.get_node("Label").text = _BUTTON_LABELS[i]
+	for i in _BUTTON_KEYS.size():
+		var btn: TextureButton = get_node("SafeFrame/Buttons/Button%d" % (i + 1))
+		btn.get_node("Label").text = _BUTTON_KEYS[i]
 		btn.pressed.connect(_on_button_pressed.bind(i))
 
 
@@ -26,4 +28,4 @@ func _on_button_pressed(index: int) -> void:
 		5:
 			get_tree().quit()
 		_:
-			print("[main_menu] stub: %s" % _BUTTON_LABELS[index])
+			print("[main_menu] stub: %s" % tr(_BUTTON_KEYS[index]))

@@ -15,14 +15,41 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="TextureRect" parent="." unique_id=204783885]
+[node name="Margin" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="SafeFrame" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+
+[node name="Background" type="TextureRect" parent="SafeFrame" unique_id=204783885]
 layout_mode = 0
 offset_right = 800.0
 offset_bottom = 600.0
 texture = ExtResource("2_bg")
-stretch_mode = 5
+expand_mode = 1
+stretch_mode = 6
 
-[node name="Char" type="TextureRect" parent="." unique_id=1100630806]
+[node name="Char" type="TextureRect" parent="SafeFrame" unique_id=1100630806]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 32.0
@@ -30,11 +57,11 @@ offset_right = 194.0
 offset_bottom = 583.0
 texture = ExtResource("3_char")
 
-[node name="Buttons" type="Control" parent="." unique_id=240105901]
+[node name="Buttons" type="Control" parent="SafeFrame" unique_id=240105901]
 layout_mode = 1
 anchors_preset = 0
 
-[node name="Button1" type="TextureButton" parent="Buttons" unique_id=1704569764]
+[node name="Button1" type="TextureButton" parent="SafeFrame/Buttons" unique_id=1704569764]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 116.0
@@ -44,7 +71,7 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button1" unique_id=1977413816]
+[node name="Label" type="Label" parent="SafeFrame/Buttons/Button1" unique_id=1977413816]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,7 +81,7 @@ grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button2" type="TextureButton" parent="Buttons" unique_id=903631839]
+[node name="Button2" type="TextureButton" parent="SafeFrame/Buttons" unique_id=903631839]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 180.0
@@ -64,7 +91,7 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button2" unique_id=1736979791]
+[node name="Label" type="Label" parent="SafeFrame/Buttons/Button2" unique_id=1736979791]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -74,7 +101,7 @@ grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button3" type="TextureButton" parent="Buttons" unique_id=1725089698]
+[node name="Button3" type="TextureButton" parent="SafeFrame/Buttons" unique_id=1725089698]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 244.0
@@ -84,7 +111,7 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button3" unique_id=2032864786]
+[node name="Label" type="Label" parent="SafeFrame/Buttons/Button3" unique_id=2032864786]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,7 +121,7 @@ grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button4" type="TextureButton" parent="Buttons" unique_id=624962078]
+[node name="Button4" type="TextureButton" parent="SafeFrame/Buttons" unique_id=624962078]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 308.0
@@ -104,7 +131,7 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button4" unique_id=1998372215]
+[node name="Label" type="Label" parent="SafeFrame/Buttons/Button4" unique_id=1998372215]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -114,7 +141,7 @@ grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button5" type="TextureButton" parent="Buttons" unique_id=1800781845]
+[node name="Button5" type="TextureButton" parent="SafeFrame/Buttons" unique_id=1800781845]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 372.0
@@ -124,7 +151,7 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button5" unique_id=247554922]
+[node name="Label" type="Label" parent="SafeFrame/Buttons/Button5" unique_id=247554922]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -134,7 +161,7 @@ grow_vertical = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button6" type="TextureButton" parent="Buttons" unique_id=2014388984]
+[node name="Button6" type="TextureButton" parent="SafeFrame/Buttons" unique_id=2014388984]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 452.0
@@ -144,7 +171,7 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="Buttons/Button6" unique_id=119335352]
+[node name="Label" type="Label" parent="SafeFrame/Buttons/Button6" unique_id=119335352]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

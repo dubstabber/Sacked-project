@@ -4,8 +4,10 @@ extends CanvasLayer
 # laid out every frame by its draw, sub_45BC90. See docs/player-action-reference.md.
 
 # sub_406510 places the menu at (400, 200) -- centred in the band the console leaves free,
-# not in the 600-pixel window.
-const CENTRE := Vector2(400.0, 200.0)
+# not in the 600-pixel window. The port derives that rather than pinning it, so the ring
+# stays centred on a canvas whose width follows the window. See docs/widescreen.md.
+const CONSOLE_HEIGHT := 200.0
+const ORIGINAL_CENTRE := Vector2(400.0, 200.0)
 # The draw's own constants. Entries sit a fixed 0.6 radians apart rather than sharing a full
 # turn, and the ring is drawn at 1.5x the radius the tick animates. The 16 pixels come off x
 # alone and centre nothing -- every ACTICON is 48 wide -- so the whole ring just sits left.
@@ -74,7 +76,15 @@ func advance(delta: float) -> void:
 func entry_position(index: int) -> Vector2:
 	var angle := _rotation - ENTRY_PITCH * float(index) + PI
 	var radius := _radius * RADIUS_SCALE
-	return CENTRE + ICON_OFFSET + Vector2(sin(angle), cos(angle)) * radius
+	return centre() + ICON_OFFSET + Vector2(sin(angle), cos(angle)) * radius
+
+
+func centre() -> Vector2:
+	var viewport := get_viewport()
+	if viewport == null:
+		return ORIGINAL_CENTRE
+	var view := viewport.get_visible_rect().size
+	return Vector2(view.x * 0.5, (view.y - CONSOLE_HEIGHT) * 0.5)
 
 
 # sub_403FB0 rebuilds its input bits every frame, so a step the ring was too busy to take

@@ -179,7 +179,7 @@ func _check_the_ring_opens_and_shuts() -> void:
 	controller.open(3)
 	_expect(menu.visible, "opening a menu shows the ring")
 	_expect(is_equal_approx(menu.ring_radius(), 0.0), "the ring opens from nothing")
-	_expect(menu.entry_position(0).is_equal_approx(MENU.CENTRE + MENU.ICON_OFFSET), "a ring of no radius stacks its entries on the centre")
+	_expect(menu.entry_position(0).is_equal_approx(menu.centre() + MENU.ICON_OFFSET), "a ring of no radius stacks its entries on the centre")
 
 	menu.advance(0.1)
 	_expect(is_equal_approx(menu.ring_radius(), 15.0), "the radius grows at 150 a second, got %f" % menu.ring_radius())
@@ -218,21 +218,29 @@ func _check_entry_geometry() -> void:
 	_expect(is_equal_approx(menu.ring_radius(), MENU.RADIUS_LIMIT), "the ring is fully open")
 	_expect(menu.is_settled(), "a ring on its first entry has nothing to turn toward")
 
+	# sub_406510's (400, 200) is the centre of the band above the console, so the port derives
+	# it from the live viewport instead of pinning it. See docs/widescreen.md.
+	var view: Vector2 = menu.get_viewport().get_visible_rect().size
+	_expect(
+		menu.centre().is_equal_approx(Vector2(view.x * 0.5, (view.y - MENU.CONSOLE_HEIGHT) * 0.5)),
+		"the ring centres on the band the console leaves free, got %s in a %s viewport" % [menu.centre(), view]
+	)
+
 	# The highlighted entry rotates to theta = PI, which is straight up from the centre.
 	var drawn := MENU.RADIUS_LIMIT * MENU.RADIUS_SCALE
 	_expect(is_equal_approx(drawn, 90.0), "the drawn radius is the original 90 pixels, got %f" % drawn)
 	var first: Vector2 = menu.entry_position(0)
 	_expect(
-		first.is_equal_approx(MENU.CENTRE + MENU.ICON_OFFSET + Vector2(0.0, -drawn)),
+		first.is_equal_approx(menu.centre() + MENU.ICON_OFFSET + Vector2(0.0, -drawn)),
 		"the highlighted entry sits straight above the centre, got %s" % first
 	)
 
 	# Entries march clockwise from there at a fixed pitch, not a share of a full turn.
 	for index in range(8):
 		var angle := -MENU.ENTRY_PITCH * float(index) + PI
-		var expected: Vector2 = MENU.CENTRE + MENU.ICON_OFFSET + Vector2(sin(angle), cos(angle)) * drawn
+		var expected: Vector2 = menu.centre() + MENU.ICON_OFFSET + Vector2(sin(angle), cos(angle)) * drawn
 		_expect(menu.entry_position(index).is_equal_approx(expected), "entry %d follows the draw's own formula" % index)
-	var pitch: float = menu.entry_position(0).angle_to_point(MENU.CENTRE + MENU.ICON_OFFSET) - menu.entry_position(1).angle_to_point(MENU.CENTRE + MENU.ICON_OFFSET)
+	var pitch: float = menu.entry_position(0).angle_to_point(menu.centre() + MENU.ICON_OFFSET) - menu.entry_position(1).angle_to_point(menu.centre() + MENU.ICON_OFFSET)
 	_expect(is_equal_approx(absf(pitch), MENU.ENTRY_PITCH), "neighbouring entries are 0.6 radians apart, got %f" % absf(pitch))
 	# Eight entries therefore cover 4.2 radians, not a full circle.
 	_expect(menu.entry_position(7).distance_to(menu.entry_position(0)) > 1.0, "a full menu does not wrap back onto its first entry")
@@ -247,7 +255,7 @@ func _check_entry_geometry() -> void:
 	menu.advance(0.016)
 	_expect(menu.is_settled(), "the ring reports itself settled the frame after it arrives")
 	_expect(
-		menu.entry_position(3).is_equal_approx(MENU.CENTRE + MENU.ICON_OFFSET + Vector2(0.0, -drawn)),
+		menu.entry_position(3).is_equal_approx(menu.centre() + MENU.ICON_OFFSET + Vector2(0.0, -drawn)),
 		"the selected entry ends up straight above the centre"
 	)
 	_free(fixture)

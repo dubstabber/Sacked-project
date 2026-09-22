@@ -15,12 +15,12 @@ const _TEXTURE_PATHS := {
 	},
 }
 
-@onready var _jobless_button: TextureButton = $JoblessButton
-@onready var _anne_button: TextureButton = $AnneButton
-@onready var _name_edit: LineEdit = $NameEdit
-@onready var _defaults_button: TextureButton = $DefaultsButton
-@onready var _main_menu_button: TextureButton = $MainMenuButton
-@onready var _continue_button: TextureButton = $ContinueButton
+@onready var _jobless_button: TextureButton = $SafeFrame/JoblessButton
+@onready var _anne_button: TextureButton = $SafeFrame/AnneButton
+@onready var _name_edit: LineEdit = $SafeFrame/NameEdit
+@onready var _defaults_button: TextureButton = $SafeFrame/DefaultsButton
+@onready var _main_menu_button: TextureButton = $SafeFrame/MainMenuButton
+@onready var _continue_button: TextureButton = $SafeFrame/ContinueButton
 
 
 func _ready() -> void:

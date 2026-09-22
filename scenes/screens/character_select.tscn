@@ -21,24 +21,50 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Margin" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="SafeFrame" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+
+[node name="Background" type="TextureRect" parent="SafeFrame"]
 layout_mode = 0
 offset_right = 800.0
 offset_bottom = 600.0
 texture = ExtResource("2_bg")
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 64.0
 offset_top = 34.0
 offset_right = 736.0
 offset_bottom = 74.0
-text = "Wybierz swoje alter ego"
+text = "character_select.title"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="JoblessButton" type="TextureButton" parent="."]
+[node name="JoblessButton" type="TextureButton" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 122.0
 offset_top = 88.0
@@ -48,7 +74,7 @@ texture_normal = ExtResource("5_jobless_passive")
 texture_pressed = ExtResource("3_jobless_active")
 texture_hover = ExtResource("4_jobless_high")
 
-[node name="Label" type="Label" parent="JoblessButton"]
+[node name="Label" type="Label" parent="SafeFrame/JoblessButton"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -58,11 +84,11 @@ offset_top = -44.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-text = "Jo Bless"
+text = "character.jobless"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AnneButton" type="TextureButton" parent="."]
+[node name="AnneButton" type="TextureButton" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 448.0
 offset_top = 88.0
@@ -72,7 +98,7 @@ texture_normal = ExtResource("8_anne_passive")
 texture_pressed = ExtResource("6_anne_active")
 texture_hover = ExtResource("7_anne_high")
 
-[node name="Label" type="Label" parent="AnneButton"]
+[node name="Label" type="Label" parent="SafeFrame/AnneButton"]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -82,21 +108,21 @@ offset_top = -44.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-text = "Anne Employed"
+text = "character.anne"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="NameLabel" type="Label" parent="."]
+[node name="NameLabel" type="Label" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 196.0
 offset_top = 468.0
 offset_right = 324.0
 offset_bottom = 506.0
-text = "Imię gracza"
+text = "character_select.name_label"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="NameInputFrame" type="TextureRect" parent="."]
+[node name="NameInputFrame" type="TextureRect" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 336.0
 offset_top = 464.0
@@ -105,14 +131,14 @@ offset_bottom = 512.0
 texture = ExtResource("9_name_input")
 stretch_mode = 5
 
-[node name="NameEdit" type="LineEdit" parent="."]
+[node name="NameEdit" type="LineEdit" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 352.0
 offset_top = 470.0
 offset_right = 672.0
 offset_bottom = 506.0
 
-[node name="DefaultsButton" type="TextureButton" parent="."]
+[node name="DefaultsButton" type="TextureButton" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 320.0
 offset_top = 536.0
@@ -122,7 +148,7 @@ texture_normal = ExtResource("11_button_passive")
 texture_pressed = ExtResource("10_button_active")
 texture_hover = ExtResource("10_button_active")
 
-[node name="Label" type="Label" parent="DefaultsButton"]
+[node name="Label" type="Label" parent="SafeFrame/DefaultsButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -130,11 +156,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-text = "Domyślne"
+text = "common.defaults"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MainMenuButton" type="TextureButton" parent="."]
+[node name="MainMenuButton" type="TextureButton" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 536.0
@@ -144,7 +170,7 @@ texture_normal = ExtResource("11_button_passive")
 texture_pressed = ExtResource("10_button_active")
 texture_hover = ExtResource("10_button_active")
 
-[node name="Label" type="Label" parent="MainMenuButton"]
+[node name="Label" type="Label" parent="SafeFrame/MainMenuButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -152,11 +178,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-text = "Główne menu"
+text = "common.main_menu"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ContinueButton" type="TextureButton" parent="."]
+[node name="ContinueButton" type="TextureButton" parent="SafeFrame"]
 layout_mode = 0
 offset_left = 624.0
 offset_top = 536.0
@@ -166,7 +192,7 @@ texture_normal = ExtResource("11_button_passive")
 texture_pressed = ExtResource("10_button_active")
 texture_hover = ExtResource("10_button_active")
 
-[node name="Label" type="Label" parent="ContinueButton"]
+[node name="Label" type="Label" parent="SafeFrame/ContinueButton"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -174,6 +200,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-text = "Kontynuuj"
+text = "common.continue"
 horizontal_alignment = 1
 vertical_alignment = 1

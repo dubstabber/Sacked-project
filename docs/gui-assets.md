@@ -72,3 +72,26 @@ cut-out bar along the bottom for hover text, the thermometer, the stopwatch, and
 round lamp slots. Three is also how many lamp sprites the executable references — smoke,
 urination and the Matrix pill — so `EDDING_ACT` and `FIRE_ACT` ship unused and are not
 exported. The top edge is transparent and wavy; the world is visible above it.
+
+`AGGRO_UP` is exported alongside `THERMO_UP`. Both are 800 × 600 overlays the console builds
+hidden at (5, 5) with alpha 220, and they carry their caption as a child label rather than in
+the art. `THERMO_UP` announces a higher aggression band; `AGGRO_UP` announces a catch. See
+[catch-reference.md](catch-reference.md).
+
+Their plate is 800 × 600 but they are not full-screen tints: each is a starburst in the upper
+left plus a horizontal ribbon, on transparency. The caption sits on that ribbon, so the port
+never scales them to a wider canvas — see [widescreen.md](widescreen.md).
+
+## The loading screen animates
+
+`CO_GUI_SCREENS_LOADING` is the boot screen's still, and `LOADING_ITEM1` (55 × 51) the coffee
+pot that stands on it. A screenshot of the original mid-load
+(`sacked-reference-images/`, gitignored and local) shows the two are not the whole picture:
+the character is urinating into the pot, with a visible stream and the pot filling from the
+bottom in yellow.
+
+That places `CO_GUI_SCREENS_PINKELSTRAHL_Piss#000..004`, five frames of 13 × 188, on the
+**loading screen** rather than only on the player's in-game urination actions, where the
+sprite group's name had previously suggested they belonged. The pot art is presumably drawn
+at successive fill levels, or masked. Neither the frame timing nor the fill mechanism is
+recovered; the port draws the still pot.

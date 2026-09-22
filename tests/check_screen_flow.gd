@@ -22,6 +22,7 @@ func _run() -> void:
 	await process_frame
 
 	_check_screens_resolve()
+	_check_level_selection()
 	_check_mode_selection()
 	_check_player_name_rules()
 	_check_result_routing()
@@ -32,7 +33,7 @@ func _run() -> void:
 	_manager.selected_game_mode = &"time"
 	_manager.last_level_won = false
 	if _failures == 0:
-		print("Screen flow: scene paths, mode selection, name rules, result routing and the retry round trip passed")
+		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing and the retry round trip passed")
 	quit(1 if _failures else 0)
 
 
@@ -44,8 +45,32 @@ func _expect(condition: bool, label: String) -> void:
 
 func _check_screens_resolve() -> void:
 	for screen: int in ScreenManagerScript.Screen.values():
-		var path: String = ScreenManagerScript._SCENE_PATHS[screen]
+		var path: String = _manager.scene_path(screen)
 		_expect(ResourceLoader.exists(path), "screen %d resolves to %s" % [screen, path])
+
+
+func _check_level_selection() -> void:
+	_expect(_manager.selected_level == 1, "the first level is selected by default")
+	_expect(_manager.is_level_available(1), "level 1 is imported")
+	_expect(not _manager.is_level_available(0), "level 0 is not a level")
+	_expect(not _manager.is_level_available(ScreenManagerScript.LEVEL_COUNT + 1), "there are only 21 levels")
+
+	var levels: Array = _manager.available_levels()
+	_expect(not levels.is_empty(), "the tree offers the imported levels")
+	_expect(int(levels[0]) == 1, "the imported levels are listed in order")
+	for level: int in levels:
+		_expect(
+			String(_manager.level_scene_path(level)) == "res://scenes/level_%d.tscn" % level,
+			"level %d resolves to its own scene" % level
+		)
+
+	# An unimported level is refused rather than sending the game to a missing scene.
+	var last := int(levels[levels.size() - 1])
+	_manager.selected_level = last
+	_manager.start_level(ScreenManagerScript.LEVEL_COUNT)
+	if not _manager.is_level_available(ScreenManagerScript.LEVEL_COUNT):
+		_expect(_manager.selected_level == last, "an unimported level leaves the selection alone")
+	_manager.selected_level = 1
 
 
 func _check_mode_selection() -> void:
@@ -134,7 +159,7 @@ func _check_result_screen_shows_the_outcome() -> void:
 		var result := scene.instantiate()
 		root.add_child(result)
 		await process_frame
-		var image := result.get_node("Image") as TextureRect
+		var image := result.get_node("SafeFrame/Image") as TextureRect
 		var expected := "win.png" if won else "lose.png"
 		_expect(
 			image.texture != null and image.texture.resource_path.ends_with(expected),

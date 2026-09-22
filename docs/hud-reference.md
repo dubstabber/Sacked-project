@@ -7,7 +7,10 @@ frame. See [game-rules-reference.md](game-rules-reference.md) for the screens th
 ## Layout
 
 Each element stores its position at object `+8`/`+12` and its layer at `+16`. The values
-are absolute screen coordinates in the 800 × 600 viewport.
+are absolute screen coordinates in the original's 800 × 600 viewport. The port's canvas is
+fixed only in height, so it keeps them as offsets inside two anchored 800 × 600 bands — see
+"Carrying these coordinates onto a wider canvas" below and
+[widescreen.md](widescreen.md).
 
 | Element | Position | Layer | Source |
 | --- | --- | --- | --- |
@@ -36,6 +39,29 @@ the exported frame against the reference screenshot confirms it: sampling its 11
 pixels gives a mean channel error of 28 at a top edge of y = 400 against 73 or more at
 ±5 pixels. The frame's top edge is transparent and wavy, so the world shows through above
 the opaque part.
+
+### Carrying these coordinates onto a wider canvas
+
+The alignment flag is what the port turns into an anchor. Because the original's viewport
+was exactly 800 wide, its flags only ever had to resolve against 800 × 600, and every
+recovered number above survives unchanged as an offset inside a band of that size:
+
+| `+1140` | What the original does | What the port anchors |
+| --- | --- | --- |
+| `0` on a console element | place it where it says | an offset inside `Band`, which is bottom docked, so it rides with the frame |
+| `0` on a banner or its caption | place it where it says | an offset inside `Banners`, which is top aligned |
+| `8` (bottom) — the frame alone | `y = viewport_height − height` | `Band` anchored to the bottom edge, frame still at band y 400 |
+| `16` (centre) | centre in the viewport | anchors of 0.5 with an offset of −size/2 |
+| bit `4` (right) | right-align | `anchor_right = 1` |
+
+No console element carries flag `16` or bit `4`; they are listed because the round menu and
+the pause panels are centred by their own code, which the port derives from the live width
+rather than pinning to 400.
+
+**One divergence.** The frame's flag is `8` alone, with no centre bit, so the original
+left-aligns it — indistinguishable from centring it in an 800-wide viewport. The port
+centres it, which keeps the console symmetric under a wider view and lets the world show on
+both sides of it. At 4:3 the two are identical.
 
 ## What each element shows
 
@@ -134,7 +160,10 @@ Polish UI. The port draws this text with Godot's default font at the same sizes.
 
 The camera. Whether the world viewport is clipped above the console or simply drawn behind
 its transparent top edge, and what `CIsoCamera` clamps to at the map edges, are still open,
-so the port's camera is unchanged and the console is drawn over the world.
+so the port's camera is unchanged and the console is drawn over the world. A wider canvas
+shows more of the map, and more of the void past its edges, which makes the missing clamp
+easier to notice but no better understood; the port does not invent one. See
+[widescreen.md](widescreen.md) for the open question as filed.
 
 ## What drives each element (implemented)
 
@@ -184,8 +213,10 @@ When that mean crosses into a higher band, `sub_402350` calls `sub_407960`, whic
 `game+14748` to 2.0. `sub_403780` counts that down by the frame delta and hides it at zero.
 The caption is a separate Arial 30 element at (240, 50) reading
 **`Uważaj! Twoi koledzy... ojej!`**, registered as the banner's child so the two rise and
-fall together. `AGGRO_UP` is the same shape but fires from a different game mode, which is
-not recovered.
+fall together. `AGGRO_UP` is the same shape — `game+14752`, built hidden at (5, 5) with the
+same alpha by `sub_405930` — and it is the **"you have been spotted" banner**: `sub_407990`
+raises it the moment an agent catches the player, and it comes down 2.0 seconds later when
+the minigame starts. See [catch-reference.md](catch-reference.md).
 
 ## How the stopwatch is swept
 

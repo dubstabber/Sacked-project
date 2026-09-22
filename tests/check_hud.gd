@@ -4,24 +4,28 @@ extends SceneTree
 const ConsoleScene := preload("res://scenes/hud/console.tscn")
 
 # sub_405930 builds every element at these absolute screen positions; the frame is bottom
-# docked, which puts its 200 pixels at y 400..600. See docs/hud-reference.md.
+# docked, which puts its 200 pixels at y 400..600 of its band. The port keeps those numbers
+# as offsets inside two anchored 800x600 bands. See docs/hud-reference.md, docs/widescreen.md.
 const ExpectedPositions := {
-	"Frame": Vector2(0, 400),
-	"Score": Vector2(85, 500),
-	"Clock": Vector2(250, 500),
-	"HoverText": Vector2(135, 556),
-	"ActionIcon": Vector2(170, 477),
-	"AggroBar": Vector2(410, 497),
-	"ClockBar": Vector2(662, 536),
-	"LampSmoke": Vector2(717, 461),
-	"LampPiss": Vector2(756, 485),
-	"LampMatrix": Vector2(754, 537),
-	"ThermoUp": Vector2(5, 5),
+	"Band/Frame": Vector2(0, 400),
+	"Band/Score": Vector2(85, 500),
+	"Band/Clock": Vector2(250, 500),
+	"Band/HoverText": Vector2(135, 556),
+	"Band/ActionIcon": Vector2(170, 477),
+	"Band/AggroBar": Vector2(410, 497),
+	"Band/ClockBar": Vector2(662, 536),
+	"Band/LampSmoke": Vector2(717, 461),
+	"Band/LampPiss": Vector2(756, 485),
+	"Band/LampMatrix": Vector2(754, 537),
+	"Banners/ThermoUp": Vector2(5, 5),
 }
 # Each of these waits on something: an action running, an action highlighted, an item held,
 # or the office souring. At rest, with an empty inventory, none may be drawn over the frame.
 # The aggression bar is not among them: sub_405930 never hides it, it just starts short.
-const InertElements := ["ActionIcon", "ClockBar", "LampSmoke", "LampPiss", "LampMatrix", "ThermoUp"]
+const InertElements := [
+	"Band/ActionIcon", "Band/ClockBar", "Band/LampSmoke", "Band/LampPiss", "Band/LampMatrix",
+	"Banners/ThermoUp",
+]
 
 var _failures := 0
 
@@ -37,6 +41,7 @@ func _run() -> void:
 
 	_check_positions(console)
 	_check_frame_covers_the_console_band(console)
+	_check_the_bands_are_anchored(console)
 	_check_inert_elements(console)
 	_check_lamps(console)
 	_check_action_progress(console)
@@ -78,13 +83,51 @@ func _check_positions(console: Node) -> void:
 
 
 func _check_frame_covers_the_console_band(console: Node) -> void:
-	var frame := console.get_node("Frame") as Sprite2D
+	var frame := console.get_node("Band/Frame") as Sprite2D
 	_expect(frame.texture != null, "the console frame has its texture")
 	if frame.texture == null:
 		return
 	_expect(not frame.centered, "the console frame is drawn from its top left")
 	_expect(frame.texture.get_size() == Vector2(800, 200), "the console frame is the original 800x200")
-	_expect(frame.position.y + frame.texture.get_height() == 600, "the console frame reaches the bottom of the viewport")
+	var band := console.get_node("Band") as Control
+	_expect(
+		frame.position.y + frame.texture.get_height() == band.size.y,
+		"the console frame reaches the bottom of its band"
+	)
+
+
+# The bands are what carries the original's absolute coordinates onto a canvas that is only
+# fixed in height. Band is bottom docked like the original's frame flag 8, Banners top
+# aligned like its flag 0, and both must let clicks through to the world.
+func _check_the_bands_are_anchored(console: Node) -> void:
+	var band := console.get_node("Band") as Control
+	_expect(
+		Vector4(band.anchor_left, band.anchor_top, band.anchor_right, band.anchor_bottom)
+			== Vector4(0.5, 1.0, 0.5, 1.0),
+		"the console band is anchored to the bottom centre"
+	)
+	_expect(
+		Vector4(band.offset_left, band.offset_top, band.offset_right, band.offset_bottom)
+			== Vector4(-400.0, -600.0, 400.0, 0.0),
+		"the console band is the original 800x600"
+	)
+	var banners := console.get_node("Banners") as Control
+	_expect(
+		Vector4(banners.anchor_left, banners.anchor_top, banners.anchor_right, banners.anchor_bottom)
+			== Vector4(0.5, 0.0, 0.5, 0.0),
+		"the banner band is anchored to the top centre"
+	)
+	_expect(
+		Vector4(banners.offset_left, banners.offset_top, banners.offset_right, banners.offset_bottom)
+			== Vector4(-400.0, 0.0, 400.0, 600.0),
+		"the banner band is the original 800x600"
+	)
+	for name in ["Band", "Banners"]:
+		var control := console.get_node(name) as Control
+		_expect(
+			control.mouse_filter == Control.MOUSE_FILTER_IGNORE,
+			"%s lets the pointer through to the world" % name
+		)
 
 
 func _check_inert_elements(console: Node) -> void:
@@ -100,21 +143,21 @@ func _check_lamps(console: Node) -> void:
 	inventory.resize(28)
 	inventory[5] = 1
 	console.set_inventory(inventory)
-	_expect(not (console.get_node("LampSmoke") as CanvasItem).visible, "the smoking lamp needs both of its items")
+	_expect(not (console.get_node("Band/LampSmoke") as CanvasItem).visible, "the smoking lamp needs both of its items")
 	inventory[6] = 1
 	console.set_inventory(inventory)
-	_expect((console.get_node("LampSmoke") as CanvasItem).visible, "the smoking lamp lights once both are held")
+	_expect((console.get_node("Band/LampSmoke") as CanvasItem).visible, "the smoking lamp lights once both are held")
 	inventory[14] = 1
 	inventory[26] = 1
 	console.set_inventory(inventory)
-	_expect((console.get_node("LampMatrix") as CanvasItem).visible, "the Matrix lamp reads slot 14")
-	_expect((console.get_node("LampPiss") as CanvasItem).visible, "the urination lamp reads slot 26")
+	_expect((console.get_node("Band/LampMatrix") as CanvasItem).visible, "the Matrix lamp reads slot 14")
+	_expect((console.get_node("Band/LampPiss") as CanvasItem).visible, "the urination lamp reads slot 26")
 	console.set_inventory(PackedInt32Array())
 
 
 # game+14724 sits at (662, 536), the stopwatch, and is fed player+992 * 100 / player+1000.
 func _check_action_progress(console: Node) -> void:
-	var bar := console.get_node("ClockBar") as Sprite2D
+	var bar := console.get_node("Band/ClockBar") as Sprite2D
 	console.set_action_progress(0.0, 0.0)
 	_expect(not bar.visible, "the progress bar is hidden while no action runs")
 	console.set_action_progress(2.5, 5.0)
@@ -132,7 +175,7 @@ func _check_action_progress(console: Node) -> void:
 # can reach are painted a radius up and left of the element. Its sweep starts at +1140
 # rather than at the top, which is the tilt of the painted dial. See docs/hud-reference.md.
 func _check_the_stopwatch_sweeps_the_dial(console: Node) -> void:
-	var bar := console.get_node("ClockBar") as Sprite2D
+	var bar := console.get_node("Band/ClockBar") as Sprite2D
 	_expect(not bar.centered, "the stopwatch texture is placed from its top left")
 	_expect(
 		bar.offset == Vector2(-36, -36),
@@ -154,7 +197,7 @@ func _check_the_stopwatch_sweeps_the_dial(console: Node) -> void:
 
 # game+14732 is fed `188 - (aggro * 1.42 + 46)` as the width to crop off its right edge.
 func _check_the_aggression_bar(console: Node) -> void:
-	var bar := console.get_node("AggroBar") as Sprite2D
+	var bar := console.get_node("Band/AggroBar") as Sprite2D
 	_expect(bar.visible, "the aggression bar is on screen from the first frame")
 	_expect(bar.region_enabled, "the bar is cropped rather than scaled")
 	_expect(bar.texture != null and bar.texture.get_size() == Vector2(188, 40), "the bar art is the original 188x40")
@@ -168,7 +211,7 @@ func _check_the_aggression_bar(console: Node) -> void:
 	console.set_aggression(0.0)
 
 	# sub_407960 raises the warning for two seconds and sub_403780 counts it back down.
-	var thermo := console.get_node("ThermoUp") as Sprite2D
+	var thermo := console.get_node("Banners/ThermoUp") as Sprite2D
 	_expect(not thermo.visible, "the warning is down until the office crosses a band")
 	console.warn_of_aggravation()
 	_expect(thermo.visible, "crossing a band raises the warning")
@@ -179,7 +222,7 @@ func _check_the_aggression_bar(console: Node) -> void:
 
 
 func _check_score_field(console: Node) -> void:
-	var score := console.get_node("Score") as Label
+	var score := console.get_node("Band/Score") as Label
 	console._on_score_changed(0)
 	_expect(score.text == "00000", "an empty score reads 00000, got %s" % score.text)
 	console._on_score_changed(4000)
@@ -189,7 +232,7 @@ func _check_score_field(console: Node) -> void:
 
 
 func _check_clock_field(console: Node) -> void:
-	var clock := console.get_node("Clock") as Label
+	var clock := console.get_node("Band/Clock") as Label
 	console._on_time_changed(0)
 	_expect(clock.text == "00:00", "the clock starts at 00:00, got %s" % clock.text)
 	console._on_time_changed(11)
@@ -204,7 +247,7 @@ func _check_clock_field(console: Node) -> void:
 
 
 func _check_hover_text(console: Node) -> void:
-	var hover := console.get_node("HoverText") as Label
+	var hover := console.get_node("Band/HoverText") as Label
 	_expect(hover.text == "...", "the hover bar idles on the original placeholder")
 	console.set_hover_text("Zrestrukturyzuj pliki")
 	_expect(hover.text == "Zrestrukturyzuj pliki", "the hover bar shows an action name")
@@ -224,7 +267,7 @@ func _check_the_level_console_follows_its_session() -> void:
 	if console != null:
 		runtime.add_score(250)
 		runtime.advance(65.0)
-		_expect((console.get_node("Score") as Label).text == "00250", "the console shows the session score")
-		_expect((console.get_node("Clock") as Label).text == "01:05", "the console shows the session clock")
+		_expect((console.get_node("Band/Score") as Label).text == "00250", "the console shows the session score")
+		_expect((console.get_node("Band/Clock") as Label).text == "01:05", "the console shows the session clock")
 	root.remove_child(level)
 	level.free()

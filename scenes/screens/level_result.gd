@@ -10,7 +10,7 @@ const LOSE_TEXTURE := preload("res://images/gui/screens/lose.png")
 func _ready() -> void:
 	var screen_manager := get_node_or_null("/root/ScreenManager")
 	var won := screen_manager != null and bool(screen_manager.get("last_level_won"))
-	($Image as TextureRect).texture = WIN_TEXTURE if won else LOSE_TEXTURE
+	($SafeFrame/Image as TextureRect).texture = WIN_TEXTURE if won else LOSE_TEXTURE
 
 
 func _unhandled_input(event: InputEvent) -> void:
