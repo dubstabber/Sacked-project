@@ -159,7 +159,8 @@ sprite tables and the button layout split into `catch_minigame_art.gd` so each c
 on its own. It is an **overlay inside the level**, not a separate scene: a win resumes the
 level that is still in memory, which changing scene would have thrown away. `CatchWatch`
 holds the banner for its two seconds, opens the duel, pauses the tree, and on the way out
-either unpauses or reports the level lost.
+either unpauses or ends the level through `LevelSession.lose()` — the same `finished` the
+clock raises, so the music stops and the run's own score and time reach the result screen.
 
 Every constant above is used as recovered: the two-second banner, the one-second step and its
 quarter-second gap, the 4.3-second answer clock, eight energy in steps of three, and the

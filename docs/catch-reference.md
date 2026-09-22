@@ -393,7 +393,9 @@ Three details the port had to add rather than reuse:
 `Console.warn_of_catch()` raises the exported `AGGRO_UP` banner with one of the four
 exclamations for 2.0 seconds, the length of the loading screen the original spends there.
 
-**The hand-off is deliberately not wired.** `hands_off_to_minigame` is off, so a catch
-reports itself — the banner, the signal, the aborted prank — and nothing else. Wiring it to
-an outcome before the minigame exists would mean inventing one, and losing the minigame ends
-the level. The task that builds screen 5 turns the flag on.
+**The hand-off is wired.** `hands_off_to_minigame` defaults on, and survives only so a check
+can drive the trigger without the duel opening over it. A win unpauses the level that is
+still in memory; a loss calls `LevelSession.lose()`, which raises the same `finished` the
+clock raises, so the theme and the warning loop stop and the run's own score and time reach
+`ScreenManager.report_level_finished` before screen 8. Neither path touches the score or the
+aggression meter.

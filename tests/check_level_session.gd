@@ -10,6 +10,15 @@ const LEVEL_1_POINTS_TARGET := 3000
 var _failures := 0
 
 
+# report_level_finished changes the scene, so the loss case hands the session this instead
+# and reads back what the level actually passed on.
+class ReportSpy extends Node:
+	var calls: Array = []
+
+	func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0.0) -> void:
+		calls.append([won, score, elapsed_seconds])
+
+
 func _init() -> void:
 	# Deferred so the run happens once the tree and its autoloads exist.
 	call_deferred("_run")
@@ -25,8 +34,9 @@ func _run() -> void:
 	_check_score_stops_after_the_end()
 	_check_warning_lead()
 	_check_level_reports_its_outcome()
+	await _check_a_lost_duel_ends_the_level()
 	if _failures == 0:
-		print("Level session: original CONDITION values, both mode predicates and the fallbacks passed")
+		print("Level session: original CONDITION values, both mode predicates, the fallbacks and the lost duel passed")
 	quit(1 if _failures else 0)
 
 
@@ -166,3 +176,50 @@ func _check_warning_lead() -> void:
 	session.advance(1.0)
 	_expect(session.is_warning(), "the countdown warning starts 10 s before the limit")
 	session.free()
+
+
+# sub_4027B0's result 2 ends the level outright. The duel is the only way a level ends
+# without its own clock saying so, so it has to arrive through the session: otherwise the
+# theme plays on into the result screen and the run reports a score of zero.
+func _check_a_lost_duel_ends_the_level() -> void:
+	var level := (load("res://scenes/level_1.tscn") as PackedScene).instantiate()
+	var runtime: Node = level.get_node_or_null("LevelRuntime")
+	_expect(runtime != null, "the level scene carries its session")
+	if runtime == null:
+		level.free()
+		return
+	runtime.enabled = false
+	root.add_child(level)
+	# CatchWatch looks the session up in a deferred call, so it needs a frame first.
+	await process_frame
+	var spy := ReportSpy.new()
+	runtime._screen_manager = spy
+	var audio: Node = level.get_node_or_null("LevelRuntime/LevelAudio")
+	_expect(audio != null, "the level runtime carries its audio")
+	var theme: AudioStreamPlayer = audio._theme if audio != null else null
+	var theme_was_playing := theme != null and theme.playing
+	var reported: Array = []
+	runtime.finished.connect(func(won: bool) -> void: reported.append(won))
+	runtime.mode = &"time"
+	runtime.add_score(1234)
+	runtime.advance(5.0)
+	var watch: Node = level.get_node_or_null("LevelRuntime/CatchWatch")
+	_expect(watch != null, "the level runtime carries the catch watch")
+	if watch != null:
+		watch._on_duel_finished(false)
+	_expect(runtime.is_finished and not runtime.won, "a lost duel finishes the session as a loss")
+	_expect(reported == [false], "the session raises finished(false) exactly once")
+	_expect(spy.calls == [[false, 1234, 5.0]], "the run's own score and clock travel with the loss")
+	_expect(not paused, "the tree is left unpaused")
+	if theme_was_playing:
+		_expect(not theme.playing, "the level theme stops when the duel is lost")
+	else:
+		# The dummy audio driver never reports a stream as playing, so fall back to proving
+		# the audio is still listening to the signal the loss now raises.
+		_expect(
+			audio != null and runtime.finished.is_connected(audio._on_finished),
+			"the level audio is connected to the session's finished signal"
+		)
+	spy.free()
+	root.remove_child(level)
+	level.free()

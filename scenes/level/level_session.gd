@@ -126,6 +126,12 @@ func advance(delta: float) -> void:
 	_evaluate(float(whole))
 
 
+# sub_4027B0's result 2 ends the level on the spot, by the same path the clock takes, so
+# the run's own score and time travel with the loss and the level's audio stops with it.
+func lose() -> void:
+	_finish(false)
+
+
 func _physics_process(delta: float) -> void:
 	advance(delta)
 

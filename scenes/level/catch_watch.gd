@@ -144,12 +144,12 @@ func _catcher_id() -> StringName:
 
 
 # Winning resumes the level in memory, which is what sub_4027B0 does with screen 1; losing
-# ends it. Neither touches the score or the office's temper.
+# ends it through the session, so the run's own score and clock reach the result screen and
+# the level's music stops. Neither touches the score or the office's temper.
 func _on_duel_finished(won: bool) -> void:
 	get_tree().paused = false
 	reset()
 	if won:
 		return
-	var screens := get_node_or_null("/root/ScreenManager")
-	if screens != null and screens.has_method("report_level_finished"):
-		screens.call("report_level_finished", false)
+	if _session != null and _session.has_method("lose"):
+		_session.lose()
