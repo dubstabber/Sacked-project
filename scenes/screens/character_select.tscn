@@ -114,13 +114,13 @@ vertical_alignment = 1
 
 [node name="NameLabel" type="Label" parent="SafeFrame"]
 layout_mode = 0
-offset_left = 196.0
+offset_left = 140.0
 offset_top = 468.0
 offset_right = 324.0
 offset_bottom = 506.0
-text = "character_select.name_label"
-horizontal_alignment = 2
+text = "highscore.name_prompt"
 vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="NameInputFrame" type="TextureRect" parent="SafeFrame"]
 layout_mode = 0

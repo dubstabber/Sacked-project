@@ -30,12 +30,13 @@ func _run() -> void:
 	_check_each_screen_asks_for_its_own_music()
 	await _check_result_screen_shows_the_outcome()
 	await _check_lost_level_returns_to_a_fresh_run()
+	await _check_the_name_box_carries_the_original_caption()
 
 	_manager.reset_player_setup()
 	_manager.selected_game_mode = &"time"
 	_manager.last_level_won = false
 	if _failures == 0:
-		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing and the retry round trip passed")
+		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption and the retry round trip passed")
 	quit(1 if _failures else 0)
 
 
@@ -212,3 +213,33 @@ func _check_result_screen_shows_the_outcome() -> void:
 		)
 		root.remove_child(result)
 		result.free()
+
+
+# Slot 219 is the character-select screen's own caption for the name box, not an invention:
+# the original draws it over two lines to the left of the box.
+func _check_the_name_box_carries_the_original_caption() -> void:
+	var i18n: Node = root.get_node_or_null("I18n")
+	if i18n == null:
+		_expect(false, "the I18n autoload is available to the screens")
+		return
+	var restore: StringName = i18n.current_language()
+	i18n.set_language(&"pl")
+	var screen := (load("res://scenes/screens/character_select.tscn") as PackedScene).instantiate()
+	root.add_child(screen)
+	await process_frame
+	var caption: Label = screen.get_node_or_null("SafeFrame/NameLabel")
+	_expect(caption != null, "the character-select screen labels its name box")
+	if caption != null:
+		_expect(caption.text == "highscore.name_prompt", "the caption is the original's slot 219")
+		_expect(
+			caption.atr(caption.text) == "Imię do tabeli najlepszych wyników",
+			"slot 219 reads what the original's screen 12 shows"
+		)
+		_expect(
+			caption.autowrap_mode != TextServer.AUTOWRAP_OFF,
+			"the caption wraps, because it is two lines wide in the original"
+		)
+	root.remove_child(screen)
+	screen.free()
+	i18n.set_language(restore)
+

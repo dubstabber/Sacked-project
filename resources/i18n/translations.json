@@ -757,14 +757,6 @@
     "en": "score",
     "de": "Punkte"
   },
-  "character_select.name_label": {
-    "en": "Player name",
-    "de": "Spielername"
-  },
-  "level_tree.level_n": {
-    "en": "Level %d",
-    "de": "Level %d"
-  },
   "minigame.banner.get_ready": {
     "en": "Attention!",
     "de": "ACHTUNG !"

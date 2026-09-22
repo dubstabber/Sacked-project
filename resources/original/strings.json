@@ -1837,16 +1837,6 @@
       "origin": "port",
       "reason": "painted into both builds' console art; only English draws a Label"
     },
-    "character_select.name_label": {
-      "pl": "Imię gracza",
-      "origin": "port",
-      "reason": "the original's name box is unlabelled art"
-    },
-    "level_tree.level_n": {
-      "pl": "Poziom %d",
-      "origin": "port",
-      "reason": "the interim tree names levels the original draws as nodes"
-    },
     "minigame.banner.get_ready": {
       "pl": "Uwaga!",
       "origin": "port",

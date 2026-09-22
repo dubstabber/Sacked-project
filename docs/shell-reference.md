@@ -90,8 +90,9 @@ so it is NUL-terminated in practice but not guaranteed by the copy.
 
 **There is no post-level name prompt.** The name comes straight from `game+20668`, typed once
 on the character-select screen, so beating a record never asks who you are. Slot 219
-(`Imię do tabeli najlepszych wyników`) is a caption somewhere in that flow rather than a
-prompt raised here; its consumer was not chased.
+(`Imię do tabeli najlepszych wyników`) is that screen's own caption rather than a prompt
+raised here: the original draws it over two lines to the left of the name box, which a
+reference screenshot of screen 12 settles.
 
 ## The level tree, screen 15
 

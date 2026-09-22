@@ -144,8 +144,6 @@ UNUSED_SLOTS = {168: "Rozpocznij poziom 1", 169: "Rozpocznij poziom 2",
 PORT_STRINGS = {
     "hud.console.time_label": ("czas", "painted into both builds' console art; only English draws a Label"),
     "hud.console.score_label": ("wynik", "painted into both builds' console art; only English draws a Label"),
-    "character_select.name_label": ("Imię gracza", "the original's name box is unlabelled art"),
-    "level_tree.level_n": ("Poziom %d", "the interim tree names levels the original draws as nodes"),
     # The four duel banners are painted art in both builds, so only English needs words. The
     # Polish release swapped two of them, and the port shows each build's art as it ships, so
     # these are the roles the sprite names give rather than what the Polish art reads.

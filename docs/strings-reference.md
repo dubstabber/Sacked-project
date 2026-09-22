@@ -134,17 +134,20 @@ nouns, not translatable text.
 
 ## Keys the original has no wording for
 
-Four, each declared in `PORT_STRINGS` with its reason:
+Six, each declared in `PORT_STRINGS` with its reason — the two console labels below, and the
+duel's four `minigame.banner.*` keys, which *The two painted words* covers:
 
 | Key | Polish | Why |
 | --- | --- | --- |
 | `hud.console.time_label` | `czas` | painted into the console art |
 | `hud.console.score_label` | `wynik` | painted into the console art |
-| `character_select.name_label` | `Imię gracza` | the original's name box is unlabelled art |
-| `level_tree.level_n` | `Poziom %d` | the interim tree names levels the original draws as nodes |
 
-The port previously invented `Wybierz poziom` and `Wstecz` for the tree. Both are gone: the
-original's own screen-15 wording is slots 190 and 191, `Wybór poziomu` and `Główne menu`.
+The port previously invented `Wybierz poziom` and `Wstecz` for the tree, `Imię gracza` for
+the character-select name box, and `Poziom %d` for the interim level list. All four are gone.
+The tree's own screen-15 wording is slots 190 and 191, `Wybór poziomu` and `Główne menu`; the
+name box's caption is slot 219, `Imię do tabeli najlepszych wyników`, which the original
+draws over two lines to the left of the box; and the real tree draws levels as nodes, so it
+never names them.
 
 ## The two painted words
 
@@ -183,7 +186,7 @@ Polish edition's box art rather than a UI string, so it stays as a logo in every
 
 `resources/original/strings.json` is generated and holds Polish and German.
 `resources/i18n/translations.json` is authored and holds **only what neither build has
-wording for**: English throughout, plus German for the four port strings. The exporter fails
+wording for**: English throughout, plus German for the six port strings. The exporter fails
 if the authored file names a language a build already provides, which is what stops the two
 drifting apart.
 
