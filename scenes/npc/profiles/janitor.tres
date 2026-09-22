@@ -4,10 +4,14 @@
 [ext_resource type="Texture2D" path="res://images/characters/janitor/janitor-idle1-atmen-right/janitor-idle1-atmen-right-000.png" id="2_2dhg4"]
 [ext_resource type="Script" path="res://scenes/player/character_profile.gd" id="3_11q2q"]
 
+[ext_resource type="AnimationLibrary" path="res://scenes/npc/profiles/janitor_actions.res" id="npc_actions"]
+
 [resource]
 script = ExtResource("3_11q2q")
 id = &"janitor"
+gender = 0
 walk_speed_tiles = 1.2
+action_animation_library = ExtResource("npc_actions")
 animation_library = ExtResource("1_kjwhg")
 idle_animation_prefix = "janitor-idle1-atmen-"
 walk_animation_prefix = "janitor-walk-"
