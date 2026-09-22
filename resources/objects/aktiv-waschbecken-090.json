@@ -1,0 +1,26 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "WASCHBECKEN",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            65,
+            71
+          ],
+          "size": [
+            70,
+            101
+          ],
+          "texture": "res://images/objects/states/aktiv-waschbecken-090/aktiv-waschbecken-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "CHEFBILD01",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            33,
+            91
+          ],
+          "size": [
+            33,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-chefbild01-090/aktiv-chefbild01-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

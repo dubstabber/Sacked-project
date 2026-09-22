@@ -15,7 +15,7 @@ func _init() -> void:
 func _run() -> void:
 	_check_buses()
 	_check_manifest()
-	_check_every_level_1_action_sound_resolves()
+	_check_every_level_action_sound_resolves()
 	if _failures == 0:
 		print("Sound table: the buses, the index and every sound level 1 can ask for resolved")
 	quit(1 if _failures else 0)
@@ -61,16 +61,35 @@ func _check_manifest() -> void:
 		_expect(ResourceLoader.exists(String(parsed["music"][track])), "%s is in the project" % track)
 
 
-func _check_every_level_1_action_sound_resolves() -> void:
-	var manifest = JSON.parse_string(FileAccess.get_file_as_string("res://resources/levels/level_1.json"))
+func _check_every_level_action_sound_resolves() -> void:
 	var actions = JSON.parse_string(FileAccess.get_file_as_string("res://resources/original/actions.json"))
 	var ids := {}
-	for item in manifest["objects"]:
-		for action_id in item["action_ids"]:
-			if int(action_id) > 0:
-				ids[String(actions["actions"][int(action_id)]["sound"])] = int(action_id)
-	_expect(ids.size() > 0, "level 1's actions name sounds")
+	var levels := 0
+	for manifest_path in _level_manifest_paths():
+		var manifest = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+		if manifest == null:
+			continue
+		levels += 1
+		for item in manifest["objects"]:
+			for action_id in item["action_ids"]:
+				if int(action_id) > 0:
+					ids[String(actions["actions"][int(action_id)]["sound"])] = int(action_id)
+	_expect(levels > 0, "at least one level manifest was read")
+	_expect(ids.size() > 0, "the imported levels' actions name sounds")
 	for sound_id in ids:
 		if sound_id == "":
 			continue
 		_expect(AUDIO.effect_stream(sound_id) != null, "%s, used by action %d, resolves" % [sound_id, ids[sound_id]])
+
+
+func _level_manifest_paths() -> Array[String]:
+	var paths: Array[String] = []
+	var dir := DirAccess.open("res://resources/levels")
+	if dir == null:
+		return paths
+	for file in dir.get_files():
+		var name := file.trim_suffix(".remap")
+		if name.begins_with("level_") and name.ends_with(".json"):
+			paths.append("res://resources/levels/" + name)
+	paths.sort()
+	return paths

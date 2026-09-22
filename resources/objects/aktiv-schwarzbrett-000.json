@@ -1,0 +1,64 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "SCHWARZBRETT",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            10,
+            98
+          ],
+          "size": [
+            59,
+            76
+          ],
+          "texture": "res://images/objects/states/aktiv-schwarzbrett-000/aktiv-schwarzbrett-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            10,
+            98
+          ],
+          "size": [
+            59,
+            76
+          ],
+          "texture": "res://images/objects/states/aktiv-schwarzbrett-000/aktiv-schwarzbrett-000-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROYED_3": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            10,
+            98
+          ],
+          "size": [
+            59,
+            76
+          ],
+          "texture": "res://images/objects/states/aktiv-schwarzbrett-000/aktiv-schwarzbrett-000-destroyed-3-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 11
+    }
+  }
+}

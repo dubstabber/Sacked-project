@@ -1,0 +1,677 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "MICROWAVE",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            28,
+            81
+          ],
+          "size": [
+            58,
+            43
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            47
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            47
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            47
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-007.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-008.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-009.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-010.png"
+        },
+        {
+          "pivot": [
+            18,
+            80
+          ],
+          "size": [
+            40,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-011.png"
+        },
+        {
+          "pivot": [
+            17,
+            81
+          ],
+          "size": [
+            39,
+            41
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-012.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-013.png"
+        },
+        {
+          "pivot": [
+            20,
+            77
+          ],
+          "size": [
+            45,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-014.png"
+        },
+        {
+          "pivot": [
+            21,
+            77
+          ],
+          "size": [
+            47,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-015.png"
+        },
+        {
+          "pivot": [
+            22,
+            77
+          ],
+          "size": [
+            49,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-016.png"
+        },
+        {
+          "pivot": [
+            20,
+            77
+          ],
+          "size": [
+            44,
+            38
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-017.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-018.png"
+        },
+        {
+          "pivot": [
+            26,
+            91
+          ],
+          "size": [
+            58,
+            55
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-019.png"
+        },
+        {
+          "pivot": [
+            23,
+            87
+          ],
+          "size": [
+            51,
+            50
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-020.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-021.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-1-022.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    },
+    "DESTROY_2": {
+      "advances_to": 10,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-000.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-001.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            47
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-002.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            47
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-003.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            40
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-004.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-005.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-006.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-007.png"
+        },
+        {
+          "pivot": [
+            17,
+            82
+          ],
+          "size": [
+            39,
+            41
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-008.png"
+        },
+        {
+          "pivot": [
+            16,
+            84
+          ],
+          "size": [
+            37,
+            43
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-009.png"
+        },
+        {
+          "pivot": [
+            18,
+            81
+          ],
+          "size": [
+            41,
+            41
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-010.png"
+        },
+        {
+          "pivot": [
+            20,
+            77
+          ],
+          "size": [
+            45,
+            38
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-011.png"
+        },
+        {
+          "pivot": [
+            19,
+            78
+          ],
+          "size": [
+            43,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-012.png"
+        },
+        {
+          "pivot": [
+            18,
+            78
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-013.png"
+        },
+        {
+          "pivot": [
+            19,
+            77
+          ],
+          "size": [
+            44,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-014.png"
+        },
+        {
+          "pivot": [
+            20,
+            76
+          ],
+          "size": [
+            46,
+            38
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-015.png"
+        },
+        {
+          "pivot": [
+            18,
+            81
+          ],
+          "size": [
+            41,
+            41
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-016.png"
+        },
+        {
+          "pivot": [
+            15,
+            85
+          ],
+          "size": [
+            35,
+            43
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-017.png"
+        },
+        {
+          "pivot": [
+            16,
+            82
+          ],
+          "size": [
+            37,
+            41
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-018.png"
+        },
+        {
+          "pivot": [
+            18,
+            79
+          ],
+          "size": [
+            41,
+            39
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-019.png"
+        },
+        {
+          "pivot": [
+            21,
+            82
+          ],
+          "size": [
+            47,
+            44
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-020.png"
+        },
+        {
+          "pivot": [
+            23,
+            87
+          ],
+          "size": [
+            52,
+            50
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-021.png"
+        },
+        {
+          "pivot": [
+            24,
+            89
+          ],
+          "size": [
+            54,
+            52
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-022.png"
+        },
+        {
+          "pivot": [
+            50,
+            119
+          ],
+          "size": [
+            102,
+            96
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-023.png"
+        },
+        {
+          "pivot": [
+            64,
+            138
+          ],
+          "size": [
+            132,
+            124
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-024.png"
+        },
+        {
+          "pivot": [
+            73,
+            147
+          ],
+          "size": [
+            150,
+            135
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-025.png"
+        },
+        {
+          "pivot": [
+            79,
+            149
+          ],
+          "size": [
+            161,
+            139
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-026.png"
+        },
+        {
+          "pivot": [
+            76,
+            152
+          ],
+          "size": [
+            156,
+            142
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-027.png"
+        },
+        {
+          "pivot": [
+            74,
+            158
+          ],
+          "size": [
+            148,
+            145
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-028.png"
+        },
+        {
+          "pivot": [
+            72,
+            155
+          ],
+          "size": [
+            147,
+            139
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-029.png"
+        },
+        {
+          "pivot": [
+            69,
+            146
+          ],
+          "size": [
+            142,
+            129
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-030.png"
+        },
+        {
+          "pivot": [
+            28,
+            81
+          ],
+          "size": [
+            58,
+            43
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-031.png"
+        },
+        {
+          "pivot": [
+            28,
+            81
+          ],
+          "size": [
+            58,
+            43
+          ],
+          "texture": "res://images/objects/states/aktiv-microwave-000/aktiv-microwave-000-destroy-2-032.png"
+        }
+      ],
+      "loop": false,
+      "state": 3
+    }
+  }
+}

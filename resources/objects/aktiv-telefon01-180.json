@@ -1,0 +1,45 @@
+{
+  "angle": "180",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "TELEFON01",
+  "states": {
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            12,
+            62
+          ],
+          "size": [
+            26,
+            19
+          ],
+          "texture": "res://images/objects/states/aktiv-telefon01-180/aktiv-telefon01-180-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            11,
+            60
+          ],
+          "size": [
+            25,
+            17
+          ],
+          "texture": "res://images/objects/states/aktiv-telefon01-180/aktiv-telefon01-180-destroy-1-000.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

@@ -1,0 +1,363 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "COFFEEMAT",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            70,
+            77
+          ],
+          "size": [
+            141,
+            121
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROYED_4": {
+      "advances_to": null,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            37,
+            114
+          ],
+          "size": [
+            76,
+            132
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroyed-4-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 12
+    },
+    "DESTROYED_6": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            52,
+            112
+          ],
+          "size": [
+            99,
+            152
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroyed-6-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 14
+    },
+    "DESTROY_2": {
+      "advances_to": 10,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-2-000.png"
+        },
+        {
+          "pivot": [
+            35,
+            113
+          ],
+          "size": [
+            73,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-2-001.png"
+        },
+        {
+          "pivot": [
+            36,
+            115
+          ],
+          "size": [
+            78,
+            131
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-2-002.png"
+        },
+        {
+          "pivot": [
+            39,
+            117
+          ],
+          "size": [
+            88,
+            131
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-2-003.png"
+        },
+        {
+          "pivot": [
+            41,
+            116
+          ],
+          "size": [
+            99,
+            128
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-2-004.png"
+        },
+        {
+          "pivot": [
+            41,
+            107
+          ],
+          "size": [
+            110,
+            115
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-2-005.png"
+        },
+        {
+          "pivot": [
+            38,
+            83
+          ],
+          "size": [
+            114,
+            85
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-2-006.png"
+        },
+        {
+          "pivot": [
+            70,
+            77
+          ],
+          "size": [
+            141,
+            121
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-2-007.png"
+        }
+      ],
+      "loop": false,
+      "state": 3
+    },
+    "DESTROY_6": {
+      "advances_to": 14,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-000.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-001.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-002.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-003.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            131
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-004.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-005.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            138
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-006.png"
+        },
+        {
+          "pivot": [
+            35,
+            112
+          ],
+          "size": [
+            72,
+            141
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-007.png"
+        },
+        {
+          "pivot": [
+            39,
+            112
+          ],
+          "size": [
+            76,
+            146
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-008.png"
+        },
+        {
+          "pivot": [
+            46,
+            112
+          ],
+          "size": [
+            86,
+            149
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-009.png"
+        },
+        {
+          "pivot": [
+            51,
+            112
+          ],
+          "size": [
+            93,
+            151
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-010.png"
+        },
+        {
+          "pivot": [
+            52,
+            112
+          ],
+          "size": [
+            96,
+            152
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-011.png"
+        },
+        {
+          "pivot": [
+            52,
+            112
+          ],
+          "size": [
+            98,
+            152
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-012.png"
+        },
+        {
+          "pivot": [
+            52,
+            112
+          ],
+          "size": [
+            99,
+            152
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-013.png"
+        },
+        {
+          "pivot": [
+            52,
+            112
+          ],
+          "size": [
+            99,
+            152
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-014.png"
+        },
+        {
+          "pivot": [
+            52,
+            112
+          ],
+          "size": [
+            99,
+            152
+          ],
+          "texture": "res://images/objects/states/aktiv-coffeemat-090/aktiv-coffeemat-090-destroy-6-015.png"
+        }
+      ],
+      "loop": false,
+      "state": 7
+    }
+  }
+}
