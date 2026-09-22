@@ -11,11 +11,15 @@ extends CanvasLayer
 const CLOCK_OVERFLOW_SECONDS := 5940
 const IDLE_HOVER_TEXT := "..."
 
-# The console art has "czas" and "wynik" painted into it, so only the language it is painted
-# in can use it. Every other language gets the same frame with the words removed and draws
-# them as Labels. See docs/strings-reference.md.
-const PAINTED_LANGUAGE: StringName = &"pl"
-const PAINTED_FRAME := preload("res://images/gui/hud/console.png")
+# Both retail builds paint their two field labels into the console art, so each ships its
+# own. The Polish one has them over the wrong fields, which the port keeps by showing that
+# build's art unaltered; the German one is correct. Anything else gets the frame with the
+# words removed and draws its own, in the German build's order.
+# See docs/strings-reference.md and docs/hud-reference.md.
+const PAINTED_FRAMES := {
+	&"pl": preload("res://images/gui/hud/console.png"),
+	&"de": preload("res://images/gui/hud/console-de.png"),
+}
 const UNLABELLED_FRAME := preload("res://images/gui/hud/console-unlabelled.png")
 
 const PROGRESS_SHADER := preload("res://scenes/shared/round_bar.gdshader")
@@ -48,7 +52,7 @@ const AGGRO_SECONDS := 2.0
 @onready var _aggro_up: Sprite2D = $Banners/AggroUp
 @onready var _aggro_up_text: Label = $Banners/AggroUp/AggroUpText
 @onready var _frame: Sprite2D = $Band/Frame
-@onready var _painted_labels: Array[Label] = [$Band/TimeLabel, $Band/ScoreLabel]
+@onready var _painted_labels: Array[Label] = [$Band/LeftLabel, $Band/RightLabel]
 
 var _session: Node
 var _actions: Node
@@ -170,10 +174,11 @@ func set_hover_text(text: String) -> void:
 
 
 func _match_frame_to_language() -> void:
-	var painted := TranslationServer.get_locale().begins_with(String(PAINTED_LANGUAGE))
-	_frame.texture = PAINTED_FRAME if painted else UNLABELLED_FRAME
+	var language := StringName(TranslationServer.get_locale().substr(0, 2))
+	var painted: Texture2D = PAINTED_FRAMES.get(language)
+	_frame.texture = painted if painted != null else UNLABELLED_FRAME
 	for label in _painted_labels:
-		label.visible = not painted
+		label.visible = painted == null
 
 
 func _notification(what: int) -> void:

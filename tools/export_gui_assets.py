@@ -23,9 +23,9 @@ from pathlib import Path
 from PIL import Image
 
 try:
-    from sprite_source import SpriteSource
+    from sprite_source import GERMAN_TEXTURE_ROOT, SpriteSource
 except ImportError:  # the tests import this file as tools.export_gui_assets
-    from tools.sprite_source import SpriteSource
+    from tools.sprite_source import GERMAN_TEXTURE_ROOT, SpriteSource
 
 
 GUI = "CO_GUI"
@@ -69,6 +69,18 @@ COLOUR_KEYS = {}
 
 ACTICON_PREFIX = "CO_GUI_ACTICON_"
 BUBBLE_PREFIX = "CO_EFFECT_Bubbles_"
+MINIGAME_PREFIX = "CO_GUI_MINIGAME_"
+
+# Sprites with words painted into them, which therefore differ per release. The port ships
+# both builds' copies and picks by language; English falls back to a drawn label over the
+# erased console. See docs/strings-reference.md.
+GERMAN_SPRITES = [
+    ("CO_GUI_CONSOLE_CONSOLE", "images/gui/hud/console-de.png"),
+    ("CO_GUI_MINIGAME_GETREADY", "images/gui/minigame/getready-de.png"),
+    ("CO_GUI_MINIGAME_YOURTURN", "images/gui/minigame/yourturn-de.png"),
+    ("CO_GUI_MINIGAME_WIN", "images/gui/minigame/win-de.png"),
+    ("CO_GUI_MINIGAME_LOOSE", "images/gui/minigame/loose-de.png"),
+]
 
 # The console art has the words "czas" and "wynik" painted into it, over the wrong fields --
 # the original's own mistake, which the port keeps. They are the only Polish text baked into
@@ -105,7 +117,11 @@ def acticon_destination(sprite: str) -> str:
 
 
 def specs(root: Path) -> list:
-    """Every (archive, sprite, destination, derive) this tool owns, in a stable order."""
+    """Every (archive, sprite, destination, source) this tool owns, in a stable order.
+
+    The fourth element is None for an ordinary sprite, a callable that derives one from the
+    decoded image, or a Path naming an alternate extraction to decode it from instead.
+    """
     result = []
     for sprite, destination in CONSOLE + SCREENS:
         result.append((GUI, sprite, destination, None))
@@ -119,6 +135,12 @@ def specs(root: Path) -> list:
     for sprite in SpriteSource(root, EFFECT).names(BUBBLE_PREFIX):
         result.append((EFFECT, sprite, f"images/effects/bubbles/{slug(sprite[len(BUBBLE_PREFIX):])}.png", None))
 
+    for sprite in SpriteSource(root, GUI).names(MINIGAME_PREFIX):
+        result.append((GUI, sprite, f"images/gui/minigame/{slug(sprite[len(MINIGAME_PREFIX):])}.png", None))
+
+    for sprite, destination in GERMAN_SPRITES:
+        result.append((GUI, sprite, destination, GERMAN_TEXTURE_ROOT))
+
     destinations = [destination for _, _, destination, _ in result]
     duplicates = {path for path in destinations if destinations.count(path) > 1}
     if duplicates:
@@ -129,11 +151,12 @@ def specs(root: Path) -> list:
 def export(root: Path, check: bool) -> int:
     failures = []
     count = 0
-    for archive, sprite, destination, derive in specs(root):
-        source = SpriteSource(root, archive)
+    for archive, sprite, destination, source_or_derive in specs(root):
+        textures = source_or_derive if isinstance(source_or_derive, Path) else None
+        source = SpriteSource(root, archive, textures)
         image = source.decode(sprite, colour_key=COLOUR_KEYS.get(sprite))
-        if derive is not None:
-            image = derive(image)
+        if callable(source_or_derive):
+            image = source_or_derive(image)
         path = root / destination
         count += 1
         if check:
@@ -165,8 +188,13 @@ def main() -> int:
 
     root = args.root.resolve()
     if args.list:
-        for archive, sprite, destination, derive in specs(root):
-            suffix = "  (derived)" if derive is not None else ""
+        for archive, sprite, destination, source_or_derive in specs(root):
+            if callable(source_or_derive):
+                suffix = "  (derived)"
+            elif source_or_derive is not None:
+                suffix = "  (German build)"
+            else:
+                suffix = ""
             print(f"{archive:10} {sprite:44} -> {destination}{suffix}")
         return 0
     return export(root, args.check)

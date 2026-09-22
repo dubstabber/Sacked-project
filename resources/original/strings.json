@@ -1830,12 +1830,12 @@
     "hud.console.time_label": {
       "pl": "czas",
       "origin": "port",
-      "reason": "painted into the console art; a Label for every other language"
+      "reason": "painted into both builds' console art; only English draws a Label"
     },
     "hud.console.score_label": {
       "pl": "wynik",
       "origin": "port",
-      "reason": "painted into the console art; a Label for every other language"
+      "reason": "painted into both builds' console art; only English draws a Label"
     },
     "character_select.name_label": {
       "pl": "Imię gracza",
@@ -1846,6 +1846,26 @@
       "pl": "Poziom %d",
       "origin": "port",
       "reason": "the interim tree names levels the original draws as nodes"
+    },
+    "minigame.banner.get_ready": {
+      "pl": "Uwaga!",
+      "origin": "port",
+      "reason": "painted into both builds' banner art"
+    },
+    "minigame.banner.your_turn": {
+      "pl": "Twoja odpowiedź!",
+      "origin": "port",
+      "reason": "painted into both builds' banner art"
+    },
+    "minigame.banner.win": {
+      "pl": "Tania wymówka!",
+      "origin": "port",
+      "reason": "painted into both builds' banner art"
+    },
+    "minigame.banner.lose": {
+      "pl": "Złapany!",
+      "origin": "port",
+      "reason": "painted into both builds' banner art"
     }
   }
 }

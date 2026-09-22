@@ -13,14 +13,17 @@ from PIL import Image
 
 
 TEXTURE_ROOT = Path("extract-sacked-assets/extracted/textures")
+# The German retail build's own archives, dumped beside the Polish ones. Only the sprites
+# with text painted into them differ, so this is read for those and nothing else.
+GERMAN_TEXTURE_ROOT = Path("extract-sacked-assets/extracted-de/textures")
 COLOUR_KEY_INDEX = 255  # 8bpp sprites key on palette index 255
 
 
 class SpriteSource:
-    def __init__(self, root: Path, archive: str):
+    def __init__(self, root: Path, archive: str, textures: Path = None):
         self.root = Path(root)
         self.archive = archive
-        self.directory = self.root / TEXTURE_ROOT / archive
+        self.directory = self.root / (textures or TEXTURE_ROOT) / archive
 
     def names(self, prefix: str = "") -> list:
         return sorted(

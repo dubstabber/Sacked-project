@@ -764,5 +764,21 @@
   "level_tree.level_n": {
     "en": "Level %d",
     "de": "Level %d"
+  },
+  "minigame.banner.get_ready": {
+    "en": "Attention!",
+    "de": "ACHTUNG !"
+  },
+  "minigame.banner.your_turn": {
+    "en": "Your answer!",
+    "de": "DEINE ANTWORT !"
+  },
+  "minigame.banner.win": {
+    "en": "Talked your way out!",
+    "de": "RAUSGEREDET !"
+  },
+  "minigame.banner.lose": {
+    "en": "Caught!",
+    "de": "ERWISCHT !"
   }
 }

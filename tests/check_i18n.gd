@@ -99,26 +99,41 @@ func _check_the_console_follows_the_language() -> void:
 	await process_frame
 
 	var frame := console.get_node("Band/Frame") as Sprite2D
-	var labels: Array = [console.get_node("Band/TimeLabel"), console.get_node("Band/ScoreLabel")]
+	var labels: Array = [console.get_node("Band/LeftLabel"), console.get_node("Band/RightLabel")]
 
-	_i18n().set_language(&"pl")
-	await process_frame
-	_expect(frame.texture == console.PAINTED_FRAME, "Polish uses the art with the words painted in")
-	for label: Label in labels:
-		_expect(not label.visible, "Polish draws no label over the painted word")
-
-	for language: StringName in [&"en", &"de"]:
+	# Both retail builds paint their own words in, so both use their own art.
+	for language: StringName in [&"pl", &"de"]:
 		_i18n().set_language(language)
 		await process_frame
-		_expect(frame.texture == console.UNLABELLED_FRAME, "%s uses the erased console art" % language)
+		_expect(
+			frame.texture == console.PAINTED_FRAMES[language],
+			"%s uses its own build's console art" % language
+		)
 		for label: Label in labels:
-			_expect(label.visible, "%s draws its own word" % language)
-			_expect(label.atr(label.text) != label.text, "%s translates the painted word" % language)
+			_expect(not label.visible, "%s draws no label over a painted word" % language)
 
+	_i18n().set_language(&"en")
+	await process_frame
+	_expect(frame.texture == console.UNLABELLED_FRAME, "English uses the erased console art")
+	for label: Label in labels:
+		_expect(label.visible, "English draws its own words")
+		_expect(label.atr(label.text) != label.text, "English translates the painted word")
+	# The German build puts the score on the left and the time on the right, which is the
+	# order the fields are in; the Polish build swapped them. English follows the German.
 	_expect(
-		console.PAINTED_FRAME.get_size() == console.UNLABELLED_FRAME.get_size(),
-		"both console frames are the same size, so nothing else shifts"
+		(labels[0] as Label).text == "hud.console.score_label",
+		"the left label names the score field it sits over"
 	)
+	_expect(
+		(labels[1] as Label).text == "hud.console.time_label",
+		"the right label names the clock field it sits over"
+	)
+
+	for language: StringName in console.PAINTED_FRAMES:
+		_expect(
+			console.PAINTED_FRAMES[language].get_size() == console.UNLABELLED_FRAME.get_size(),
+			"every console frame is the same size, so nothing else shifts"
+		)
 
 	_i18n().set_language(&"pl")
 	root.remove_child(console)

@@ -78,10 +78,17 @@ From `sub_403780`:
 ```
 
 Two consequences worth stating plainly. The **score is the left field and the clock the
-right one**, which means the `czas` and `wynik` labels painted into the console art sit
-over the wrong values; that is the original's own mistake and reproducing it is the
-faithful choice. And the round bar tracks the **progress of the action the player is
-performing**, not aggression — it is the elapsed and total duration of the current prank.
+right one**, which means the `czas` and `wynik` labels painted into the Polish console art
+sit over the wrong values.
+
+**That mistake belongs to the Polish release, not the game.** The German build's own console
+sprite reads `punkte` on the left and `zeit` on the right, correctly naming the fields
+underneath. So each build ships its own art and the port shows each unaltered, swap included;
+a language with no art of its own draws its labels in the German order. See
+[strings-reference.md](strings-reference.md).
+
+And the round bar tracks the **progress of the action the player is performing**, not
+aggression — it is the elapsed and total duration of the current prank.
 
 The lamps read the player's inventory at `player+1008`: smoking needs **both** slot 5 and
 slot 6, the Matrix lamp needs slot 14, and urination needs slot 26. Slot 26 is the item

@@ -148,9 +148,11 @@ original's own screen-15 wording is slots 190 and 191, `Wybór poziomu` and `Gł
 
 ## The two painted words
 
-`console.png` has `czas` and `wynik` painted into it, each over the *other* field — the
-original's own mistake, which the port keeps. They are the only Polish baked into a sprite
-the port ships. `export_gui_assets.py` derives `console-unlabelled.png` from the same decoded
+Both retail builds paint the console's two field labels into its art, and **they disagree**.
+The Polish sprite reads `czas` over the score field and `wynik` over the clock, each over the
+wrong one; the German sprite reads `punkte` and `zeit`, correctly. So the swap is a Polish
+localisation mistake rather than the game's, and the port ships **both** sprites and shows
+each build its own, unaltered. `export_gui_assets.py` derives `console-unlabelled.png` from the same decoded
 sprite by flooding two measured boxes with the frame's flat blue `(74, 109, 230)`:
 
 | Word | Box |
@@ -159,13 +161,20 @@ sprite by flooding two measured boxes with the frame's flat blue `(74, 109, 230)
 | `wynik` | `(236, 67)`–`(293, 98)` |
 
 Those boxes contain nothing but the lettering and that flat blue, so the fill leaves no seam.
-Polish draws the original art; every other language draws the erased copy plus two Labels at
-the same places, keeping the swap.
+Polish and German each draw their own build's art. Any other language draws the erased copy
+plus two Labels, placed in the **German** order — score on the left, time on the right —
+because copying the Polish mistake into a language that never made it would be wrong.
 
-The German build ships its own console sprite in its own `CO_GUI.OGD`, with whatever German
-words it paints there. Extracting that container would replace the two authored German
-labels with the build's own and settle whether the German release repeats the swapped-labels
-bug. It is not done: the only gain is two short strings, against extracting a 15 MB archive.
+The German `CO_GUI.OGD` is dumped to `extract-sacked-assets/extracted-de/`, and
+`export_gui_assets.py` reads exactly five sprites from it: the console and the duel's four
+banners, the only art in the port with words painted in.
+
+The duel's banners disagree between the builds too, and again the Polish release is the one
+at fault. The German `YOURTURN` reads `DEINE ANTWORT !` and `WIN` reads `RAUSGEREDET !`,
+which match what their sprite names say they are for. The Polish pair is the other way round:
+`YOURTURN` carries `Tania wymówka!` and `WIN` carries `Twoja odpowiedź!`. The port draws each
+build's art where its name says, so a Polish player sees them swapped, and English draws
+labels in the German roles.
 
 `loading.png` also carries Polish, the hand-lettered title `zemsta urzędasa`. That is the
 Polish edition's box art rather than a UI string, so it stays as a logo in every language.

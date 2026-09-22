@@ -142,10 +142,17 @@ UNUSED_SLOTS = {168: "Rozpocznij poziom 1", 169: "Rozpocznij poziom 2",
 
 # Text the port has to show that the original has no wording for, with the reason it exists.
 PORT_STRINGS = {
-    "hud.console.time_label": ("czas", "painted into the console art; a Label for every other language"),
-    "hud.console.score_label": ("wynik", "painted into the console art; a Label for every other language"),
+    "hud.console.time_label": ("czas", "painted into both builds' console art; only English draws a Label"),
+    "hud.console.score_label": ("wynik", "painted into both builds' console art; only English draws a Label"),
     "character_select.name_label": ("Imię gracza", "the original's name box is unlabelled art"),
     "level_tree.level_n": ("Poziom %d", "the interim tree names levels the original draws as nodes"),
+    # The four duel banners are painted art in both builds, so only English needs words. The
+    # Polish release swapped two of them, and the port shows each build's art as it ships, so
+    # these are the roles the sprite names give rather than what the Polish art reads.
+    "minigame.banner.get_ready": ("Uwaga!", "painted into both builds' banner art"),
+    "minigame.banner.your_turn": ("Twoja odpowiedź!", "painted into both builds' banner art"),
+    "minigame.banner.win": ("Tania wymówka!", "painted into both builds' banner art"),
+    "minigame.banner.lose": ("Złapany!", "painted into both builds' banner art"),
 }
 
 # Godot's % formatting is positional, so a translation has to repeat these in order. The

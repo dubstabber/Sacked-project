@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" path="res://images/gui/hud/thermo-up.png" id="8"]
 [ext_resource type="Texture2D" path="res://images/gui/hud/aggro-up.png" id="9"]
 [ext_resource type="Texture2D" path="res://images/gui/hud/console-unlabelled.png" id="10"]
+[ext_resource type="Texture2D" path="res://images/gui/hud/console-de.png" id="11"]
 
 [node name="Console" type="CanvasLayer"]
 layer = 50
@@ -92,7 +93,7 @@ offset_bottom = 532.0
 theme_override_font_sizes/font_size = 22
 text = "00:00"
 
-[node name="TimeLabel" type="Label" parent="Band"]
+[node name="LeftLabel" type="Label" parent="Band"]
 visible = false
 offset_left = 91.0
 offset_top = 468.0
@@ -102,9 +103,9 @@ theme_override_colors/font_color = Color(0.996, 0.086, 0.004, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.1, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 20
-text = "hud.console.time_label"
+text = "hud.console.score_label"
 
-[node name="ScoreLabel" type="Label" parent="Band"]
+[node name="RightLabel" type="Label" parent="Band"]
 visible = false
 offset_left = 236.0
 offset_top = 465.0
@@ -114,7 +115,7 @@ theme_override_colors/font_color = Color(0.996, 0.086, 0.004, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.1, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 24
-text = "hud.console.score_label"
+text = "hud.console.time_label"
 
 [node name="HoverText" type="Label" parent="Band"]
 offset_left = 135.0
