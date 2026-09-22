@@ -302,8 +302,13 @@ Two corrections to earlier assumptions:
 - **`Następny poziom` goes to the level tree, not to the next level.** The caption promises a
   next level; the target is screen 15, where the freshly-unlocked nodes have just turned
   yellow. The port must send it to the tree.
-- **`Instrukcja` (172) and `Opuść grę` (173) are not on either result screen.** Neither class
-  references them. Of slots 172–178 the result screens use only 174–177.
+- **`Instrukcja` (172) and `Opuść grę` (173) are on no screen at all.** Neither slot has a
+  single cross-reference in the image: they are dead strings the build still ships. Of slots
+  172–178 the result screens use only 174–177.
+- **Neither result screen draws anything of its own.** `CWinScreen` and `CLooseScreen` leave
+  the draw vtable slot at the base implementation, where `CHighscore` and `CLevelDesc`
+  override it. So each is its background picture plus its two buttons — no score, no time,
+  no caption.
 
 The win screen plays sound `S1100` on entry and stops whatever `game+19056` was playing.
 
@@ -338,13 +343,39 @@ Built with the table pointer `game+19196`, so it reads all 28 in-memory records.
 **Only three pages are reachable.** `sub_403F20`'s case 14 handles a button 6 that would
 select page 3, and slot 206 (`22 do 28` / `22 bis 28`) holds its caption, but `sub_420A20`
 never constructs it. Page 3 and the seven records behind it are dead in the shipped build —
-consistent with the tree's empty seventh column. The rows-per-page count is seven on the
-evidence of the captions themselves (`1 do 7`, `8 do 14`, `15 do 21`); the draw loop was not
-read.
+consistent with the tree's empty seventh column.
 
 The page index lives at `+1260` (`sub_421110` just stores it) and the column at `+1261`.
 `sub_4210C0` flips the column and relabels its own button with the **other** column's name,
-slot 201 `Wynik` or slot 202 `Czas`. Initial state is page 0 with `+1261 = 1`.
+slot 201 `Wynik` or slot 202 `Czas`. Initial state is page 0 with `+1261 = 1`, which is the
+**score** board; the button therefore starts out offering `Czas`.
+
+### The rows
+
+`sub_4210A0` is the draw override — the base draw, then `sub_421120`, which walks **seven
+records** starting at `52 * (7 * page)` and puts four fields on each:
+
+| column | rect on row 0 | content |
+|---|---|---|
+| number | `(16, 154, 64, 40)` | `(#%d)` from `record[+0]` |
+| title | `(88, 154, 400, 40)` | `off_46C0A4[level]`, the slot 232+n title |
+| name | `(496, 154, 184, 40)` | `record[+4]` on the score board, `record[+28]` on the time board |
+| value | `(688, 154, 96, 40)` | the score or the time, below |
+
+Rows step 46 px: y = 154, 200, 246, 292, 338, 384, 430. Each column's rect is a fixed offset
+added to the row's own `(16, y)`; the tables are at `0x470820` (four column rects) and
+`0x470880` (seven row rects, stride 16).
+
+**The toggle moves the name column with the value column.** On the score board the row shows
+`record[+4]` beside `record[+24]`, formatted `"% 8d"` or `"     ---"` when the score is 0; on
+the time board it shows `record[+28]` beside `record[+48]`, formatted `"%02d:%02d"` or
+`"--:--"` when it is the 12345 sentinel. So each board names whoever set that board's record,
+which is why the two names are separate fields in the first place.
+
+Both value formats are space-padded to right-align in the original's fixed-width GUI font.
+The port's font is proportional, so it right-aligns the column instead and drops the padding.
+
+Slot 206 (`22 do 28`) is never built, so the fourth page and its seven records stay dead.
 
 Slots 162–165 (`highscore.best_score_format` and friends) are **not** used here. Their only
 reference is `sub_4061C0`, the level loader, so they belong to the loading screen, which

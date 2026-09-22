@@ -38,8 +38,13 @@ that slot; everything else plays at the full effects volume from `handler+3892`.
 ## What a level plays
 
 - **Theme.** `sub_406AF0` ends a level's setup with `rand() % 3` over `Theme1`, `Theme2`
-  and `Theme3`. `Menu1` belongs to the shell; `Menu2` ships but is not reached from the
-  screens the port has.
+  and `Theme3`. The shell has two tracks: `sub_407370` asks for one on four cases only,
+  `Menu1` on the loading and menu screens and `Menu2` on the coworker-names and highscore
+  screens. Every other screen keeps whatever is already playing, which is why the level
+  tree, the description screen and character select are silent about music and still run
+  under `Menu1` — every route to them passes through the menu. The port mirrors this with a
+  per-screen stream map in `ScreenManager`; the names screen is not built yet, so `Menu2` is
+  reached only from the highscore board. See docs/shell-reference.md.
 - **Warning.** `sub_403780` starts `S1012` looping once `limit - elapsed <= 10`, keeping the
   slot in `game+19056` so it is only started once.
 - **Win.** Screen 7 plays `S1100`.
