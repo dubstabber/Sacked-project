@@ -42,6 +42,10 @@ class OriginalNpcDataTests(unittest.TestCase):
         self.assertIsNone(find_startup_item([boundary], (154,), set(), (0.0, 0.0), (0.5,)))
 
     def test_spawn_type_order_and_temporary_claims_determine_assignments(self):
+        # sub_406AF0 drains the SPAWN list by type in ascending order -- one call each for
+        # types 0..3, then a loop per type for 4..7 -- and sub_413320 returns the first
+        # record still carrying that type, so file order only breaks ties inside a type.
+        # Records are listed here out of type order to prove the sort, not the file.
         level = {
             "spawns": [spawn(3, 6, 0.0, 0.0), spawn(2, 4, 0.0, 0.0), spawn(1, 1, 0.0, 0.0)],
             "items": [item(10, 152, 0.2, 0.0), item(11, 153, 0.3, 0.0), item(12, 68, 0.0, 0.0), item(13, 70, 0.0, 0.0)],
@@ -54,8 +58,41 @@ class OriginalNpcDataTests(unittest.TestCase):
         self.assertEqual([npc["assigned_chair_instance_id"] for npc in npcs], [None, 12, 13])
 
     def test_singleton_roles_and_repeatable_coworker_spawns(self):
+        # sub_406AF0 gives types 1, 2 and 3 a bare `if` and types 4..7 a while loop, so a
+        # second boss, secretary or janitor record is never consumed. Level 7 ships two
+        # secretary records and the original creates one secretary.
         level = {"spawns": [spawn(index, kind, 0.0, 0.0) for index, kind in enumerate((0, 1, 1, 2, 2, 3, 3, 4, 4))], "items": []}
         self.assertEqual([npc["spawn_id"] for npc in build_npcs(level, {})], [1, 2, 3, 4, 4])
+
+    def test_the_boss_and_the_janitor_are_given_no_desk(self):
+        # CObj_Boss (sub_404B90) and CObj_Housekeeper (sub_404D20) call sub_418790, which
+        # zeroes both the workstation and the chair, where every other agent calls
+        # sub_4185B0 and claims one.
+        level = {
+            "spawns": [spawn(index, kind, 0.0, 0.0) for index, kind in enumerate((1, 2, 3, 4))],
+            "items": [item(10, 152, 0.1, 0.0), item(11, 153, 0.2, 0.0),
+                      item(12, 68, 0.0, 0.0), item(13, 70, 0.0, 0.0)],
+        }
+        definitions = {item_type << 4: ObjectDefinition(item_type << 4, category, "", "")
+                       for item_type, category in ((152, 5), (153, 5), (68, 1), (70, 1))}
+        npcs = {npc["spawn_id"]: npc for npc in build_npcs(level, definitions)}
+        for spawn_id in (1, 3):
+            self.assertIsNone(npcs[spawn_id]["assigned_workstation_instance_id"])
+            self.assertIsNone(npcs[spawn_id]["assigned_chair_instance_id"])
+        # The desks the two of them skipped are still there for the agents that do claim.
+        self.assertEqual(npcs[2]["assigned_workstation_instance_id"], 10)
+        self.assertEqual(npcs[4]["assigned_workstation_instance_id"], 11)
+
+    def test_level_7_ships_two_secretaries_and_only_one_is_created(self):
+        from tools.import_original_level import level_paths, parse_level_file
+
+        level = parse_level_file(ROOT / level_paths(7).source_rel)
+        secretaries = [entry for entry in level["spawns"] if int(entry["spawn_id"]) == 2]
+        self.assertEqual(len(secretaries), 2)
+        built = [npc for npc in build_npcs(level, parse_object_database(ORIGINAL_OBJECTS)) if npc["spawn_id"] == 2]
+        self.assertEqual(len(built), 1)
+        # The one that survives is the first in the file, which is what sub_413320 returns.
+        self.assertEqual(built[0]["instance_id"], int(secretaries[0]["instance_id"]))
 
     def test_committed_level_has_original_three_npcs_and_workstations(self):
         manifest = json.loads((ROOT / "resources/levels/level_1.json").read_text())

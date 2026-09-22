@@ -30,6 +30,37 @@ Factories `sub_404B90`, `sub_404EC0`, `sub_404D20`, `sub_405010`, and `sub_4051D
 
 The level's `SPAWN` records establish characters and their initial locations. The inspected `LEVEL_00` data has four spawns: player `(12, 9)`, boss `(1, 12)`, male employee 1 `(3, 2)`, and female employee 1 `(6, 1)`. It has no serialized NPC patrol routes. An authored route in the Godot port is an authoring feature, not an extracted original schedule.
 
+## Which agent is created first
+
+Who gets which desk depends entirely on the order the agents are made in, because
+`sub_4185B0` claims the first free workstation it finds. That order is **not** the order the
+`SPAWN` records sit in the file.
+
+`sub_412FB0`'s `SPAWN` branch appends each record to a doubly-linked list at `game+1852` in
+file order and counts them at `game+1856`. `sub_406AF0`, the level's start-up, then drains
+that list **by spawn type in ascending order**: one call each for types 0, 1, 2 and 3, then
+a `while` loop per type for 4, 5, 6 and 7. `sub_413320(type)` walks the list from its head
+and returns the first record still carrying that type, then sets bit 15 of the type field to
+mark it spent, which is what ends each loop.
+
+Three consequences, all reproduced by `build_npcs`:
+
+- **Creation order is ascending spawn type, and file order within one type.** The port sorts
+  the spawn records by `spawn_id`, and Python's sort is stable, so records of one type keep
+  the order they were read in.
+- **Types 1, 2 and 3 are created at most once.** They get a bare `if`, not a loop, so a
+  second boss, secretary or janitor record is simply never consumed. Level 7 ships two
+  secretary records and the original creates one secretary.
+- **The boss and the janitor get no desk and no chair.** `CObj_Boss` (`sub_404B90`) and
+  `CObj_Housekeeper` (`sub_404D20`) call `sub_418790`, which writes 0 to both `+1836` and
+  `+1840`; only the secretary (`sub_404EC0`) and the four coworker variants
+  (`sub_405010`/`sub_4051D0`, each with a 0/1 argument) call `sub_4185B0`. This is why the
+  two of them fail the initial work request described below rather than taking a coworker's
+  desk.
+
+`sub_406AF0` also resets the coworker-name pool (`sub_4156B0`) before the first agent exists,
+and ends by picking the level theme with `rand() % 3`.
+
 The original agents choose targets at runtime. `sub_416D50` selects a target item via `sub_417120`, obtains its interaction position from `sub_410030`, rounds the ground coordinates with `int(value + 0.5)`, and generates a path. The interaction position is the object's ground position plus the orientation-transformed floats from object-definition offsets `+536/+540`.
 
 `sub_4061C0` builds a pathfinding grid from `INFODATA` bit 0: blocked cells become byte 255 and free cells become zero. `sub_41E910` expands four neighbors in order left, up, right, down, rejecting out-of-bounds cells, blocked cells, and the immediate parent. The queue search at `sub_41EFB0` adds the grid-byte cost to the accumulated path cost and uses squared Euclidean distance to the goal as its heuristic. Since ordinary free cells cost zero, this is not a shortest-path guarantee equivalent to conventional unit-cost A*.
