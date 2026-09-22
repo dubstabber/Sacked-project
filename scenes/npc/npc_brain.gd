@@ -15,8 +15,23 @@ const SMOKING_GOAL := 6
 # sub_417B00 sets agent+1820 when the item it walked to is tampered with, and sub_416450
 # holds goal 8 -- the ANGRY bubble -- for as long as the busy timer it starts.
 const REACTION_GOAL := 8
+# sub_4164E0: a filed repair job shows goal 9 -- the REPAIR bubble -- for as long as the
+# reaction's own busy timer runs, and resets the item when it expires. sub_417B00 files it
+# for a janitor whose broken item is one of the thirty types sub_4180F0 lists.
+# See docs/npc-reference.md.
+const REPAIR_GOAL := 9
+const REPAIRABLE_TYPES_PATH := "res://resources/original/repairable_types.json"
+const JANITOR_PROFILE: StringName = &"janitor"
 # sub_41DEA0(25, agent x, agent y): the player scores for every agent it catches out.
 const REACTION_SCORE := 25
+# Each archetype's tick reads the reaction flag from its own animation table, and the names
+# are not shared: sub_419CE0 picks PISSED, sub_419740 picks STAND#EXPLODE, and sub_41E360
+# has no reaction branch at all -- the secretary is angry without changing what she is
+# playing. See docs/catch-reference.md.
+const REACTION_CLIPS := {
+	&"boss": &"explode",
+	&"secretary": &"idle",
+}
 # sub_4187F0 splits a full meter across the goals the map can actually offer, and
 # sub_417B00 hands an agent one share the first time each of its goals is spoiled -- so an
 # agent is at its angriest once that many different goals have been.
@@ -30,26 +45,77 @@ const SOCIAL_APPROACH_TILES := 1.2
 const SOCIAL_RANGE_TILES := 8.0
 # sub_416770 rebuilds a social route every three seconds while it is walking.
 const SOCIAL_REFRESH_SECONDS := 3.0
-# Verified ordinary goals and profile tables: docs/npc-reference.md.
-const PROFILES := {
-	&"boss": {
-		"rates": [5.0, 5.0, 65.0, 0.0, 10.0, 7.0, 10.0, 20.0],
-		"rooms": [10, 266, 328, 256, 128, 76, 264, 72],
-	},
-	&"male-employee-1": {
-		"rates": [12.0, 15.0, 19.0, 87.0, 15.0, 15.0, 13.0, 9.0],
-		"rooms": [11, 11, 76, 5, 128, 76, 12, 72],
-	},
-	&"female-employee-1": {
-		"rates": [17.0, 8.0, 16.0, 86.0, 21.0, 17.0, 19.0, 7.0],
-		"rooms": [11, 11, 76, 5, 128, 76, 12, 72],
-	},
+# The decay rates, speeds and notice constants come out of sub_4184B0's table at 0x46E7D8
+# through tools/export_npc_profiles.py. The room masks are compiled-in immediates rather
+# than table columns, so they stay here. See docs/npc-reference.md.
+const PROFILE_TABLE_PATH := "res://resources/original/npc_profiles.json"
+const ROOM_MASKS := {
+	&"boss": [10, 266, 328, 256, 128, 76, 264, 72],
+	&"secretary": [11, 11, 76, 5, 128, 76, 12, 72],
+	&"janitor": [11, 11, 76, 5, 128, 76, 12, 72],
+	&"male-employee-1": [11, 11, 76, 5, 128, 76, 12, 72],
+	&"male-employee-2": [11, 11, 76, 5, 128, 76, 12, 72],
+	&"female-employee-1": [11, 11, 76, 5, 128, 76, 12, 72],
+	&"female-employee-2": [11, 11, 76, 5, 128, 76, 12, 72],
 }
+
+static var _profile_table: Dictionary = {}
+static var _repairable_types: Dictionary = {}
+
+
+# The thirty item types sub_4180F0 answers yes for, exported from the binary's own jump
+# table by tools/export_repairable_types.py.
+static func repairable_types() -> Dictionary:
+	if not _repairable_types.is_empty():
+		return _repairable_types
+	var file := FileAccess.open(REPAIRABLE_TYPES_PATH, FileAccess.READ)
+	if file == null:
+		push_warning("Missing repairable type table: %s" % REPAIRABLE_TYPES_PATH)
+		return _repairable_types
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not (parsed is Dictionary):
+		push_warning("Repairable type table is not readable: %s" % REPAIRABLE_TYPES_PATH)
+		return _repairable_types
+	for entry in parsed.get("types", []):
+		_repairable_types[int((entry as Dictionary).get("type", -1))] = true
+	return _repairable_types
+
+
+# One parse for every agent on the map, kept on the class rather than the instance.
+static func profiles() -> Dictionary:
+	if not _profile_table.is_empty():
+		return _profile_table
+	var file := FileAccess.open(PROFILE_TABLE_PATH, FileAccess.READ)
+	if file == null:
+		push_warning("Missing NPC profile table: %s" % PROFILE_TABLE_PATH)
+		return _profile_table
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not (parsed is Dictionary):
+		push_warning("NPC profile table is not readable: %s" % PROFILE_TABLE_PATH)
+		return _profile_table
+	for id in parsed.get("profiles", {}):
+		var entry: Dictionary = parsed["profiles"][id]
+		var key := StringName(id)
+		if not ROOM_MASKS.has(key):
+			continue
+		var rates: Array = []
+		for rate in entry.get("rates", []):
+			rates.append(float(rate))
+		_profile_table[key] = {
+			"rates": rates,
+			"rooms": ROOM_MASKS[key],
+			"speed_tiles": float(entry.get("speed_tiles", 0.0)),
+			"notice_radius_tiles": float(entry.get("notice_radius_tiles", 0.0)),
+			"notice_cone_degrees": float(entry.get("notice_cone_degrees", 0.0)),
+		}
+	return _profile_table
 # Item types sub_417B00 dispatches on; see docs/npc-reference.md.
 const WORK_SEATS := [68, 69, 70, 71, 72, 73, 74, 86, 93, 94, 121, 122]
 const MONITOR_TYPES := [152, 153, 154, 155]
 const CUBICLE_TYPES := [173, 262]
 const COPIER_TYPES := [129]
+# The state sub_417B00 gives the copier while an agent photocopies at it.
+const COPIER_IN_USE_STATE := 9
 const SPECIAL_ACTIVE_TYPES := [139, 140, 146, 147, 150, 151]
 const SPECIAL_PASSIVE_TYPES := [5, 6, 7, 8, 9, 88, 97, 98, 115]
 const WORK_CHAIR_TYPES := [68, 69, 70, 71]
@@ -87,6 +153,10 @@ var _retries := 0
 var _retry_delay := 0.0
 var _target: Node2D
 var _active: Node2D
+# agent+1832: the item a filed repair job will reset when the reaction's timer runs out.
+var _repair_job: Node2D
+# The object whose state this agent raised while using it, put back when it stops.
+var _using_object: Node
 var _passive: Node2D
 var _claimed_seat: Node2D
 var _social_refresh := 0.0
@@ -97,6 +167,8 @@ var _aggravated: Array[bool] = []
 var _goal_candidates: Array = []
 var _alternate_candidates: Array[Node2D] = []
 var _has_claim := false
+# agent+1824, raised by sub_416090 while the agent is inside a toilet cubicle.
+var _inside_cubicle := false
 var _initialized := false
 
 
@@ -115,7 +187,7 @@ func _initialize() -> void:
 	if actor_profile == null:
 		return
 	_profile_id = StringName(actor_profile.get("id"))
-	_configuration = PROFILES.get(_profile_id, {})
+	_configuration = profiles().get(_profile_id, {})
 	if _configuration.is_empty():
 		return
 	if random_seed == 0:
@@ -410,6 +482,9 @@ func _on_destination_reached() -> void:
 			if _available(_active):
 				duration = 20.0
 				claim = _active
+				# sub_417B00 puts the copier itself into state 9 while it is being used, so
+				# its DESTROYED_1 loop runs in ordinary play with no prank involved.
+				_using_object = _set_object_state(_active, COPIER_IN_USE_STATE)
 		elif active_type in SPECIAL_ACTIVE_TYPES:
 			duration = 15.0
 			animation = &"special-1"
@@ -435,6 +510,9 @@ func _on_destination_reached() -> void:
 		_claimed_seat = claim
 		_has_claim = true
 		claim.set("occupant", _actor)
+		# sub_416090 keeps agent+1824 raised while the agent is shut in a cubicle, so a
+		# colleague in there notices nothing. See docs/catch-reference.md.
+		_inside_cubicle = int(claim.get("item_type")) in CUBICLE_TYPES
 	if _goal == SMOKING_GOAL:
 		# sub_419CE0 plays slot 6 for goal 6; sub_41A510 drops to idle without it.
 		animation = &"special-2"
@@ -452,12 +530,10 @@ func _on_destination_reached() -> void:
 
 
 # sub_417B00's tampered branch, then sub_416450. The agent stands where it arrived and is
-# angry for a fixed stretch; the player is paid once, on the spot. The original also nudges
-# its aggression at agent+952 and hands a janitor the repair job at agent+1816 -- neither
-# system exists here yet, so neither is reproduced. See docs/npc-reference.md.
+# angry for a fixed stretch; the player is paid once, on the spot. See docs/npc-reference.md.
 func _start_reaction() -> void:
 	_take_offence(_goal)
-	var animation := &"explode" if _profile_id == &"boss" else &"pissed"
+	var animation := REACTION_CLIPS.get(_profile_id, &"pissed") as StringName
 	var facing := _focus_position(_active) - _actor.global_position
 	var started := bool(_actor.call(
 		"start_activity", animation, _random.randf_range(10.0, 12.0), facing
@@ -465,7 +541,11 @@ func _start_reaction() -> void:
 	if not started:
 		_on_navigation_failed()
 		return
-	_goal = REACTION_GOAL
+	# sub_417B00 files the job before the reaction, and sub_4164E0 then shows goal 9 for as
+	# long as the same timer runs. No tick has a repair branch, so the clip stays the
+	# reaction's own -- the janitor is angry, not busy.
+	_repair_job = _active if _can_repair(_active) else null
+	_goal = REPAIR_GOAL if _repair_job != null else REACTION_GOAL
 	_state = State.ACTING
 	var session := get_tree().get_first_node_in_group("level_session")
 	if session != null:
@@ -538,8 +618,15 @@ func _on_navigation_failed() -> void:
 func _on_activity_finished() -> void:
 	if not enabled or _state != State.ACTING:
 		return
+	_clear_object_state()
+	# A shut-in agent has nowhere to go: sub_416090 re-arms its anger instead of freeing it.
+	if is_locked_in():
+		_stay_shut_in()
+		return
 	_release_seat()
-	if _goal == REACTION_GOAL:
+	_finish_repair()
+	_clear_object_state()
+	if _goal == REACTION_GOAL or _goal == REPAIR_GOAL:
 		# sub_416450 ends the reaction by resetting every need, not just the one it was
 		# after, so a provoked agent walks away with nothing left to want.
 		for goal in range(_needs.size()):
@@ -554,17 +641,29 @@ func _on_activity_finished() -> void:
 	_retries = 0
 
 
+# Actions 110 and 112 shut an occupant in, and sub_416090 never reaches the branch that
+# would let them out, so a locked agent keeps its claim until the item is reset -- which is
+# what a finished repair does. See docs/prank-reference.md.
+func is_locked_in() -> bool:
+	return is_instance_valid(_claimed_seat) and bool(_claimed_seat.get("locked_in"))
+
+
 func _release_seat() -> void:
+	if is_locked_in():
+		return
 	if is_instance_valid(_claimed_seat) and _claimed_seat.get("occupant") == _actor:
 		_claimed_seat.set("occupant", null)
 	_claimed_seat = null
 	_has_claim = false
+	_inside_cubicle = false
 
 
 func _stop() -> void:
 	if is_instance_valid(_actor) and _actor.has_method("cancel_commands") and _state != State.IDLE:
 		_actor.call("cancel_commands")
 	_release_seat()
+	_clear_object_state()
+	_repair_job = null
 	_state = State.IDLE
 	_goal = -1
 	_pending_goal = -1
@@ -577,3 +676,133 @@ func _stop() -> void:
 
 func _exit_tree() -> void:
 	_stop()
+
+
+# sub_418310, the whole of how an agent notices the player. The cheap eight-tile box comes
+# first, then the radius, then the cone -- which is bypassed entirely within two tiles, so a
+# prank right beside a colleague is seen whatever they are facing -- and finally the same
+# sight ray the player's own reach test uses. See docs/catch-reference.md.
+const NOTICE_BOX_TILES := 8.0
+const NOTICE_ALWAYS_TILES := 2.0
+const NOTICE_RADIUS_STEP := 0.2
+# sub_419740 alone applies none of the band widenings.
+const UNHURRIED_PROFILE := &"boss"
+const NOTICE_CONE_STEP := 5.0
+
+
+func notices(target: Node2D, layer: Node) -> bool:
+	if _actor == null or target == null or layer == null or not _initialized:
+		return false
+	var from: Vector2 = layer.to_grid_position(_actor.global_position)
+	var to: Vector2 = layer.to_grid_position(target.global_position)
+	var delta := to - from
+	if absf(delta.x) > NOTICE_BOX_TILES or absf(delta.y) > NOTICE_BOX_TILES:
+		return false
+	var distance := delta.length()
+	if distance > notice_radius_tiles():
+		return false
+	if distance > NOTICE_ALWAYS_TILES and absf(_bearing_error(layer, delta)) > notice_cone_degrees() * 0.5:
+		return false
+	return layer.has_line_of_sight(_actor.global_position, target.global_position)
+
+
+# The original's heading convention, shared with the player turning to face an item:
+# 180 - atan2(dx, dz) * 57.29579, in logical tiles rather than screen pixels.
+func _bearing_error(layer: Node, delta: Vector2) -> float:
+	var facing: Vector2 = _facing_tiles(layer)
+	if facing == Vector2.ZERO or delta == Vector2.ZERO:
+		return 0.0
+	var error := _heading_degrees(facing) - _heading_degrees(delta)
+	error = fposmod(error, 360.0)
+	return 360.0 - error if error > 180.0 else error
+
+
+func _heading_degrees(direction: Vector2) -> float:
+	return 180.0 - rad_to_deg(atan2(direction.x, direction.y))
+
+
+# The actor keeps its heading in screen space; the map is a linear projection, so two
+# converted points give the same direction in logical tiles.
+func _facing_tiles(layer: Node) -> Vector2:
+	var screen: Vector2 = _actor.get("facing_screen")
+	if screen == null or screen == Vector2.ZERO:
+		return Vector2.ZERO
+	var origin: Vector2 = layer.to_grid_position(_actor.global_position)
+	return layer.to_grid_position(_actor.global_position + screen * 32.0) - origin
+
+
+func notice_radius_tiles() -> float:
+	return _noticed_value("notice_radius_tiles", NOTICE_RADIUS_STEP)
+
+
+func notice_cone_degrees() -> float:
+	return _noticed_value("notice_cone_degrees", NOTICE_CONE_STEP)
+
+
+# The three coworker-shaped ticks widen both with the aggression band exactly as they widen
+# speed; sub_419740, the boss, applies none of the three.
+func _noticed_value(field: String, step: float) -> float:
+	var base := float(_configuration.get(field, 0.0))
+	if _profile_id == UNHURRIED_PROFILE:
+		return base
+	return base + step * float(_actor.get("aggression_band"))
+
+
+# sub_416090 raises agent+1824 while the agent is inside a toilet cubicle, and only clears
+# it when it steps back out -- which an agent locked in by action 110 or 112 never does.
+func is_blind() -> bool:
+	return _inside_cubicle or is_locked_in()
+
+
+# sub_4180F0 files the job for a janitor whose broken item is one of the thirty types its
+# jump table answers yes for. sub_4181F0 is the other route, open to anyone: a cubicle whose
+# occupant has been shut in. See docs/npc-reference.md.
+func _can_repair(item: Node2D) -> bool:
+	if not is_instance_valid(item):
+		return false
+	if bool(item.get("locked_in")):
+		return true
+	if _profile_id != JANITOR_PROFILE:
+		return false
+	return repairable_types().has(int(item.get("item_type")))
+
+
+# sub_4164E0's expiry branch: the job is cleared and the item put back the way sub_4100B0
+# leaves it, which re-enables every action slot the player had used up.
+func _finish_repair() -> void:
+	if not is_instance_valid(_repair_job):
+		_repair_job = null
+		return
+	if _repair_job.has_method("reset_actions"):
+		_repair_job.call("reset_actions")
+	var object := _repair_job.get_parent()
+	if object != null and object.has_method("set_state"):
+		object.call("set_state", 0)
+	_repair_job = null
+
+
+# The occupant of a locked cubicle keeps sulking where it sits. It does not re-score the
+# player -- sub_41DEA0 pays once, when the agent is first caught out -- and it does not file
+# a repair on its own cubicle: sub_4181F0's route belongs to whoever walks up to it next.
+func _stay_shut_in() -> void:
+	var animation := REACTION_CLIPS.get(_profile_id, &"pissed") as StringName
+	var facing: Vector2 = _actor.get("last_direction")
+	if not bool(_actor.call("start_activity", animation, _random.randf_range(10.0, 12.0), facing)):
+		_state = State.IDLE
+		return
+	_goal = REACTION_GOAL
+	_state = State.ACTING
+
+
+func _set_object_state(point: Node, state: int) -> Node:
+	var object := point.get_parent() if point != null else null
+	if object == null or not object.has_method("set_state"):
+		return null
+	object.call("set_state", state)
+	return object
+
+
+func _clear_object_state() -> void:
+	if is_instance_valid(_using_object):
+		_using_object.call("set_state", 0)
+	_using_object = null

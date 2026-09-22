@@ -17,6 +17,11 @@ import struct
 import sys
 from pathlib import Path
 
+try:
+    from import_original_level import imported_level_numbers, level_paths
+except ImportError:  # imported as tools.export_action_table by the tests
+    from tools.import_original_level import imported_level_numbers, level_paths
+
 
 EXE_REL = Path("extract-sacked-assets/sacked/sacked.exe")
 SOUND_DIR_REL = Path("extract-sacked-assets/sacked/Sound/FX")
@@ -40,6 +45,20 @@ ITEM_STATE_TABLE_VA = 0x46DD54
 ITEM_STATE_COUNT = 16  # sub_40FDA0 clamps the state to 0..15
 BUBBLE_TABLE_VA = 0x46E7A8
 BUBBLE_COUNT = 10
+
+# Action ids whose effects reach past their own object, and the ids gated on who is in a
+# toilet cubicle. Both groups are implemented now, so UNPORTED_ACTION_IDS is empty: the check
+# below enforces that in both directions, so importing a level that places an action the port
+# cannot carry out fails until the list is updated or the gap is closed.
+#
+#   79, 116, 118  sub_41DC80's global consequences, which reach past their own object
+#   43, 44, 110, 112, 138  gated on who occupies a toilet cubicle (sub_41D820's fourth rule);
+#                          110 and 112 also lock the occupant in through item+224
+#
+# See docs/prank-reference.md and docs/catch-reference.md.
+GLOBAL_CONSEQUENCE_IDS = frozenset({79, 116, 118})
+CUBICLE_GATED_IDS = frozenset({43, 44, 110, 112, 138})
+UNPORTED_ACTION_IDS = frozenset()
 
 # sub_41D820 ignores a required-item slot whose value is >= 31, so those are not prerequisites.
 REQUIRED_ITEM_LIMIT = 0x1F
@@ -368,15 +387,53 @@ def check(root: Path, table: dict) -> int:
         if action["sound"] and action["sound"].upper() not in sounds:
             failures.append(f"action {action_id} sound {action['sound']} has no wav")
 
+    # UNPORTED_ACTION_IDS is the subset of the special ids that is not implemented yet. It is
+    # empty, and both directions are enforced so it cannot quietly stop meaning that.
+    placed_special = placed_special_ids(root)
+    for action_id in sorted(placed_special & UNPORTED_ACTION_IDS):
+        failures.append(
+            f"action {action_id} {actions[action_id]['name']!r} is placed on an imported "
+            "level but needs machinery the port does not have"
+        )
+    for action_id in sorted(UNPORTED_ACTION_IDS - placed_special):
+        failures.append(
+            f"action {action_id} is listed as unported but no imported level places it; "
+            "drop it from UNPORTED_ACTION_IDS"
+        )
+    for action_id in sorted(UNPORTED_ACTION_IDS - (GLOBAL_CONSEQUENCE_IDS | CUBICLE_GATED_IDS)):
+        failures.append(
+            f"action {action_id} is listed as unported but is not one of the special ids"
+        )
+
     if failures:
         print("Action table check failed:\n" + "\n".join(f"  {line}" for line in failures))
         return 1
     print(
         f"Verified {len(table['actions'])} action records "
         f"({len(used)} used by CO_OBJECTS.DAT), {len(table['icons'])} icons, "
-        f"{len(table['item_states'])} item states."
+        f"{len(table['item_states'])} item states, "
+        f"{len(placed_special)} placed ids needing special machinery, "
+        f"{len(UNPORTED_ACTION_IDS)} of them unported."
     )
     return 0
+
+
+def placed_special_ids(root: Path) -> frozenset:
+    """Which of the ids needing machinery beyond the generic path the imported levels place."""
+    definitions = object_action_ids(root)
+    watched = GLOBAL_CONSEQUENCE_IDS | CUBICLE_GATED_IDS
+    placed = set()
+    for number in imported_level_numbers(root):
+        manifest_path = root / level_paths(number).manifest_rel
+        if not manifest_path.is_file():
+            continue
+        manifest = json.loads(manifest_path.read_text())
+        for item in manifest["objects"]:
+            item_type = (int(item["kind"], 16) >> 4) & 0xFFF
+            definition = definitions.get(item_type)
+            if definition:
+                placed.update(watched.intersection(definition["action_ids"]))
+    return frozenset(placed)
 
 
 def report(root: Path, table: dict, level: int) -> int:
@@ -416,7 +473,7 @@ def report(root: Path, table: dict, level: int) -> int:
             key = "free"
         classes[key].append((node, item_name, action))
 
-    target = manifest.get("conditions", {}).get("base", {}).get("score_target")
+    conditions = manifest.get("conditions", {})
     print(f"level {level}: {len(placed)} placed action rows on {len(manifest['objects'])} objects")
     for key, rows in classes.items():
         total = sum(action["score"] for _, _, action in rows)
@@ -424,8 +481,13 @@ def report(root: Path, table: dict, level: int) -> int:
         for node, _, action in rows:
             best_per_object[node] = max(best_per_object.get(node, 0), action["score"])
         print(f"  {key:28} {len(rows):3} rows  {total:6} pts  ({sum(best_per_object.values())} if one per object)")
-    if target:
-        print(f"  score target from CONDITION: {target}")
+    for mode in ("time", "points"):
+        condition = conditions.get(mode, {})
+        if condition.get("score_target"):
+            print(
+                f"  {mode} game CONDITION: {condition['score_target']} pts "
+                f"in {condition['time_limit_seconds']:.0f} s"
+            )
 
     free_and_pickup = classes["free"] + classes["pickup"]
     print("\n  free + pickup rows, highest first:")

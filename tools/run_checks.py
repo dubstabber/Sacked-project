@@ -17,6 +17,9 @@ EXTRACTION_REL = Path("extract-sacked-assets")
 # extraction and compares them against the checked-in files. They are skipped without it.
 REFERENCE_CHECKS = [
     ["tools/export_action_table.py", "--check"],
+    ["tools/export_strings.py", "--check"],
+    ["tools/export_repairable_types.py", "--check"],
+    ["tools/export_npc_profiles.py", "--check"],
     ["tools/export_gui_assets.py", "--check"],
     ["tools/export_sounds.py", "--check"],
     ["tools/export_object_state_assets.py", "--check"],

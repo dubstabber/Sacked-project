@@ -192,6 +192,7 @@ metadata/original_instance_id = 12
 script = ExtResource("72")
 item_type = 60
 room_id = 2
+orientation = 2
 action_ids = PackedInt32Array()
 
 [node name="Object013Drehstuhl03" parent="World/Objects" instance=ExtResource("46")]
@@ -211,6 +212,7 @@ script = ExtResource("72")
 category = 6
 item_type = 70
 room_id = 2
+orientation = 2
 action_ids = PackedInt32Array()
 
 [node name="Object014MonitorTastaturLinks" parent="World/Objects" instance=ExtResource("23")]
@@ -230,6 +232,7 @@ script = ExtResource("72")
 category = 6
 item_type = 153
 room_id = 2
+orientation = 2
 active = true
 action_ids = PackedInt32Array(13, 14, 15, 58)
 
@@ -307,6 +310,7 @@ metadata/original_instance_id = 18
 script = ExtResource("72")
 item_type = 108
 room_id = 7
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object019Schreibtisch02" parent="World/Objects" instance=ExtResource("58")]
@@ -324,6 +328,7 @@ metadata/original_instance_id = 19
 script = ExtResource("72")
 item_type = 120
 room_id = 8
+orientation = 2
 action_ids = PackedInt32Array()
 
 [node name="Object020Jagdtrophae" parent="World/Objects" instance=ExtResource("57")]
@@ -435,6 +440,7 @@ position = Vector2(-33.600006, 16.800003)
 script = ExtResource("72")
 category = 9
 item_type = 192
+orientation = 1
 active = true
 action_ids = PackedInt32Array(120)
 
@@ -454,6 +460,7 @@ position = Vector2(-33.600006, 16.800003)
 script = ExtResource("72")
 category = 9
 item_type = 192
+orientation = 1
 active = true
 action_ids = PackedInt32Array(120)
 
@@ -474,6 +481,7 @@ script = ExtResource("72")
 category = 5
 item_type = 263
 room_id = 3
+orientation = 1
 active = true
 action_ids = PackedInt32Array(139)
 
@@ -606,6 +614,7 @@ position = Vector2(-48, -24)
 script = ExtResource("72")
 item_type = 130
 room_id = 2
+orientation = 2
 active = true
 action_ids = PackedInt32Array(1)
 
@@ -625,6 +634,7 @@ position = Vector2(-48, 24)
 script = ExtResource("72")
 item_type = 131
 room_id = 8
+orientation = 1
 active = true
 action_ids = PackedInt32Array(9)
 
@@ -741,6 +751,7 @@ script = ExtResource("72")
 category = 6
 item_type = 153
 room_id = 8
+orientation = 2
 active = true
 action_ids = PackedInt32Array(13, 14, 15, 58)
 
@@ -760,6 +771,7 @@ position = Vector2(-48, 24)
 script = ExtResource("72")
 category = 9
 item_type = 161
+orientation = 1
 active = true
 action_ids = PackedInt32Array(35)
 
@@ -875,6 +887,7 @@ script = ExtResource("72")
 category = 5
 item_type = 242
 room_id = 1
+orientation = 3
 active = true
 action_ids = PackedInt32Array(77, 125)
 
@@ -913,6 +926,7 @@ script = ExtResource("72")
 category = 2
 item_type = 240
 room_id = 8
+orientation = 1
 active = true
 action_ids = PackedInt32Array(64)
 
@@ -931,6 +945,7 @@ metadata/original_instance_id = 51
 script = ExtResource("72")
 item_type = 47
 room_id = 8
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object052Regal02" parent="World/Objects" instance=ExtResource("54")]
@@ -984,6 +999,7 @@ metadata/original_instance_id = 54
 script = ExtResource("72")
 item_type = 1
 room_id = 8
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object055Heizkorper" parent="World/Objects" instance=ExtResource("39")]
@@ -1000,6 +1016,7 @@ metadata/original_instance_id = 55
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object055Heizkorper"]
 script = ExtResource("72")
 item_type = 10
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object056Heizkorper" parent="World/Objects" instance=ExtResource("38")]
@@ -1033,6 +1050,7 @@ metadata/original_instance_id = 57
 script = ExtResource("72")
 item_type = 10
 room_id = 8
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object058Kleiderstaender02" parent="World/Objects" instance=ExtResource("40")]
@@ -1065,6 +1083,7 @@ metadata/original_instance_id = 59
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object059VentiGross"]
 script = ExtResource("72")
 item_type = 42
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object060Sofa01" parent="World/Objects" instance=ExtResource("42")]
@@ -1084,6 +1103,7 @@ script = ExtResource("72")
 category = 7
 item_type = 182
 room_id = 3
+orientation = 2
 action_ids = PackedInt32Array()
 
 [node name="Object061Standascher02" parent="World/Objects" instance=ExtResource("44")]
@@ -1121,6 +1141,7 @@ position = Vector2(-48, 24)
 script = ExtResource("72")
 category = 9
 item_type = 125
+orientation = 1
 active = true
 action_ids = PackedInt32Array(7)
 
@@ -1158,6 +1179,7 @@ position = Vector2(-48, 24)
 script = ExtResource("72")
 category = 9
 item_type = 161
+orientation = 1
 active = true
 action_ids = PackedInt32Array(35)
 
@@ -1193,6 +1215,7 @@ metadata/original_instance_id = 66
 script = ExtResource("72")
 item_type = 50
 room_id = 2
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object067Papier03" parent="World/Objects" instance=ExtResource("51")]
@@ -1210,6 +1233,7 @@ metadata/original_instance_id = 67
 script = ExtResource("72")
 item_type = 51
 room_id = 2
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object068Papier01" parent="World/Objects" instance=ExtResource("48")]
@@ -1227,6 +1251,7 @@ metadata/original_instance_id = 68
 script = ExtResource("72")
 item_type = 49
 room_id = 8
+orientation = 2
 action_ids = PackedInt32Array()
 
 [node name="Object069Heizkorper" parent="World/Objects" instance=ExtResource("38")]
@@ -1297,6 +1322,7 @@ metadata/original_instance_id = 72
 script = ExtResource("72")
 item_type = 213
 room_id = 4
+orientation = 2
 action_ids = PackedInt32Array()
 
 [node name="Object073Eingang" parent="World/Objects" instance=ExtResource("37")]
@@ -1330,6 +1356,7 @@ metadata/original_instance_id = 74
 script = ExtResource("72")
 item_type = 83
 room_id = 1
+orientation = 1
 action_ids = PackedInt32Array()
 
 [node name="Object075Kaffeedose" parent="World/Objects" instance=ExtResource("65")]
@@ -1383,6 +1410,7 @@ script = ExtResource("72")
 category = 6
 item_type = 121
 room_id = 8
+orientation = 2
 action_ids = PackedInt32Array()
 
 [node name="Object078Kuchenschrank03" parent="World/Objects" instance=ExtResource("64")]

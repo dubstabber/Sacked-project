@@ -80,6 +80,7 @@ func _run() -> void:
 	_check_cleanup()
 	_check_arrival_actions()
 	_check_reacting_to_a_tampered_item()
+	_check_repairing_a_broken_item()
 	_check_social_target()
 	_check_interrupted_activity()
 	_check_routes_and_retry_limit()
@@ -306,8 +307,8 @@ func _check_arrival_actions() -> void:
 	_expect(plant["duration"] >= 10.0 and plant["duration"] <= 16.0, "an ordinary target keeps the default action timer")
 
 
-func _point_fixture(category: int, item_type: int, room: int, active: bool) -> Dictionary:
-	var fixture := _fixture()
+func _point_fixture(category: int, item_type: int, room: int, active: bool, profile_id := &"male-employee-1") -> Dictionary:
+	var fixture := _fixture(profile_id)
 	var point := _point(fixture["world"], "Target", Vector2(6, 5), Vector2(1, 0), category, item_type, room, active)
 	fixture["brain"]._build_candidates()
 	fixture["point"] = point
@@ -434,3 +435,77 @@ func _expect(condition: bool, label: String) -> void:
 	if not condition:
 		_failures += 1
 		push_error(label)
+
+
+# Goal 9. sub_417B00 files the job for a janitor whose broken item is one of the thirty types
+# sub_4180F0 lists, sub_4164E0 shows the REPAIR bubble while the reaction's timer runs, and
+# its expiry puts the item back through sub_4100B0. See docs/npc-reference.md.
+func _check_repairing_a_broken_item() -> void:
+	var session := SessionStub.new()
+	root.add_child(session)
+
+	# Type 152 is a workstation, and one of the thirty the jump table answers yes for.
+	var repairable := BRAIN.repairable_types()
+	_expect(repairable.size() == 30, "the exported table holds thirty repairable types, got %d" % repairable.size())
+	_expect(repairable.has(152), "the workstation type 152 is repairable")
+	_expect(not repairable.has(68), "the chair type 68 is not")
+
+	var fixture := _point_fixture(9, 152, 0, true, &"janitor")
+	var brain: Node = fixture["brain"]
+	var actor: Actor = fixture["actor"]
+	var point: Node2D = fixture["point"]
+	point.action_ids = PackedInt32Array([1, 0, 0, 0, 0, 0, 0, 0])
+	point.reset_actions()
+	point.set("tampered", true)
+	point.disable_slot(0)
+
+	brain._target = point
+	brain._active = point
+	brain._state = BRAIN.State.NAVIGATING
+	brain._goal = 2
+	actor.destination_reached.emit()
+
+	_expect(brain._goal == BRAIN.REPAIR_GOAL, "a janitor at a broken repairable item holds goal 9, got %d" % brain._goal)
+	# No tick has a repair branch, so the janitor is angry rather than busy.
+	_expect(actor.activity.get("animation") == &"pissed", "the janitor still plays the reaction clip")
+	_expect(brain._repair_job == point, "the job names the item it will put back")
+	_expect(bool(point.get("tampered")), "the item is still broken while the repair runs")
+	_expect(not point.is_action_enabled(0), "its used-up action is still disabled mid-repair")
+
+	actor.finish_activity()
+	_expect(brain._goal == -1 and brain._state == BRAIN.State.IDLE, "the janitor is free once the repair is done")
+	_expect(not bool(point.get("tampered")), "a finished repair clears the tampering")
+	_expect(point.is_action_enabled(0), "a finished repair re-enables the action the player used")
+	_expect(brain._repair_job == null, "the job is cleared with the item")
+
+	# Anyone else meets the same broken item and only sulks at it.
+	var other := _point_fixture(9, 152, 0, true)
+	other["point"].set("tampered", true)
+	other["brain"]._target = other["point"]
+	other["brain"]._active = other["point"]
+	other["brain"]._state = BRAIN.State.NAVIGATING
+	other["brain"]._goal = 2
+	(other["actor"] as Actor).destination_reached.emit()
+	_expect(other["brain"]._goal == BRAIN.REACTION_GOAL, "a coworker holds goal 8 at the same item")
+	_expect(other["brain"]._repair_job == null, "a coworker files no repair job")
+	(other["actor"] as Actor).finish_activity()
+	_expect(bool(other["point"].get("tampered")), "a coworker leaves the item broken")
+
+	# A janitor at a type outside the thirty does the same.
+	var unlisted := _point_fixture(9, 68, 0, true, &"janitor")
+	unlisted["point"].set("tampered", true)
+	unlisted["brain"]._target = unlisted["point"]
+	unlisted["brain"]._active = unlisted["point"]
+	unlisted["brain"]._state = BRAIN.State.NAVIGATING
+	unlisted["brain"]._goal = 2
+	(unlisted["actor"] as Actor).destination_reached.emit()
+	_expect(unlisted["brain"]._goal == BRAIN.REACTION_GOAL, "a janitor holds goal 8 at an unrepairable item")
+	_expect(unlisted["brain"]._repair_job == null, "an unrepairable item files no job")
+
+	for key in ["world"]:
+		for owned in [fixture, other, unlisted]:
+			var node: Node = owned[key]
+			root.remove_child(node)
+			node.queue_free()
+	root.remove_child(session)
+	session.free()

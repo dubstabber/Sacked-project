@@ -6,17 +6,27 @@ extends Marker2D
 @export var category: int = 0
 @export var item_type: int = 0
 @export var room_id: int = 0
+# item+196: the object's quarter-turn index, which decides which side an action that
+# repositions the player puts them on. See docs/player-action-reference.md.
+@export var orientation: int = 0
 @export var active: bool = false
 # The object's prank action ids, in original slot order; see docs/prank-reference.md.
 @export var action_ids: PackedInt32Array = PackedInt32Array()
 
 var occupant: Node
-# item+228, which sub_41B240 sets the moment the player finishes *any* action on the object
-# and only the item reset at sub_40FEF0 ever clears. An agent that walks to a tampered
-# object reacts instead of using it; see docs/npc-reference.md.
+# item+224. Actions 110 and 112 shut an occupant in, and only an item reset -- which a
+# finished repair performs -- lets them out again. While it is set the agent inside is also
+# blind, because sub_416090 never reaches the branch that clears its notice flag.
+# See docs/prank-reference.md and docs/catch-reference.md.
+var locked_in := false
+# item+228, which sub_41B240 sets the moment the player finishes *any* action on the object.
+# Two things clear it: sub_40FEF0, the item's full reset, and sub_4100B0 below, which a
+# finished repair calls. An agent that walks to a tampered object reacts instead of using
+# it; see docs/npc-reference.md.
 var tampered := false
 # item+252: one flag per slot, cleared as its action is used. sub_4100B0 enables every slot
-# that carries an action id and then disables everything those slots unlock.
+# that carries an action id, disables everything those slots unlock, then clears item+224
+# and item+228 and puts the object back to state 0.
 var action_enabled: Array[bool] = []
 
 
@@ -30,6 +40,7 @@ func _ready() -> void:
 
 func reset_actions() -> void:
 	tampered = false
+	locked_in = false
 	action_enabled.resize(action_ids.size())
 	for slot in range(action_ids.size()):
 		action_enabled[slot] = action_ids[slot] != 0

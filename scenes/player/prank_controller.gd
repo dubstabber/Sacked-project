@@ -15,15 +15,56 @@ const TINT_OUT_OF_REACH := Color(1.0, 1.0, 50.0 / 255.0)
 const TINT_NO_ACTION := Color(1.0, 50.0 / 255.0, 50.0 / 255.0)
 # sub_42D200(120 - sin(phase * 2.5) * -80) -- the pulse the highlight is drawn with.
 const PULSE_CENTRE := 120.0 / 255.0
+# sub_41DC80: four action ids reach past the object they were performed on. Everything else
+# in its 79..118 range falls through and does nothing. See docs/prank-reference.md.
+const CONSEQUENCE_BLACKOUT := 79
+const CONSEQUENCE_LOCK_IN := [110, 112]
+const CONSEQUENCE_PROJECTOR := 116
+const CONSEQUENCE_HEATING := 118
+const CONSEQUENCE_STATE := 9
+# 79 blacks out every type-253 item; 116 looks for a type-265 one.
+const BLACKOUT_ITEM_TYPE := 253
+const PROJECTOR_ITEM_TYPE := 265
+const HEATING_CATEGORY := 9
+# The search is a box on each axis, with strict bounds, not a radius -- a nearer candidate
+# later in the world's own order loses to a farther one earlier in it.
+const PROJECTOR_REACH_TILES := 5.0
+# player+1068, counted down by dt * 10, so the blackout lasts forty seconds.
+const BLACKOUT_TIMER := 400.0
+const BLACKOUT_RATE := 10.0
+
+# sub_41D820's fourth rule reads the cubicle's occupant: 43, 44 and 138 need it empty, 110
+# needs an occupant who is not the boss, and 112 needs the boss.
+# sub_41B240's selector-5 branch steps the player onto the object before photocopying. The
+# object's quarter-turn index picks the side: orientation 0 takes the 090 view and the
+# (0.8, 0.85) offset, anything else the 180 view and (0.85, 0.8). Those two views are the
+# only ones ASSCOPY ships. See docs/player-action-reference.md.
+const REPOSITION_SELECTOR := 5
+const REPOSITION_OFFSETS := {
+	0: Vector2(0.80, 0.85),
+	1: Vector2(0.85, 0.80),
+}
+
+const CUBICLE_GATED_IDS := [43, 44, 110, 112, 138]
+const CUBICLE_FREE_IDS := [43, 44, 138]
+const CUBICLE_BOSS_ID := 112
+const BOSS_PROFILE: StringName = &"boss"
+
 const PULSE_SWING := 80.0 / 255.0
 const PULSE_RATE := 2.5
 # sub_41A510 maps a record's animation selector (+0x18) to a slot in the player's animation
-# table at 0x46EC04. Only the clips level 1 can reach are imported; see
+# table at 0x46EC04. Every selector the imported levels place is here; selector 13, BUCKET,
+# is the one the table names that no imported level reaches. See
 # tools/character_action_clips.json and docs/player-action-reference.md.
 const SELECTOR_CLIPS := {
-	0: "stand-use", 1: "knee-use", 2: "kick", 3: "punch",
-	6: "steal", 7: "drink", 8: "ketchup", 9: "phone-type", 12: "piss-2",
+	0: "stand-use", 1: "knee-use", 2: "kick", 3: "punch", 4: "flipbag",
+	5: "asscopy", 6: "steal", 7: "drink", 8: "ketchup", 9: "phone-type",
+	10: "spray", 11: "phone-call", 12: "piss-2", 14: "flipbag2",
 }
+# ASSCOPY ships only the two views the copier can be stepped onto from, so until the
+# reposition that comes with it picks a side, the snapped facing takes the nearer one.
+# Clip names resolve by screen angle, so view 090 is down-right and 180 is down-left.
+const ASSCOPY_FACINGS := [Vector2(1, 1), Vector2(-1, 1)]
 # Selector 12 picks its facing at random from the three views its clip ships.
 const PISS_FACINGS := {
 	"jobless": [Vector2(1, 0), Vector2(0, -1), Vector2(1, -1)],
@@ -59,6 +100,10 @@ var _highlight: Sprite2D
 var _highlight_material: ShaderMaterial
 var _world_mask: Node2D
 var _environment_revision := -1
+# player+1068: how much of the blackout action's forty seconds is left.
+var blackout_remaining := 0.0
+# Where the player stood before an action moved them, restored when it applies or aborts.
+var _return_position := Vector2.INF
 var _acting_point: Node
 var _acting_entry: Dictionary = {}
 var _elapsed := 0.0
@@ -76,6 +121,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_advance_blackout(delta)
 	if state == State.ACTING:
 		_advance_action(delta)
 		return
@@ -155,6 +201,7 @@ func confirm() -> void:
 	_draw_highlight(null, TINT_READY)
 	_set_acting(true)
 
+	_step_onto_object(int(entry["action_id"]))
 	_play_action_animation(action)
 
 	var object := _object_of(_acting_point)
@@ -225,6 +272,9 @@ func _apply_action() -> void:
 			focus_point = null
 			object.queue_free()
 
+	_step_back()
+	_apply_global_consequence(action_id, point)
+
 	var session := get_tree().get_first_node_in_group("level_session")
 	if session != null:
 		# sub_41DE60 floats the number off the player, not off the object it acted on.
@@ -253,8 +303,7 @@ func _apply_result_state(object: Node, action: Dictionary, action_id: int) -> vo
 			object.set_state(result)
 
 
-# sub_41D820, in slot order. Cubicle occupancy is not modelled yet, so the five ids that
-# depend on it are reported as they stand.
+# sub_41D820, in slot order.
 func available_slots(point: Node) -> PackedInt32Array:
 	var slots := PackedInt32Array()
 	if point == null:
@@ -272,9 +321,29 @@ func available_slots(point: Node) -> PackedInt32Array:
 			var item := int(required)
 			if item > 0 and item < inventory.size() and inventory[item] <= 0:
 				satisfied = false
-		if satisfied:
+		if satisfied and _occupancy_allows(action_id, point):
 			slots.append(slot)
 	return slots
+
+
+# sub_41D820's fourth rule: five ids care who is in the cubicle. 43, 44 and 138 need it
+# empty; 110 needs somebody in it who is not the boss; 112 needs the boss.
+# See docs/prank-reference.md.
+func _occupancy_allows(action_id: int, point: Node) -> bool:
+	if not CUBICLE_GATED_IDS.has(action_id):
+		return true
+	var occupant = point.get("occupant")
+	if not is_instance_valid(occupant):
+		return CUBICLE_FREE_IDS.has(action_id)
+	if CUBICLE_FREE_IDS.has(action_id):
+		return false
+	var is_boss := _profile_id_of(occupant) == BOSS_PROFILE
+	return is_boss if action_id == CUBICLE_BOSS_ID else not is_boss
+
+
+func _profile_id_of(occupant) -> StringName:
+	var profile = occupant.get("profile") if occupant != null else null
+	return StringName(profile.get("id")) if profile != null else &""
 
 
 # sub_41DA50 fills the menu from the surviving slots.
@@ -387,6 +456,10 @@ func _play_action_animation(action: Dictionary) -> void:
 		var views: Array = PISS_FACINGS.get(String(_player.get("profile").get("id")), [])
 		if not views.is_empty():
 			facing = views[randi() % views.size()]
+	elif selector == REPOSITION_SELECTOR:
+		# The player is standing on the object by now, so the vector to it says nothing.
+		# _step_onto_object already chose the side; use it.
+		facing = _nearest_asscopy_facing(_player.get("last_direction"))
 	_player.set("last_direction", facing)
 	if clip == "" or not _player.play_action_animation(clip, facing):
 		# No clip for this selector yet: the action still runs, the player just stands.
@@ -456,3 +529,145 @@ func _object_under_cursor() -> Node2D:
 			best_depth = depth
 			best = object
 	return best
+
+
+# sub_402470 pushes the player to its mode's abort state rather than letting the action
+# finish, so a prank interrupted by being caught pays nothing and leaves the object alone.
+# The one thing already applied is a start-time result state, which state 5 restores.
+func abort_action() -> void:
+	if state != State.ACTING:
+		return
+	var point := _acting_point
+	var entry := _acting_entry
+	_acting_point = null
+	_acting_entry = {}
+	_step_back()
+	if point != null and is_instance_valid(point):
+		var action := ActionTable.get_action(int(entry.get("action_id", 0)))
+		if int(action.get("result_state", 0)) == STATE_IN_USE:
+			point.set("in_use", false)
+		elif bool(action.get("state_at_start", false)):
+			var object := _object_of(point)
+			if object != null and object.has_method("set_state"):
+				object.set_state(0)
+	clear_selection()
+	state = State.FREE
+	_set_acting(false)
+	_elapsed = 0.0
+	_duration = 0.0
+	progress_changed.emit(0.0, 0.0)
+
+
+# ASSCOPY has two views rather than eight. The original picks a side when it repositions the
+# player onto the copier; until that lands, the nearer of the two is used so the clip is at
+# least facing the right way. See docs/player-action-reference.md.
+func _nearest_asscopy_facing(facing: Vector2) -> Vector2:
+	var best := facing
+	var best_dot := -INF
+	for view in ASSCOPY_FACINGS:
+		var dot: float = (view as Vector2).normalized().dot(facing.normalized())
+		if dot > best_dot:
+			best_dot = dot
+			best = view
+	return best
+
+
+# sub_41DC80. Four ids reach past the object the action was performed on; the rest of its
+# 79..118 range is a no-op. See docs/prank-reference.md.
+func _apply_global_consequence(action_id: int, point: Node) -> void:
+	if action_id == CONSEQUENCE_BLACKOUT:
+		for node in _objects_of_type(BLACKOUT_ITEM_TYPE):
+			node.call("set_state", CONSEQUENCE_STATE)
+		blackout_remaining = BLACKOUT_TIMER
+	elif action_id == CONSEQUENCE_HEATING:
+		for node in _objects_of_category(HEATING_CATEGORY):
+			node.call("set_state", CONSEQUENCE_STATE)
+	elif action_id == CONSEQUENCE_PROJECTOR:
+		var target := _first_object_in_reach(PROJECTOR_ITEM_TYPE, point)
+		if target != null:
+			target.call("set_state", CONSEQUENCE_STATE)
+	elif CONSEQUENCE_LOCK_IN.has(action_id):
+		# Only worth anything if somebody is actually in there to be shut in.
+		if point != null and is_instance_valid(point) and point.get("occupant") != null:
+			point.set("locked_in", true)
+
+
+# player+1068, ticked at dt * 10. When it runs out the blacked-out items come back.
+func _advance_blackout(delta: float) -> void:
+	if blackout_remaining <= 0.0:
+		return
+	blackout_remaining -= delta * BLACKOUT_RATE
+	if blackout_remaining > 0.0:
+		return
+	blackout_remaining = 0.0
+	for node in _objects_of_type(BLACKOUT_ITEM_TYPE):
+		node.call("set_state", 0)
+
+
+func _activity_points() -> Array:
+	return get_tree().get_nodes_in_group("npc_activity_points")
+
+
+func _objects_of_type(item_type: int) -> Array:
+	var result := []
+	for point in _activity_points():
+		if int(point.get("item_type")) != item_type:
+			continue
+		var object := _object_of(point)
+		if object != null and object.has_method("set_state"):
+			result.append(object)
+	return result
+
+
+func _objects_of_category(category: int) -> Array:
+	var result := []
+	for point in _activity_points():
+		if int(point.get("category")) != category:
+			continue
+		var object := _object_of(point)
+		if object != null and object.has_method("set_state"):
+			result.append(object)
+	return result
+
+
+# The original stops at the first candidate whose offset from the focused item is inside a
+# box on each axis. It never measures a distance, so this is deliberately not a nearest
+# search: world order decides.
+func _first_object_in_reach(item_type: int, point: Node) -> Node:
+	if point == null or not is_instance_valid(point):
+		return null
+	var origin := IsoDirection.screen_to_ground((point as Node2D).global_position)
+	for candidate in _activity_points():
+		if int(candidate.get("item_type")) != item_type:
+			continue
+		var offset := IsoDirection.screen_to_ground((candidate as Node2D).global_position) - origin
+		if absf(offset.x) >= PROJECTOR_REACH_TILES or absf(offset.y) >= PROJECTOR_REACH_TILES:
+			continue
+		var object := _object_of(candidate)
+		if object != null and object.has_method("set_state"):
+			return object
+	return null
+
+
+# sub_41B240 state 2 for selector 5: the player is placed on the object and faces the view
+# the object's orientation chooses.
+func _step_onto_object(action_id: int) -> void:
+	if _player == null or _acting_point == null or not is_instance_valid(_acting_point):
+		return
+	if int(ActionTable.get_action(action_id).get("player_animation", -1)) != REPOSITION_SELECTOR:
+		return
+	var orientation := int(_acting_point.get("orientation"))
+	var side := 0 if orientation == 0 else 1
+	var offset: Vector2 = REPOSITION_OFFSETS[side]
+	_return_position = _player.global_position
+	var ground := IsoDirection.screen_to_ground((_acting_point as Node2D).global_position) + offset
+	_player.global_position = IsoDirection.ground_to_screen(ground)
+	_player.set("last_direction", ASSCOPY_FACINGS[side])
+
+
+# sub_41B240 states 4 and 5 both put the player back where they were.
+func _step_back() -> void:
+	if _player == null or not _return_position.is_finite():
+		return
+	_player.global_position = _return_position
+	_return_position = Vector2.INF

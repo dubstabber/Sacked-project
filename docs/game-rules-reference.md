@@ -85,7 +85,7 @@ handle in `game+19056`, which is the countdown warning.
 | 2 | Intro; starts `Menu1` |
 | 3 | Main menu; starts `Menu1` |
 | 4 | Loading |
-| 5 | The catch minigame. The opponent portrait is 7 when the catching agent's type is 1, the boss, and 4 otherwise |
+| 5 | The catch minigame, entered 2 s after an agent catches the player. Winning returns to screen 1 and losing goes to screen 8; see [catch-reference.md](catch-reference.md) |
 | 7 | Win; plays `S1100` |
 | 8 | Lose |
 | 9 | Restart the level, then falls through to screen 1 |
@@ -98,7 +98,44 @@ handle in `game+19056`, which is the countdown warning.
 | 16 | Level description |
 
 The level tree accepts buttons 1 to 21 and calls `sub_408D00(game, n - 1)` before moving
-to the description screen; its button 29 returns to the main menu. Sound setup moves each
+to the description screen; its button 29 returns to the main menu.
+
+A screenshot of it (`sacked-reference-images/`, gitignored and local) shows what it draws:
+21 spherical nodes on a diamond lattice over the blue vortex backdrop, linked by glowing
+bars that fan out left to right from a single root. Each node is one of **three colours** —
+green, yellow or red — and the shot has the leftmost few green, the next three yellow and
+every node beyond them red. Read against the sprite names `LEVEL_BUTTON_FREE`, `_PLAYED`
+and `_LOCKED`, that is played, playable and locked, with the yellow frontier sitting exactly
+where the green ends. The title `Wybór poziomu` (slot 190) sits along the top and a single
+`Główne menu` button (slot 191) in the bottom-left corner, which confirms both keys. The
+linking bars are drawn in the same two colours as the nodes they join, so the path already
+taken is lit differently from the path ahead. The node coordinates themselves still have to
+come out of the binary.
+
+### What the description screen draws
+
+A screenshot of screen 16 for level 1 (`sacked-reference-images/`, gitignored and local)
+settles almost all of its layout:
+
+- A **title** centred along the top, `Pierwszy ostatni dzień (#01)` — the level's own title
+  from slot 232 + n, with its **1-based number appended as `(#%02d)`**.
+- The **left panel** (`MENU_LEVEL_BACKDROP_DESC`, 480 × 392) carries `Level_XX.txt` rendered
+  whole, with the `%s` substituted: description paragraph, blank, the goal sentence, blank,
+  blank, hint paragraph. For level 1 the goal reads `Aby ukończyć ten poziom, musisz zdobyć
+  4000 punktów w ciągu 6 minut.` — that is slots 158 and 159, the pause panel's own two
+  lines, run together into one sentence. So the `%s` is the mode's objective wording, and the
+  port composes it from the same keys the pause panel uses.
+- The **right panel** (`_INFO`, 256 × 392) is four label/value pairs, each label left-aligned
+  with its value right-aligned on the following line: `Najlepszy czas` `02:54`,
+  `Najlepszy wynik` `---`, `Rozmiar` `16 x 16`, `Poziom trudności` `Początkujący`. That is
+  slots 194–197, the `---` sentinel of slot 163, level 1's MAPINFO width and height formatted
+  `%d x %d`, and difficulty index 0.
+- **`Wróć` bottom-left and `Kontynuuj` bottom-right** (slots 198 and 193), on the same button
+  art the rest of the shell uses.
+- The backdrop is the blue vortex the tree also uses.
+
+What is still missing is the per-level difficulty index — the screen shows level 1 as
+`Początkujący`, but where the other twenty come from is a table yet to be found. Sound setup moves each
 volume by 5 and clamps to 0–100, with defaults of 75 for music and 65 for effects.
 
 Pause is `game+12740` bit `0x20`, toggled by **scancode 121** and refused while the screen

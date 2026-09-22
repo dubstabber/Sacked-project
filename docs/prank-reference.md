@@ -85,7 +85,9 @@ Two `+0x40` values are markers rather than states: **17** means the object keeps
 (the pickups), and **18** sets `item+232` for the duration of the action and clears it
 afterwards. `sub_4100B0` resets an object: each of its eight slots is enabled when its
 action id is non-zero, every id named in an enabled slot's **unlock** list is then disabled,
-and the object is put in state 0.
+`item+224` and `item+228` are cleared, and the object is put in state 0. It is what a
+finished repair calls, so it also releases a colleague locked in a cubicle; see
+[catch-reference.md](catch-reference.md).
 
 ### How a transition settles
 
@@ -124,8 +126,12 @@ transition unplayable, so the compositor now repaints only the rectangles a chan
 the byte-identity guarantee are described in [map-rendering.md](map-rendering.md).
 
 Of the 80 state clips level 1 can reach, eight are real multi-frame transitions; all eight
-are one-shot `DESTROY_n`. No looping multi-frame state is reachable on this level, so
-nothing yet needs the per-frame cost of a looping object clip.
+are one-shot `DESTROY_n`. Level 2 is the first map that reaches a **looping** one: the
+copier, the aquarium, the projector screen and the stove all hold a `DESTROYED_n` that never
+ends, and the copier enters state 9 whenever an NPC photocopies something, with no prank
+involved. A clip that never ends cannot repaint a dirty rectangle forever, so a looping
+object leaves the static bake and is drawn as a depth-tested actor until its state changes.
+The measurements and the mechanism are in [map-rendering.md](map-rendering.md).
 
 ## Availability
 
@@ -160,17 +166,37 @@ The `+0x18` selector maps to animation slots through `sub_41A510`:
 repositions the player onto the object (+0.8/+0.85 tiles, facing chosen from the object's
 orientation) — entering a toilet cubicle — and state 4/5 restore the saved position when the
 current slot is 17. `sub_41A510` indexes `entity + 4*(direction + 8*(slot+4))`, so slot
-numbers are entity animation-array indices; which clip each slot holds for the player is not
-recovered yet and is deliberately left to the task that imports the player action clips.
+numbers are entity animation-array indices. Which clip each slot holds is named by the
+21-entry table at `0x46EC04`, recovered under "The player's animation slots" in
+[player-action-reference.md](player-action-reference.md).
 
 Granted items are added to `player+1008`: ids 6 and 9 are set to 99 rather than incremented
 (inexhaustible), and id 22 adds 3. Score is added at `player+984` by `sub_41DE60`, which
 also spawns the floating number.
 
-Four action ids have global consequences beyond their own object (`sub_41DC80`): **79** puts
-every item of type 253 into state 9, **116** does the same to the nearest type-265 item
-within ±5 tiles, **118** to every item of category 9, and **110/112** set `item+224` on the
-cubicle to lock the occupant in.
+Four action ids have global consequences beyond their own object, all of them in
+`sub_41DC80`. Like `sub_4180F0` it is a jump table rather than a switch: the id is biased by
+−79, bounds-checked against 39, and indexes a selector table at `0x41DE2C` whose byte picks
+one of four branches. Ids 80–109, 111, 113–115 and 117 all fall to the shared epilogue and do
+nothing.
+
+| Id | What it does |
+| --- | --- |
+| **79** | every item of type 253 to state 9, then `player+1068 = 400.0` |
+| **110**, **112** | only if the cubicle's `item+216` is 1, i.e. someone is in it: set `item+224` to lock them in |
+| **116** | the **first** item of type 265 inside a box around the focused item, to state 9 |
+| **118** | every item of category 9 to state 9 |
+
+Two details the earlier note had wrong or missing:
+
+- **116 takes the first match, not the nearest.** It walks the world's own type-265 list and
+  stops at the first candidate that passes, setting state 9 and returning. The test is a
+  **box on each axis independently**, `-5.0 < dx < 5.0` and the same for `dy`, with strict
+  bounds on both sides — the two constants are at `0x465A38` and `0x465894`. Nothing measures
+  a distance, so a nearer candidate later in the list loses to a farther one earlier in it.
+- **79's countdown starts at 400.0.** `player+1068` is set to that float, and it counts down
+  by `dt * 10`, so the type-253 items stay in state 9 for **40 seconds** before
+  `sub_411070`/`sub_40FDA0` put them back.
 
 ## What LEVEL_00 is worth
 
@@ -187,8 +213,9 @@ imported level manifest and `CO_OBJECTS.DAT`. LEVEL_00 places **66 action rows**
 
 So the target is reachable from prerequisite-free actions alone, with room to spare, and an
 inventory is an enrichment rather than a gate for this level. Two of those free rows are the
-cubicle-occupancy ones (110 at 250, 112 at 400), which the port cannot currently trigger
-because its NPCs cannot reach the LEVEL_00 toilet (`npc-reference.md`); excluding them still
+cubicle-occupancy ones (110 at 250, 112 at 400). The port implements the rule now, but on
+level 1 they still cannot be reached: its NPCs cannot get to the LEVEL_00 toilet at all
+(`npc-reference.md`), so nobody is ever in the cubicle to shut in. Excluding them still
 leaves 5800 points.
 
 These point values agree with the published walkthrough for the German release — lock a
