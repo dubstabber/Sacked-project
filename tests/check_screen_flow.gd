@@ -27,6 +27,7 @@ func _run() -> void:
 	_check_player_name_rules()
 	_check_result_routing()
 	_check_the_tree_reaches_a_level_through_its_description()
+	_check_each_screen_asks_for_its_own_music()
 	await _check_result_screen_shows_the_outcome()
 	await _check_lost_level_returns_to_a_fresh_run()
 
@@ -103,6 +104,27 @@ func _check_result_routing() -> void:
 	_manager.last_level_won = false
 
 
+# sub_407370 asks for a track on four cases only: Menu1 for the loading and menu screens and
+# Menu2 for the coworker-names and highscore screens. Everything downstream of the menu keeps
+# what is already playing, and a level stops it.
+func _check_each_screen_asks_for_its_own_music() -> void:
+	var menu1 := load("res://audio/music/menu1.ogg")
+	var menu2 := load("res://audio/music/menu2.ogg")
+	for screen: int in [
+		ScreenManagerScript.Screen.MAIN_MENU,
+		ScreenManagerScript.Screen.CHARACTER_SELECT,
+		ScreenManagerScript.Screen.LEVEL_TREE,
+		ScreenManagerScript.Screen.LEVEL_DESCRIPTION,
+	]:
+		_expect(_manager._menu_music_for(screen) == menu1, "screen %d keeps Menu1 playing" % screen)
+	_expect(
+		_manager._menu_music_for(ScreenManagerScript.Screen.HIGHSCORES) == menu2,
+		"the highscore board is the one shell screen that changes the track"
+	)
+	for screen: int in [ScreenManagerScript.Screen.LEVEL, ScreenManagerScript.Screen.LEVEL_RESULT]:
+		_expect(_manager._menu_music_for(screen) == null, "screen %d plays no menu music" % screen)
+
+
 # sub_403F20's case 15 sends a tree node to the description screen, and its case 16 sends
 # Kontynuuj into the level. There is no route from the tree straight into a level.
 func _check_the_tree_reaches_a_level_through_its_description() -> void:
@@ -126,8 +148,8 @@ func _check_the_tree_reaches_a_level_through_its_description() -> void:
 	_manager.selected_level = before
 
 
-# The whole way round: a lost level reaches the result screen, the result screen leads back
-# to the tree, and the next run starts from zero and still reports its own outcome.
+# The whole way round: a lost level reaches the result screen, Powtórz restarts it, and the
+# next run starts from zero and still reports its own outcome.
 func _check_lost_level_returns_to_a_fresh_run() -> void:
 	var scene := load("res://scenes/level_1.tscn") as PackedScene
 
@@ -152,12 +174,11 @@ func _check_lost_level_returns_to_a_fresh_run() -> void:
 	var result := (load("res://scenes/screens/level_result.tscn") as PackedScene).instantiate()
 	root.add_child(result)
 	await process_frame
-	var dismiss := InputEventKey.new()
-	dismiss.keycode = KEY_SPACE
-	dismiss.pressed = true
-	root.push_input(dismiss)
+	# A loss offers Powtórz, which sub_407370's case 9 turns into a clean reload of the
+	# same level rather than a trip back through the tree.
+	(result.get_node("SafeFrame/Forward") as TextureButton).pressed.emit()
 	await process_frame
-	_expect(_manager.current == ScreenManagerScript.Screen.LEVEL_TREE, "the result screen leads back to the level tree")
+	_expect(_manager.current == ScreenManagerScript.Screen.LEVEL, "Powtórz restarts the level that was lost")
 	root.remove_child(result)
 	result.free()
 

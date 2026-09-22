@@ -73,6 +73,10 @@ MENU = [
     ("CO_GUI_MENU_LEVEL_BUTTON_LOCKED_PASSIVE", "images/gui/menu/level-node-locked-passive.png"),
     ("CO_GUI_MENU_BASE_BUTTON_ACTIVE", "images/gui/menu/base-button-active.png"),
     ("CO_GUI_MENU_BASE_BUTTON_PASSIVE", "images/gui/menu/base-button-passive.png"),
+    # The highscore board and its narrower page-tab button.
+    ("CO_GUI_MENU_BASE_BG_04", "images/gui/screens/highscores.png"),
+    ("CO_GUI_MENU_HISCORE_BUTTON_ACTIVE", "images/gui/menu/hiscore-button-active.png"),
+    ("CO_GUI_MENU_HISCORE_BUTTON_PASSIVE", "images/gui/menu/hiscore-button-passive.png"),
 ]
 
 FONTS = [

@@ -8,6 +8,7 @@ enum Screen {
 	LEVEL_DESCRIPTION,
 	LEVEL,
 	LEVEL_RESULT,
+	HIGHSCORES,
 }
 
 # Screen.LEVEL resolves through selected_level instead, so it has no entry here.
@@ -18,6 +19,7 @@ const _SCENE_PATHS := {
 	Screen.LEVEL_TREE: "res://scenes/screens/level_tree.tscn",
 	Screen.LEVEL_DESCRIPTION: "res://scenes/screens/level_description.tscn",
 	Screen.LEVEL_RESULT: "res://scenes/screens/level_result.tscn",
+	Screen.HIGHSCORES: "res://scenes/screens/highscores.tscn",
 }
 
 # The original's level tree offers buttons 1 to 21; sub_408D00 turns button n into the
@@ -29,7 +31,11 @@ const _PROFILES := {
 	&"anne": preload("res://scenes/player/profiles/anne.tres"),
 }
 
-const _MENU_MUSIC_STREAM: AudioStream = preload("res://audio/music/menu1.ogg")
+# sub_407370 asks for a track on four cases only: Menu1 on the loading and menu screens,
+# Menu2 on the coworker-names and highscore screens. Every other screen keeps what is
+# already playing, which is why the tree and the description screen are on this list too.
+const _MENU1: AudioStream = preload("res://audio/music/menu1.ogg")
+const _MENU2: AudioStream = preload("res://audio/music/menu2.ogg")
 
 const DEFAULT_CHARACTER: StringName = &"jobless"
 const DEFAULT_PLAYER_NAMES := {
@@ -59,7 +65,6 @@ func _input(event: InputEvent) -> void:
 func _ready() -> void:
 	_menu_music_player = AudioStreamPlayer.new()
 	_menu_music_player.name = "MenuMusic"
-	_menu_music_player.stream = _MENU_MUSIC_STREAM
 	_menu_music_player.bus = &"Music"
 	_menu_music_player.finished.connect(_on_menu_music_finished)
 	add_child(_menu_music_player)
@@ -124,6 +129,16 @@ func change_to_level_tree() -> void:
 	change_to(Screen.LEVEL_TREE)
 
 
+func change_to_highscores() -> void:
+	change_to(Screen.HIGHSCORES)
+
+
+# sub_407370's case 9: tear the level down and load the same .col again. It keeps nothing --
+# the sequence is the one case 1 runs on a fresh start -- and it lands on screen 1, not 9.
+func restart_level() -> void:
+	change_to(Screen.LEVEL)
+
+
 const DUEL_EXTRA_CASTS := 2
 const DUEL_COUNT_LIMIT := 9
 
@@ -182,11 +197,23 @@ func get_selected_profile() -> Resource:
 func _sync_menu_music() -> void:
 	if _menu_music_player == null:
 		return
-	if _is_menu_screen(current):
-		if not _menu_music_player.playing:
-			_menu_music_player.play()
-	else:
+	var wanted := _menu_music_for(current)
+	if wanted == null:
 		_menu_music_player.stop()
+		return
+	if _menu_music_player.stream != wanted:
+		_menu_music_player.stream = wanted
+		_menu_music_player.play()
+	elif not _menu_music_player.playing:
+		_menu_music_player.play()
+
+
+func _menu_music_for(screen: Screen) -> AudioStream:
+	if screen == Screen.HIGHSCORES:
+		return _MENU2
+	if _is_menu_screen(screen):
+		return _MENU1
+	return null
 
 
 func _is_menu_screen(screen: Screen) -> bool:
@@ -201,7 +228,7 @@ func _is_menu_screen(screen: Screen) -> bool:
 
 
 func _on_menu_music_finished() -> void:
-	if _is_menu_screen(current):
+	if _menu_music_for(current) != null:
 		_menu_music_player.play()
 
 

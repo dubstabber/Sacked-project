@@ -25,6 +25,8 @@ func _on_button_pressed(index: int) -> void:
 			get_node("/root/ScreenManager").call("start_game_setup", &"time")
 		1:
 			get_node("/root/ScreenManager").call("start_game_setup", &"points")
+		2:
+			get_node("/root/ScreenManager").call("change_to_highscores")
 		5:
 			get_tree().quit()
 		_:
