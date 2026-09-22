@@ -347,8 +347,8 @@ func _build_banners() -> void:
 		label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.0))
 		label.add_theme_color_override("font_outline_color", Color(0.1, 0.1, 0.1))
 		label.add_theme_constant_override("outline_size", 6)
-		label.size = Vector2(800.0, 60.0)
-		label.position = Vector2(0.0, MinigameArt.BANNER_Y)
+		label.size = Vector2(800.0, MinigameArt.BANNER_HEIGHT)
+		label.position = Vector2(0.0, (600.0 - MinigameArt.BANNER_HEIGHT) * 0.5)
 		holder.add_child(label)
 		_banner_nodes[role] = holder
 	_match_banners_to_language()
@@ -363,7 +363,9 @@ func _match_banners_to_language() -> void:
 		art.texture = texture
 		art.visible = texture != null
 		if texture != null:
-			art.position = Vector2((800.0 - texture.get_size().x) * 0.5, MinigameArt.BANNER_Y)
+			# Flag 16 centres it on both axes, and the two builds' banners differ in height.
+			var art_size := texture.get_size()
+			art.position = (Vector2(800.0, 600.0) - art_size) * 0.5
 		(holder.get_node("Text") as Label).visible = texture == null
 
 

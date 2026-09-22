@@ -36,7 +36,8 @@ const BUTTON_Y := 550
 const SEQUENCE_SHIFT := 46
 const ANSWER_MIN_X := 430
 
-const BANNER_Y := 240.0
+# Alignment flag 16 centres a banner in the viewport, so each sits on its own height.
+const BANNER_HEIGHT := 60.0
 const BANNER_ROLES: Array[StringName] = [&"get_ready", &"your_turn", &"win", &"lose"]
 # Both retail builds paint these; anything else draws a label instead.
 const BANNER_ART := {
