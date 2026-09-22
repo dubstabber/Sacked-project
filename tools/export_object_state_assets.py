@@ -22,8 +22,18 @@ from PIL import Image
 
 try:
     from export_character_depth_maps import encode_depth_rgba, read_frame_depth, write_rgba_png
+    from import_original_level import imported_level_numbers, level_paths
 except ImportError:  # imported as tools.export_object_state_assets by the tests
     from tools.export_character_depth_maps import encode_depth_rgba, read_frame_depth, write_rgba_png
+    from tools.import_original_level import imported_level_numbers, level_paths
+
+
+def level_manifests(root: Path):
+    """Every imported level, in numeric order so first-seen fields never reshuffle."""
+    for number in imported_level_numbers(root):
+        path = root / level_paths(number).manifest_rel
+        if path.is_file():
+            yield json.loads(path.read_text())
 
 
 EXTRACTION_TOOLS_REL = Path("extract-sacked-assets/tools")
@@ -37,6 +47,17 @@ STATE_MANIFEST_DIR_REL = Path("resources/objects")
 DESTROYED_OFFSET = 7
 FIRST_TRANSITION_STATE = 2
 LAST_TRANSITION_STATE = 8
+
+# sub_41DC80: three action ids reach past their own object and put something else into
+# DESTROYED_1. Those targets carry no action ids of their own -- the projector screen action
+# 116 switches on has none at all -- so their art has to be pulled in by what points at them
+# rather than by what they offer. See docs/prank-reference.md.
+CONSEQUENCE_STATE = 9  # DESTROYED_1
+GLOBAL_CONSEQUENCE_TARGETS = {
+    79: {"item_type": 253},   # every air conditioner
+    116: {"item_type": 265},  # the nearest projector screen within +/-5 tiles
+    118: {"category": 9},     # every meeting-room item
+}
 # No sprite in the container is anywhere near this far from its own frame, so a pivot past
 # it means the field was read unsigned again; an off-frame sprite drags the world's static
 # composite bounds out with it.
@@ -48,17 +69,34 @@ PIVOT_SANITY_LIMIT = 4096
 # them keeps the gap from growing silently -- a state that stops resolving fails the check.
 KNOWN_MISSING_STATES = {
     "aktiv-aktenablage-180 DESTROY_1 (no clip in the container)",
+    "aktiv-aquarium-000 DESTROY_2 (no clip in the container)",
     "aktiv-aushang-090 DESTROY_1 (no clip in the container)",
+    "aktiv-aushang2-000 DESTROY_1 (no clip in the container)",
+    "aktiv-beamer-270 DESTROYED_1 (no clip in the container)",
+    "aktiv-beamer-270 DESTROY_1 (no clip in the container)",
+    "aktiv-chefbild01-090 DESTROY_1 (no clip in the container)",
+    "aktiv-chefbild02-090 DESTROY_1 (no clip in the container)",
+    "aktiv-chefbild03-000 DESTROY_1 (no clip in the container)",
+    "aktiv-chefvitrine-000 DESTROY_1 (no clip in the container)",
+    "aktiv-coffeemat-090 DESTROY_1 (no clip in the container)",
+    "aktiv-coffeemat-090 DESTROY_4 (no clip in the container)",
     "aktiv-colamat-000 DESTROY_1 (no clip in the container)",
     "aktiv-colamat-000 DESTROY_4 (no clip in the container)",
     "aktiv-disketten-000 DESTROY_1 (no clip in the container)",
     "aktiv-drucker01-000 DESTROY_1 (no clip in the container)",
+    "aktiv-drucker01-180 DESTROY_1 (no clip in the container)",
     "aktiv-fenster01-000 DESTROY_1 (no clip in the container)",
+    "aktiv-fenster01-090 DESTROY_1 (no clip in the container)",
     "aktiv-fenster02-000 DESTROY_1 (no clip in the container)",
+    "aktiv-fenster02-090 DESTROY_1 (no clip in the container)",
+    "aktiv-fenster03-000 DESTROY_1 (no clip in the container)",
     "aktiv-fenster03-090 DESTROY_1 (no clip in the container)",
+    "aktiv-flipchart-000 DESTROY_1 (no clip in the container)",
     "aktiv-flipchart-090 DESTROY_1 (no clip in the container)",
     "aktiv-handtuchspender-000 DESTROY_1 (no clip in the container)",
     "aktiv-handy-000 DESTROY_1 (no clip in the container)",
+    "aktiv-heizungssteuerung-090 DESTROYED_1 (no clip in the container)",
+    "aktiv-heizungssteuerung-090 DESTROY_1 (no clip in the container)",
     "aktiv-k-hlschrank-000 DESTROYED_1 (no clip in the container)",
     "aktiv-k-hlschrank-000 DESTROYED_2 (no clip in the container)",
     "aktiv-k-hlschrank-000 DESTROYED_3 (no clip in the container)",
@@ -67,29 +105,73 @@ KNOWN_MISSING_STATES = {
     "aktiv-k-hlschrank-000 DESTROY_3 (no clip in the container)",
     "aktiv-kaffeemaschi-270 DESTROYED_2 (no clip in the container)",
     "aktiv-kaffeemaschi-270 DESTROY_1 (no clip in the container)",
+    "aktiv-kopierer-000 DESTROY_1 (no clip in the container)",
+    "aktiv-kopierer-000 DESTROY_2 (no clip in the container)",
+    "aktiv-monitor-kaffee-000 DESTROYED_1 (no clip in the container)",
+    "aktiv-monitor-kaffee-000 DESTROYED_2 (no clip in the container)",
+    "aktiv-monitor-kaffee-000 DESTROYED_3 (no clip in the container)",
+    "aktiv-monitor-kaffee-000 DESTROYED_4 (no clip in the container)",
+    "aktiv-monitor-kaffee-000 DESTROY_1 (no clip in the container)",
+    "aktiv-monitor-kaffee-000 DESTROY_2 (no clip in the container)",
+    "aktiv-monitor-kaffee-000 DESTROY_3 (no clip in the container)",
+    "aktiv-monitor-kaffee-000 DESTROY_4 (no clip in the container)",
     "aktiv-monitor-tastatur-frontal-000 DESTROYED_1 (no clip in the container)",
     "aktiv-monitor-tastatur-frontal-000 DESTROYED_2 (no clip in the container)",
     "aktiv-monitor-tastatur-frontal-000 DESTROYED_3 (no clip in the container)",
     "aktiv-monitor-tastatur-frontal-000 DESTROY_1 (no clip in the container)",
     "aktiv-monitor-tastatur-frontal-000 DESTROY_2 (no clip in the container)",
     "aktiv-monitor-tastatur-frontal-000 DESTROY_3 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-000 DESTROYED_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-000 DESTROYED_2 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-000 DESTROYED_3 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-000 DESTROY_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-000 DESTROY_2 (no clip in the container)",
+    "aktiv-monitor-tastatur-links-000 DESTROY_3 (no clip in the container)",
     "aktiv-monitor-tastatur-links-180 DESTROYED_1 (no clip in the container)",
     "aktiv-monitor-tastatur-links-180 DESTROYED_2 (no clip in the container)",
     "aktiv-monitor-tastatur-links-180 DESTROYED_3 (no clip in the container)",
     "aktiv-monitor-tastatur-links-180 DESTROY_1 (no clip in the container)",
     "aktiv-monitor-tastatur-links-180 DESTROY_2 (no clip in the container)",
     "aktiv-monitor-tastatur-links-180 DESTROY_3 (no clip in the container)",
+    "aktiv-monitor-tastatur-rechts-000 DESTROYED_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-rechts-000 DESTROYED_2 (no clip in the container)",
+    "aktiv-monitor-tastatur-rechts-000 DESTROYED_3 (no clip in the container)",
+    "aktiv-monitor-tastatur-rechts-000 DESTROY_1 (no clip in the container)",
+    "aktiv-monitor-tastatur-rechts-000 DESTROY_2 (no clip in the container)",
+    "aktiv-monitor-tastatur-rechts-000 DESTROY_3 (no clip in the container)",
     "aktiv-poster01-090 DESTROY_1 (no clip in the container)",
+    "aktiv-poster03-000 DESTROY_1 (no clip in the container)",
+    "aktiv-poster04-090 DESTROY_1 (no clip in the container)",
+    "aktiv-putzeimer-000 DESTROY_1 (no clip in the container)",
+    "aktiv-salz-zucker-090 DESTROYED_1 (no clip in the container)",
+    "aktiv-salz-zucker-090 DESTROY_1 (no clip in the container)",
+    "aktiv-schwarzbrett-000 DESTROY_1 (no clip in the container)",
+    "aktiv-schwarzbrett-000 DESTROY_2 (no clip in the container)",
+    "aktiv-schwarzbrett-000 DESTROY_3 (no clip in the container)",
     "aktiv-server-000 DESTROY_1 (no clip in the container)",
     "aktiv-server-000 DESTROY_6 (no clip in the container)",
     "aktiv-spiegel-000 DESTROY_1 (no clip in the container)",
+    "aktiv-spiegel-090 DESTROY_1 (no clip in the container)",
     "aktiv-spuele-000 DESTROYED_1 (frames missing on disk)",
     "aktiv-spuele-000 DESTROY_1 (no clip in the container)",
+    "aktiv-spuele-090 DESTROYED_1 (frames missing on disk)",
+    "aktiv-spuele-090 DESTROY_1 (no clip in the container)",
+    "aktiv-spuelmaschine-000 DESTROYED_1 (frames missing on disk)",
+    "aktiv-spuelmaschine-000 DESTROY_1 (no clip in the container)",
     "aktiv-stifthalter01-000 DESTROY_1 (no clip in the container)",
+    "aktiv-tafel-090 DESTROY_1 (no clip in the container)",
+    "aktiv-teddy-180 DESTROY_1 (no clip in the container)",
+    "aktiv-telefon01-180 DESTROYED_1 (no clip in the container)",
+    "aktiv-telefon01-180 DESTROY_2 (no clip in the container)",
+    "aktiv-tischlampe2-270 DESTROY_1 (no clip in the container)",
     "aktiv-toikabine-000 DESTROY_1 (no clip in the container)",
     "aktiv-toikabine-000 DESTROY_2 (no clip in the container)",
     "aktiv-toikabine-000 DESTROY_3 (no clip in the container)",
+    "aktiv-toikabine-090 DESTROY_1 (no clip in the container)",
+    "aktiv-toikabine-090 DESTROY_2 (no clip in the container)",
+    "aktiv-toikabine-090 DESTROY_3 (no clip in the container)",
     "aktiv-waschbecken-000 DESTROY_1 (no clip in the container)",
+    "aktiv-waschbecken-090 DESTROY_1 (no clip in the container)",
 }
 
 
@@ -128,24 +210,39 @@ def wanted_states(actions: dict, action_ids: list) -> list:
     return states
 
 
+def item_type(entry: dict) -> int:
+    return (int(entry["kind"], 16) >> 4) & 0xFFF
+
+
+def consequence_states(manifest: dict, entry: dict) -> list:
+    """DESTROYED_1, when some action placed on this level reaches this object from another."""
+    for action_id, target in GLOBAL_CONSEQUENCE_TARGETS.items():
+        if not any(action_id in other["action_ids"] for other in manifest["objects"]):
+            continue
+        if target.get("item_type") == item_type(entry) or target.get("category") == entry["object_category"]:
+            return [CONSEQUENCE_STATE]
+    return []
+
+
 def object_specs(root: Path) -> list:
-    """One entry per (object texture, needed states), derived from the level manifest."""
+    """One entry per (object texture, needed states), derived from the level manifests."""
     actions = json.loads((root / ACTIONS_REL).read_text())
-    manifest = json.loads((root / "resources/levels/level_1.json").read_text())
     specs = {}
-    for item in manifest["objects"]:
-        if not item["action_ids"]:
-            continue
-        source = item["source_sprite"]
-        if "_IDLE_" not in source:
-            continue
-        prefix, rest = source.rsplit("_IDLE_", 1)
-        angle = rest.split("_")[0]
-        key = Path(item["texture"]).stem
-        specs.setdefault(key, {"prefix": prefix, "angle": angle, "states": [], "sprite": item["sprite_name"]})
-        for state in wanted_states(actions, item["action_ids"]):
-            if state not in specs[key]["states"]:
-                specs[key]["states"].append(state)
+    for manifest in level_manifests(root):
+        for item in manifest["objects"]:
+            states = wanted_states(actions, item["action_ids"]) + consequence_states(manifest, item)
+            if not states:
+                continue
+            source = item["source_sprite"]
+            if "_IDLE_" not in source:
+                continue
+            prefix, rest = source.rsplit("_IDLE_", 1)
+            angle = rest.split("_")[0]
+            key = Path(item["texture"]).stem
+            specs.setdefault(key, {"prefix": prefix, "angle": angle, "states": [], "sprite": item["sprite_name"]})
+            for state in states:
+                if state not in specs[key]["states"]:
+                    specs[key]["states"].append(state)
     return [(key, value) for key, value in sorted(specs.items())]
 
 

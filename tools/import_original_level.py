@@ -18,19 +18,15 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 SOURCE_ID = 3
 TILE_SIZE = (96, 48)
-PLAYABLE_LEVEL_NUMBER = 1
-ORIGINAL_LEVEL_INDEX = PLAYABLE_LEVEL_NUMBER - 1
-LEVEL_SOURCE_REL = Path("extract-sacked-assets/sacked/Levels/LEVEL_00.col")
-# sub_408D00 picks the plain file for the time game and the S file for the points game.
-LEVEL_POINTS_SOURCE_REL = Path("extract-sacked-assets/sacked/Levels/LEVEL_00s.col")
-LEVEL_TEXT_REL = Path("extract-sacked-assets/sacked/Levels/Level_00.txt")
+# The level tree accepts 21 levels; sub_408D00 turns button n into original index n - 1.
+LEVEL_COUNT = 21
+LEVELS_DIR_REL = Path("extract-sacked-assets/sacked/Levels")
 OBJECT_DB_REL = Path("extract-sacked-assets/sacked/CO_OBJECTS.DAT")
 OBJECT_TEXTURE_LOG_REL = Path("extract-sacked-assets/extracted/textures/CO_OBJECTS/png_conversion_log.json")
 OBJECT_TEXTURE_ROOT_REL = Path("extract-sacked-assets/extracted/textures/CO_OBJECTS")
 OBJECT_IMAGE_DIR_REL = Path("images/objects")
 TILE_ATLAS_MANIFEST_REL = Path("resources/tilemaps/sacked-tile-atlases.json")
-LEVEL_MANIFEST_REL = Path("resources/levels/level_1.json")
-LEVEL_SCENE_REL = Path("scenes/level_1.tscn")
+LEVEL_MANIFEST_DIR_REL = Path("resources/levels")
 OBJECT_PREFAB_DIR_REL = Path("scenes/objects")
 NPC_PROFILES = {
     1: "boss",
@@ -43,6 +39,56 @@ NPC_PROFILES = {
 }
 WORKSTATION_TYPES = (152, 153, 154, 155)
 CHAIR_TYPES = (68, 69, 70, 71, 72, 73, 74, 86, 93, 94, 121, 122)
+
+
+@dataclass(frozen=True)
+class LevelPaths:
+    """Every path that depends on which level is being imported."""
+
+    number: int
+    index: int
+    source_rel: Path
+    points_source_rel: Path
+    text_rel: Path
+    manifest_rel: Path
+    scene_rel: Path
+
+
+def level_paths(number: int) -> LevelPaths:
+    if not 1 <= number <= LEVEL_COUNT:
+        raise ValueError(f"level {number} is outside the original's 1..{LEVEL_COUNT} range")
+    index = number - 1
+    return LevelPaths(
+        number=number,
+        index=index,
+        source_rel=LEVELS_DIR_REL / ("LEVEL_%02d.col" % index),
+        # sub_408D00 picks the plain file for the time game and the S file for the points game.
+        points_source_rel=LEVELS_DIR_REL / ("LEVEL_%02ds.col" % index),
+        text_rel=LEVELS_DIR_REL / ("Level_%02d.txt" % index),
+        manifest_rel=LEVEL_MANIFEST_DIR_REL / ("level_%d.json" % number),
+        scene_rel=Path("scenes/level_%d.tscn" % number),
+    )
+
+
+def imported_level_numbers(root: Path) -> List[int]:
+    """The levels this checkout has already imported, in numeric order."""
+    numbers = []
+    for path in (root / LEVEL_MANIFEST_DIR_REL).glob("level_*.json"):
+        match = re.fullmatch(r"level_(\d+)", path.stem)
+        if match:
+            number = int(match.group(1))
+            if 1 <= number <= LEVEL_COUNT:
+                numbers.append(number)
+    return sorted(numbers) or [1]
+
+
+@dataclass(frozen=True)
+class LevelBuild:
+    """One level's computed manifest, before anything is written."""
+
+    paths: LevelPaths
+    manifest: Dict[str, object]
+    source_to_dest: Dict[Path, Path]
 
 
 @dataclass(frozen=True)
@@ -506,7 +552,7 @@ def domain_hints(definition: ObjectDefinition) -> List[str]:
         hints.append("MEETING")
     if sprite in {"BESEN", "HANDTUCHHAKEN", "PUTZWAGEN", "TOIKABINE", "TOIKABINE&EIMER"}:
         hints.append("WC")
-    if object_id in {
+    if definition.object_id in {
         0x000203A0,
         0x000203B0,
         0x020003C0,
@@ -652,12 +698,46 @@ def round_float(value: float) -> float:
     return round(value, 6)
 
 
-def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
-    level = parse_level_file(root / LEVEL_SOURCE_REL)
-    object_db = parse_object_database(root / OBJECT_DB_REL)
-    texture_candidates = load_texture_candidates(root)
+@dataclass(frozen=True)
+class ImportContext:
+    """The level-independent inputs, loaded once and shared by every level."""
+
+    object_db: Dict[int, "ObjectDefinition"]
+    texture_candidates: List["TextureCandidate"]
+    atlases: Dict[str, object]
+
+
+def load_import_context(root: Path) -> ImportContext:
     tile_manifest = json.loads((root / TILE_ATLAS_MANIFEST_REL).read_text(encoding="utf-8"))
-    atlases = tile_manifest["atlases"]
+    return ImportContext(
+        object_db=parse_object_database(root / OBJECT_DB_REL),
+        texture_candidates=load_texture_candidates(root),
+        atlases=tile_manifest["atlases"],
+    )
+
+
+def check_points_file_matches(paths: LevelPaths, level: Dict[str, object], points_level: Dict[str, object]) -> None:
+    """The importer takes only CONDITION from the S file, so everything else has to agree.
+
+    Across the campaign the S files of six levels also move items, spawns or layers; those
+    need a second scene rather than a shared one, so refuse them loudly instead of quietly
+    rendering the time game's layout in the points game.
+    """
+    differing = [key for key in sorted(level) if key != "condition" and level[key] != points_level.get(key)]
+    if differing:
+        raise ValueError(
+            "%s differs from %s beyond CONDITION (%s); the points game needs its own scene"
+            % (paths.points_source_rel.name, paths.source_rel.name, ", ".join(differing))
+        )
+
+
+def build_manifest(root: Path, paths: LevelPaths, context: ImportContext) -> Tuple[Dict[str, object], Dict[Path, Path]]:
+    level = parse_level_file(root / paths.source_rel)
+    points_level = parse_level_file(root / paths.points_source_rel)
+    check_points_file_matches(paths, level, points_level)
+    object_db = context.object_db
+    texture_candidates = context.texture_candidates
+    atlases = context.atlases
 
     width = int(level["width"])
     height = int(level["height"])
@@ -669,7 +749,7 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
     wall_tiles = layers["LAYER1"]
     duplicate_wall_tiles = layers["LAYER2"]
     if wall_tiles != duplicate_wall_tiles:
-        raise ValueError(f"{LEVEL_SOURCE_REL.name} LAYER2 no longer matches LAYER1; importer needs a separate mapping")
+        raise ValueError(f"{paths.source_rel.name} LAYER2 no longer matches LAYER1; importer needs a separate mapping")
 
     floor_atlas = atlases["floor"]
     wall_atlas = atlases["walls"]
@@ -734,10 +814,10 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
 
     manifest = {
         "generated_by": "tools/import_original_level.py",
-        "source": LEVEL_SOURCE_REL.as_posix(),
-        "original_level_index": ORIGINAL_LEVEL_INDEX,
-        "playable_level_number": PLAYABLE_LEVEL_NUMBER,
-        "original_level_text": LEVEL_TEXT_REL.as_posix(),
+        "source": paths.source_rel.as_posix(),
+        "original_level_index": paths.index,
+        "playable_level_number": paths.number,
+        "original_level_text": paths.text_rel.as_posix(),
         "object_database": OBJECT_DB_REL.as_posix(),
         "tile_atlas_manifest": TILE_ATLAS_MANIFEST_REL.as_posix(),
         "tile_size": list(TILE_SIZE),
@@ -751,7 +831,7 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
         },
         "conditions": {
             "time": level["condition"],
-            "points": parse_condition((root / LEVEL_POINTS_SOURCE_REL).read_bytes()),
+            "points": points_level["condition"],
         },
         "collision_grid": build_collision_grid(level["info_data"], width, height),
         "tile_layers": [
@@ -798,7 +878,7 @@ def build_manifest(root: Path) -> Tuple[Dict[str, object], Dict[Path, Path]]:
         "spawns": spawns,
         "player_spawn_id": 0,
         "ignored_layers": {
-            "LAYER2": f"matches LAYER1 for {LEVEL_SOURCE_REL.name} and is not rendered twice",
+            "LAYER2": f"matches LAYER1 for {paths.source_rel.name} and is not rendered twice",
         },
     }
     return manifest, source_to_dest
@@ -826,19 +906,68 @@ def copy_atomic(source: Path, target: Path) -> None:
         temp_path.unlink(missing_ok=True)
 
 
-def write_outputs(root: Path, manifest: Dict[str, object], source_to_dest: Dict[Path, Path]) -> None:
-    manifest_text = json.dumps(manifest, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
-    write_atomic_text(manifest_text, root / LEVEL_MANIFEST_REL)
-    remove_stale_object_textures(root, source_to_dest.values())
-    for source_rel, dest_rel in sorted(source_to_dest.items(), key=lambda item: item[1].as_posix()):
-        copy_atomic(root / source_rel, root / dest_rel)
+def manifest_text(manifest: Dict[str, object]) -> str:
+    return json.dumps(manifest, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
 
-def remove_stale_object_textures(root: Path, expected_dest_rels: Iterable[Path]) -> None:
+def check_texture_union(builds: Dict[int, "LevelBuild"]) -> None:
+    """One slug must mean one sprite at one pivot across every level.
+
+    build_level_scene.gd keys its prefab cache on (texture, pivot) but names the file after
+    the texture alone, so two levels disagreeing here would silently overwrite each other's
+    prefab. Its own -pivot-X-Y fallback only sees one level per process, which is why this
+    has to be caught here.
+    """
+    seen: Dict[str, Tuple[int, Tuple[object, ...]]] = {}
+    conflicts: List[str] = []
+    for number in sorted(builds):
+        for entry in builds[number].manifest["objects"]:
+            slug = Path(str(entry["texture"])).stem
+            signature = (entry["source_sprite"], tuple(entry["pivot"]), tuple(entry["texture_size"]))
+            first = seen.get(slug)
+            if first is None:
+                seen[slug] = (number, signature)
+            elif first[1] != signature:
+                conflicts.append(
+                    "%s: level %d has %s but level %d has %s" % (slug, first[0], first[1], number, signature)
+                )
+    if conflicts:
+        raise ValueError("object texture slugs disagree between levels:\n  " + "\n  ".join(sorted(set(conflicts))))
+
+
+def write_outputs(root: Path, builds: Dict[int, "LevelBuild"], targets: Iterable[int]) -> None:
+    union = union_destinations(builds)
+    for number in sorted(targets):
+        build = builds[number]
+        write_atomic_text(manifest_text(build.manifest), root / build.paths.manifest_rel)
+    remove_stale_object_textures(root, union)
+    for build in (builds[number] for number in sorted(builds)):
+        for source_rel, dest_rel in sorted(build.source_to_dest.items(), key=lambda item: item[1].as_posix()):
+            source = root / source_rel
+            target = root / dest_rel
+            # Copying an identical file would only churn its mtime and force a Godot reimport.
+            if target.is_file() and filecmp.cmp(source, target, shallow=False):
+                continue
+            copy_atomic(source, target)
+
+
+def union_destinations(builds: Dict[int, "LevelBuild"]) -> Dict[Path, Path]:
+    union: Dict[Path, Path] = {}
+    for number in sorted(builds):
+        union.update(builds[number].source_to_dest)
+    return union
+
+
+def remove_stale_object_textures(root: Path, union: Dict[Path, Path]) -> None:
+    """Prune against the union of every imported level, never one level's manifest alone.
+
+    The glob stays non-recursive on purpose: images/objects/states/ holds the per-state
+    frames that export_object_state_assets.py owns, and they are not named here.
+    """
     object_dir = root / OBJECT_IMAGE_DIR_REL
     if not object_dir.is_dir():
         return
-    expected = {root / dest_rel for dest_rel in expected_dest_rels}
+    expected = {root / dest_rel for dest_rel in union.values()}
     expected |= {path.with_name(path.stem + "-depth.png") for path in expected}
     for path in object_dir.glob("*.png"):
         if path not in expected:
@@ -849,16 +978,20 @@ def remove_stale_object_textures(root: Path, expected_dest_rels: Iterable[Path])
             path.unlink()
 
 
-def compare_outputs(root: Path, manifest: Dict[str, object], source_to_dest: Dict[Path, Path]) -> int:
-    expected_manifest = json.dumps(manifest, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
-    manifest_path = root / LEVEL_MANIFEST_REL
+def compare_outputs(root: Path, builds: Dict[int, "LevelBuild"]) -> int:
     failures: List[str] = []
-    if not manifest_path.is_file():
-        failures.append(f"missing {LEVEL_MANIFEST_REL}")
-    elif manifest_path.read_text(encoding="utf-8") != expected_manifest:
-        failures.append(f"stale {LEVEL_MANIFEST_REL}")
+    for number in sorted(builds):
+        build = builds[number]
+        manifest_path = root / build.paths.manifest_rel
+        if not manifest_path.is_file():
+            failures.append(f"missing {build.paths.manifest_rel}")
+        elif manifest_path.read_text(encoding="utf-8") != manifest_text(build.manifest):
+            failures.append(f"stale {build.paths.manifest_rel}")
+        if not (root / build.paths.scene_rel).is_file():
+            failures.append(f"missing {build.paths.scene_rel}")
 
-    for source_rel, dest_rel in sorted(source_to_dest.items(), key=lambda item: item[1].as_posix()):
+    union = union_destinations(builds)
+    for source_rel, dest_rel in sorted(union.items(), key=lambda item: item[1].as_posix()):
         source = root / source_rel
         target = root / dest_rel
         if not target.is_file():
@@ -866,7 +999,7 @@ def compare_outputs(root: Path, manifest: Dict[str, object], source_to_dest: Dic
         elif not filecmp.cmp(source, target, shallow=False):
             failures.append(f"stale {dest_rel}")
 
-    expected_dest_rels = set(source_to_dest.values())
+    expected_dest_rels = set(union.values())
     expected_dest_rels |= {path.with_name(path.stem + "-depth.png") for path in expected_dest_rels}
     object_dir = root / OBJECT_IMAGE_DIR_REL
     if object_dir.is_dir():
@@ -875,43 +1008,67 @@ def compare_outputs(root: Path, manifest: Dict[str, object], source_to_dest: Dic
             if rel not in expected_dest_rels:
                 failures.append(f"stale {rel}")
 
+    # --check cannot run Godot, so the prefabs are verified as a file set only.
+    prefab_dir = root / OBJECT_PREFAB_DIR_REL
+    if prefab_dir.is_dir():
+        expected_prefabs = {dest_rel.stem for dest_rel in union.values()}
+        actual_prefabs = {path.stem for path in prefab_dir.glob("*.tscn")}
+        for stem in sorted(expected_prefabs - actual_prefabs):
+            failures.append(f"missing {OBJECT_PREFAB_DIR_REL / (stem + '.tscn')}")
+        for stem in sorted(actual_prefabs - expected_prefabs):
+            failures.append(f"stale {OBJECT_PREFAB_DIR_REL / (stem + '.tscn')}")
+
+    levels = ", ".join(str(number) for number in sorted(builds))
     if failures:
-        print("Level 1 import outputs are stale:", file=sys.stderr)
+        print(f"Level import outputs are stale (levels {levels}):", file=sys.stderr)
         for failure in failures:
             print(f"  {failure}", file=sys.stderr)
         return 1
-    print("Level 1 import data is up to date.")
+    print(f"Level import data is up to date (levels {levels}).")
     return 0
 
 
-def run_godot_scene_builder(root: Path, godot_binary: str) -> None:
+def run_godot_scene_builder(root: Path, godot_binary: str, builds: Dict[int, "LevelBuild"], targets: Iterable[int]) -> None:
     env = os.environ.copy()
     env.setdefault("HOME", "/tmp/sacked-godot-home")
     env.setdefault("XDG_CONFIG_HOME", "/tmp/sacked-godot-config")
     env.setdefault("XDG_DATA_HOME", "/tmp/sacked-godot-xdg")
 
     subprocess.run([godot_binary, "--headless", "--path", ".", "--import"], cwd=root, env=env, check=True)
-    subprocess.run(
-        [
-            godot_binary,
-            "--headless",
-            "--path",
-            ".",
-            "--script",
-            "tools/build_level_scene.gd",
-            "--",
-            "res://%s" % LEVEL_MANIFEST_REL.as_posix(),
-            "res://%s" % LEVEL_SCENE_REL.as_posix(),
-        ],
-        cwd=root,
-        env=env,
-        check=True,
-    )
-    normalize_scene_file(root / LEVEL_SCENE_REL)
+    for number in sorted(targets):
+        paths = builds[number].paths
+        subprocess.run(
+            [
+                godot_binary,
+                "--headless",
+                "--path",
+                ".",
+                "--script",
+                "tools/build_level_scene.gd",
+                "--",
+                "res://%s" % paths.manifest_rel.as_posix(),
+                "res://%s" % paths.scene_rel.as_posix(),
+            ],
+            cwd=root,
+            env=env,
+            check=True,
+        )
+        normalize_scene_file(root / paths.scene_rel)
+    remove_stale_object_prefabs(root, union_destinations(builds))
     # The builder re-saves every object prefab with a fresh random unique_id, so without
     # the same normalization each regeneration churns all of scenes/objects/.
     for prefab in sorted((root / OBJECT_PREFAB_DIR_REL).glob("*.tscn")):
         normalize_scene_file(prefab)
+
+
+def remove_stale_object_prefabs(root: Path, union: Dict[Path, Path]) -> None:
+    prefab_dir = root / OBJECT_PREFAB_DIR_REL
+    if not prefab_dir.is_dir():
+        return
+    expected = {dest_rel.stem for dest_rel in union.values()}
+    for path in prefab_dir.glob("*.tscn"):
+        if path.stem not in expected:
+            path.unlink()
 
 
 def normalize_scene_file(path: Path) -> None:
@@ -962,27 +1119,58 @@ def normalize_scene_file(path: Path) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Import original Sacked first playable level data into the Godot project.")
-    parser.add_argument("--check", action="store_true", help="Verify copied object textures and level manifest are current.")
-    parser.add_argument("--skip-godot", action="store_true", help="Write manifest and object textures without regenerating the scene.")
-    parser.add_argument("--godot-binary", default=None, help="Godot binary used to serialize the level scene.")
+    parser = argparse.ArgumentParser(description="Import original Sacked level data into the Godot project.")
+    parser.add_argument("--check", action="store_true", help="Verify copied object textures and level manifests are current.")
+    parser.add_argument("--skip-godot", action="store_true", help="Write manifests and object textures without regenerating the scenes.")
+    parser.add_argument("--godot-binary", default=None, help="Godot binary used to serialize the level scenes.")
+    parser.add_argument(
+        "--level",
+        type=int,
+        action="append",
+        dest="levels",
+        metavar="N",
+        help=f"Playable level 1..{LEVEL_COUNT} to import or refresh; repeatable. Defaults to every imported level.",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Refresh every already-imported level. This never imports a level for the first time; use --level for that.",
+    )
     return parser.parse_args()
+
+
+def build_levels(root: Path, numbers: Iterable[int]) -> Dict[int, LevelBuild]:
+    context = load_import_context(root)
+    builds: Dict[int, LevelBuild] = {}
+    for number in sorted(set(numbers)):
+        paths = level_paths(number)
+        manifest, source_to_dest = build_manifest(root, paths, context)
+        builds[number] = LevelBuild(paths=paths, manifest=manifest, source_to_dest=source_to_dest)
+    check_texture_union(builds)
+    return builds
 
 
 def main() -> int:
     args = parse_args()
     root = repo_root()
-    manifest, source_to_dest = build_manifest(root)
-    if args.check:
-        return compare_outputs(root, manifest, source_to_dest)
+    known = imported_level_numbers(root)
+    targets = list(known) if args.all or not args.levels else sorted(set(args.levels))
+    for number in targets:
+        level_paths(number)
+    # Every imported level is rebuilt in memory, because pruning and the slug guard are only
+    # correct against the whole set, not against the levels this run happens to write.
+    builds = build_levels(root, set(known) | set(targets))
 
-    write_outputs(root, manifest, source_to_dest)
+    if args.check:
+        return compare_outputs(root, builds)
+
+    write_outputs(root, builds, targets)
     if not args.skip_godot:
         # Imported here, not at module scope: the tests import this file as
         # tools.import_original_level, where sibling modules are not on sys.path.
         from godot_binary import find_godot_binary
 
-        run_godot_scene_builder(root, args.godot_binary or find_godot_binary(root))
+        run_godot_scene_builder(root, args.godot_binary or find_godot_binary(root), builds, targets)
     return 0
 
 

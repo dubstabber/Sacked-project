@@ -9,26 +9,39 @@ from PIL import Image
 
 from export_character_depth_maps import encode_depth_rgba, read_frame_depth
 
+try:
+    from tools.import_original_level import imported_level_numbers, level_paths
+except ImportError:
+    from import_original_level import imported_level_numbers, level_paths
+
 
 def depth_image(folder: Path, size: tuple[int, int]) -> Image.Image:
     depth, mask = read_frame_depth(folder, *size)
     return Image.frombytes("RGBA", size, encode_depth_rgba(depth, mask, *size))
 
 
+def level_manifests(root: Path):
+    """Every imported level, in numeric order so first-seen fields never reshuffle."""
+    for number in imported_level_numbers(root):
+        path = root / level_paths(number).manifest_rel
+        if path.is_file():
+            yield json.loads(path.read_text())
+
+
 def outputs(root: Path):
-    manifest = json.loads((root / "resources/levels/level_1.json").read_text())
     texture_root = root / "extract-sacked-assets/extracted/textures"
     seen = set()
-    for item in manifest["objects"]:
-        color_path = root / item["texture"].removeprefix("res://")
-        destination = color_path.with_stem(color_path.stem + "-depth")
-        if destination in seen:
-            continue
-        seen.add(destination)
-        yield destination, depth_image(
-            texture_root / "CO_OBJECTS" / item["source_sprite"],
-            tuple(item["texture_size"]),
-        )
+    for manifest in level_manifests(root):
+        for item in manifest["objects"]:
+            color_path = root / item["texture"].removeprefix("res://")
+            destination = color_path.with_stem(color_path.stem + "-depth")
+            if destination in seen:
+                continue
+            seen.add(destination)
+            yield destination, depth_image(
+                texture_root / "CO_OBJECTS" / item["source_sprite"],
+                tuple(item["texture_size"]),
+            )
 
     atlases = json.loads((root / "resources/tilemaps/sacked-tile-atlases.json").read_text())
     for name in ("walls",):
@@ -55,14 +68,19 @@ def main() -> int:
     failures = []
     for path, expected in outputs(args.root):
         count += 1
-        if args.check:
-            if not path.is_file():
-                failures.append(str(path))
-                continue
+        current = None
+        if path.is_file():
             with Image.open(path) as actual:
-                if actual.size != expected.size or actual.convert("RGBA").tobytes() != expected.tobytes():
-                    failures.append(str(path))
-        else:
+                if actual.size == expected.size:
+                    current = actual.convert("RGBA").tobytes()
+        matches = current is not None and current == expected.tobytes()
+        if args.check:
+            if not matches:
+                failures.append(str(path))
+        elif not matches:
+            # Only rewrite a mask whose pixels actually changed. PIL does not reproduce the
+            # encoder the committed files were written with, so saving an unchanged mask
+            # would churn its LFS object for identical pixels.
             expected.save(path)
     if failures:
         print("Missing or stale depth masks:\n" + "\n".join(failures))
