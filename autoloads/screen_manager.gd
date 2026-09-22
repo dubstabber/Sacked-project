@@ -5,6 +5,7 @@ enum Screen {
 	MAIN_MENU,
 	CHARACTER_SELECT,
 	LEVEL_TREE,
+	LEVEL_DESCRIPTION,
 	LEVEL,
 	LEVEL_RESULT,
 }
@@ -15,6 +16,7 @@ const _SCENE_PATHS := {
 	Screen.MAIN_MENU: "res://scenes/screens/main_menu.tscn",
 	Screen.CHARACTER_SELECT: "res://scenes/screens/character_select.tscn",
 	Screen.LEVEL_TREE: "res://scenes/screens/level_tree.tscn",
+	Screen.LEVEL_DESCRIPTION: "res://scenes/screens/level_description.tscn",
 	Screen.LEVEL_RESULT: "res://scenes/screens/level_result.tscn",
 }
 
@@ -95,6 +97,17 @@ func available_levels() -> Array[int]:
 	return levels
 
 
+# sub_403F20's case 15: a tree node opens the description screen, which is the only route
+# into a level. The button for a locked level is inert rather than absent, so the guard is
+# here rather than at the click.
+func open_level_description(level: int) -> void:
+	if level < 1 or level > LEVEL_COUNT:
+		push_warning("No level %d" % level)
+		return
+	selected_level = level
+	change_to(Screen.LEVEL_DESCRIPTION)
+
+
 func start_level(level: int) -> void:
 	if not is_level_available(level):
 		push_warning("No imported level %d" % level)
@@ -124,8 +137,14 @@ func begin_duel() -> int:
 
 
 # A level reports its own outcome; sub_407370 sends both results to their own screen.
-func report_level_finished(won: bool) -> void:
+# sub_406E70 records on the way past, and only for a win -- the loss path writes nothing.
+func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0.0) -> void:
 	last_level_won = won
+	var progress := get_node_or_null("/root/ProgressStore")
+	if progress != null:
+		progress.call(
+			"record_result", selected_level, selected_game_mode, won, score, elapsed_seconds, player_name
+		)
 	change_to(Screen.LEVEL_RESULT)
 
 
@@ -171,7 +190,14 @@ func _sync_menu_music() -> void:
 
 
 func _is_menu_screen(screen: Screen) -> bool:
-	return screen == Screen.MAIN_MENU or screen == Screen.CHARACTER_SELECT or screen == Screen.LEVEL_TREE
+	# sub_407370 starts Menu1 for the menu and keeps it running across the screens that
+	# follow: the tree and the description screen ask for no music of their own.
+	return (
+		screen == Screen.MAIN_MENU
+		or screen == Screen.CHARACTER_SELECT
+		or screen == Screen.LEVEL_TREE
+		or screen == Screen.LEVEL_DESCRIPTION
+	)
 
 
 func _on_menu_music_finished() -> void:

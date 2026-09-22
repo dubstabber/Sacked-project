@@ -1,0 +1,225 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/screens/level_description.gd" id="1"]
+[ext_resource type="Texture2D" path="res://images/gui/screens/level-description.png" id="2"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/level-backdrop-desc.png" id="3"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/level-backdrop-info.png" id="4"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/base-button-passive.png" id="5"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/base-button-active.png" id="6"]
+
+[node name="LevelDescription" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Margin" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="SafeFrame" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 600.0
+mouse_filter = 2
+texture = ExtResource("2")
+
+[node name="Title" type="Label" parent="SafeFrame"]
+layout_mode = 0
+offset_right = 800.0
+offset_top = 16.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DescPanel" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 112.0
+offset_right = 496.0
+offset_bottom = 504.0
+mouse_filter = 2
+texture = ExtResource("3")
+
+[node name="DescText" type="Label" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 128.0
+offset_right = 488.0
+offset_bottom = 488.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+autowrap_mode = 3
+
+[node name="InfoPanel" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 528.0
+offset_top = 112.0
+offset_right = 784.0
+offset_bottom = 504.0
+mouse_filter = 2
+texture = ExtResource("4")
+
+[node name="Info" type="Control" parent="SafeFrame"]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 600.0
+mouse_filter = 2
+
+[node name="BestTimeLabel" type="Label" parent="SafeFrame/Info"]
+layout_mode = 0
+offset_left = 536.0
+offset_top = 128.0
+offset_right = 776.0
+offset_bottom = 160.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+text = "description.best_time"
+vertical_alignment = 1
+
+[node name="BestTimeValue" type="Label" parent="SafeFrame/Info"]
+layout_mode = 0
+offset_left = 536.0
+offset_top = 168.0
+offset_right = 776.0
+offset_bottom = 200.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BestScoreLabel" type="Label" parent="SafeFrame/Info"]
+layout_mode = 0
+offset_left = 536.0
+offset_top = 224.0
+offset_right = 776.0
+offset_bottom = 256.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+text = "description.best_score"
+vertical_alignment = 1
+
+[node name="BestScoreValue" type="Label" parent="SafeFrame/Info"]
+layout_mode = 0
+offset_left = 536.0
+offset_top = 264.0
+offset_right = 776.0
+offset_bottom = 296.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SizeLabel" type="Label" parent="SafeFrame/Info"]
+layout_mode = 0
+offset_left = 536.0
+offset_top = 320.0
+offset_right = 776.0
+offset_bottom = 352.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+text = "description.size"
+vertical_alignment = 1
+
+[node name="SizeValue" type="Label" parent="SafeFrame/Info"]
+layout_mode = 0
+offset_left = 536.0
+offset_top = 360.0
+offset_right = 776.0
+offset_bottom = 392.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="DifficultyLabel" type="Label" parent="SafeFrame/Info"]
+layout_mode = 0
+offset_left = 536.0
+offset_top = 416.0
+offset_right = 776.0
+offset_bottom = 448.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+text = "description.difficulty"
+vertical_alignment = 1
+
+[node name="DifficultyValue" type="Label" parent="SafeFrame/Info"]
+layout_mode = 0
+offset_left = 536.0
+offset_top = 456.0
+offset_right = 776.0
+offset_bottom = 488.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Back" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 536.0
+offset_right = 176.0
+offset_bottom = 584.0
+texture_normal = ExtResource("5")
+texture_pressed = ExtResource("6")
+texture_hover = ExtResource("6")
+
+[node name="Label" type="Label" parent="SafeFrame/Back"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "description.back"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Continue" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 624.0
+offset_top = 536.0
+offset_right = 784.0
+offset_bottom = 584.0
+texture_normal = ExtResource("5")
+texture_pressed = ExtResource("6")
+texture_hover = ExtResource("6")
+
+[node name="Label" type="Label" parent="SafeFrame/Continue"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "common.continue"
+horizontal_alignment = 1
+vertical_alignment = 1

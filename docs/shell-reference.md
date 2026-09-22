@@ -357,6 +357,29 @@ screens **13 and 14** only. The tree, the description screen and character selec
 nothing and simply keep whatever is playing, which is `Menu1` because every route to them
 passes through the main menu.
 
+## What the port builds on this
+
+`tools/export_level_index.py` reads the two tree tables and both `.col` files per level into
+`resources/levels/index.json`, so the lattice, the unlock edges, the difficulty and each
+level's size and condition are generated rather than transcribed. It refuses to run unless
+the column table is still triangular and the difficulty table is still the column minus one.
+
+`autoloads/progress_store.gd` keeps the original's fields, its two sentinels and its
+win-only write policy, but puts the registry values and `HIGHSCORE.DAT` together in one
+`user://progress.cfg`: a `[progress]` section holding the two masks and a `[level_N]`
+section per level. It does not write the binary file or touch the registry.
+
+Two divergences worth naming:
+
+- **A level with no imported scene opens its description but cannot be started.** The
+  original ships all 21, so it never has to refuse one; this port has imported some, and
+  `Kontynuuj` is disabled for the rest rather than hiding them from the tree.
+- **The screens are laid out in an 800x600 safe frame** that a wider window pillarboxes in
+  black, as the original does. See [widescreen.md](widescreen.md).
+
+The description screen's `%s` splicing is shared with the pause panel through
+`scenes/shared/goal_text.gd`, since both show the same recovered sentence.
+
 ## Not chased
 
 The 9-slice `CO_GUI_WINDOWS_*` frame — which screens draw it — was left for the task that

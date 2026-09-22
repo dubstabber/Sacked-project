@@ -26,6 +26,7 @@ func _run() -> void:
 	_check_mode_selection()
 	_check_player_name_rules()
 	_check_result_routing()
+	_check_the_tree_reaches_a_level_through_its_description()
 	await _check_result_screen_shows_the_outcome()
 	await _check_lost_level_returns_to_a_fresh_run()
 
@@ -100,6 +101,29 @@ func _check_result_routing() -> void:
 	_manager.last_level_won = true
 	_expect(_manager.last_level_won, "a win is recorded for the result screen")
 	_manager.last_level_won = false
+
+
+# sub_403F20's case 15 sends a tree node to the description screen, and its case 16 sends
+# Kontynuuj into the level. There is no route from the tree straight into a level.
+func _check_the_tree_reaches_a_level_through_its_description() -> void:
+	var before: int = _manager.selected_level
+	_manager.open_level_description(2)
+	_expect(
+		_manager.current == ScreenManagerScript.Screen.LEVEL_DESCRIPTION,
+		"a tree node opens the description screen"
+	)
+	_expect(_manager.selected_level == 2, "the description screen is told which level it describes")
+
+	_manager.start_level(2)
+	_expect(_manager.current == ScreenManagerScript.Screen.LEVEL, "Kontynuuj starts the level it describes")
+
+	# A level with no scene still gets a description screen; only the start is refused.
+	_manager.open_level_description(ScreenManagerScript.LEVEL_COUNT)
+	_expect(
+		_manager.current == ScreenManagerScript.Screen.LEVEL_DESCRIPTION,
+		"an unimported level still opens its description"
+	)
+	_manager.selected_level = before
 
 
 # The whole way round: a lost level reaches the result screen, the result screen leads back

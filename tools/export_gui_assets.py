@@ -56,6 +56,25 @@ SCREENS = [
     ("CO_GUI_SCREENS_MENU_BACKGROUND", "images/gui/screens/menu_background.png"),
 ]
 
+# The shell between levels. The tree's backdrop has its lattice of linking bars painted in,
+# so the screen is that one picture plus 21 node buttons at recovered coordinates; the six
+# node faces are the three states in their active and passive halves. The base button face is
+# the 160x48 one every shell screen shares. See docs/shell-reference.md.
+MENU = [
+    ("CO_GUI_SCREENS_LEVELTREE", "images/gui/screens/level-tree.png"),
+    ("CO_GUI_MENU_BASE_BG_06", "images/gui/screens/level-description.png"),
+    ("CO_GUI_MENU_LEVEL_BACKDROP_DESC", "images/gui/menu/level-backdrop-desc.png"),
+    ("CO_GUI_MENU_LEVEL_BACKDROP_INFO", "images/gui/menu/level-backdrop-info.png"),
+    ("CO_GUI_MENU_LEVEL_BUTTON_FREE_ACTIVE", "images/gui/menu/level-node-free-active.png"),
+    ("CO_GUI_MENU_LEVEL_BUTTON_FREE_PASSIVE", "images/gui/menu/level-node-free-passive.png"),
+    ("CO_GUI_MENU_LEVEL_BUTTON_PLAYED_ACTIVE", "images/gui/menu/level-node-played-active.png"),
+    ("CO_GUI_MENU_LEVEL_BUTTON_PLAYED_PASSIVE", "images/gui/menu/level-node-played-passive.png"),
+    ("CO_GUI_MENU_LEVEL_BUTTON_LOCKED_ACTIVE", "images/gui/menu/level-node-locked-active.png"),
+    ("CO_GUI_MENU_LEVEL_BUTTON_LOCKED_PASSIVE", "images/gui/menu/level-node-locked-passive.png"),
+    ("CO_GUI_MENU_BASE_BUTTON_ACTIVE", "images/gui/menu/base-button-active.png"),
+    ("CO_GUI_MENU_BASE_BUTTON_PASSIVE", "images/gui/menu/base-button-passive.png"),
+]
+
 FONTS = [
     ("CO_EFFECT_FONT_SCORE", "images/gui/fonts/score-digits.png"),
 ]
@@ -123,7 +142,7 @@ def specs(root: Path) -> list:
     decoded image, or a Path naming an alternate extraction to decode it from instead.
     """
     result = []
-    for sprite, destination in CONSOLE + SCREENS:
+    for sprite, destination in CONSOLE + SCREENS + MENU:
         result.append((GUI, sprite, destination, None))
     result.append(("CO_GUI", "CO_GUI_CONSOLE_CONSOLE", UNLABELLED_CONSOLE, unlabelled_console))
     for sprite, destination in FONTS:

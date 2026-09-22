@@ -21,6 +21,8 @@ const SCREENS := [
 	"res://scenes/screens/boot_loading.tscn",
 	"res://scenes/screens/main_menu.tscn",
 	"res://scenes/screens/character_select.tscn",
+	"res://scenes/screens/level_tree.tscn",
+	"res://scenes/screens/level_description.tscn",
 	"res://scenes/screens/level_result.tscn",
 ]
 

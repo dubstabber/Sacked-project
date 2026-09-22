@@ -38,6 +38,7 @@ var won := false
 var aggression := 0.0
 
 var _elapsed_seconds := -1
+var _screen_manager: Node
 var _warned := false
 
 
@@ -53,7 +54,8 @@ func _ready() -> void:
 	var screen_manager := get_node_or_null("/root/ScreenManager")
 	if screen_manager != null:
 		mode = StringName(screen_manager.get("selected_game_mode"))
-		finished.connect(screen_manager.report_level_finished)
+		_screen_manager = screen_manager
+		finished.connect(_report_finished)
 	set_physics_process(enabled)
 
 
@@ -142,6 +144,12 @@ func _evaluate(seconds: float) -> void:
 		_finish(true)
 	elif seconds > limit:
 		_finish(false)
+
+
+# sub_406E70 records the run it is handed, so the score and the clock travel with the
+# outcome rather than being fetched back out of a level that is about to be freed.
+func _report_finished(result: bool) -> void:
+	_screen_manager.call("report_level_finished", result, score, elapsed)
 
 
 func _finish(result: bool) -> void:

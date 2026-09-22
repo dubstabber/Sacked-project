@@ -72,13 +72,13 @@ func _check_pause_stops_the_level() -> void:
 	# The panel restates the level's own CONDITION, in its mode's wording.
 	session.mode = &"time"
 	var lines: Array = prompts._goal_lines()
-	_expect(lines[0] == tr(PROMPTS.TIME_GOAL), "the time game states its goal")
-	_expect(lines[1] == tr(PROMPTS.TIME_GOAL_FORMAT) % [4000, 6], "the time game states level 1's 4000 points in 6 minutes")
+	_expect(lines[0] == tr(GoalText.TIME_GOAL), "the time game states its goal")
+	_expect(lines[1] == tr(GoalText.TIME_GOAL_FORMAT) % [4000, 6], "the time game states level 1's 4000 points in 6 minutes")
 	_expect(lines[0] == "Aby ukończyć ten poziom, musisz zdobyć", "the Polish wording is the original's own")
 	session.mode = &"points"
 	lines = prompts._goal_lines()
-	_expect(lines[0] == tr(PROMPTS.POINTS_GOAL_FORMAT) % 5, "the points game states its own 5 minutes")
-	_expect(lines[1] == tr(PROMPTS.POINTS_TARGET_FORMAT) % 3000, "the points game states its own 3000 points")
+	_expect(lines[0] == tr(GoalText.POINTS_GOAL_FORMAT) % 5, "the points game states its own 5 minutes")
+	_expect(lines[1] == tr(GoalText.POINTS_TARGET_FORMAT) % 3000, "the points game states its own 3000 points")
 
 	_key(KEY_P)
 	await process_frame

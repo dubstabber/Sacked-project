@@ -18,10 +18,6 @@ const PROMPT_COLOR := Color(250.0 / 255.0, 250.0 / 255.0, 250.0 / 255.0)
 const LABEL_COLOR := Color(1.0, 1.0, 1.0)
 
 # Slots 156-161 and 167 of the original's text table; see docs/strings-reference.md.
-const TIME_GOAL := &"prompt.time_goal"
-const TIME_GOAL_FORMAT := &"prompt.time_goal_format"
-const POINTS_GOAL_FORMAT := &"prompt.points_goal_format"
-const POINTS_TARGET_FORMAT := &"prompt.points_target_format"
 const PAUSED := &"prompt.paused"
 const QUIT_QUESTION := &"prompt.quit_question"
 const QUIT_ANSWER := &"prompt.quit_answer"
@@ -109,10 +105,7 @@ func _goal_lines() -> Array:
 		limit = float(_session.limit_seconds())
 		target = int(_session.target_score())
 		mode = _session.mode
-	var minutes := int(limit / 60.0)
-	if mode == &"points":
-		return [tr(POINTS_GOAL_FORMAT) % minutes, tr(POINTS_TARGET_FORMAT) % target]
-	return [tr(TIME_GOAL), tr(TIME_GOAL_FORMAT) % [target, minutes]]
+	return GoalText.lines(mode, limit, target)
 
 
 # The recovered rects are x 49..750 of an 800-wide viewport; a wider canvas moves them by
