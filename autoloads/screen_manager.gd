@@ -5,18 +5,22 @@ enum Screen {
 	MAIN_MENU,
 	CHARACTER_SELECT,
 	LEVEL_TREE,
-	LEVEL_1,
+	LEVEL,
 	LEVEL_RESULT,
 }
 
+# Screen.LEVEL resolves through selected_level instead, so it has no entry here.
 const _SCENE_PATHS := {
 	Screen.BOOT_LOADING: "res://scenes/screens/boot_loading.tscn",
 	Screen.MAIN_MENU: "res://scenes/screens/main_menu.tscn",
 	Screen.CHARACTER_SELECT: "res://scenes/screens/character_select.tscn",
 	Screen.LEVEL_TREE: "res://scenes/screens/level_tree.tscn",
-	Screen.LEVEL_1: "res://scenes/level_1.tscn",
 	Screen.LEVEL_RESULT: "res://scenes/screens/level_result.tscn",
 }
+
+# The original's level tree offers buttons 1 to 21; sub_408D00 turns button n into the
+# original's level index n - 1. See docs/game-rules-reference.md.
+const LEVEL_COUNT := 21
 
 const _PROFILES := {
 	&"jobless": preload("res://scenes/player/profiles/jobless.tres"),
@@ -33,6 +37,7 @@ const DEFAULT_PLAYER_NAMES := {
 const PLAYER_NAME_MAX_LENGTH := 16
 
 var current: Screen = Screen.BOOT_LOADING
+var selected_level := 1
 var selected_game_mode: StringName = &"time"
 var last_level_won := false
 var selected_character: StringName = DEFAULT_CHARACTER
@@ -59,7 +64,40 @@ func _ready() -> void:
 func change_to(screen: Screen) -> void:
 	current = screen
 	_sync_menu_music()
-	get_tree().change_scene_to_file(_SCENE_PATHS[screen])
+	get_tree().change_scene_to_file(scene_path(screen))
+
+
+func scene_path(screen: Screen) -> String:
+	if screen == Screen.LEVEL:
+		return level_scene_path(selected_level)
+	return String(_SCENE_PATHS[screen])
+
+
+func level_scene_path(level: int) -> String:
+	return "res://scenes/level_%d.tscn" % level
+
+
+# ResourceLoader rather than a directory listing, so this also answers in an exported build.
+func is_level_available(level: int) -> bool:
+	if level < 1 or level > LEVEL_COUNT:
+		return false
+	return ResourceLoader.exists(level_scene_path(level))
+
+
+func available_levels() -> Array[int]:
+	var levels: Array[int] = []
+	for level in range(1, LEVEL_COUNT + 1):
+		if is_level_available(level):
+			levels.append(level)
+	return levels
+
+
+func start_level(level: int) -> void:
+	if not is_level_available(level):
+		push_warning("No imported level %d" % level)
+		return
+	selected_level = level
+	change_to(Screen.LEVEL)
 
 
 func change_to_main_menu() -> void:
