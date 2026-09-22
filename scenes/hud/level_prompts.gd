@@ -1,10 +1,13 @@
 extends Control
 
 # The two panels Main_RenderUpdate draws over a running level: the pause panel, which
-# restates what the level asks for, and the quit confirmation. Both are centred on x 400
-# with a two-pixel drop shadow; see docs/game-rules-reference.md.
+# restates what the level asks for, and the quit confirmation. Both are centred on x 400 of
+# the original's 800-wide viewport with a two-pixel drop shadow; see
+# docs/game-rules-reference.md. The port recentres them on the live width, which is the same
+# x on a 4:3 canvas -- see docs/widescreen.md.
 
 # (49, 232)-(750, 372) for the pause panel, (49, 150)-(750, 230) for the quit prompt.
+const ORIGINAL_WIDTH := 800.0
 const PAUSE_PANEL := Rect2(49, 232, 701, 140)
 const QUIT_PANEL := Rect2(49, 150, 701, 80)
 const SHADOW_OFFSET := Vector2(2, 2)
@@ -14,19 +17,25 @@ const PAUSE_COLOR := Color(250.0 / 255.0, 190.0 / 255.0, 100.0 / 255.0)
 const PROMPT_COLOR := Color(250.0 / 255.0, 250.0 / 255.0, 250.0 / 255.0)
 const LABEL_COLOR := Color(1.0, 1.0, 1.0)
 
-# The strings as the Polish release ships them.
-const TIME_GOAL := "Aby ukończyć ten poziom, musisz zdobyć"
-const TIME_GOAL_FORMAT := "%d punktów w ciągu %d minut."
-const POINTS_GOAL_FORMAT := "Zdobądź jak najwięcej puntków w ciągu %d minut."
-const POINTS_TARGET_FORMAT := "Potrzebujesz przynajmniej %d punktów!"
-const PAUSED := "Pauza"
-const QUIT_QUESTION := "Czy na pewno chcesz wyjść?"
-const QUIT_ANSWER := "(T)ak lub (N)ie"
+# Slots 156-161 and 167 of the original's text table; see docs/strings-reference.md.
+const TIME_GOAL := &"prompt.time_goal"
+const TIME_GOAL_FORMAT := &"prompt.time_goal_format"
+const POINTS_GOAL_FORMAT := &"prompt.points_goal_format"
+const POINTS_TARGET_FORMAT := &"prompt.points_target_format"
+const PAUSED := &"prompt.paused"
+const QUIT_QUESTION := &"prompt.quit_question"
+const QUIT_ANSWER := &"prompt.quit_answer"
+# The original answers this prompt with the initials its own wording names, so the keys are
+# part of the translation rather than constants: T/N in Polish, Y/N in English, J/N in German.
+const QUIT_YES_KEY := &"prompt.quit_yes_key"
+const QUIT_NO_KEY := &"prompt.quit_no_key"
 
 var is_paused := false
 var is_quit_prompt_open := false
 
 var _session: Node
+var _yes_key := KEY_NONE
+var _no_key := KEY_NONE
 
 
 func _ready() -> void:
@@ -35,6 +44,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_session = get_tree().get_first_node_in_group("level_session")
+	_bind_answer_keys()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -42,10 +52,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	var key := (event as InputEventKey).keycode
 	if is_quit_prompt_open:
-		# The original answers this prompt with the initials of Tak and Nie.
-		if key == KEY_T:
+		if key == _yes_key:
 			_leave_level()
-		elif key == KEY_N:
+		elif key == _no_key:
 			is_quit_prompt_open = false
 			queue_redraw()
 		else:
@@ -80,15 +89,15 @@ func _leave_level() -> void:
 
 func _draw() -> void:
 	if is_paused:
-		_draw_panel(PAUSE_PANEL)
+		_draw_panel(panel_rect(PAUSE_PANEL))
 		var lines := _goal_lines()
 		_draw_centred(lines[0], PAUSE_PANEL.position.y + 10.0, PAUSE_COLOR)
 		_draw_centred(lines[1], PAUSE_PANEL.position.y + 35.0, PAUSE_COLOR)
-		_draw_centred(PAUSED, PAUSE_PANEL.position.y + 85.0, LABEL_COLOR)
+		_draw_centred(tr(PAUSED), PAUSE_PANEL.position.y + 85.0, LABEL_COLOR)
 	if is_quit_prompt_open:
-		_draw_panel(QUIT_PANEL)
-		_draw_centred(QUIT_QUESTION, QUIT_PANEL.position.y + 10.0, PROMPT_COLOR)
-		_draw_centred(QUIT_ANSWER, QUIT_PANEL.position.y + 35.0, PROMPT_COLOR)
+		_draw_panel(panel_rect(QUIT_PANEL))
+		_draw_centred(tr(QUIT_QUESTION), QUIT_PANEL.position.y + 10.0, PROMPT_COLOR)
+		_draw_centred(tr(QUIT_ANSWER), QUIT_PANEL.position.y + 35.0, PROMPT_COLOR)
 
 
 # The panel restates the level's own CONDITION, in the wording its mode uses.
@@ -102,8 +111,14 @@ func _goal_lines() -> Array:
 		mode = _session.mode
 	var minutes := int(limit / 60.0)
 	if mode == &"points":
-		return [POINTS_GOAL_FORMAT % minutes, POINTS_TARGET_FORMAT % target]
-	return [TIME_GOAL, TIME_GOAL_FORMAT % [target, minutes]]
+		return [tr(POINTS_GOAL_FORMAT) % minutes, tr(POINTS_TARGET_FORMAT) % target]
+	return [tr(TIME_GOAL), tr(TIME_GOAL_FORMAT) % [target, minutes]]
+
+
+# The recovered rects are x 49..750 of an 800-wide viewport; a wider canvas moves them by
+# half of what it added, so they stay centred and keep their original width.
+func panel_rect(panel: Rect2) -> Rect2:
+	return Rect2(panel.position + Vector2((size.x - ORIGINAL_WIDTH) * 0.5, 0.0), panel.size)
 
 
 func _draw_panel(panel: Rect2) -> void:
@@ -112,8 +127,21 @@ func _draw_panel(panel: Rect2) -> void:
 
 func _draw_centred(text: String, top: float, color: Color) -> void:
 	var font := ThemeDB.fallback_font
-	var size := ThemeDB.fallback_font_size
-	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
-	var origin := Vector2(400.0 - width * 0.5, top + float(size))
-	draw_string(font, origin + SHADOW_OFFSET, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, SHADOW_COLOR)
-	draw_string(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+	var font_size := ThemeDB.fallback_font_size
+	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	var origin := Vector2(size.x * 0.5 - width * 0.5, top + float(font_size))
+	draw_string(font, origin + SHADOW_OFFSET, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, SHADOW_COLOR)
+	draw_string(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
+
+
+# The label a key is drawn as, not its position, so a German player presses the J their own
+# prompt names.
+func _bind_answer_keys() -> void:
+	_yes_key = OS.find_keycode_from_string(tr(QUIT_YES_KEY))
+	_no_key = OS.find_keycode_from_string(tr(QUIT_NO_KEY))
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED:
+		_bind_answer_keys()
+		queue_redraw()

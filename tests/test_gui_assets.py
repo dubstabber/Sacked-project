@@ -3,7 +3,13 @@ from pathlib import Path
 
 from PIL import Image
 
-from tools.export_gui_assets import slug, specs
+from tools.export_gui_assets import (
+    CONSOLE_FILL,
+    CONSOLE_LABEL_BOXES,
+    UNLABELLED_CONSOLE,
+    slug,
+    specs,
+)
 from tools.sprite_source import SpriteSource
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -112,7 +118,7 @@ class ExportTableTest(unittest.TestCase):
 
     def test_table_covers_every_icon_and_bubble(self):
         table = specs(ROOT)
-        destinations = [destination for _, _, destination in table]
+        destinations = [destination for _, _, destination, _ in table]
         self.assertEqual(len(destinations), len(set(destinations)))
         icons = [path for path in destinations if path.startswith("images/gui/acticons/")]
         bubbles = [path for path in destinations if path.startswith("images/effects/bubbles/")]
@@ -121,9 +127,31 @@ class ExportTableTest(unittest.TestCase):
         self.assertEqual(len(bubbles), 10)
 
     def test_every_exported_file_exists(self):
-        for _, sprite, destination in specs(ROOT):
+        for _, sprite, destination, _ in specs(ROOT):
             with self.subTest(sprite=sprite):
                 self.assertTrue((ROOT / destination).is_file(), destination)
+
+    def test_the_console_variant_only_erases_the_two_painted_words(self):
+        """The erased copy exists so the other languages can draw their own labels."""
+        from PIL import Image
+
+        painted = Image.open(ROOT / "images/gui/hud/console.png").convert("RGBA")
+        erased = Image.open(ROOT / UNLABELLED_CONSOLE).convert("RGBA")
+        self.assertEqual(painted.size, erased.size)
+
+        boxes = CONSOLE_LABEL_BOXES
+        before, after = painted.load(), erased.load()
+        changed = 0
+        for y in range(painted.size[1]):
+            for x in range(painted.size[0]):
+                inside = any(x0 <= x < x1 and y0 <= y < y1 for x0, y0, x1, y1 in boxes)
+                if not inside:
+                    self.assertEqual(before[x, y], after[x, y], f"pixel {(x, y)} changed outside a word box")
+                elif before[x, y] != after[x, y]:
+                    changed += 1
+                    self.assertEqual(after[x, y], CONSOLE_FILL)
+        # If nothing changed the words are still there, which is the failure that matters.
+        self.assertGreater(changed, 500)
 
 
 if __name__ == "__main__":

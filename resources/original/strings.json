@@ -1,0 +1,1851 @@
+{
+  "generated_by": "tools/export_strings.py",
+  "sources": {
+    "pl": {
+      "exe": "extract-sacked-assets/sacked/sacked.exe",
+      "size": 479232,
+      "sha256": "6404096cc74e1c954daa2033a7d7d7826429a27deaa679f1ff7103027f614a86",
+      "text_table": "0x0046bd04",
+      "level_texts": "extract-sacked-assets/sacked/Levels"
+    },
+    "de": {
+      "exe": "extract-sacked-assets/Gefeuert/Gefeuert.exe",
+      "size": 487424,
+      "sha256": "f1ddc93d9fa17ed9db4199139c58a19aea71e8e77317ed60085a518f1715d05d",
+      "text_table": "0x0046dd1c",
+      "level_texts": "extract-sacked-assets/Gefeuert/Levels"
+    }
+  },
+  "text_table_slots": 255,
+  "generated_languages": [
+    "pl",
+    "de"
+  ],
+  "authored_languages": [
+    "en"
+  ],
+  "strings": {
+    "prompt.quit_question": {
+      "slots": [
+        156
+      ],
+      "pl": "Czy na pewno chcesz wyjść?",
+      "de": "Möchtest Du das Spiel wirklich beenden?"
+    },
+    "prompt.quit_answer": {
+      "slots": [
+        157
+      ],
+      "pl": "(T)ak lub (N)ie",
+      "de": "(J)a oder (N)ein"
+    },
+    "prompt.time_goal": {
+      "slots": [
+        158
+      ],
+      "pl": "Aby ukończyć ten poziom, musisz zdobyć",
+      "de": "Um diesen Level erfolgreich zu bestehen, musst Du"
+    },
+    "prompt.time_goal_format": {
+      "slots": [
+        159
+      ],
+      "pl": "%d punktów w ciągu %d minut.",
+      "de": "%d Punkte in %d Minuten erreichen."
+    },
+    "prompt.points_goal_format": {
+      "slots": [
+        160
+      ],
+      "pl": "Zdobądź jak najwięcej puntków w ciągu %d minut.",
+      "de": "Versuche in %d Minuten möglichst viele Punkte zu erreichen."
+    },
+    "prompt.points_target_format": {
+      "slots": [
+        161
+      ],
+      "pl": "Potrzebujesz przynajmniej %d punktów!",
+      "de": "Du brauchst mindestens %d Punkte!"
+    },
+    "highscore.best_score_format": {
+      "slots": [
+        162
+      ],
+      "pl": "Najlepszy wynik: %d",
+      "de": "Bester Score: %d"
+    },
+    "highscore.best_score_none": {
+      "slots": [
+        163
+      ],
+      "pl": "Najlepszy wynik: ---",
+      "de": "Bester Score: ---"
+    },
+    "highscore.best_time_format": {
+      "slots": [
+        164
+      ],
+      "pl": "Najlepszy czas: %02d:%02d",
+      "de": "Beste Zeit: %02d:%02d"
+    },
+    "highscore.best_time_none": {
+      "slots": [
+        165
+      ],
+      "pl": "Najlepszy czas: --:--",
+      "de": "Beste Zeit: --:--"
+    },
+    "hud.thermo_warning": {
+      "slots": [
+        166
+      ],
+      "pl": "Uważaj! Twoi koledzy... ojej!",
+      "de": "Vorsicht!!! Deine Kollegen...Oh oh!"
+    },
+    "prompt.paused": {
+      "slots": [
+        167
+      ],
+      "pl": "Pauza",
+      "de": "Spiel angehalten"
+    },
+    "result.manual": {
+      "slots": [
+        172
+      ],
+      "pl": "Instrukcja",
+      "de": "Spielanleitung"
+    },
+    "result.quit_game": {
+      "slots": [
+        173
+      ],
+      "pl": "Opuść grę",
+      "de": "Spiel beenden"
+    },
+    "result.next_level": {
+      "slots": [
+        175
+      ],
+      "pl": "Następny poziom",
+      "de": "Nächster Level"
+    },
+    "result.retry": {
+      "slots": [
+        177
+      ],
+      "pl": "Powtórz",
+      "de": "Nochmal"
+    },
+    "catch.exclaim.0": {
+      "slots": [
+        179
+      ],
+      "pl": "Mamy cię!",
+      "de": "Erwischt!!!"
+    },
+    "catch.exclaim.1": {
+      "slots": [
+        180
+      ],
+      "pl": "A kto to?!",
+      "de": "Wen haben wir denn da?"
+    },
+    "catch.exclaim.2": {
+      "slots": [
+        181
+      ],
+      "pl": "Co się dzieje?",
+      "de": "Was geht hier vor?"
+    },
+    "catch.exclaim.3": {
+      "slots": [
+        182
+      ],
+      "pl": "Co za bezczelność!",
+      "de": "Wie unverschämt!"
+    },
+    "menu.time_game": {
+      "slots": [
+        183
+      ],
+      "pl": "Gra na czas",
+      "de": "Zeitmodus"
+    },
+    "menu.points_game": {
+      "slots": [
+        184
+      ],
+      "pl": "Gra na punkty",
+      "de": "Punktemodus"
+    },
+    "menu.highscores": {
+      "slots": [
+        185
+      ],
+      "pl": "Najlepsze wyniki",
+      "de": "Highscore"
+    },
+    "menu.names": {
+      "slots": [
+        186
+      ],
+      "pl": "Imiona",
+      "de": "Kollegennamen"
+    },
+    "menu.sound": {
+      "slots": [
+        187
+      ],
+      "pl": "Dźwięk i muzyka",
+      "de": "Sound & Musik"
+    },
+    "menu.quit": {
+      "slots": [
+        188
+      ],
+      "pl": "Wyjście",
+      "de": "Beenden"
+    },
+    "level_tree.title": {
+      "slots": [
+        190
+      ],
+      "pl": "Wybór poziomu",
+      "de": "Levelauswahl"
+    },
+    "description.best_time": {
+      "slots": [
+        194
+      ],
+      "pl": "Najlepszy czas",
+      "de": "Beste Zeit"
+    },
+    "description.best_score": {
+      "slots": [
+        195
+      ],
+      "pl": "Najlepszy wynik",
+      "de": "Bester Score"
+    },
+    "description.size": {
+      "slots": [
+        196
+      ],
+      "pl": "Rozmiar",
+      "de": "Grösse"
+    },
+    "description.difficulty": {
+      "slots": [
+        197
+      ],
+      "pl": "Poziom trudności",
+      "de": "Schwierigkeit"
+    },
+    "description.back": {
+      "slots": [
+        198
+      ],
+      "pl": "Wróć",
+      "de": "Zurück"
+    },
+    "highscore.best_score": {
+      "slots": [
+        200
+      ],
+      "pl": "Najlepszy wynik",
+      "de": "Highscore"
+    },
+    "highscore.score": {
+      "slots": [
+        201
+      ],
+      "pl": "Wynik",
+      "de": "Score"
+    },
+    "highscore.time": {
+      "slots": [
+        202
+      ],
+      "pl": "Czas",
+      "de": "Zeit"
+    },
+    "highscore.page.0": {
+      "slots": [
+        203
+      ],
+      "pl": "1 do 7",
+      "de": "1 bis 7"
+    },
+    "highscore.page.1": {
+      "slots": [
+        204
+      ],
+      "pl": "8 do 14",
+      "de": "8 bis 14"
+    },
+    "highscore.page.2": {
+      "slots": [
+        205
+      ],
+      "pl": "15 do 21",
+      "de": "15 bis 21"
+    },
+    "highscore.page.3": {
+      "slots": [
+        206
+      ],
+      "pl": "22 do 28",
+      "de": "22 bis 28"
+    },
+    "names.title": {
+      "slots": [
+        209
+      ],
+      "pl": "Wybierz kolegów",
+      "de": "Kollegen Benennen"
+    },
+    "character_select.title": {
+      "slots": [
+        213
+      ],
+      "pl": "Wybierz swoje alter ego",
+      "de": "Wähle Deine Erscheinung"
+    },
+    "character.jobless": {
+      "slots": [
+        214
+      ],
+      "pl": "Jo Bless",
+      "de": "Jo Bless"
+    },
+    "character.anne": {
+      "slots": [
+        215
+      ],
+      "pl": "Anne Employed",
+      "de": "Anne Employed"
+    },
+    "highscore.name_prompt": {
+      "slots": [
+        219
+      ],
+      "pl": "Imię do tabeli najlepszych wyników",
+      "de": "Name für Highscore"
+    },
+    "sound.title": {
+      "slots": [
+        221
+      ],
+      "pl": "Konfiguracja dźwięku i muzyki",
+      "de": "Sound & Musik Einstellungen"
+    },
+    "common.main_menu": {
+      "slots": [
+        174,
+        176,
+        191,
+        207,
+        211,
+        217,
+        223
+      ],
+      "pl": "Główne menu",
+      "de": "Hauptmenü"
+    },
+    "common.continue": {
+      "slots": [
+        178,
+        193,
+        218
+      ],
+      "pl": "Kontynuuj",
+      "de": "Weiter"
+    },
+    "common.defaults": {
+      "slots": [
+        210,
+        216,
+        222
+      ],
+      "pl": "Domyślne",
+      "de": "Standard"
+    },
+    "difficulty.0": {
+      "slots": [
+        225
+      ],
+      "pl": "Początkujący",
+      "de": "Anfängerlevel"
+    },
+    "difficulty.1": {
+      "slots": [
+        226
+      ],
+      "pl": "łatwy",
+      "de": "leicht"
+    },
+    "difficulty.2": {
+      "slots": [
+        227
+      ],
+      "pl": "Wyzwanie",
+      "de": "anspruchsvoll"
+    },
+    "difficulty.3": {
+      "slots": [
+        228
+      ],
+      "pl": "Wymagający",
+      "de": "schwer"
+    },
+    "difficulty.4": {
+      "slots": [
+        229
+      ],
+      "pl": "Trudny",
+      "de": "sehr schwer"
+    },
+    "difficulty.5": {
+      "slots": [
+        230
+      ],
+      "pl": "Bardzo trudny",
+      "de": "extrem"
+    },
+    "difficulty.6": {
+      "slots": [
+        231
+      ],
+      "pl": "Ekstremalny",
+      "de": "Mach dein Testament"
+    },
+    "level.1.title": {
+      "slots": [
+        233
+      ],
+      "pl": "Pierwszy ostatni dzień",
+      "de": "Der erste letzte Tag"
+    },
+    "level.2.title": {
+      "slots": [
+        234
+      ],
+      "pl": "Sala zemsty",
+      "de": "Der lange Flur der Rache"
+    },
+    "level.3.title": {
+      "slots": [
+        235
+      ],
+      "pl": "Twój były szef jest bardzo zajęty",
+      "de": "Ist der Boss aus dem Haus..."
+    },
+    "level.4.title": {
+      "slots": [
+        236
+      ],
+      "pl": "Tyle pracy...",
+      "de": "So viel zu tun..."
+    },
+    "level.5.title": {
+      "slots": [
+        237
+      ],
+      "pl": "Biuro rzeczy zniszczonych",
+      "de": "Little Office of Destruction"
+    },
+    "level.6.title": {
+      "slots": [
+        238
+      ],
+      "pl": "Jak wół w polu...",
+      "de": "Wie die Hühner auf der Stange..."
+    },
+    "level.7.title": {
+      "slots": [
+        239
+      ],
+      "pl": "Biuro... ostateczna granica",
+      "de": "Unendliche Weiten"
+    },
+    "level.8.title": {
+      "slots": [
+        240
+      ],
+      "pl": "To robota Eike",
+      "de": "Eike hats gerichtet"
+    },
+    "level.9.title": {
+      "slots": [
+        241
+      ],
+      "pl": "By zagrać na nerwach byłym kolegom...",
+      "de": "Was Du nicht willst, das man Dir tut,..."
+    },
+    "level.10.title": {
+      "slots": [
+        242
+      ],
+      "pl": "Randka w kuchni",
+      "de": "Treffpunkt Küche"
+    },
+    "level.11.title": {
+      "slots": [
+        243
+      ],
+      "pl": "Masz dokumenty?",
+      "de": "Rausgeschmissen... ?"
+    },
+    "level.12.title": {
+      "slots": [
+        244
+      ],
+      "pl": "Klaustrofobia",
+      "de": "Klaustrophobia"
+    },
+    "level.13.title": {
+      "slots": [
+        245
+      ],
+      "pl": "Gniew owiec",
+      "de": "Zornige Lämmer"
+    },
+    "level.14.title": {
+      "slots": [
+        246
+      ],
+      "pl": "Ciasna kuchnia...",
+      "de": "Durch diese hohle Küche muss er kommen"
+    },
+    "level.15.title": {
+      "slots": [
+        247
+      ],
+      "pl": "Uwielbiam zapach świec dymnych o poranku...",
+      "de": "Ich liebe den Geruch von Rauchbomben..."
+    },
+    "level.16.title": {
+      "slots": [
+        248
+      ],
+      "pl": "Szef poszedł na panienki",
+      "de": "Schlecht fürs Geschäft"
+    },
+    "level.17.title": {
+      "slots": [
+        249
+      ],
+      "pl": "Trudne rozstania",
+      "de": "Abschiedsgrüsse"
+    },
+    "level.18.title": {
+      "slots": [
+        250
+      ],
+      "pl": "Oko burzy",
+      "de": "Im Auge des Sturms"
+    },
+    "level.19.title": {
+      "slots": [
+        251
+      ],
+      "pl": "Zarządzanie Jakością",
+      "de": "Mustergültige Teppichmuster"
+    },
+    "level.20.title": {
+      "slots": [
+        252
+      ],
+      "pl": "Ostatnie wyjście F4",
+      "de": "Last Exit F4"
+    },
+    "level.21.title": {
+      "slots": [
+        253
+      ],
+      "pl": "Biuro Paradiso",
+      "de": "Büro Paradiso"
+    },
+    "action.1.name": {
+      "pl": "Zrestrukturyzuj pliki",
+      "de": "Die Aktenablage optimieren",
+      "action": 1,
+      "slots": [
+        1
+      ]
+    },
+    "action.2.name": {
+      "pl": "Opróżnij szafkę kierownika",
+      "de": "Koffer ausleeren",
+      "action": 2,
+      "slots": [
+        2
+      ]
+    },
+    "action.3.name": {
+      "pl": "Opróżnij teczkę szefa",
+      "de": "Koffer vom Boss ausleeren",
+      "action": 3,
+      "slots": [
+        3
+      ]
+    },
+    "action.4.name": {
+      "pl": "Uwolnij rybki",
+      "de": "Die Fische befreien",
+      "action": 4,
+      "slots": [
+        4
+      ]
+    },
+    "action.5.name": {
+      "pl": "Zatruj akwarium",
+      "de": "Spülmaschinentab im Aquarium auflösen",
+      "action": 5,
+      "slots": [
+        5
+      ]
+    },
+    "action.6.name": {
+      "pl": "Zabarw akwarium",
+      "de": "Aquariumwasser neu färben",
+      "action": 6,
+      "slots": [
+        6
+      ]
+    },
+    "action.7.name": {
+      "pl": "Zabierz delegacje",
+      "de": "Aushang der Geschäftsleitung abreissen",
+      "action": 7,
+      "slots": [
+        7
+      ]
+    },
+    "action.8.name": {
+      "pl": "Odwróć obrazy",
+      "de": "Bild umdrehen",
+      "action": 8,
+      "slots": [
+        8
+      ]
+    },
+    "action.9.name": {
+      "pl": "Zabierz pocztę",
+      "de": "Post sicherstellen",
+      "action": 9,
+      "slots": [
+        9
+      ]
+    },
+    "action.10.name": {
+      "pl": "Połam płyty CD",
+      "de": "CD Belastungstest",
+      "action": 10,
+      "slots": [
+        10
+      ]
+    },
+    "action.11.name": {
+      "pl": "Zaklej otwór",
+      "de": "Münzeinwurf verkleben",
+      "action": 11,
+      "slots": [
+        11
+      ]
+    },
+    "action.12.name": {
+      "pl": "Przewróć automat z napojami",
+      "de": "Automat umkippen",
+      "action": 12,
+      "slots": [
+        12
+      ]
+    },
+    "action.13.name": {
+      "pl": "Sformatuj dysk C:",
+      "de": "Festplatte formatieren",
+      "action": 13,
+      "slots": [
+        13
+      ]
+    },
+    "action.14.name": {
+      "pl": "Wyłącz komputer",
+      "de": "Computer ausschalten",
+      "action": 14,
+      "slots": [
+        14
+      ]
+    },
+    "action.15.name": {
+      "pl": "Zainstaluj parę wirusów",
+      "de": "Viren installieren",
+      "action": 15,
+      "slots": [
+        15
+      ]
+    },
+    "action.16.name": {
+      "pl": "Powyginaj dyskietki",
+      "de": "Disketten Belastungstest",
+      "action": 16,
+      "slots": [
+        16
+      ]
+    },
+    "action.17.name": {
+      "pl": "Wyłącz drukarkę",
+      "de": "Drucker ausschalten",
+      "action": 17,
+      "slots": [
+        17
+      ]
+    },
+    "action.18.name": {
+      "pl": "Ukradnij cartridge",
+      "de": "Druckerpatrone ausbauen",
+      "action": 18,
+      "slots": [
+        18
+      ]
+    },
+    "action.19.name": {
+      "pl": "Zabierz zapalniczkę",
+      "de": "Feuerzeug sicherstellen",
+      "action": 19,
+      "slots": [
+        19
+      ]
+    },
+    "action.20.name": {
+      "pl": "Opróżnij teczkę",
+      "de": "Tasche ausleeren",
+      "action": 20,
+      "slots": [
+        20
+      ]
+    },
+    "action.21.name": {
+      "pl": "Ustaw kuchenkę na pełną moc",
+      "de": "Herdplatten überhitzen",
+      "action": 21,
+      "slots": [
+        21
+      ]
+    },
+    "action.22.name": {
+      "pl": "Zapal sobie (w poczekalni)",
+      "de": "Rauchen (im Aufenthaltsraum)",
+      "action": 22,
+      "slots": [
+        22
+      ]
+    },
+    "action.23.name": {
+      "pl": "Zapal sobie (gdziekolwiek)",
+      "de": "Rauchen (irgendwo)",
+      "action": 23,
+      "slots": [
+        23
+      ]
+    },
+    "action.24.name": {
+      "pl": "Zapal sobie (w gabinecie szefa)",
+      "de": "Rauchen (Bosszimmer)",
+      "action": 24,
+      "slots": [
+        24
+      ]
+    },
+    "action.25.name": {
+      "pl": "Sprawdź, co jest napisane na spodzie kubka",
+      "de": "Schauen was auf dem Tassenboden steht",
+      "action": 25,
+      "slots": [
+        25
+      ]
+    },
+    "action.26.name": {
+      "pl": "Zabierz filiżankę do kawy",
+      "de": "Kaffeetasse einsammeln",
+      "action": 26,
+      "slots": [
+        26
+      ]
+    },
+    "action.27.name": {
+      "pl": "Zabierz klej",
+      "de": "Kleber einsammeln",
+      "action": 27,
+      "slots": [
+        27
+      ]
+    },
+    "action.28.name": {
+      "pl": "Ustaw kopiarkę na ciągłą pracę",
+      "de": "Kopierer auf Dauerbetrieb stellen",
+      "action": 28,
+      "slots": [
+        28
+      ]
+    },
+    "action.29.name": {
+      "pl": "Wyłącz kopiarkę",
+      "de": "Kopierer ausschalten",
+      "action": 29,
+      "slots": [
+        29
+      ]
+    },
+    "action.30.name": {
+      "pl": "Zabierz jajka",
+      "de": "Eier entwenden",
+      "action": 30,
+      "slots": [
+        30
+      ]
+    },
+    "action.31.name": {
+      "pl": "Odmroź lodówkę",
+      "de": "Kühlschrank abtauen",
+      "action": 31,
+      "slots": [
+        31
+      ]
+    },
+    "action.32.name": {
+      "pl": "Podgrzej jajka w mikrofalówce",
+      "de": "Eier in die Mikrowelle",
+      "action": 32,
+      "slots": [
+        32
+      ]
+    },
+    "action.33.name": {
+      "pl": "Podpal kosz na śmieci",
+      "de": "Mülleimer in Brand setzen",
+      "action": 33,
+      "slots": [
+        33
+      ]
+    },
+    "action.34.name": {
+      "pl": "Podpal śmietnik",
+      "de": "Papierkorb in Brand setzen",
+      "action": 34,
+      "slots": [
+        34
+      ]
+    },
+    "action.35.name": {
+      "pl": "Zabierz plakat",
+      "de": "Poster von der Wand reissen",
+      "action": 35,
+      "slots": [
+        35
+      ]
+    },
+    "action.36.name": {
+      "pl": "Poprzekładaj pocztę",
+      "de": "Postfächer umsortieren",
+      "action": 36,
+      "slots": [
+        36
+      ]
+    },
+    "action.37.name": {
+      "pl": "Przewróć wiadro",
+      "de": "Über den Putzeimer stolpern",
+      "action": 37,
+      "slots": [
+        37
+      ]
+    },
+    "action.38.name": {
+      "pl": "Podkręć głośność",
+      "de": "Radio lautstellen",
+      "action": 38,
+      "slots": [
+        38
+      ]
+    },
+    "action.39.name": {
+      "pl": "Zwiń klucze",
+      "de": "Schlüssel verschwinden lassen",
+      "action": 39,
+      "slots": [
+        39
+      ]
+    },
+    "action.40.name": {
+      "pl": "Rozbij lustro",
+      "de": "Spiegel zerschlagen",
+      "action": 40,
+      "slots": [
+        40
+      ]
+    },
+    "action.41.name": {
+      "pl": "Zabierz pastylki ze zmywarki",
+      "de": "Spülitab entwenden",
+      "action": 41,
+      "slots": [
+        41
+      ]
+    },
+    "action.42.name": {
+      "pl": "Połam długopisy",
+      "de": "Stifte zerbrechen",
+      "action": 42,
+      "slots": [
+        42
+      ]
+    },
+    "action.43.name": {
+      "pl": "Zabierz papier toaletowy",
+      "de": "85% der Menschheit leben ohne Klopapier",
+      "action": 43,
+      "slots": [
+        43
+      ]
+    },
+    "action.44.name": {
+      "pl": "Rozwiń papier w toalecie",
+      "de": "Klopapier zur Dekoration einsetzen",
+      "action": 44,
+      "slots": [
+        44
+      ]
+    },
+    "action.45.name": {
+      "pl": "Zaklej zamek",
+      "de": "Kleber mit Drehschloss kombinieren",
+      "action": 45,
+      "slots": [
+        45
+      ]
+    },
+    "action.46.name": {
+      "pl": "Przewróć sejf",
+      "de": "Tresor umkippen",
+      "action": 46,
+      "slots": [
+        46
+      ]
+    },
+    "action.47.name": {
+      "pl": "Przepal czajnik elektryczny",
+      "de": "Wasserkocher überhitzen",
+      "action": 47,
+      "slots": [
+        47
+      ]
+    },
+    "action.48.name": {
+      "pl": "Zabierz papierosy",
+      "de": "Zigaretten entwenden",
+      "action": 48,
+      "slots": [
+        48
+      ]
+    },
+    "action.49.name": {
+      "pl": "Zamień cukier na sól",
+      "de": "Zucker und Salz vertauschen",
+      "action": 49,
+      "slots": [
+        49
+      ]
+    },
+    "action.50.name": {
+      "pl": "Zabierz poufne dokumenty",
+      "de": "Vertrauliche Akten entwenden",
+      "action": 50,
+      "slots": [
+        50
+      ]
+    },
+    "action.51.name": {
+      "pl": "Opróżnij teczkę dozorcy",
+      "de": "Koffer vom Hausmeister ausleeren",
+      "action": 51,
+      "slots": [
+        51
+      ]
+    },
+    "action.52.name": {
+      "pl": "Zabierz legitymację AA",
+      "de": "Ausweis Anonyme Alkies entwenden",
+      "action": 52,
+      "slots": [
+        52
+      ]
+    },
+    "action.53.name": {
+      "pl": "Zabierz list pochwalny",
+      "de": "Vorladung zur Polizei entwenden",
+      "action": 53,
+      "slots": [
+        53
+      ]
+    },
+    "action.54.name": {
+      "pl": "Zabierz notatkę z szyfrem do sejfu",
+      "de": "Zettel mit Tresorcode entwenden",
+      "action": 54,
+      "slots": [
+        54
+      ]
+    },
+    "action.55.name": {
+      "pl": "Zabierz list miłosny od szefa",
+      "de": "Einen Liebesbrief vom Boss einstecken",
+      "action": 55,
+      "slots": [
+        55
+      ]
+    },
+    "action.56.name": {
+      "pl": "Wlej keczup do automatu",
+      "de": "Automat mit Ketchup garnieren",
+      "action": 56,
+      "slots": [
+        56
+      ]
+    },
+    "action.57.name": {
+      "pl": "Okradnij automat",
+      "de": "Automat plündern",
+      "action": 57,
+      "slots": [
+        57
+      ]
+    },
+    "action.58.name": {
+      "pl": "Pobaw się klawiaturą",
+      "de": "Computertastatur mit Tesa polstern",
+      "action": 58,
+      "slots": [
+        58
+      ]
+    },
+    "action.59.name": {
+      "pl": "Przefaksuj poufne dokumenty do konkurencji",
+      "de": "vertrauliche Akten an Konkurrenten faxen",
+      "action": 59,
+      "slots": [
+        59
+      ]
+    },
+    "action.60.name": {
+      "pl": "Zamów nieprzyzwoite reprodukcje",
+      "de": "Unanständige Faxe anfordern",
+      "action": 60,
+      "slots": [
+        60
+      ]
+    },
+    "action.61.name": {
+      "pl": "Przefaksuj ściśle tajne dokumenty do konkurencji",
+      "de": "Firmengeheimnisse an Konkurrenten faxen",
+      "action": 61,
+      "slots": [
+        61
+      ]
+    },
+    "action.62.name": {
+      "pl": "Wyłącz faks",
+      "de": "Faxgerät ausschalten",
+      "action": 62,
+      "slots": [
+        62
+      ]
+    },
+    "action.63.name": {
+      "pl": "Zabierz gaśnicę",
+      "de": "Feuerlöscher entwenden",
+      "action": 63,
+      "slots": [
+        63
+      ]
+    },
+    "action.65.name": {
+      "pl": "Zabierz majtki",
+      "de": "Slip entwenden",
+      "action": 65,
+      "slots": [
+        65
+      ]
+    },
+    "action.66.name": {
+      "pl": "Załóż podsłuch w komórce",
+      "de": "Handy mit Tesa verpacken",
+      "action": 66,
+      "slots": [
+        66
+      ]
+    },
+    "action.67.name": {
+      "pl": "Zmień kod w komórce",
+      "de": "Handy-PIN sperren",
+      "action": 67,
+      "slots": [
+        67
+      ]
+    },
+    "action.68.name": {
+      "pl": "Prześlij obsceniczne SMS-y",
+      "de": "Obszöne SMS verschicken",
+      "action": 68,
+      "slots": [
+        68
+      ]
+    },
+    "action.74.name": {
+      "pl": "Nasikaj (gdziekolwiek)",
+      "de": "Revier markieren",
+      "action": 74,
+      "slots": [
+        74
+      ]
+    },
+    "action.75.name": {
+      "pl": "Nasikaj (w gabinecie szefa)",
+      "de": "Revier markieren (Bosszimmer)",
+      "action": 75,
+      "slots": [
+        75
+      ]
+    },
+    "action.76.name": {
+      "pl": "Zapal sobie (w serwerowni)",
+      "de": "Rauchen im Serverraum",
+      "action": 76,
+      "slots": [
+        76
+      ]
+    },
+    "action.77.name": {
+      "pl": "Opróżnij dzbanek do kawy",
+      "de": "Kaffee an die Milben ausschenken",
+      "action": 77,
+      "slots": [
+        77
+      ]
+    },
+    "action.78.name": {
+      "pl": "Zabierz keczup",
+      "de": "Ketchup einsammeln",
+      "action": 78,
+      "slots": [
+        78
+      ]
+    },
+    "action.79.name": {
+      "pl": "Włóż świecę dymną do klimatyzatora",
+      "de": "Rauchbombe in die Klimaanlage werfen",
+      "action": 79,
+      "slots": [
+        79
+      ]
+    },
+    "action.80.name": {
+      "pl": "Włóż jajka do klimatyzatora",
+      "de": "Eier in die Klimaanlage werfen",
+      "action": 80,
+      "slots": [
+        80
+      ]
+    },
+    "action.81.name": {
+      "pl": "Przedziuraw kondomy szefa",
+      "de": "Kondome vom Boss perforieren",
+      "action": 81,
+      "slots": [
+        81
+      ]
+    },
+    "action.82.name": {
+      "pl": "Zepsuj kopiarkę",
+      "de": "Papierstau verursachen",
+      "action": 82,
+      "slots": [
+        82
+      ]
+    },
+    "action.83.name": {
+      "pl": "Użyj keczupu jako ozdoby",
+      "de": "Ketchup in den Kühlschrank spritzen",
+      "action": 83,
+      "slots": [
+        83
+      ]
+    },
+    "action.84.name": {
+      "pl": "Napełnij pęcherz",
+      "de": "Die Blase füllen",
+      "action": 84,
+      "slots": [
+        84
+      ]
+    },
+    "action.86.name": {
+      "pl": "Włóż świecę dymną do mikrofalówki",
+      "de": "Rauchbombe in die Mikrowelle",
+      "action": 86,
+      "slots": [
+        86
+      ]
+    },
+    "action.91.name": {
+      "pl": "Podkradnij świecę dymną",
+      "de": "Rauchbombe entwenden",
+      "action": 91,
+      "slots": [
+        91
+      ]
+    },
+    "action.92.name": {
+      "pl": "Zabierz klucz uniwersalny",
+      "de": "Generalschlüsselbund entwenden",
+      "action": 92,
+      "slots": [
+        92
+      ]
+    },
+    "action.93.name": {
+      "pl": "Przyczep legitymację AA do tablicy",
+      "de": "Ein anonymer Alkoholiker weniger...",
+      "action": 93,
+      "slots": [
+        93
+      ]
+    },
+    "action.94.name": {
+      "pl": "Powieś wezwania na tablicy",
+      "de": "Vorladung am Brett ausstellen",
+      "action": 94,
+      "slots": [
+        94
+      ]
+    },
+    "action.95.name": {
+      "pl": "Przyczep rozbierane zdjęcia sekretarki na tablicy",
+      "de": "Liebesbrief vom Boss am Brett ausstellen",
+      "action": 95,
+      "slots": [
+        95
+      ]
+    },
+    "action.96.name": {
+      "pl": "Ochłodź serwer keczupem",
+      "de": "Server mit Ketchup kühlen",
+      "action": 96,
+      "slots": [
+        96
+      ]
+    },
+    "action.97.name": {
+      "pl": "Skasuj wszystkie dane z serwera",
+      "de": "Server löschen",
+      "action": 97,
+      "slots": [
+        97
+      ]
+    },
+    "action.98.name": {
+      "pl": "Odłącz serwer",
+      "de": "Kabel vom Server entfernen",
+      "action": 98,
+      "slots": [
+        98
+      ]
+    },
+    "action.99.name": {
+      "pl": "Przewróć serwer",
+      "de": "Server kippen",
+      "action": 99,
+      "slots": [
+        99
+      ]
+    },
+    "action.102.name": {
+      "pl": "Zakręć rurę ze ściekami",
+      "de": "Abwasserschlauch entfernen",
+      "action": 102,
+      "slots": [
+        102
+      ]
+    },
+    "action.103.name": {
+      "pl": "Namieszaj na tablicy",
+      "de": "Tafel verunstalten",
+      "action": 103,
+      "slots": [
+        103
+      ]
+    },
+    "action.104.name": {
+      "pl": "Owiń telefon taśmą samoprzylepną",
+      "de": "Dieser Apparat ist falsch verbunden",
+      "action": 104,
+      "slots": [
+        104
+      ]
+    },
+    "action.105.name": {
+      "pl": "Zadzwoń po pogotowie",
+      "de": "Notruf bei der Polizei (Geiselnahme)",
+      "action": 105,
+      "slots": [
+        105
+      ]
+    },
+    "action.106.name": {
+      "pl": "Zamów kilka ton pizzy",
+      "de": "sinnlose Pizza-Bestellung",
+      "action": 106,
+      "slots": [
+        106
+      ]
+    },
+    "action.107.name": {
+      "pl": "Ups, taśma samoprzylepna się do mnie lepi",
+      "de": "Tesa entwenden",
+      "action": 107,
+      "slots": [
+        107
+      ]
+    },
+    "action.108.name": {
+      "pl": "Powieś używane majtki na lampce",
+      "de": "Slip auf Tischlampe dekorieren",
+      "action": 108,
+      "slots": [
+        108
+      ]
+    },
+    "action.109.name": {
+      "pl": "Zapchaj ubikację papierem toaletowym",
+      "de": "Diese Rolle bringt das Klo zum Überlaufen",
+      "action": 109,
+      "slots": [
+        109
+      ]
+    },
+    "action.110.name": {
+      "pl": "Zamknij kolegę z pracy w kabinie toaletowej",
+      "de": "Gefangen im kleinsten Büro der Welt",
+      "action": 110,
+      "slots": [
+        110
+      ]
+    },
+    "action.112.name": {
+      "pl": "Zamknij szefa w kabinie toaletowej",
+      "de": "Da drin wird noch eine Führungskraft benötigt",
+      "action": 112,
+      "slots": [
+        112
+      ]
+    },
+    "action.113.name": {
+      "pl": "Spuść wodę w zapchanej ubikacji",
+      "de": "Überschwemmung!",
+      "action": 113,
+      "slots": [
+        113
+      ]
+    },
+    "action.114.name": {
+      "pl": "Zabierz tajne dokumenty firmowe",
+      "de": "Firmengeheimnisse entwenden",
+      "action": 114,
+      "slots": [
+        114
+      ]
+    },
+    "action.115.name": {
+      "pl": "Otwórz sejf",
+      "de": "Tresor öffnen",
+      "action": 115,
+      "slots": [
+        115
+      ]
+    },
+    "action.116.name": {
+      "pl": "Puść film porno na telebimie",
+      "de": "Hardcorestreifen auf den Videobeamer",
+      "action": 116,
+      "slots": [
+        116
+      ]
+    },
+    "action.117.name": {
+      "pl": "Zabierz kasetę z pornolem",
+      "de": "Hardcorevideo einstecken",
+      "action": 117,
+      "slots": [
+        117
+      ]
+    },
+    "action.118.name": {
+      "pl": "Ustaw ogrzewanie na maksimum",
+      "de": "Heizung voll aufdrehen",
+      "action": 118,
+      "slots": [
+        118
+      ]
+    },
+    "action.119.name": {
+      "pl": "Ustaw pułapkę na myszy w szufladzie",
+      "de": "Mausefalle in Tasche plazieren",
+      "action": 119,
+      "slots": [
+        119
+      ]
+    },
+    "action.120.name": {
+      "pl": "Posmaruj okno mydłem",
+      "de": "Das Fenster einseifen",
+      "action": 120,
+      "slots": [
+        120
+      ]
+    },
+    "action.125.name": {
+      "pl": "Nasikaj do dzbanka z kawą",
+      "de": "Verwöhn-Aroma für die Kollegen",
+      "action": 125,
+      "slots": [
+        125
+      ]
+    },
+    "action.127.name": {
+      "pl": "Unendlich viele Kopien des Adonishinterns anfertigen",
+      "de": "Unendlich viele Kopien des Adonishinterns anfertigen",
+      "action": 127,
+      "slots": [
+        127
+      ]
+    },
+    "action.128.name": {
+      "pl": "Ustaw pułapkę na myszy w lodówcę",
+      "de": "Mausefalle in Kühlschrank plazieren",
+      "action": 128,
+      "slots": [
+        128
+      ]
+    },
+    "action.129.name": {
+      "pl": "Zabierz pułapkę na myszy",
+      "de": "Mausefalle nehmen",
+      "action": 129,
+      "slots": [
+        129
+      ]
+    },
+    "action.130.name": {
+      "pl": "Opróżnij prywatną butelkę szefa",
+      "de": "Getränk leertrinken",
+      "action": 130,
+      "slots": [
+        130
+      ]
+    },
+    "action.131.name": {
+      "pl": "Zabierz mydło",
+      "de": "Seife mitgehen lassen",
+      "action": 131,
+      "slots": [
+        131
+      ]
+    },
+    "action.133.name": {
+      "pl": "Zadzwoń na 0-700",
+      "de": "0190-Nummern anrufen",
+      "action": 133,
+      "slots": [
+        133
+      ]
+    },
+    "action.135.name": {
+      "pl": "Przelej wodę w zlewie",
+      "de": "Nach mir die Sintflut!",
+      "action": 135,
+      "slots": [
+        135
+      ]
+    },
+    "action.136.name": {
+      "pl": "Przelej wodę w zlewie",
+      "de": "Nach mir die Sintflut!",
+      "action": 136,
+      "slots": [
+        135
+      ]
+    },
+    "action.137.name": {
+      "pl": "Zabierz korek",
+      "de": "Waschbeckenstöpsel entwenden",
+      "action": 137,
+      "slots": [
+        137
+      ]
+    },
+    "action.139.name": {
+      "pl": "Zepsuj dystrybutor wody",
+      "de": "Wasserspender auslaufen lassen",
+      "action": 139,
+      "slots": [
+        139
+      ]
+    },
+    "action.140.name": {
+      "pl": "Pokaż misiowi, gdzie jego miejsce",
+      "de": "Am Teddybär ein Exempel statuieren",
+      "action": 140,
+      "slots": [
+        140
+      ]
+    },
+    "action.141.name": {
+      "pl": "Zabierz filiżanki",
+      "de": "Zu Unrecht erworbene Auszeichnungen entwenden",
+      "action": 141,
+      "slots": [
+        141
+      ]
+    },
+    "action.143.name": {
+      "pl": "Globus mit Klopapier umwickeln",
+      "de": "Globus mit Klopapier umwickeln",
+      "action": 143,
+      "slots": [
+        143
+      ]
+    },
+    "action.144.name": {
+      "pl": "Podpal świat",
+      "de": "Umwickelten Globus in Brand stecken",
+      "action": 144,
+      "slots": [
+        144
+      ]
+    },
+    "action.145.name": {
+      "pl": "Spal materiały dotyczące sprzedaży",
+      "de": "P.O.S. Material abfackeln",
+      "action": 145,
+      "slots": [
+        145
+      ]
+    },
+    "action.146.name": {
+      "pl": "Opróżnij maszynę z ręcznikami",
+      "de": "Handtuchspender leeren",
+      "action": 146,
+      "slots": [
+        146
+      ]
+    },
+    "action.150.name": {
+      "pl": "Wlej wodę do kabiny",
+      "de": "Wasser in Kabine spritzen",
+      "action": 150,
+      "slots": [
+        150
+      ]
+    },
+    "action.151.name": {
+      "pl": "Wlej wodę do kabiny",
+      "de": "Wasser in Kabine spritzen",
+      "action": 151,
+      "slots": [
+        150
+      ]
+    },
+    "action.152.name": {
+      "pl": "Wlej wodę do kabiny",
+      "de": "Wasser in Kabine spritzen",
+      "action": 152,
+      "slots": [
+        150
+      ]
+    },
+    "action.153.name": {
+      "pl": "Rozlej wodę z wiadra",
+      "de": "Über den Putzeimer stolpern",
+      "action": 153,
+      "slots": [
+        153
+      ]
+    },
+    "action.154.name": {
+      "pl": "Napełnij pęcherz",
+      "de": "Die Blase füllen",
+      "action": 154,
+      "slots": [
+        84
+      ]
+    },
+    "action.155.name": {
+      "pl": "Zabierz klucz uniwersalny",
+      "de": "Generalschlüsselbund entwenden",
+      "action": 155,
+      "slots": [
+        92
+      ]
+    },
+    "level.1.description": {
+      "pl": "Niewielkie biuro, w którym pracują nadal dwie osoby. Wyczucie czasu jest niezbędne.",
+      "de": "Ein kleines Büro mit nur noch zwei Angestellten. Zur richtigen Zeit am richtigen Ort zu sein ist hier der Schlüssel zum Erfolg.",
+      "file": "Level_00.txt"
+    },
+    "level.1.hint": {
+      "pl": "Czy wiesz, że Twoi koledzy zawsze Cię zauważą, jeśli siejesz zniszczenie blisko nich? Nawet jeśli są odwróceni plecami.",
+      "de": "Wusstest Du schon, dass Deine Ex-Kollegen Zerstörungen in ihrer unmittelbaren Nähe immer bemerken?",
+      "file": "Level_00.txt"
+    },
+    "level.2.description": {
+      "pl": "Zobacz, jak harują przy biurkach na prawo i lewo.",
+      "de": "Zur Rechten wie zur Linken siehst Du sie an Ihren Plätzen schinden.",
+      "file": "Level_01.txt"
+    },
+    "level.2.hint": {
+      "pl": "Wiesz, że zapalniczka to podstawowe narzędzie zemsty?",
+      "de": "Wusstest Du schon, dass ein Feuerzeug eines der wichtigsten Rachewerkzeuge ist?",
+      "file": "Level_01.txt"
+    },
+    "level.3.description": {
+      "pl": "Szef właśnie cię wywalił, ale teraz wyszedł z biura. Do dzieła!",
+      "de": "Eben hat Dein Boss Dich noch gefeuert, jetzt ist er schon nicht mehr im Büro.  Kannst Du diesen Umstand nutzen?",
+      "file": "Level_02.txt"
+    },
+    "level.3.hint": {
+      "pl": "Czy wiesz, że do palenia potrzebujesz dwóch rzeczy?",
+      "de": "Wusstest Du schon, dass zum Rauchen zwei Utensilien benötigt werden?",
+      "file": "Level_02.txt"
+    },
+    "level.4.description": {
+      "pl": "...i tak mało czasu! Mądrze go wykorzystaj!",
+      "de": "... und so wenig Zeit.  Nutzen Du sollst sie weise!",
+      "file": "Level_03.txt"
+    },
+    "level.4.hint": {
+      "pl": "Wiesz, że możesz sprawdzić pole widzenia Twoich kolegów?",
+      "de": "Wusstest Du schon, dass Du den Sichtkegel jedes Kollegen sichtbar machen kannst?",
+      "file": "Level_03.txt"
+    },
+    "level.5.description": {
+      "pl": "To biuro zawsze było dla ciebie za małe. Nadszedł czas na wielkie czyny.",
+      "de": "In diesem Büro war es Dir sowieso schon immer zu eng.  Jetzt ist die Zeit für grosse Taten.",
+      "file": "Level_04.txt"
+    },
+    "level.5.hint": {
+      "pl": "Czy wiesz, że możesz cofnąć czynność, póki widzisz menu akcji? Jeśli już zaczniesz coś robić, nie możesz tego zatrzymać.",
+      "de": "Wusstest Du schon, dass Aktionen im Auswahlfenster abgebrochen werden können?  Einmal gestartet, geht das nicht mehr.",
+      "file": "Level_04.txt"
+    },
+    "level.6.description": {
+      "pl": "...tak twoi byli koledzy zaharowują się na śmierć w biurze. Wstrząśnij nimi trochę.",
+      "de": "...sitzen Deine Ex-Kollegen bei der Arbeit.  Los!  Scheuch sie mal ordentlich auf.",
+      "file": "Level_05.txt"
+    },
+    "level.6.hint": {
+      "pl": "Wiesz, że niektóre czynności będą niedostępne, jeśli wykonasz najpierw inne?",
+      "de": "Wusstest Du schon, dass manche Aktionen andere sperren?",
+      "file": "Level_05.txt"
+    },
+    "level.7.description": {
+      "pl": "Zniszcz, czego nie zniszczył dotąd żaden człowiek.",
+      "de": "Zerstöre, wo noch nie zuvor ein Mensch zerstört hat.",
+      "file": "Level_06.txt"
+    },
+    "level.7.hint": {
+      "pl": "Wiesz, że przy pomocy faksu możesz przesłać ściśle tajne dokumenty całemu światu?",
+      "de": "Wusstest Du schon, dass mit einem Faxgerät auch sensible Firmeninformationen in die Welt verschickt werden können?",
+      "file": "Level_06.txt"
+    },
+    "level.8.description": {
+      "pl": "Nie rozumiesz? My też nie mogliśmy w to uwierzyć.",
+      "de": "Das verstehst Du nicht?  Wir hätten es auch nicht geglaubt.",
+      "file": "Level_07.txt"
+    },
+    "level.8.hint": {
+      "pl": "Wiesz, że sejf można otworzyć?",
+      "de": "Wusstest Du schon, dass Du den Safe auch öffnen kannst?",
+      "file": "Level_07.txt"
+    },
+    "level.9.description": {
+      "pl": "...niezbędne mogą okazać się niezwykłe metody.",
+      "de": "...das tu den anderen, das tut gut!",
+      "file": "Level_08.txt"
+    },
+    "level.9.hint": {
+      "pl": "Czy wiesz, że niektóre przedmioty lubią spać z rybkami?",
+      "de": "Wusstest Du schon, dass bestimmte Gegenstände im Aquarium nicht nur die Fische ärgern?",
+      "file": "Level_08.txt"
+    },
+    "level.10.description": {
+      "pl": "Byli koledzy są uzależnieni od kawy i przesiadują w kuchni. Masz spore pole do manewru!",
+      "de": "Diese Ex-Kollegen stehen ja andauernd in der Küche.  Kannst Du das für Deine Zwecke nutzen?",
+      "file": "Level_09.txt"
+    },
+    "level.10.hint": {
+      "pl": "Czy wiesz, że istnieje związek między kuchenkami mikrofalowymi i systemem klimatyzacji?",
+      "de": "Wusstest Du schon, dass es eine direkte Verbindung zwischen Klimaanlagen und Mikrowellen gibt?",
+      "file": "Level_09.txt"
+    },
+    "level.11.description": {
+      "pl": "Skorzystaj z nich w toalecie.",
+      "de": "Draufgeschissen!",
+      "file": "Level_10.txt"
+    },
+    "level.11.hint": {
+      "pl": "Czy wiesz, że liczy się nie tylko uczynek, ale także miejsce?",
+      "de": "Wusstest Du schon, dass Aktionen an verschiedenen Orten auch unterschiedlich gewertet werden können?",
+      "file": "Level_10.txt"
+    },
+    "level.12.description": {
+      "pl": "Małe, przytulne pokoje i tłum ludzi - to tworzy szczególną atmosferę, prawda?",
+      "de": "Enge Räume und viele Ex-Kollegen erzeugen einen ganz besonderen Flair.",
+      "file": "Level_11.txt"
+    },
+    "level.12.hint": {
+      "pl": "Czy wiesz, że ludzie, którzy stracą stanowisko pracy, mogą zacząć włóczyć się po okolicy?",
+      "de": "Wusstest Du schon, dass Ex-Kollegen sich nach Verlust ihres Arbeitsplatzes dem Vergnügen hingeben und durch das Büro streifen?",
+      "file": "Level_11.txt"
+    },
+    "level.13.description": {
+      "pl": "Każdy musi dbać o swój pokój. Dopóki nie usłyszy zewu natury...",
+      "de": "Hier muss jeder Angestellte auf sein eigenes Zimmer aufpassen.  Aber sie müssen ja auch mal was essen.",
+      "file": "Level_12.txt"
+    },
+    "level.13.hint": {
+      "pl": "Wiesz, że wkurzając kolegów zyskasz więcej punktów?",
+      "de": "Wusstest Du schon, dass der Zorn Deiner Ex-Kollegen auf Dauer Punkte bringt?",
+      "file": "Level_12.txt"
+    },
+    "level.14.description": {
+      "pl": "Znajdziesz tu szeroki wybór napojów. A że w przyrodzie nic nie ginie, musisz... Hehe, już łapiesz.",
+      "de": "Und nicht nur dort findet man ausreichend zu trinken.  Aber wohin, wenn man mal muss?  Hehe ... erraten.",
+      "file": "Level_13.txt"
+    },
+    "level.14.hint": {
+      "pl": "Wiesz, że mydło jest wielokrotnego użytku?",
+      "de": "Wusstest Du schon, dass Seife sich mehrmals benutzen lässt?",
+      "file": "Level_13.txt"
+    },
+    "level.15.description": {
+      "pl": "To zapach zemsty!",
+      "de": "Es riecht nach Rache!",
+      "file": "Level_14.txt"
+    },
+    "level.15.hint": {
+      "pl": "Wiesz, że możesz pozamykać kolegów w toalecie?",
+      "de": "Wusstest Du schon, dass man Ex-Kollegen auf der Toilette einsperren kann?",
+      "file": "Level_14.txt"
+    },
+    "level.16.description": {
+      "pl": "Ma więc ważniejsze sprawy na głowie, a nikt nie pilnuje jego gabinetu.",
+      "de": "Wer passt eigentlich auf das Bosszimmer auf, wenn dieser mal nicht da ist?",
+      "file": "Level_15.txt"
+    },
+    "level.16.hint": {
+      "pl": "Wiesz, że uniwersalny klucz otwiera przed Tobą nowe możliwości?",
+      "de": "Wusstest Du schon, dass der Generalschlüssel neue Aktionsmöglichkeiten erschliesst?",
+      "file": "Level_15.txt"
+    },
+    "level.17.description": {
+      "pl": "Pokaż szefowi co do niego czujesz",
+      "de": "Taten sagen mehr als 1000 Worte.  Zeige Deinem Boss, welch tiefe Gefühle Du für ihn hegst.",
+      "file": "Level_16.txt"
+    },
+    "level.17.hint": {
+      "pl": "Wiesz, że przemoc nie jest jedynym rozwiązaniem?",
+      "de": "Wusstest Du schon, dass Gewalt keine Lösung ist?",
+      "file": "Level_16.txt"
+    },
+    "level.18.description": {
+      "pl": "Może by tak opróżnić choć raz środkowe biuro?",
+      "de": "Wäre es schön, wenn das mittlere Büro mal leer wäre...",
+      "file": "Level_17.txt"
+    },
+    "level.18.hint": {
+      "pl": "Wiesz, że korki mogą bardzo namieszać? Chociaż ciężko je znaleźć.",
+      "de": "Wusstest Du schon, dass Waschbeckenstöpsel schwer zu finden sind?",
+      "file": "Level_17.txt"
+    },
+    "level.19.description": {
+      "pl": "Uważnie obejrzyj okolicę. Większość przedmiotów to już i tak złom, który należy posortować.",
+      "de": "Aber mustere auch den Rest genau.  Da gibt es reichlich gültige Objekte zum ausmustern.",
+      "file": "Level_18.txt"
+    },
+    "level.19.hint": {
+      "pl": "Wiesz, że Twoi byli koledzy są bardzo otwarci, co do swoich zamiarów? Wystarczy obserwować dymki nad ich głowami.",
+      "de": "Wusstest Du schon, dass Du an den Gedankenblasen über Deinen Ex-Kollegen ihre nächste Absicht ahnen kannst?",
+      "file": "Level_18.txt"
+    },
+    "level.20.description": {
+      "pl": "Szybki, wszechstronny, dynamiczny - to cechy dobrego urzędnika. Nigdy nie jest za późno, by je w sobie odnaleźć - nawet ostatniego dnia w pracy.",
+      "de": "Schnell, flexibel, dynamisch... manche Fähigkeiten wollen am letzten Tag noch entdeckt werden.",
+      "file": "Level_19.txt"
+    },
+    "level.20.hint": {
+      "pl": "Wiesz, że torby i mapy skrywają wiele ciekawych rzeczy?",
+      "de": "Wusstest Du schon, dass sich in Koffern und Taschen interessante Privatgegenstände finden lassen?",
+      "file": "Level_19.txt"
+    },
+    "level.21.description": {
+      "pl": "Długie korytarze, drogie dywany, wielka i czysta kuchnia, atrakcyjny personel i bogate wyposażenie, które czeka żeby je zniszczyć.",
+      "de": "Lange, blau leuchtende Flure, herrlich weiss glänzende Küchen und ein ganzes Sortiment an zu zerstörenden Gegenständen. Buchen Sie noch heute ...",
+      "file": "Level_20.txt"
+    },
+    "level.21.hint": {
+      "pl": "Wiesz, że problemy można rozwiązywać także werbalnie?",
+      "de": "Wusstest Du schon, dass man Probleme auch verbal lösen kann?",
+      "file": "Level_20.txt"
+    },
+    "app.window_title": {
+      "pl": "Gefeuert! - Dein letzter Tag",
+      "de": "Gefeuert! - Dein letzter Tag",
+      "va": {
+        "pl": "0x0046e004",
+        "de": "0x0047045c"
+      }
+    },
+    "prompt.quit_yes_key": {
+      "derived_from": "prompt.quit_answer",
+      "pl": "T",
+      "de": "J"
+    },
+    "prompt.quit_no_key": {
+      "derived_from": "prompt.quit_answer",
+      "pl": "N",
+      "de": "N"
+    },
+    "hud.console.time_label": {
+      "pl": "czas",
+      "origin": "port",
+      "reason": "painted into the console art; a Label for every other language"
+    },
+    "hud.console.score_label": {
+      "pl": "wynik",
+      "origin": "port",
+      "reason": "painted into the console art; a Label for every other language"
+    },
+    "character_select.name_label": {
+      "pl": "Imię gracza",
+      "origin": "port",
+      "reason": "the original's name box is unlabelled art"
+    },
+    "level_tree.level_n": {
+      "pl": "Poziom %d",
+      "origin": "port",
+      "reason": "the interim tree names levels the original draws as nodes"
+    }
+  }
+}

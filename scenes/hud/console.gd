@@ -2,10 +2,21 @@ extends CanvasLayer
 
 # The in-level console. Element positions and what each one shows are recovered in
 # docs/hud-reference.md; sub_405930 builds them and sub_403780 feeds them.
+#
+# The recovered coordinates are absolute in the original's 800x600 viewport, so they live as
+# offsets inside two 800x600 bands: Band carries the original's bottom-aligned elements and
+# Banners its top-aligned ones. See docs/widescreen.md.
 
 # sub_403780 prints "XX:XX" once the clock passes this.
 const CLOCK_OVERFLOW_SECONDS := 5940
 const IDLE_HOVER_TEXT := "..."
+
+# The console art has "czas" and "wynik" painted into it, so only the language it is painted
+# in can use it. Every other language gets the same frame with the words removed and draws
+# them as Labels. See docs/strings-reference.md.
+const PAINTED_LANGUAGE: StringName = &"pl"
+const PAINTED_FRAME := preload("res://images/gui/hud/console.png")
+const UNLABELLED_FRAME := preload("res://images/gui/hud/console-unlabelled.png")
 
 const PROGRESS_SHADER := preload("res://scenes/shared/round_bar.gdshader")
 # CGUIRoundBarTex's own fields: +96 is the fan radius and +1140 the angle its sweep starts
@@ -23,22 +34,31 @@ const AGGRO_BAR_BASE := 46.0
 const AGGRO_BAR_SCALE := 1.42
 # sub_407960 raises THERMO_UP and sets game+14748 to 2.0; sub_403780 counts it back down.
 const THERMO_SECONDS := 2.0
+# sub_407990 raises AGGRO_UP on a catch, and both sub_403780 and Main_RenderUpdate watch
+# game+72 while the screen is 4: at 2.0 s the banner comes down and the minigame opens.
+const AGGRO_SECONDS := 2.0
 
-@onready var _score: Label = $Score
-@onready var _clock: Label = $Clock
-@onready var _hover: Label = $HoverText
-@onready var _action_icon: Sprite2D = $ActionIcon
-@onready var _progress: Sprite2D = $ClockBar
-@onready var _aggro: Sprite2D = $AggroBar
-@onready var _thermo: Sprite2D = $ThermoUp
+@onready var _score: Label = $Band/Score
+@onready var _clock: Label = $Band/Clock
+@onready var _hover: Label = $Band/HoverText
+@onready var _action_icon: Sprite2D = $Band/ActionIcon
+@onready var _progress: Sprite2D = $Band/ClockBar
+@onready var _aggro: Sprite2D = $Band/AggroBar
+@onready var _thermo: Sprite2D = $Banners/ThermoUp
+@onready var _aggro_up: Sprite2D = $Banners/AggroUp
+@onready var _aggro_up_text: Label = $Banners/AggroUp/AggroUpText
+@onready var _frame: Sprite2D = $Band/Frame
+@onready var _painted_labels: Array[Label] = [$Band/TimeLabel, $Band/ScoreLabel]
 
 var _session: Node
 var _actions: Node
 var _progress_material: ShaderMaterial
 var _thermo_remaining := 0.0
+var _aggro_up_remaining := 0.0
 
 
 func _ready() -> void:
+	add_to_group("level_console")
 	_session = get_tree().get_first_node_in_group("level_session")
 	if _session != null:
 		_session.score_changed.connect(_on_score_changed)
@@ -49,6 +69,7 @@ func _ready() -> void:
 		_on_time_changed(int(_session.elapsed))
 		set_aggression(float(_session.aggression))
 	set_hover_text(IDLE_HOVER_TEXT)
+	_match_frame_to_language()
 
 	# game+14724 sits at (662, 536) -- the stopwatch -- and is fed
 	# player+992 * 100 / player+1000, swept rather than clipped. That position is the centre
@@ -98,18 +119,30 @@ func warn_of_aggravation() -> void:
 	_thermo.visible = true
 
 
+# sub_407990: the banner and one of four exclamations, for as long as the loading screen
+# that follows a catch. See docs/catch-reference.md. The Label translates the key itself.
+func warn_of_catch(exclamation_key: StringName) -> void:
+	_aggro_up_text.text = String(exclamation_key)
+	_aggro_up_remaining = AGGRO_SECONDS
+	_aggro_up.visible = true
+
+
 func _process(delta: float) -> void:
-	if _thermo_remaining <= 0.0:
-		return
-	_thermo_remaining -= delta
-	if _thermo_remaining <= 0.0:
-		_thermo_remaining = 0.0
-		_thermo.visible = false
+	if _thermo_remaining > 0.0:
+		_thermo_remaining -= delta
+		if _thermo_remaining <= 0.0:
+			_thermo_remaining = 0.0
+			_thermo.visible = false
+	if _aggro_up_remaining > 0.0:
+		_aggro_up_remaining -= delta
+		if _aggro_up_remaining <= 0.0:
+			_aggro_up_remaining = 0.0
+			_aggro_up.visible = false
 
 
 func set_inventory(inventory: PackedInt32Array) -> void:
 	for lamp_name in LAMP_SLOTS:
-		var lamp := get_node_or_null(lamp_name) as Sprite2D
+		var lamp := get_node_or_null("Band/" + lamp_name) as Sprite2D
 		if lamp == null:
 			continue
 		var lit := true
@@ -134,3 +167,15 @@ func _on_time_changed(seconds: int) -> void:
 
 func set_hover_text(text: String) -> void:
 	_hover.text = text if text != "" else IDLE_HOVER_TEXT
+
+
+func _match_frame_to_language() -> void:
+	var painted := TranslationServer.get_locale().begins_with(String(PAINTED_LANGUAGE))
+	_frame.texture = PAINTED_FRAME if painted else UNLABELLED_FRAME
+	for label in _painted_labels:
+		label.visible = not painted
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and _frame != null:
+		_match_frame_to_language()

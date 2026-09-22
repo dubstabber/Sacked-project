@@ -8,24 +8,38 @@
 [ext_resource type="Texture2D" path="res://images/gui/hud/lamp-piss.png" id="6"]
 [ext_resource type="Texture2D" path="res://images/gui/hud/lamp-smoke.png" id="7"]
 [ext_resource type="Texture2D" path="res://images/gui/hud/thermo-up.png" id="8"]
+[ext_resource type="Texture2D" path="res://images/gui/hud/aggro-up.png" id="9"]
+[ext_resource type="Texture2D" path="res://images/gui/hud/console-unlabelled.png" id="10"]
 
 [node name="Console" type="CanvasLayer"]
 layer = 50
 script = ExtResource("1")
 
-[node name="Frame" type="Sprite2D" parent="."]
+[node name="Band" type="Control" parent="."]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -600.0
+offset_right = 400.0
+offset_bottom = 0.0
+mouse_filter = 2
+
+[node name="Frame" type="Sprite2D" parent="Band"]
 texture_filter = 1
 position = Vector2(0, 400)
 centered = false
 texture = ExtResource("2")
 
-[node name="ActionIcon" type="Sprite2D" parent="."]
+[node name="ActionIcon" type="Sprite2D" parent="Band"]
 texture_filter = 1
 visible = false
 position = Vector2(170, 477)
 centered = false
 
-[node name="AggroBar" type="Sprite2D" parent="."]
+[node name="AggroBar" type="Sprite2D" parent="Band"]
 texture_filter = 1
 position = Vector2(410, 497)
 centered = false
@@ -33,7 +47,7 @@ texture = ExtResource("3")
 region_enabled = true
 region_rect = Rect2(0, 0, 46, 40)
 
-[node name="ClockBar" type="Sprite2D" parent="."]
+[node name="ClockBar" type="Sprite2D" parent="Band"]
 texture_filter = 1
 visible = false
 position = Vector2(662, 536)
@@ -41,44 +55,28 @@ centered = false
 offset = Vector2(-36, -36)
 texture = ExtResource("4")
 
-[node name="LampSmoke" type="Sprite2D" parent="."]
+[node name="LampSmoke" type="Sprite2D" parent="Band"]
 texture_filter = 1
 visible = false
 position = Vector2(717, 461)
 centered = false
 texture = ExtResource("7")
 
-[node name="LampPiss" type="Sprite2D" parent="."]
+[node name="LampPiss" type="Sprite2D" parent="Band"]
 texture_filter = 1
 visible = false
 position = Vector2(756, 485)
 centered = false
 texture = ExtResource("6")
 
-[node name="LampMatrix" type="Sprite2D" parent="."]
+[node name="LampMatrix" type="Sprite2D" parent="Band"]
 texture_filter = 1
 visible = false
 position = Vector2(754, 537)
 centered = false
 texture = ExtResource("5")
 
-[node name="ThermoUp" type="Sprite2D" parent="."]
-texture_filter = 1
-visible = false
-modulate = Color(1, 1, 1, 0.8627451)
-position = Vector2(5, 5)
-centered = false
-texture = ExtResource("8")
-
-[node name="ThermoUpText" type="Label" parent="ThermoUp"]
-offset_left = 235.0
-offset_top = 45.0
-offset_right = 795.0
-offset_bottom = 90.0
-theme_override_font_sizes/font_size = 30
-text = "Uważaj! Twoi koledzy... ojej!"
-
-[node name="Score" type="Label" parent="."]
+[node name="Score" type="Label" parent="Band"]
 offset_left = 85.0
 offset_top = 500.0
 offset_right = 245.0
@@ -86,7 +84,7 @@ offset_bottom = 532.0
 theme_override_font_sizes/font_size = 22
 text = "00000"
 
-[node name="Clock" type="Label" parent="."]
+[node name="Clock" type="Label" parent="Band"]
 offset_left = 250.0
 offset_top = 500.0
 offset_right = 410.0
@@ -94,7 +92,31 @@ offset_bottom = 532.0
 theme_override_font_sizes/font_size = 22
 text = "00:00"
 
-[node name="HoverText" type="Label" parent="."]
+[node name="TimeLabel" type="Label" parent="Band"]
+visible = false
+offset_left = 91.0
+offset_top = 468.0
+offset_right = 231.0
+offset_bottom = 494.0
+theme_override_colors/font_color = Color(0.996, 0.086, 0.004, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "hud.console.time_label"
+
+[node name="ScoreLabel" type="Label" parent="Band"]
+visible = false
+offset_left = 236.0
+offset_top = 465.0
+offset_right = 376.0
+offset_bottom = 495.0
+theme_override_colors/font_color = Color(0.996, 0.086, 0.004, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "hud.console.score_label"
+
+[node name="HoverText" type="Label" parent="Band"]
 offset_left = 135.0
 offset_top = 556.0
 offset_right = 700.0
@@ -102,3 +124,44 @@ offset_bottom = 588.0
 theme_override_colors/font_color = Color(0.98, 0.98, 0.98, 1)
 theme_override_font_sizes/font_size = 22
 text = "..."
+
+[node name="Banners" type="Control" parent="."]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -400.0
+offset_top = 0.0
+offset_right = 400.0
+offset_bottom = 600.0
+mouse_filter = 2
+
+[node name="ThermoUp" type="Sprite2D" parent="Banners"]
+texture_filter = 1
+visible = false
+modulate = Color(1, 1, 1, 0.8627451)
+position = Vector2(5, 5)
+centered = false
+texture = ExtResource("8")
+
+[node name="ThermoUpText" type="Label" parent="Banners/ThermoUp"]
+offset_left = 235.0
+offset_top = 45.0
+offset_right = 795.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 30
+text = "hud.thermo_warning"
+
+[node name="AggroUp" type="Sprite2D" parent="Banners"]
+texture_filter = 1
+visible = false
+modulate = Color(1, 1, 1, 0.8627451)
+position = Vector2(5, 5)
+centered = false
+texture = ExtResource("9")
+
+[node name="AggroUpText" type="Label" parent="Banners/AggroUp"]
+offset_left = 235.0
+offset_top = 45.0
+offset_right = 795.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 30

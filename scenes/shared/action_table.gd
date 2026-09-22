@@ -36,8 +36,16 @@ static func get_action(action_id: int) -> Dictionary:
 	return _actions[action_id]
 
 
+# The hover bar and the ring show this, so it follows the language. tr() is a Node method
+# and this is a RefCounted, hence TranslationServer directly. A key with no translation
+# comes back as itself, which is the signal to fall back to the record's own Polish.
 static func action_name(action_id: int) -> String:
-	return String(get_action(action_id).get("name", ""))
+	var recorded := String(get_action(action_id).get("name", ""))
+	if recorded == "":
+		return ""
+	var key := "action.%d.name" % action_id
+	var translated := TranslationServer.translate(key)
+	return recorded if translated == key else String(translated)
 
 
 static func icon_texture(action_id: int) -> Texture2D:

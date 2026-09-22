@@ -1,0 +1,768 @@
+{
+  "prompt.quit_question": {
+    "en": "Are you sure you want to quit?"
+  },
+  "prompt.quit_answer": {
+    "en": "(Y)es or (N)o"
+  },
+  "prompt.time_goal": {
+    "en": "To finish this level you have to score"
+  },
+  "prompt.time_goal_format": {
+    "en": "%d points within %d minutes."
+  },
+  "prompt.points_goal_format": {
+    "en": "Score as many points as you can within %d minutes."
+  },
+  "prompt.points_target_format": {
+    "en": "You need at least %d points!"
+  },
+  "highscore.best_score_format": {
+    "en": "Best score: %d"
+  },
+  "highscore.best_score_none": {
+    "en": "Best score: ---"
+  },
+  "highscore.best_time_format": {
+    "en": "Best time: %02d:%02d"
+  },
+  "highscore.best_time_none": {
+    "en": "Best time: --:--"
+  },
+  "hud.thermo_warning": {
+    "en": "Careful! Your colleagues... uh-oh!"
+  },
+  "prompt.paused": {
+    "en": "Paused"
+  },
+  "result.manual": {
+    "en": "Manual"
+  },
+  "result.quit_game": {
+    "en": "Quit game"
+  },
+  "result.next_level": {
+    "en": "Next level"
+  },
+  "result.retry": {
+    "en": "Retry"
+  },
+  "catch.exclaim.0": {
+    "en": "Gotcha!"
+  },
+  "catch.exclaim.1": {
+    "en": "And who's this?!"
+  },
+  "catch.exclaim.2": {
+    "en": "What's going on?"
+  },
+  "catch.exclaim.3": {
+    "en": "What a nerve!"
+  },
+  "menu.time_game": {
+    "en": "Time game"
+  },
+  "menu.points_game": {
+    "en": "Points game"
+  },
+  "menu.highscores": {
+    "en": "High scores"
+  },
+  "menu.names": {
+    "en": "Names"
+  },
+  "menu.sound": {
+    "en": "Sound and music"
+  },
+  "menu.quit": {
+    "en": "Quit"
+  },
+  "level_tree.title": {
+    "en": "Level select"
+  },
+  "description.best_time": {
+    "en": "Best time"
+  },
+  "description.best_score": {
+    "en": "Best score"
+  },
+  "description.size": {
+    "en": "Size"
+  },
+  "description.difficulty": {
+    "en": "Difficulty"
+  },
+  "description.back": {
+    "en": "Back"
+  },
+  "highscore.best_score": {
+    "en": "Best score"
+  },
+  "highscore.score": {
+    "en": "Score"
+  },
+  "highscore.time": {
+    "en": "Time"
+  },
+  "highscore.page.0": {
+    "en": "1 to 7"
+  },
+  "highscore.page.1": {
+    "en": "8 to 14"
+  },
+  "highscore.page.2": {
+    "en": "15 to 21"
+  },
+  "highscore.page.3": {
+    "en": "22 to 28"
+  },
+  "names.title": {
+    "en": "Choose your colleagues"
+  },
+  "character_select.title": {
+    "en": "Choose your alter ego"
+  },
+  "character.jobless": {
+    "en": "Jo Bless"
+  },
+  "character.anne": {
+    "en": "Anne Employed"
+  },
+  "highscore.name_prompt": {
+    "en": "Name for the high score table"
+  },
+  "sound.title": {
+    "en": "Sound and music settings"
+  },
+  "common.main_menu": {
+    "en": "Main menu"
+  },
+  "common.continue": {
+    "en": "Continue"
+  },
+  "common.defaults": {
+    "en": "Defaults"
+  },
+  "difficulty.0": {
+    "en": "Beginner"
+  },
+  "difficulty.1": {
+    "en": "Easy"
+  },
+  "difficulty.2": {
+    "en": "Challenge"
+  },
+  "difficulty.3": {
+    "en": "Demanding"
+  },
+  "difficulty.4": {
+    "en": "Hard"
+  },
+  "difficulty.5": {
+    "en": "Very hard"
+  },
+  "difficulty.6": {
+    "en": "Extreme"
+  },
+  "level.1.title": {
+    "en": "The first last day"
+  },
+  "level.2.title": {
+    "en": "The hall of revenge"
+  },
+  "level.3.title": {
+    "en": "Your ex-boss is a very busy man"
+  },
+  "level.4.title": {
+    "en": "So much work..."
+  },
+  "level.5.title": {
+    "en": "The lost and broken office"
+  },
+  "level.6.title": {
+    "en": "Like an ox in the field..."
+  },
+  "level.7.title": {
+    "en": "Office... the final frontier"
+  },
+  "level.8.title": {
+    "en": "That's Eike's doing"
+  },
+  "level.9.title": {
+    "en": "To really get on your ex-colleagues' nerves..."
+  },
+  "level.10.title": {
+    "en": "A date in the kitchen"
+  },
+  "level.11.title": {
+    "en": "Got the documents?"
+  },
+  "level.12.title": {
+    "en": "Claustrophobia"
+  },
+  "level.13.title": {
+    "en": "The wrath of the sheep"
+  },
+  "level.14.title": {
+    "en": "A cramped little kitchen..."
+  },
+  "level.15.title": {
+    "en": "I love the smell of smoke candles in the morning..."
+  },
+  "level.16.title": {
+    "en": "The boss is out chasing skirt"
+  },
+  "level.17.title": {
+    "en": "Hard goodbyes"
+  },
+  "level.18.title": {
+    "en": "The eye of the storm"
+  },
+  "level.19.title": {
+    "en": "Quality management"
+  },
+  "level.20.title": {
+    "en": "Last exit F4"
+  },
+  "level.21.title": {
+    "en": "Office Paradiso"
+  },
+  "action.1.name": {
+    "en": "Restructure the files"
+  },
+  "action.2.name": {
+    "en": "Empty the manager's locker"
+  },
+  "action.3.name": {
+    "en": "Empty the boss's briefcase"
+  },
+  "action.4.name": {
+    "en": "Set the fish free"
+  },
+  "action.5.name": {
+    "en": "Poison the aquarium"
+  },
+  "action.6.name": {
+    "en": "Dye the aquarium"
+  },
+  "action.7.name": {
+    "en": "Take the travel expense forms"
+  },
+  "action.8.name": {
+    "en": "Turn the pictures around"
+  },
+  "action.9.name": {
+    "en": "Take the mail"
+  },
+  "action.10.name": {
+    "en": "Snap the CDs"
+  },
+  "action.11.name": {
+    "en": "Glue up the opening"
+  },
+  "action.12.name": {
+    "en": "Kick over the drinks machine"
+  },
+  "action.13.name": {
+    "en": "Format drive C:"
+  },
+  "action.14.name": {
+    "en": "Switch off the computer"
+  },
+  "action.15.name": {
+    "en": "Install a couple of viruses"
+  },
+  "action.16.name": {
+    "en": "Bend the floppy disks"
+  },
+  "action.17.name": {
+    "en": "Switch off the printer"
+  },
+  "action.18.name": {
+    "en": "Steal the printer cartridge"
+  },
+  "action.19.name": {
+    "en": "Take the lighter"
+  },
+  "action.20.name": {
+    "en": "Empty the briefcase"
+  },
+  "action.21.name": {
+    "en": "Turn the stove up to full"
+  },
+  "action.22.name": {
+    "en": "Have a smoke (in the waiting area)"
+  },
+  "action.23.name": {
+    "en": "Have a smoke (anywhere)"
+  },
+  "action.24.name": {
+    "en": "Have a smoke (in the boss's office)"
+  },
+  "action.25.name": {
+    "en": "See what's on the bottom of the mug"
+  },
+  "action.26.name": {
+    "en": "Take the coffee cup"
+  },
+  "action.27.name": {
+    "en": "Take the glue"
+  },
+  "action.28.name": {
+    "en": "Set the copier to endless copying"
+  },
+  "action.29.name": {
+    "en": "Switch off the copier"
+  },
+  "action.30.name": {
+    "en": "Take the eggs"
+  },
+  "action.31.name": {
+    "en": "Defrost the fridge"
+  },
+  "action.32.name": {
+    "en": "Heat the eggs in the microwave"
+  },
+  "action.33.name": {
+    "en": "Set the wastebasket on fire"
+  },
+  "action.34.name": {
+    "en": "Set the rubbish bin on fire"
+  },
+  "action.35.name": {
+    "en": "Take the poster"
+  },
+  "action.36.name": {
+    "en": "Shuffle the mail around"
+  },
+  "action.37.name": {
+    "en": "Kick over the bucket"
+  },
+  "action.38.name": {
+    "en": "Crank up the volume"
+  },
+  "action.39.name": {
+    "en": "Swipe the keys"
+  },
+  "action.40.name": {
+    "en": "Smash the mirror"
+  },
+  "action.41.name": {
+    "en": "Take the dishwasher tablets"
+  },
+  "action.42.name": {
+    "en": "Snap the pens"
+  },
+  "action.43.name": {
+    "en": "Take the toilet paper"
+  },
+  "action.44.name": {
+    "en": "Unroll the toilet paper"
+  },
+  "action.45.name": {
+    "en": "Glue up the lock"
+  },
+  "action.46.name": {
+    "en": "Tip over the safe"
+  },
+  "action.47.name": {
+    "en": "Burn out the electric kettle"
+  },
+  "action.48.name": {
+    "en": "Take the cigarettes"
+  },
+  "action.49.name": {
+    "en": "Swap the sugar for salt"
+  },
+  "action.50.name": {
+    "en": "Take the confidential documents"
+  },
+  "action.51.name": {
+    "en": "Empty the janitor's briefcase"
+  },
+  "action.52.name": {
+    "en": "Take the AA membership card"
+  },
+  "action.53.name": {
+    "en": "Take the letter of commendation"
+  },
+  "action.54.name": {
+    "en": "Take the note with the safe code"
+  },
+  "action.55.name": {
+    "en": "Take the boss's love letter"
+  },
+  "action.56.name": {
+    "en": "Pour ketchup into the machine"
+  },
+  "action.57.name": {
+    "en": "Rob the vending machine"
+  },
+  "action.58.name": {
+    "en": "Have some fun with the keyboard"
+  },
+  "action.59.name": {
+    "en": "Fax the confidential files to the rivals"
+  },
+  "action.60.name": {
+    "en": "Order some indecent prints"
+  },
+  "action.61.name": {
+    "en": "Fax the top-secret files to the rivals"
+  },
+  "action.62.name": {
+    "en": "Switch off the fax"
+  },
+  "action.63.name": {
+    "en": "Take the fire extinguisher"
+  },
+  "action.65.name": {
+    "en": "Take the panties"
+  },
+  "action.66.name": {
+    "en": "Bug the mobile phone"
+  },
+  "action.67.name": {
+    "en": "Change the phone's PIN code"
+  },
+  "action.68.name": {
+    "en": "Send obscene text messages"
+  },
+  "action.74.name": {
+    "en": "Take a piss (anywhere)"
+  },
+  "action.75.name": {
+    "en": "Take a piss (in the boss's office)"
+  },
+  "action.76.name": {
+    "en": "Have a smoke (in the server room)"
+  },
+  "action.77.name": {
+    "en": "Empty the coffee pot"
+  },
+  "action.78.name": {
+    "en": "Take the ketchup"
+  },
+  "action.79.name": {
+    "en": "Put the smoke bomb in the air con"
+  },
+  "action.80.name": {
+    "en": "Put the eggs in the air con"
+  },
+  "action.81.name": {
+    "en": "Poke holes in the boss's condoms"
+  },
+  "action.82.name": {
+    "en": "Break the copier"
+  },
+  "action.83.name": {
+    "en": "Use the ketchup as decoration"
+  },
+  "action.84.name": {
+    "en": "Fill your bladder"
+  },
+  "action.86.name": {
+    "en": "Put the smoke bomb in the microwave"
+  },
+  "action.91.name": {
+    "en": "Pinch the smoke bomb"
+  },
+  "action.92.name": {
+    "en": "Take the master key"
+  },
+  "action.93.name": {
+    "en": "Pin the AA card on the board"
+  },
+  "action.94.name": {
+    "en": "Pin the notices on the board"
+  },
+  "action.95.name": {
+    "en": "Pin the secretary's nude photos up"
+  },
+  "action.96.name": {
+    "en": "Cool the server with ketchup"
+  },
+  "action.97.name": {
+    "en": "Wipe all the data off the server"
+  },
+  "action.98.name": {
+    "en": "Unplug the server"
+  },
+  "action.99.name": {
+    "en": "Tip over the server"
+  },
+  "action.102.name": {
+    "en": "Shut off the waste pipe"
+  },
+  "action.103.name": {
+    "en": "Deface the notice board"
+  },
+  "action.104.name": {
+    "en": "Wrap the phone in sticky tape"
+  },
+  "action.105.name": {
+    "en": "Call an ambulance"
+  },
+  "action.106.name": {
+    "en": "Order a few tons of pizza"
+  },
+  "action.107.name": {
+    "en": "Oops, the sticky tape stuck to me"
+  },
+  "action.108.name": {
+    "en": "Hang the used panties on the lamp"
+  },
+  "action.109.name": {
+    "en": "Clog the toilet with toilet paper"
+  },
+  "action.110.name": {
+    "en": "Lock a workmate in the toilet cubicle"
+  },
+  "action.112.name": {
+    "en": "Lock the boss in the toilet cubicle"
+  },
+  "action.113.name": {
+    "en": "Flush the clogged toilet"
+  },
+  "action.114.name": {
+    "en": "Take the top-secret company files"
+  },
+  "action.115.name": {
+    "en": "Open the safe"
+  },
+  "action.116.name": {
+    "en": "Play the porn film on the big screen"
+  },
+  "action.117.name": {
+    "en": "Take the porn tape"
+  },
+  "action.118.name": {
+    "en": "Turn the heating up to max"
+  },
+  "action.119.name": {
+    "en": "Set the mousetrap in the drawer"
+  },
+  "action.120.name": {
+    "en": "Smear the window with soap"
+  },
+  "action.125.name": {
+    "en": "Piss in the coffee pot"
+  },
+  "action.127.name": {
+    "en": "Make endless copies of the Adonis's butt"
+  },
+  "action.128.name": {
+    "en": "Set the mousetrap in the fridge"
+  },
+  "action.129.name": {
+    "en": "Take the mousetrap"
+  },
+  "action.130.name": {
+    "en": "Empty the boss's private bottle"
+  },
+  "action.131.name": {
+    "en": "Take the soap"
+  },
+  "action.133.name": {
+    "en": "Call a 1-900 sex line"
+  },
+  "action.135.name": {
+    "en": "Overflow the sink"
+  },
+  "action.136.name": {
+    "en": "Overflow the sink"
+  },
+  "action.137.name": {
+    "en": "Take the sink plug"
+  },
+  "action.139.name": {
+    "en": "Wreck the water cooler"
+  },
+  "action.140.name": {
+    "en": "Show the teddy where it belongs"
+  },
+  "action.141.name": {
+    "en": "Take the coffee cups"
+  },
+  "action.143.name": {
+    "en": "Wrap the globe in toilet paper"
+  },
+  "action.144.name": {
+    "en": "Set the world on fire"
+  },
+  "action.145.name": {
+    "en": "Burn the sales documents"
+  },
+  "action.146.name": {
+    "en": "Empty the towel dispenser"
+  },
+  "action.150.name": {
+    "en": "Pour water into the cubicle"
+  },
+  "action.151.name": {
+    "en": "Pour water into the cubicle"
+  },
+  "action.152.name": {
+    "en": "Pour water into the cubicle"
+  },
+  "action.153.name": {
+    "en": "Spill the water from the bucket"
+  },
+  "action.154.name": {
+    "en": "Fill your bladder"
+  },
+  "action.155.name": {
+    "en": "Take the master key"
+  },
+  "level.1.description": {
+    "en": "A small office with two people still working in it. Timing is everything."
+  },
+  "level.1.hint": {
+    "en": "Did you know your colleagues always spot you if you wreak havoc right next to them? Even with their backs turned."
+  },
+  "level.2.description": {
+    "en": "Watch them slaving away at their desks, left and right."
+  },
+  "level.2.hint": {
+    "en": "Did you know the lighter is the basic tool of revenge?"
+  },
+  "level.3.description": {
+    "en": "The boss has just fired you, and now he's left the office. Get to work!"
+  },
+  "level.3.hint": {
+    "en": "Did you know you need two things to have a smoke?"
+  },
+  "level.4.description": {
+    "en": "...and so little time! Use it wisely!"
+  },
+  "level.4.hint": {
+    "en": "Did you know you can check your colleagues' field of view?"
+  },
+  "level.5.description": {
+    "en": "This office was always too small for you. Time for great deeds."
+  },
+  "level.5.hint": {
+    "en": "Did you know you can call off an action as long as the action menu is still up? Once you've started something, there's no stopping it."
+  },
+  "level.6.description": {
+    "en": "...that's how your former colleagues are working themselves to death at the office. Give them a good shake."
+  },
+  "level.6.hint": {
+    "en": "Did you know some actions are no longer available if you do others first?"
+  },
+  "level.7.description": {
+    "en": "Destroy what no man has destroyed before."
+  },
+  "level.7.hint": {
+    "en": "Did you know you can use the fax machine to send top-secret documents to the whole world?"
+  },
+  "level.8.description": {
+    "en": "You don't get it? We couldn't believe it either."
+  },
+  "level.8.hint": {
+    "en": "Did you know the safe can be opened?"
+  },
+  "level.9.description": {
+    "en": "...unusual methods may well be called for."
+  },
+  "level.9.hint": {
+    "en": "Did you know some objects like to sleep with the fishes?"
+  },
+  "level.10.description": {
+    "en": "Your ex-colleagues are addicted to coffee and hang around in the kitchen. That gives you plenty of room to manoeuvre!"
+  },
+  "level.10.hint": {
+    "en": "Did you know there's a connection between microwave ovens and the air-conditioning system?"
+  },
+  "level.11.description": {
+    "en": "Put them to use in the toilet."
+  },
+  "level.11.hint": {
+    "en": "Did you know it's not only the deed that counts, but the place as well?"
+  },
+  "level.12.description": {
+    "en": "Small, cosy rooms and a crowd of people - that makes for a very special atmosphere, doesn't it?"
+  },
+  "level.12.hint": {
+    "en": "Did you know that people who lose their workplace may start wandering around the area?"
+  },
+  "level.13.description": {
+    "en": "Everyone has to look after their own room. Until nature calls..."
+  },
+  "level.13.hint": {
+    "en": "Did you know you score more points by winding your colleagues up?"
+  },
+  "level.14.description": {
+    "en": "You'll find a wide selection of drinks here. And since nothing in nature ever goes to waste, you have to... Heh, you get the idea."
+  },
+  "level.14.hint": {
+    "en": "Did you know soap can be used more than once?"
+  },
+  "level.15.description": {
+    "en": "That's the smell of revenge!"
+  },
+  "level.15.hint": {
+    "en": "Did you know you can lock your colleagues in the toilet?"
+  },
+  "level.16.description": {
+    "en": "So he's got more important things on his mind, and nobody is keeping an eye on his office."
+  },
+  "level.16.hint": {
+    "en": "Did you know a master key opens up whole new possibilities?"
+  },
+  "level.17.description": {
+    "en": "Show the boss exactly what you feel for him"
+  },
+  "level.17.hint": {
+    "en": "Did you know violence isn't the only solution?"
+  },
+  "level.18.description": {
+    "en": "How about clearing out the middle office for once?"
+  },
+  "level.18.hint": {
+    "en": "Did you know fuses can stir up a lot of trouble? They're just hard to find."
+  },
+  "level.19.description": {
+    "en": "Take a good look around. Most of this stuff is scrap anyway, and scrap needs sorting."
+  },
+  "level.19.hint": {
+    "en": "Did you know your ex-colleagues are very open about their intentions? Just watch the bubbles above their heads."
+  },
+  "level.20.description": {
+    "en": "Fast, versatile, dynamic - those are the marks of a good office worker. It's never too late to find them in yourself - not even on your last day at work."
+  },
+  "level.20.hint": {
+    "en": "Did you know bags and briefcases hide all sorts of interesting things?"
+  },
+  "level.21.description": {
+    "en": "Long corridors, expensive carpets, a huge spotless kitchen, attractive staff and lavish furnishings just waiting to be wrecked."
+  },
+  "level.21.hint": {
+    "en": "Did you know problems can be solved verbally as well?"
+  },
+  "app.window_title": {
+    "en": "Sacked! - Your Last Day"
+  },
+  "prompt.quit_yes_key": {
+    "en": "Y"
+  },
+  "prompt.quit_no_key": {
+    "en": "N"
+  },
+  "hud.console.time_label": {
+    "en": "time",
+    "de": "Zeit"
+  },
+  "hud.console.score_label": {
+    "en": "score",
+    "de": "Punkte"
+  },
+  "character_select.name_label": {
+    "en": "Player name",
+    "de": "Spielername"
+  },
+  "level_tree.level_n": {
+    "en": "Level %d",
+    "de": "Level %d"
+  }
+}
