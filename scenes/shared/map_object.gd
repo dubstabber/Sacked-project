@@ -18,6 +18,14 @@ const LAST_TRANSITION_STATE := 8
 const DESTROYED_OFFSET := 7
 const STATE_MANIFEST_DIR := "res://resources/objects/"
 
+# An object normally bakes into the one static world composite. A clip that never stops
+# would make that composite repaint at its frame rate forever, so a looping object leaves
+# the bake and is drawn as a depth-tested actor instead, exactly as a character is: the
+# shader still tests it against every other object, and a frame becomes a texture swap.
+# See docs/map-rendering.md.
+const WORLD_GROUP := &"depth_world_objects"
+const ACTOR_GROUP := &"depth_composited_characters"
+
 @export var color_texture: Texture2D:
 	set(value):
 		color_texture = value
@@ -43,10 +51,12 @@ var _clip_fps := 0.0
 var _clip_elapsed := 0.0
 var _clip_frame := -1
 var _clip_advances_to := -1
+var _clip_loops := false
+var _drawn_as_actor := false
 
 
 func _enter_tree() -> void:
-	add_to_group("depth_world_objects")
+	add_to_group(ACTOR_GROUP if _drawn_as_actor else WORLD_GROUP)
 	set_notify_transform(true)
 
 
@@ -65,6 +75,20 @@ func _refresh_sprite() -> void:
 		sprite.centered = false
 		sprite.texture = color_texture
 		sprite.offset = -pivot
+	# While drawn as an actor this object is not in the bake, so a new frame is nothing the
+	# world composite has to hear about.
+	if not _drawn_as_actor:
+		changed.emit()
+
+
+func _set_drawn_as_actor(value: bool) -> void:
+	if value == _drawn_as_actor:
+		return
+	_drawn_as_actor = value
+	if is_inside_tree():
+		remove_from_group(WORLD_GROUP if value else ACTOR_GROUP)
+		add_to_group(ACTOR_GROUP if value else WORLD_GROUP)
+	# Either way the bake changes: it loses this object, or it gains it back.
 	changed.emit()
 
 
@@ -108,11 +132,13 @@ func set_state(target: int) -> void:
 		if target == 0:
 			_stop_clip()
 			_apply_texture(_idle_texture, _idle_pivot)
+		_set_drawn_as_actor(false)
 		state_changed.emit(state)
 		return
 
 	var frames: Array = clip.get("frames", [])
 	if frames.is_empty():
+		_set_drawn_as_actor(false)
 		state_changed.emit(state)
 		return
 	_clip = frames
@@ -121,8 +147,12 @@ func set_state(target: int) -> void:
 	_clip_elapsed = 0.0
 	_clip_frame = -1
 	_clip_advances_to = int(clip.get("advances_to", -1)) if clip.get("advances_to") != null else -1
+	# The container's own loop flag, which every DESTROYED_n carries and no DESTROY_n does:
+	# a transition plays once and settles, a damaged state runs for as long as it is held.
+	_clip_loops = bool(clip.get("loop", false))
 	# A single frame is a plain swap; a real transition animates and then settles.
 	set_process(frames.size() > 1)
+	_set_drawn_as_actor(_clip_loops and frames.size() > 1)
 	_show_frame(0)
 	state_changed.emit(state)
 
@@ -166,6 +196,7 @@ func _stop_clip() -> void:
 	_clip_textures.clear()
 	_clip_frame = -1
 	_clip_advances_to = -1
+	_clip_loops = false
 
 
 func _process(delta: float) -> void:
@@ -175,6 +206,10 @@ func _process(delta: float) -> void:
 	_clip_elapsed += delta
 	var index := int(_clip_elapsed * _clip_fps)
 	if index >= _clip.size():
+		if _clip_loops:
+			_clip_elapsed = fmod(_clip_elapsed, float(_clip.size()) / _clip_fps)
+			_show_frame(int(_clip_elapsed * _clip_fps))
+			return
 		# sub_410290 advances a finished DESTROY_n to its DESTROYED_n.
 		var settled := _clip_advances_to
 		_stop_clip()
