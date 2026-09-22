@@ -21,11 +21,16 @@ const EXCLAMATIONS := [
 	&"catch.exclaim.3",
 ]
 
-# The hand-off into the minigame is not built yet, so an unguarded catch would have to
-# invent an outcome. Until the minigame screen exists the trigger only reports itself.
-@export var hands_off_to_minigame := false
+# sub_407990 holds the banner for this long before sub_407370 opens screen 5.
+const BANNER_SECONDS := 2.0
+
+# Kept so a check can watch the trigger without the duel opening on top of it.
+@export var hands_off_to_minigame := true
 
 var caught_by: Node2D = null
+
+var _minigame: Node
+var _banner_remaining := 0.0
 
 var _session: Node
 var _player: Node2D
@@ -51,7 +56,15 @@ func _bind() -> void:
 			break
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	# sub_407990 holds the banner for two seconds and sub_407370 then opens screen 5, so the
+	# duel arrives underneath a banner that is already up.
+	if _banner_remaining > 0.0:
+		_banner_remaining -= delta
+		if _banner_remaining <= 0.0:
+			_banner_remaining = 0.0
+			_open_duel()
+		return
 	if caught_by != null or get_tree().paused:
 		return
 	if _player == null or _prank == null or _layer == null:
@@ -97,10 +110,46 @@ func _catch(agent: Node2D) -> void:
 	caught.emit(agent)
 	if not hands_off_to_minigame:
 		return
-	var screens := get_node_or_null("/root/ScreenManager")
-	if screens != null and screens.has_method("report_caught"):
-		screens.report_caught(agent)
+	# The banner is up for two seconds and the duel opens underneath it, which is the order
+	# sub_407990 and sub_407370 run in.
+	_banner_remaining = BANNER_SECONDS
 
 
 func reset() -> void:
 	caught_by = null
+
+
+func _open_duel() -> void:
+	if _minigame == null:
+		_minigame = get_tree().get_first_node_in_group("catch_minigame")
+	if _minigame == null or not _minigame.has_method("open"):
+		return
+	var screens := get_node_or_null("/root/ScreenManager")
+	var character: StringName = &"jobless"
+	var casts := 2
+	if screens != null:
+		character = StringName(screens.get("selected_character"))
+		casts = int(screens.call("begin_duel"))
+	if not _minigame.is_connected("finished", _on_duel_finished):
+		_minigame.connect("finished", _on_duel_finished)
+	_minigame.call("open", _catcher_id(), character, casts)
+	get_tree().paused = true
+
+
+func _catcher_id() -> StringName:
+	if not is_instance_valid(caught_by):
+		return &"boss"
+	var profile = caught_by.get("profile")
+	return StringName(profile.get("id")) if profile != null else &"boss"
+
+
+# Winning resumes the level in memory, which is what sub_4027B0 does with screen 1; losing
+# ends it. Neither touches the score or the office's temper.
+func _on_duel_finished(won: bool) -> void:
+	get_tree().paused = false
+	reset()
+	if won:
+		return
+	var screens := get_node_or_null("/root/ScreenManager")
+	if screens != null and screens.has_method("report_level_finished"):
+		screens.call("report_level_finished", false)

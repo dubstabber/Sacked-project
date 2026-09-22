@@ -40,6 +40,9 @@ var current: Screen = Screen.BOOT_LOADING
 var selected_level := 1
 var selected_game_mode: StringName = &"time"
 var last_level_won := false
+# game+19052: how many duels have happened. The duel about to start is two casts longer than
+# this, and the counter itself stops at nine. See docs/minigame-reference.md.
+var duels_fought := 0
 var selected_character: StringName = DEFAULT_CHARACTER
 var player_name: String = get_default_player_name(DEFAULT_CHARACTER)
 var _menu_music_player: AudioStreamPlayer
@@ -106,6 +109,18 @@ func change_to_main_menu() -> void:
 
 func change_to_level_tree() -> void:
 	change_to(Screen.LEVEL_TREE)
+
+
+const DUEL_EXTRA_CASTS := 2
+const DUEL_COUNT_LIMIT := 9
+
+
+# sub_406430 hands the duel the counter plus two, then advances it and clamps it, so each
+# time the player is caught the sequence they have to repeat is one longer.
+func begin_duel() -> int:
+	var casts := duels_fought + DUEL_EXTRA_CASTS
+	duels_fought = mini(duels_fought + 1, DUEL_COUNT_LIMIT)
+	return casts
 
 
 # A level reports its own outcome; sub_407370 sends both results to their own screen.

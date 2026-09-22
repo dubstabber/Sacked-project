@@ -139,7 +139,7 @@ winning costs only the interrupted prank and the time.
 
 - The button's own click handler. Everything it must do is pinned by how the tick reads
   `m_iJoBlessSpell` and `m_iJoBlessSpellPos`, but the code that writes them has not been read,
-  so whether a click is ignored outside state 5 is an assumption.
+  so whether a click is ignored outside state 5 is an assumption. The port ignores it.
 - What `+312` gates. It is set while no answer is being displayed and cleared while one is,
   which reads like "the buttons accept input now", but nothing that consumes it has been read.
 - `m_pTime`'s `+104 = 3` and `+120 = 4.0`, presumably a digit count and a scale.
@@ -151,3 +151,31 @@ fourteen buttons, all at fixed coordinates, driven by a ten-state machine with t
 constants. The work is in the assets, 48 sprites including an 800 × 800 background, and in
 the four banners, which carry their text painted into the art and so need the same treatment
 the console labels got.
+
+## What the port implements
+
+`scenes/level/catch_minigame.tscn` and `.gd` are the screen and its state machine, with the
+sprite tables and the button layout split into `catch_minigame_art.gd` so each can be checked
+on its own. It is an **overlay inside the level**, not a separate scene: a win resumes the
+level that is still in memory, which changing scene would have thrown away. `CatchWatch`
+holds the banner for its two seconds, opens the duel, pauses the tree, and on the way out
+either unpauses or reports the level lost.
+
+Every constant above is used as recovered: the two-second banner, the one-second step and its
+quarter-second gap, the 4.3-second answer clock, eight energy in steps of three, and the
+sequence length growing by one per duel to a cap of eleven. `ScreenManager.duels_fought` is
+`game+19052`.
+
+Three port decisions worth naming:
+
+- **The backdrop.** The original spins the texture coordinates of a quad pinned to the
+  screen, so it never shows an edge. The port spins the sprite and scales it by 1.25, which
+  is enough for the frame's corners to stay covered at every angle. The pattern is therefore
+  slightly larger than the original's.
+- **The banners** use each retail build's own painted art, and a drawn label for any language
+  that has none. The Polish build's `YOURTURN` and `WIN` are swapped relative to what their
+  names say, which the port reproduces by showing that build's art where its name belongs.
+  See [strings-reference.md](strings-reference.md).
+- **The console is inert outside the answering state**, and a second click is ignored while
+  an answer is still on show. The original's click handler has not been read, so this is the
+  port's reading of what the tick requires rather than something recovered.

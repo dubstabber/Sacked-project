@@ -153,7 +153,10 @@ func _check_only_mid_prank(world: Node, player: Node2D) -> void:
 	if watch == null or prank == null:
 		_expect(false, "the level runtime carries the catch watch and the player's actions")
 		return
-	_expect(not watch.hands_off_to_minigame, "the hand-off stays off until the minigame screen exists")
+	# The duel exists now, so a catch leads somewhere. The flag survives only so a check can
+	# drive the trigger without the screen opening over it.
+	_expect(watch.hands_off_to_minigame, "a catch hands off to the duel")
+	_expect(is_equal_approx(watch.BANNER_SECONDS, 2.0), "the banner gets its two seconds first")
 	_expect(watch.caught_by == null, "nothing is caught before a prank starts")
 
 	# Standing next to a colleague is safe; only performing an action is not.
