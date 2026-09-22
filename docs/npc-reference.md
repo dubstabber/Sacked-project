@@ -24,7 +24,7 @@ NPC class initializers write preliminary speeds, then `sub_4184B0` overwrites th
 
 Factories `sub_404B90`, `sub_404EC0`, `sub_404D20`, `sub_405010`, and `sub_4051D0` establish those character types and variants. Internal type `+1740` is 1 for boss, 2 for secretary, 3 for janitor, and 4 for coworkers. Coworker gender at `+1744` is 0 for male and 1 for female; variant `+1748` is 0 or 1.
 
-`sub_417730` moves NPCs toward their current waypoint using the exact logical normalized vector `(dx, dz) / sqrt(dx² + dz²)`, multiplied by current speed, frame delta, and the multiplier at `+76`. Their velocity is continuous toward the target; only sprite facing is quantized into eight directions. Coworker, secretary, and janitor update functions (`sub_419CE0`, `sub_41E360`, `sub_41A8D0`) adjust current speed to `base_speed + 0.15 * integer_at_1064`. Their slowed flag at `+1792` sets the multiplier to 0.2 instead of 1.0. The boss tick `sub_419740` applies the same slowdown multiplier but does not apply that speed-increase formula. The slowed and speed-increase states themselves are not implemented.
+`sub_417730` moves NPCs toward their current waypoint using the exact logical normalized vector `(dx, dz) / sqrt(dx² + dz²)`, multiplied by current speed, frame delta, and the multiplier at `+76`. Their velocity is continuous toward the target; only sprite facing is quantized into eight directions. Coworker, secretary, and janitor update functions (`sub_419CE0`, `sub_41E360`, `sub_41A8D0`) adjust current speed to `base_speed + 0.15 * integer_at_1064`. Their slowed flag at `+1792` sets the multiplier to 0.2 instead of 1.0. The boss tick `sub_419740` applies the same slowdown multiplier but does not apply that speed-increase formula. Those same three ticks also widen the agent's notice radius and cone with the band, which is covered in [catch-reference.md](catch-reference.md); the boss is exempt from all three. The speed increase is implemented (see "How angry the office gets" below); the slowed state at `+1792` is not — it belongs to one of the player's own unported abilities.
 
 ## Runtime route generation
 
@@ -130,7 +130,9 @@ Panic, cleanup, anger progression, and the complete social interaction state mac
 
 ## Implemented autonomous subset
 
-`scenes/npc/npc_brain.gd` implements needs-based selection for the three imported `LEVEL_00` profiles: boss, male employee 1, and female employee 1. Their initial needs, work preference, decay rates, room masks, random durations, completion resets, and failure delays use the values above, including the decay cadence: a failed goal start still decays every need on the same tick, and a goal whose candidate list is empty is disabled with its rate zeroed. Assigned chair/workstation paths remain separate from seat occupation. Explicit authored routes override this brain.
+`scenes/npc/npc_brain.gd` implements needs-based selection for six of the seven characters: boss, secretary, janitor, both male employees and female employee 1. Female employee 2 waits for the first level that spawns her. Their initial needs, work preference, decay rates, room masks, random durations, completion resets, and failure delays use the values above, including the decay cadence: a failed goal start still decays every need on the same tick, and a goal whose candidate list is empty is disabled with its rate zeroed. Assigned chair/workstation paths remain separate from seat occupation. Explicit authored routes override this brain.
+
+The speeds, decay rates and notice constants are no longer transcribed: `tools/export_npc_profiles.py` reads all seven records out of `sub_4184B0`'s table at `0x46E7D8` into `resources/original/npc_profiles.json`, and the brain loads that once per class. The room masks stay in GDScript because they are compiled-in immediates rather than table columns.
 
 All eight goals are implemented. On arrival the brain runs `sub_417B00`'s dispatch: monitors claim a free seat within 1.8 tiles and work for 50–60 seconds, office swivel chairs sit for 40–50 seconds, executive chairs and sofas claim the seat and sit relaxed for 15–25 seconds with the anchor shifted 30 % toward the interaction point, toilet cubicles are claimed and entered for 10–15 seconds, the copier is claimed for 20 seconds, the special-action item types run 15 seconds, and anything else keeps the default 10–16 second timer. Work sitting uses `SIT#USE` (`SIT#IDLE` for the boss) and relaxed sitting uses `SIT#EASY`; the special-action types use `SPECIAL#1`.
 
@@ -140,7 +142,17 @@ Two `LEVEL_00` targets cannot be reached, for different reasons. The toilet cubi
 
 `LEVEL_00`'s only standing ashtray sits at tile `(12.79, 5.21)` and its interaction offset of `+0.6` in X keeps the approach inside cell `(13, 5)`, which the original collision grid marks blocked. Goal 6 therefore cannot complete on this map in the original either. The port reproduces that: the attempt fails, the agent keeps decaying its other needs, and the tie-break in `sub_415FF0` — first index wins — hands the turn to a lower-numbered goal once that need also reaches zero.
 
-Coworkers use `SIT#USE` throughout work instead of the original rare per-tick `SIT#IDLE` selection, because reproducing a per-tick clip swap needs the original's clock-driven action playback, which this port has not verified for action clips. The copier's own object animation state 9 is not modelled; only the agent side of that action is. Panic, cleanup, anger progression and the `+1064` speed increase remain unimplemented; reacting to a tampered object is implemented and described below.
+Coworkers use `SIT#USE` throughout work instead of the original rare per-tick `SIT#IDLE` selection, because reproducing a per-tick clip swap needs the original's clock-driven action playback, which this port has not verified for action clips. The copier is put into its own state 9 while an agent photocopies at it, which is what makes its `DESTROYED_1` loop run in ordinary play with no prank involved; the brain restores state 0 when the activity ends, is interrupted or the agent is stopped. Panic, cleanup and anger progression remain unimplemented; the `+1064` speed increase and reacting to a tampered object are implemented and described below.
+
+### What the wider cast changed
+
+Level 2 spawns six of the seven characters at once, and `tests/check_npc_level_2_runtime.gd` runs all of them on the real map for two simulated minutes. Three things only show up there:
+
+- **The secretary never changes clip when she reacts.** `sub_41E360` has no branch for the reaction flag at all, so `_start_reaction` asks her for `idle` rather than a `PISSED` her table does not name. She is angry — goal 8, the ANGRY bubble, the player's 25 points — without a pose for it. See [catch-reference.md](catch-reference.md).
+- **The janitor has no seated work clip.** His table (`0x46EBD8`) holds only `SIT#EASY`, so every seated state resolves to it, and `STAND#USE` at slot 3 is named but never selected by `sub_41A8D0`. It is therefore not imported.
+- **Goal 4 completes for the first time.** Level 2's toilet cubicles are reachable where `LEVEL_00`'s is not, so an agent really does step inside one. An agent performing any activity has been placed on the item's own anchor by `sub_4161E0` or `sub_416090` — inside a blocked cell, in the cubicle's case — so a footprint check only applies while it is walking.
+
+The port's footprint safeguard costs much more on this map than on `LEVEL_00`: over those two minutes the janitor retries navigation 1143 times and the secretary 292, against single digits on level 1. Every one of them is the divergence described above — the original lets an agent stand flush against a wall and the port does not — and all six still reach targets and finish activities. Closing the gap means letting NPC movement ignore static collision the way the original does, which is the same deliberate trade `LEVEL_00`'s unreachable toilet already documents.
 
 The port additionally releases claims and restores standing positions when a brain is disabled, removed, or its activity target/seat disappears. An action with no clip at all plays the idle fallback and warns once, matching `sub_41A510` rather than failing the goal. These are authoring/runtime safety behavior, not claims about original object-deletion handling. The isolated `tests/check_npc_brain.gd` exercises target filters, goal disabling, the arrival dispatch for each item class, work startup, durations, occupation, need resets, retry bounds, authored-route override, and interrupted/missing-action cleanup with a stub actor. `tests/check_npc_level_runtime.gd` runs the three original agents on the imported map for two simulated minutes.
 
@@ -198,7 +210,9 @@ been disabled.
 agent's `agent+1064`, reading the mean as it stood at the start of the frame. `sub_419CE0`,
 `sub_41E360` and `sub_41A8D0` walk at `base_speed + 0.15 * that`, so the whole office picks
 up pace as it sours — up to 0.45 tiles a second at the top band. `sub_419740`, the boss,
-reads the band but does not apply that formula.
+reads the band but does not apply that formula. The same three ticks also add `0.2 * band`
+to the notice radius and `5.0 * band` to the notice cone, so a soured office sees further
+and wider as well as moving faster — see [catch-reference.md](catch-reference.md).
 
 **The warning.** When the band rises, `sub_402350` calls `sub_407960`, which shows
 `game+14740` — the `THERMO_UP` overlay the console builds hidden at (5, 5) — and sets
@@ -276,7 +290,7 @@ not shared:
 | --- | --- | --- | --- |
 | Coworkers | `0x46EB44`, `sub_419CE0` | 7 | `PISSED` |
 | Boss | `0x46EAE0`, `sub_419740` | 1 | `STAND#EXPLODE` |
-| Secretary | `0x46EEE4`, `sub_41E360` | — | not recovered |
+| Secretary | `0x46EEE4`, `sub_41E360` | — | none — her tick has no `+1820` branch ([catch-reference.md](catch-reference.md)) |
 
 Both ship 8 views and both loop. They are imported through
 `tools/character_action_clips.json` as `pissed` and `explode`.
@@ -288,7 +302,19 @@ have yet:
 
 - **`agent+1816` and `agent+1832`**: a janitor (`agent+1740 == 3`) whose broken item is one
   of the 30 types `sub_4180F0` lists files it as a repair job, and everyone else does the
-  same through `sub_4181F0` for a flagged cubicle (type 173 with `item+224` set). That is
-  goal 9, `REPAIR`, which the brain cannot pick yet. Both branches also write `agent+1124`,
-  but the unconditional 10-to-12-second write below them overwrites it, so the reaction is
-  always the same length.
+  same through `sub_4181F0` for a flagged cubicle (type 173 with `item+224` set). Both
+  branches also write `agent+1124`, but the unconditional 10-to-12-second write below them
+  overwrites it, so the reaction is always the same length.
+
+  **The janitor half is implemented.** `npc_brain.gd` files `_repair_job` in
+  `_start_reaction` when the agent is a janitor and the item's type is in the exported table,
+  holds goal 9 for the reaction instead of goal 8 — which is what raises the `REPAIR` bubble
+  rather than the `ANGRY` one — and on `_on_activity_finished` puts the item back: the
+  activity point's `reset_actions()` plus state 0 on the object. The clip stays the
+  reaction's own, because no per-tick function has a repair branch. The cubicle route waits
+  for the `item+224` lock, which arrives with the cubicle-occupancy actions.
+
+  The 30 types come from `tools/export_repairable_types.py`, which decodes `sub_4180F0`'s
+  jump table out of the binary. What a finished repair does to the item, including that it
+  clears `item+228` and releases a cubicle lock, is in
+  [catch-reference.md](catch-reference.md).

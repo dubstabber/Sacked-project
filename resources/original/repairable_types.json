@@ -1,0 +1,136 @@
+{
+  "generated_by": "tools/export_repairable_types.py",
+  "source": {
+    "exe": "extract-sacked-assets/sacked/sacked.exe",
+    "size": 479232,
+    "sha256": "6404096cc74e1c954daa2033a7d7d7826429a27deaa679f1ff7103027f614a86",
+    "function": "0x004180f0",
+    "selector_table": "0x0041813c",
+    "jump_table": "0x00418134",
+    "first_type": 102,
+    "type_span": 168,
+    "repair_job_offset": "0x728"
+  },
+  "types": [
+    {
+      "type": 102,
+      "name": "Handtuchautomat"
+    },
+    {
+      "type": 110,
+      "name": "Waschbecken"
+    },
+    {
+      "type": 126,
+      "name": "Bild 1"
+    },
+    {
+      "type": 127,
+      "name": "Bild 2"
+    },
+    {
+      "type": 129,
+      "name": "Kopierer"
+    },
+    {
+      "type": 135,
+      "name": "ChefBild 1"
+    },
+    {
+      "type": 136,
+      "name": "ChefBild 2"
+    },
+    {
+      "type": 137,
+      "name": "ChefBild 3"
+    },
+    {
+      "type": 141,
+      "name": "Herd"
+    },
+    {
+      "type": 143,
+      "name": "Drucker 1"
+    },
+    {
+      "type": 144,
+      "name": "Drucker 2"
+    },
+    {
+      "type": 152,
+      "name": "Tastatur frontal"
+    },
+    {
+      "type": 153,
+      "name": "Tastatur links"
+    },
+    {
+      "type": 154,
+      "name": "Tastatur rechts"
+    },
+    {
+      "type": 155,
+      "name": "Tastatur mit Kaffeetasse"
+    },
+    {
+      "type": 173,
+      "name": "Toilettenkabine"
+    },
+    {
+      "type": 177,
+      "name": "Chefurkunde"
+    },
+    {
+      "type": 190,
+      "name": "Fenster 1a"
+    },
+    {
+      "type": 191,
+      "name": "Fenster 1b"
+    },
+    {
+      "type": 192,
+      "name": "Fenster 1c"
+    },
+    {
+      "type": 197,
+      "name": "Spüle"
+    },
+    {
+      "type": 237,
+      "name": "FAX-Gerät"
+    },
+    {
+      "type": 240,
+      "name": "Flipchart"
+    },
+    {
+      "type": 248,
+      "name": "Server-Tower"
+    },
+    {
+      "type": 250,
+      "name": "Tafel / Whiteboard"
+    },
+    {
+      "type": 255,
+      "name": "Heizungssteuerung"
+    },
+    {
+      "type": 262,
+      "name": "Toi-Kabine mit Wassereimer"
+    },
+    {
+      "type": 267,
+      "name": "Fenster 2a"
+    },
+    {
+      "type": 268,
+      "name": "Fenster 2b"
+    },
+    {
+      "type": 269,
+      "name": "Fenster 2c"
+    }
+  ]
+}
