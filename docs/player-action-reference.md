@@ -261,8 +261,8 @@ Two things in the source needed care:
 
 - **`ASSCOPY` ships only two views**, `090` and `180`, because the original repositions the
   player onto the copier and so only ever shows it from the two sides it can be stepped onto
-  from. Until that reposition is implemented the controller snaps the facing to the nearer
-  of the two.
+  from. `PrankController._step_onto_object` applies that reposition, and the clip then plays
+  from whichever of the two sides it chose.
 - **`ANNE_ASSCOPY_090`'s pivot is negative.** `SPRITEHDR` stores it as a signed 16-bit pair,
   but the extraction helper read it unsigned, so `pivot_x` comes through as 65531 where it
   means −5, and the reference JSON's `offset.x` carries −65531 to match. The library importer

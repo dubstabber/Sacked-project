@@ -306,13 +306,13 @@ have yet:
   branches also write `agent+1124`, but the unconditional 10-to-12-second write below them
   overwrites it, so the reaction is always the same length.
 
-  **The janitor half is implemented.** `npc_brain.gd` files `_repair_job` in
-  `_start_reaction` when the agent is a janitor and the item's type is in the exported table,
+  **Both halves are implemented.** `npc_brain.gd` files `_repair_job` in `_start_reaction`
+  when the agent is a janitor and the item's type is in the exported table, or — for any
+  agent at all — when the item carries the `item+224` cubicle lock,
   holds goal 9 for the reaction instead of goal 8 — which is what raises the `REPAIR` bubble
   rather than the `ANGRY` one — and on `_on_activity_finished` puts the item back: the
   activity point's `reset_actions()` plus state 0 on the object. The clip stays the
-  reaction's own, because no per-tick function has a repair branch. The cubicle route waits
-  for the `item+224` lock, which arrives with the cubicle-occupancy actions.
+  reaction's own, because no per-tick function has a repair branch.
 
   The 30 types come from `tools/export_repairable_types.py`, which decodes `sub_4180F0`'s
   jump table out of the binary. What a finished repair does to the item, including that it

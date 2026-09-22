@@ -93,9 +93,8 @@ original's 4:3 frame the area past the edge of a map is the navy `(16, 16, 74)` 
 clear colour above; black is only what lies outside the frame. The level expands rather than
 pillarboxing, so it uses the navy and never the black.
 
-This applies to `boot_loading`, `main_menu`, `character_select` and `level_result` today, and
-to every screen built later. `level_tree` is still the interim list and adopts the convention
-when the real tree is built.
+This applies to `boot_loading`, `main_menu`, `character_select`, `level_tree`,
+`level_description`, `level_result` and `highscores` today, and to every screen built later.
 
 **One visible change at 4:3.** The main menu's background art is 800 × 800 and was being
 letterboxed into an 800 × 600 rect, leaving bars down both sides. It now covers that rect,
