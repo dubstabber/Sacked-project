@@ -95,6 +95,7 @@ func _run() -> void:
 	_check_reacting_to_a_tampered_item()
 	_check_repairing_a_broken_item()
 	_check_rescuing_a_locked_in_colleague()
+	_check_leaving_a_cubicle()
 	_check_social_target()
 	_check_routes_end_on_cell_centres()
 	_check_interrupted_activity()
@@ -765,12 +766,14 @@ func _check_repairing_a_broken_item() -> void:
 # Actions 110 and 112 lock a cubicle's occupant in. sub_417120 still hands that cubicle to the
 # next colleague who needs it; the colleague finds it tampered with, reacts, and files the
 # repair through sub_4181F0 (type 173 with item+224 set). The repair's expiry resets the item
-# (sub_4100B0), and on its next tick sub_416090 lets the inmate out.
+# (sub_4100B0), and sub_416090 lets the inmate out on the first tick after the colleague has
+# stepped away from the door (sub_418EA0).
 func _check_rescuing_a_locked_in_colleague() -> void:
 	var fixture := _point_fixture(8, 173, 7, true)
 	var world: Node2D = fixture["world"]
 	var brain: Node = fixture["brain"]
 	var actor: Actor = fixture["actor"]
+	actor.add_to_group("npc_agents")
 	var cubicle: Node2D = fixture["point"]
 	var item := (cubicle.get_parent() as Node2D).global_position
 
@@ -797,25 +800,88 @@ func _check_rescuing_a_locked_in_colleague() -> void:
 	_expect(inmate_brain._goal == BRAIN.REACTION_GOAL and inmate_brain.is_locked_in(), "a locked-in occupant turns angry when its timer runs out")
 	_expect(inmate.global_position.is_equal_approx(item), "the locked-in occupant stays inside the cubicle")
 	_expect(inmate_brain.is_blind(), "and sees nothing from in there")
+	# Nothing but sub_416090 reads +1796 and +1820 stays clear, so no tick picks PISSED: the
+	# inmate stands in its idle slot, and asks about the door again on every tick.
+	_expect(inmate.activity.get("animation") == &"idle", "the inmate stands idle, angry through goal 8 alone")
+	_expect(float(inmate.activity.get("duration", -1.0)) == 0.0, "and tries the door again on the next tick")
 	inmate.finish_activity()
-	_expect(cubicle.get("occupant") == inmate and inmate.global_position.is_equal_approx(item), "sulking longer does not let it out")
+	_expect(cubicle.get("occupant") == inmate and inmate.global_position.is_equal_approx(item), "a locked door does not let it out")
 
 	_expect(brain._candidates(4) == [cubicle], "the locked, tampered, occupied cubicle is still a goal-4 candidate")
 	brain._attempt_goal(4)
 	_expect(brain._state == BRAIN.State.NAVIGATING and brain._target == cubicle, "a colleague who needs the toilet walks to it")
+	actor.global_position = actor.destination
 	actor.destination_reached.emit()
 	_expect(actor.activity.get("animation") == &"pissed", "the colleague finds it tampered with and reacts")
 	_expect(brain._repair_job == cubicle, "sub_4181F0 files the locked cubicle as the colleague's repair job")
 	_expect(brain._goal == BRAIN.REACTION_GOAL, "the rescuer shows the ANGRY bubble, not REPAIR")
 	_expect(cubicle.get("occupant") == inmate, "the colleague does not take the cubicle")
-	inmate_brain._physics_process(0.1)
+	inmate.finish_activity()
 	_expect(cubicle.get("occupant") == inmate, "the inmate stays locked in while the repair runs")
 	actor.finish_activity()
 	_expect(not bool(cubicle.get("locked_in")) and not bool(cubicle.get("tampered")), "the finished repair resets the cubicle")
 	_expect(brain._repair_job == null, "the repair job is done")
-	inmate_brain._physics_process(0.1)
-	_expect(cubicle.get("occupant") == null, "the inmate leaves on its next tick")
+	inmate.finish_activity()
+	_expect(cubicle.get("occupant") == inmate and inmate.global_position.is_equal_approx(item), "the rescuer standing at the door keeps the inmate inside")
+	_expect(inmate_brain._goal == BRAIN.REACTION_GOAL and inmate_brain.is_blind(), "still angry and blind while it waits")
+	actor.global_position += IsoDirection.ground_to_screen(Vector2(0, 2))
+	inmate.finish_activity()
+	_expect(cubicle.get("occupant") == null, "the inmate leaves on the first tick after the rescuer steps away")
 	_expect(inmate.global_position.is_equal_approx(cubicle.global_position), "the inmate steps out onto the interaction point")
 	_expect(inmate_brain._state == BRAIN.State.IDLE and not inmate_brain.is_blind(), "the inmate is free and can see again")
 	_expect(inmate_brain._needs[4] == toilet_need, "being let out completes goal 8, not the toilet goal")
+	world.free()
+
+
+# sub_416090 lets an occupant out only when sub_418EA0 finds no other entity -- agent or
+# player -- strictly within half a tile of the interaction point on both axes (0x4160FE);
+# otherwise it stays inside and asks again on the next tick. Seats have no such test.
+func _check_leaving_a_cubicle() -> void:
+	var fixture := _point_fixture(8, 173, 7, true)
+	var world: Node2D = fixture["world"]
+	var brain: Node = fixture["brain"]
+	var actor: Actor = fixture["actor"]
+	var cubicle: Node2D = fixture["point"]
+	var item := (cubicle.get_parent() as Node2D).global_position
+	brain._target = cubicle
+	brain._active = cubicle
+	brain._state = BRAIN.State.NAVIGATING
+	brain._goal = 4
+	actor.destination_reached.emit()
+	_expect(cubicle.get("occupant") == actor, "the occupant goes in")
+	# The interaction point is ground (7, 5).
+	var waiting := _agent(world, "Waiting", 1, Vector2(7.4, 4.7))
+	brain._needs[4] = 1.0
+	actor.finish_activity()
+	_expect(cubicle.get("occupant") == actor and actor.global_position.is_equal_approx(item), "somebody at the door keeps the occupant inside")
+	_expect(actor.activity.get("animation") == &"idle" and float(actor.activity.get("duration", -1.0)) == 0.0, "it stands idle and asks again next tick")
+	_expect(brain._goal == 4 and brain._state == BRAIN.State.ACTING and brain.is_blind(), "the goal is not done and it still sees nothing")
+	waiting.position = IsoDirection.ground_to_screen(Vector2(7.6, 5.0))
+	var player := Node2D.new()
+	player.position = IsoDirection.ground_to_screen(Vector2(6.8, 5.3))
+	var actions := Node.new()
+	actions.add_to_group("player_actions")
+	player.add_child(actions)
+	world.add_child(player)
+	actor.finish_activity()
+	_expect(cubicle.get("occupant") == actor, "the player at the door keeps it inside too")
+	player.position = IsoDirection.ground_to_screen(Vector2(7.0, 5.6))
+	actor.finish_activity()
+	_expect(cubicle.get("occupant") == null, "half a tile off on one axis is enough to let it out")
+	_expect(actor.global_position.is_equal_approx(cubicle.global_position), "it steps out onto the interaction point")
+	_expect(brain._state == BRAIN.State.IDLE and brain._needs[4] >= 60.0 and not brain.is_blind(), "and the toilet goal completes")
+
+	# A seat's exit, sub_4161E0, has no such test.
+	var sofa := _point(world, "Sofa", Vector2(10, 5), Vector2(1, 0), 7, 182, 3, false)
+	brain._build_candidates()
+	brain._target = sofa
+	brain._active = null
+	brain._passive = sofa
+	brain._state = BRAIN.State.NAVIGATING
+	brain._goal = 7
+	actor.destination_reached.emit()
+	_expect(sofa.get("occupant") == actor, "the agent sits on the sofa")
+	waiting.position = sofa.global_position
+	actor.finish_activity()
+	_expect(sofa.get("occupant") == null and brain._state == BRAIN.State.IDLE, "somebody standing at a seat does not keep its occupant sitting")
 	world.free()

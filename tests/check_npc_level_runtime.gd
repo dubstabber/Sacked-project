@@ -10,6 +10,12 @@ const CUBICLE_TYPES := [173, 262]
 const SOFA_SEED := 42
 const SOFA_SECONDS := 40
 const SOFA := "Object060Sofa01"
+# sub_418D20 blocks the cell of every other entity before a route search, the player's
+# included, and the player spawns on (12, 9): the interaction cell of the cardboard cutout,
+# the boss's only decoration. A player who never moved would pin his goal 2 at 0 and starve
+# every goal after it, so the long runs park the frozen player off the map.
+const CUTOUT := "Object031Pappaufsteller01"
+const PARKED_PLAYER := Vector2(-100000, -100000)
 
 var _failures := 0
 var _stats: Dictionary = {}
@@ -53,6 +59,8 @@ func _run() -> void:
 	player.get_node("FootstepPlayer").stop_footsteps()
 	player.get_node("FootstepPlayer").stream = null
 	var collision_layer := world.get_node("CollisionTileMapLayer") as TileMapLayer
+	_check_the_player_blocks_the_cutout(world, player, collision_layer)
+	player.position = PARKED_PLAYER
 	var activity_points := get_nodes_in_group("npc_activity_points")
 	var toilet_users := {}
 	for frame in range(SIMULATION_SECONDS * Engine.physics_ticks_per_second):
@@ -98,6 +106,7 @@ func _check_the_boss_sits_on_the_sofa() -> void:
 	player.set_physics_process(false)
 	player.get_node("FootstepPlayer").stop_footsteps()
 	player.get_node("FootstepPlayer").stream = null
+	player.position = PARKED_PLAYER
 	var sofa := world.get_node("Objects/%s/InteractionPoint" % SOFA)
 	var seated_frames := 0
 	for frame in range(SOFA_SECONDS * Engine.physics_ticks_per_second):
@@ -109,6 +118,22 @@ func _check_the_boss_sits_on_the_sofa() -> void:
 				break
 	_expect(seated_frames > 0, "with seed %d the boss sits on %s within %d seconds" % [SOFA_SEED, SOFA, SOFA_SECONDS])
 	level.free()
+
+
+# The cutout's interaction point rounds to the player's spawn cell, so the boss cannot plan a
+# route to it until the player steps off; an agent standing there would do the same.
+func _check_the_player_blocks_the_cutout(world: Node, player: Node2D, layer: TileMapLayer) -> void:
+	var boss := world.get_node("Npc080Boss") as CharacterBody2D
+	var cutout := world.get_node("Objects/%s/InteractionPoint" % CUTOUT) as Node2D
+	var cell := _rounded_cell(layer, cutout.global_position)
+	var end := layer.to_global(layer.map_to_local(cell))
+	_expect(cell == _rounded_cell(layer, player.global_position), "the player spawns on the cutout's interaction cell")
+	_expect(not boss.navigate_to(end), "the boss cannot route to the cutout while the player stands on its cell")
+	var spawn := player.position
+	player.position = PARKED_PLAYER
+	_expect(boss.navigate_to(end), "he can once the player has moved off it")
+	boss.cancel_commands()
+	player.position = spawn
 
 
 # The same arrival the long run exercises, but against an object the player has finished an

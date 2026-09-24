@@ -22,10 +22,11 @@ func _run() -> void:
 	await _check_collision_detour()
 	await _check_unreachable_destination()
 	await _check_step_back_from_a_return_point()
+	await _check_other_entities_block_routes()
 	await _check_seated_activity_and_cancellation()
 	await _check_missing_seated_view_uses_original_fallback()
 	if _failures == 0:
-		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point and seated activities passed")
+		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles and seated activities passed")
 	quit(1 if _failures else 0)
 
 
@@ -140,6 +141,77 @@ func _check_step_back_from_a_return_point() -> void:
 		_expect(events.reached == 1 and events.failed == 0, "the agent at %s walks on to its destination" % start_tile)
 		_expect_vector(npc.global_position, target, "the agent at %s arrives" % start_tile)
 		world.free()
+
+
+# sub_418D20 marks the rounded cell of every other entity -- agents and the player -- as
+# blocked before each search and restores it after. sub_41EE70 never tests the start, and the
+# goal is reached by popping it, so an occupied goal or passage fails the route while an
+# occupied start cell does not.
+func _check_other_entities_block_routes() -> void:
+	var world := _make_world()
+	var layer := _make_corridor(world, true)
+	var npc := _make_npc(_world_position(layer, Vector2(1, 1)), 8.0)
+	world.add_child(npc)
+	var goal := _world_position(layer, Vector2(5, 1))
+	var agent := _entity(world, layer, Vector2(3, 4), false)
+	_expect(not npc.navigate_to(goal), "an agent standing in the only gap closes it")
+	agent.position = _world_position(layer, Vector2(5, 1))
+	_expect(not npc.navigate_to(goal), "an agent standing on the goal cell refuses the route")
+	agent.position = _world_position(layer, Vector2(5.3, 1.4))
+	_expect(not npc.navigate_to(goal), "an agent anywhere inside the goal cell refuses it")
+	agent.position = _world_position(layer, Vector2(1, 1))
+	_expect(npc.navigate_to(goal), "an agent sharing the start cell does not")
+	agent.position = _world_position(layer, Vector2(5, 2))
+	_expect(npc.navigate_to(goal), "an agent beside the goal does not")
+	agent.free()
+	var player := _entity(world, layer, Vector2(3, 4), true)
+	_expect(not npc.navigate_to(goal), "the player standing in the gap closes it too")
+	var elsewhere := _make_world()
+	player.reparent(elsewhere, false)
+	_expect(npc.navigate_to(goal), "an entity in another world is ignored, and the cells come back after the search")
+	npc.cancel_commands()
+	elsewhere.free()
+
+	# Off the centre of its cell, the start's footprint reaches into a neighbour someone
+	# stands in; the search itself never looks at the start, so the route still goes.
+	npc.global_position = _world_position(layer, Vector2(1.3, 1))
+	var neighbour := _entity(world, layer, Vector2(2, 1), false)
+	_expect(npc.navigate_to(goal), "a start whose footprint touches an occupied neighbour still routes")
+	npc.cancel_commands()
+	neighbour.free()
+
+	# Walked for real: the route goes round a cell somebody stands in. The refusals above
+	# report their failures deferred, so let them land first.
+	await process_frame
+	npc.global_position = _world_position(layer, Vector2(4, 1))
+	var target := _world_position(layer, Vector2(6, 1))
+	_entity(world, layer, Vector2(5, 1), false)
+	var events := _navigation_events(npc)
+	var entered := false
+	_expect(npc.navigate_to(target), "a target past the occupied cell routes round it")
+	for frame in range(240):
+		await physics_frame
+		var tile := _tile_position(layer, npc.global_position)
+		if Vector2i(floori(tile.x + 0.5), floori(tile.y + 0.5)) == Vector2i(5, 1):
+			entered = true
+		if events.reached > 0 or events.failed > 0:
+			break
+	_expect(events.reached == 1, "the agent arrives past the occupied cell")
+	_expect(not entered, "the agent never walks through the occupied cell")
+	world.free()
+
+
+func _entity(world: Node2D, layer: TileMapLayer, tile: Vector2, player: bool) -> Node2D:
+	var entity := Node2D.new()
+	entity.position = _world_position(layer, tile)
+	if player:
+		var actions := Node.new()
+		actions.add_to_group("player_actions")
+		entity.add_child(actions)
+	else:
+		entity.add_to_group("npc_agents")
+	world.add_child(entity)
+	return entity
 
 
 func _check_seated_activity_and_cancellation() -> void:

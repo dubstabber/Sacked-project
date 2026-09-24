@@ -69,7 +69,7 @@ The original agents choose targets at runtime. `sub_416D50` selects a target ite
 
 NPC traversal at `sub_417730` aims at a route entry's cell plus its direction vector. When the distance is below **0.4 logical tiles**, it advances the route index. Completing the route frees it, turns toward the target item, and calls `sub_417B00` to begin the action. It does not use the port's former six-screen-pixel arrival threshold or a fixed pause after every waypoint.
 
-Before pathfinding, `sub_418D20` temporarily marks other entity positions as occupied, then restores those cells afterward. NPC construction at `sub_415D50` disables the player-style static collision flag at `+100`; original NPC avoidance relies on generated paths and agent handling. The port's shared physical grid collision is an explicit additional safeguard for authored movement.
+Before pathfinding, `sub_418D20` temporarily marks other entity positions as occupied, then restores those cells afterward (see "Other entities in the way" below). NPC construction at `sub_415D50` disables the player-style static collision flag at `+100`; original NPC avoidance relies on generated paths and agent handling. The port's shared physical grid collision is an explicit additional safeguard for authored movement.
 
 ## Goals and target selection
 
@@ -157,6 +157,10 @@ For a seat with original base interaction offset `(1, 0)`:
 
 Relaxed sitting instead faces along the interaction offset and shifts the ground anchor 30% toward the interaction point. When either sitting timer ends, `sub_4161E0` places the NPC at the seat's interaction point and clears the seat's occupation.
 
+### Leaving a cubicle
+
+A cubicle is left differently. When its timer is spent, `sub_416090` first checks the lock (`item+224`, above). Then it asks `sub_418EA0` whether the way out is clear: that walks the world's entity list, every agent and the player, and answers no when any other one stands **strictly within half a tile** of the interaction point on **both** axes (`0x418F53`). Only on a yes does the agent step out onto the point, release the cubicle and clear `+1824` (`0x41610B`–`0x41612F`). Otherwise it returns busy and stays inside, still blind, and asks again on the next tick. The goal is not completed until it gets out. Seats have no such test. The port does the same. While the way out is blocked the brain restarts the in-cubicle activity for one tick at a time, in the idle clip, and it counts the player too. The port used to let an occupant out regardless, onto a colleague standing at the door. That matters most for a rescue: the colleague who files the repair reacts at the door, so the freed inmate stays inside until that colleague walks off.
+
 Coworker animation slots are `0 IDLE#1#ATMEN`, `1 IDLE#2`, `2 WALK`, `3 SIT#IDLE`, `4 SIT#USE`, `5 SPECIAL#1`, `6 SPECIAL#2`, `7 PISSED`, `8 SIT#EASY` (table `0x46EB44`, tick `sub_419CE0`). The tick picks in this order: walking uses `WALK`; sitting uses `SIT#EASY` when the relaxed flag at `+1804` is set, otherwise `SIT#USE` for random values 0–4080 and `SIT#IDLE` for 4081–4095 from `rand() & 0xfff`; the special-action flag at `+1812` uses `SPECIAL#1`; the reaction flag at `+1820` uses `PISSED`; goal 6 uses `SPECIAL#2`; and standing idle picks `IDLE#2` for 4089–4095. Secretary equivalents are slots 6/7/9 for idle/use/easy (`0x46EEE4`, `sub_41E360`). The boss uses slot 3 `SIT#IDLE` (`0x46EAE0`, `sub_419740`).
 
 `sub_41A510` resolves a slot against the agent's current eight-direction index. A slot with no clip for that view falls back to the clip for view `000`, and a slot with no clip at all falls back to the idle slot. Each coworker variant ships only one of `SPECIAL#1` and `SPECIAL#2`, so goal 6 plays the idle fallback for the variant-1 coworkers in `LEVEL_00`.
@@ -190,6 +194,14 @@ The port routes the same way. `npc_brain.gd` sends an agent to the centre of the
 The other end is the point an agent is stood back on. `sub_4161E0` (seats) and `sub_416090` (cubicles) return it to the **exact** interaction point, which can be flush against a wall or, for a few seats the monitor's seat search can hand out, inside a blocked cell. When the ordinary search refuses to start there, `npc.gd` plans from that point's rounded cell with the cell itself exempt from the search, as `sub_41EE70` never tests it, and steps back onto the cell's centre first. Walking keeps its collision throughout; the step back only moves the body out of the overlap.
 
 Before routes ended on cells the port walked to the exact point, and the footprint test refused every target whose point sits within 0.85 tiles of a blocked cell. On `LEVEL_00` that was the toilet cubicle `(11.68, 0.99)` against blocked `(11, 1)`, the sink `(7.99, 13.34)` against `(8, 14)` and the sofa `(12.21, 6.13)` against `(13, 6)` — which is why the boss never sat on the sofa — and on levels 1–8 some fifty candidate points in all, among them the secretary's own chair on level 2, seven coworkers' chairs on levels 4, 6 and 7, the only drink on levels 5 and 6, every relax seat on level 3 and the toilets on levels 3 and 8. The original reaches all of them.
+
+### Other entities in the way
+
+Before each search, from `sub_416D50` (`0x416D6E`) and from `sub_416960` (`0x4169A0`), `sub_418D20` walks the agent's `+1732` list. That is the world's entity list, which also holds the player: `sub_4049F0` appends the player to `game+1924` (`0x404B42`), the list the agent factories store in `+1732` (`sub_404B90` at `0x404CBF` for the boss). The walk skips the agent itself and writes 255, blocked, into the rounded cell of every other entity, saving what was there. The search's restore loop puts the cells back (`0x4170A9`–`0x4170F1`, and in `sub_416960` via `sub_419410`/`sub_419450`). Items never block a cell this way. `sub_41EE70` does not test the start cell and the goal is found by popping it, so a cell someone stands in fails the route when it is the goal cell or the only way through, and never when it is the agent's own. A failed start is an ordinary failure: the 0.5–1.5 second retry, and the goal is dropped after five.
+
+The port marks the same cells in `npc.gd` for the search only: the other agents and the player, not the agent's own cell. Bodies still pass through one another, since agents and the player do not collide. The port's start footprint and the first leg of a route never refuse a route over an occupied cell. A start they would refuse falls back to the step back described above, and that search starts at the cell's centre, where only the unmarked start cell is tested.
+
+One consequence on `LEVEL_00`: the player spawns on `(12, 9)`, which is also where the cardboard cutout `PAPPAUFSTELLER01`, the boss's only decoration, rounds to. Until the player moves off that cell, the boss cannot reach the cutout, and his goal-2 need can pin at 0 and starve every later goal. `check_npc_level_runtime.gd` asserts exactly that, then parks its frozen player off the map for the long runs. Seated agents stand 2.4 screen pixels higher than the original's logical position (the seat's height), which moves their rounded cell only if the anchor lies within 0.05 tiles of a cell edge.
 
 ### When a goal can never succeed
 
@@ -314,14 +326,18 @@ one it was pursuing.
 `sub_416090` is a separate goal-8 case: an agent inside a cubicle whose `item+224` is set —
 the flag actions 110 and 112 apply — is angry for as long as it stays locked in. Once its
 cubicle timer has run out, every tick sets goal 8 (`0x416143`) and returns busy without
-moving the agent off the item's anchor, so it stays inside. The first tick after `item+224`
-clears, which only an item reset does (a finished repair, below), it steps back out onto the
-interaction point and releases the cubicle. `sub_4165D0` then completes goal 8, and
+moving the agent off the item's anchor, so it stays inside. It is angry through the bubble
+alone: `+1820` stays clear, and a text search for `+704h]` finds `+1796` read only by
+`sub_416090` itself, so no tick picks a clip for it and the inmate stands in its idle slot.
+From the first tick after `item+224` clears, which only an item reset does (a finished
+repair, below), it takes the ordinary way out (see "Leaving a cubicle" above): out onto the
+interaction point once nobody stands at the door. `sub_4165D0` then completes goal 8, and
 `sub_415FD0` writes that goal's need slot, which lies past the eight needs `sub_416770`
 decays (`0x4168F0`). So being let out satisfies nothing: the inmate still wants the toilet
 it never got to use. The port does all of this. Its locked-in agent used to be stood back on
-the interaction point at the end of its first timer and sulk outside the cubicle, and a
-repair would only have let it out at the end of the current 10–12 second sulk.
+the interaction point at the end of its first timer and sulk outside the cubicle in its
+`PISSED` clip, and a repair would only have let it out at the end of the current 10–12
+second sulk.
 
 The arrival path in `sub_417B00` awards **25 points** through `sub_41DEA0(0x19, x, y)` at the
 agent's own position, which confirms the published walkthrough's "+25 when a colleague tries

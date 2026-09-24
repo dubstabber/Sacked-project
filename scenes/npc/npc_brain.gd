@@ -114,6 +114,21 @@ static func profiles() -> Dictionary:
 			"notice_cone_degrees": float(entry.get("notice_cone_degrees", 0.0)),
 		}
 	return _profile_table
+
+
+# agent+1732, the world's entity list that sub_418D20 and sub_418EA0 walk: every agent, and
+# the player, whom sub_4049F0 appends to the same list (0x404B42).
+static func world_entities(world: Node) -> Array[Node2D]:
+	var result: Array[Node2D] = []
+	var tree := world.get_tree()
+	for node in tree.get_nodes_in_group("npc_agents"):
+		if node is Node2D and world.is_ancestor_of(node):
+			result.append(node)
+	for actions in tree.get_nodes_in_group("player_actions"):
+		var player := actions.get_parent() as Node2D
+		if player != null and world.is_ancestor_of(player):
+			result.append(player)
+	return result
 # Item types sub_417B00 dispatches on; see docs/npc-reference.md.
 const WORK_SEATS := [68, 69, 70, 71, 72, 73, 74, 86, 93, 94, 121, 122]
 const MONITOR_TYPES := [152, 153, 154, 155]
@@ -251,11 +266,6 @@ func _physics_process(delta: float) -> void:
 			_on_navigation_failed()
 		elif _state == State.ACTING and (not is_instance_valid(_target) or (_has_claim and not is_instance_valid(_claimed_seat))):
 			_stop()
-		elif _shut_in and not is_locked_in():
-			# Past its timer sub_416090 tests item+224 on every tick, so the repair that
-			# clears it lets the inmate out at once rather than after another sulk.
-			_actor.call("cancel_commands")
-			_on_activity_finished()
 		return
 	# sub_416540 gates a queued start on the same timer that holds the retry delay.
 	if _retry_delay > 0.0:
@@ -659,9 +669,16 @@ func _on_activity_finished() -> void:
 	if not enabled or _state != State.ACTING:
 		return
 	_clear_object_state()
-	# A shut-in agent has nowhere to go: sub_416090 re-arms its anger instead of freeing it.
+	# sub_416090 once the cubicle timer is spent: a locked door keeps the agent in with goal 8
+	# (0x416143), and an open one lets it out only when sub_418EA0 finds nobody else within
+	# half a tile of the interaction point (0x4160FE). Either way it asks again next tick.
 	if is_locked_in():
-		_stay_shut_in()
+		_shut_in = true
+		_goal = REACTION_GOAL
+		_hold_inside()
+		return
+	if _inside_cubicle and _exit_is_blocked():
+		_hold_inside()
 		return
 	_release_seat()
 	_finish_repair()
@@ -827,21 +844,31 @@ func _finish_repair() -> void:
 	_repair_job = null
 
 
-# The occupant of a locked cubicle keeps sulking inside it: sub_416090 sets goal 8 at
-# 0x416143 and never moves it off the item's anchor. It does not re-score the player --
-# sub_41DEA0 pays once, when the agent is first caught out -- and it does not file a repair
-# on its own cubicle: sub_4181F0's route belongs to whoever walks up to it next.
-func _stay_shut_in() -> void:
-	var animation := REACTION_CLIPS.get(_profile_id, &"pissed") as StringName
+# An agent that may not leave its cubicle stays on the item's anchor for one more tick, and
+# sub_416090 asks again. Only sub_416090 reads +1796, and no tick picks a clip for it, so the
+# agent stands in its idle slot whether it is shut in or waiting for the way out; a locked-in
+# one is angry through goal 8 alone. It does not re-score the player -- sub_41DEA0 pays once,
+# when the agent is first caught out -- and it does not file a repair on its own cubicle:
+# sub_4181F0's route belongs to whoever walks up to it next.
+func _hold_inside() -> void:
 	var placement := _placement(_claimed_seat, false, false, null)
 	if not bool(_actor.call(
-		"start_activity", animation, _random.randf_range(10.0, 12.0), placement["facing"], placement["anchor"], placement["return"]
+		"start_activity", &"idle", 0.0, placement["facing"], placement["anchor"], placement["return"]
 	)):
 		_state = State.IDLE
-		return
-	_goal = REACTION_GOAL
-	_state = State.ACTING
-	_shut_in = true
+
+
+# sub_418EA0 walks the world's entity list and refuses the way out when any other agent, or
+# the player, stands strictly within half a tile of the interaction point on both axes.
+func _exit_is_blocked() -> bool:
+	var exit := _claimed_seat.global_position
+	for entity in world_entities(_actor.get_parent()):
+		if entity == _actor:
+			continue
+		var offset := IsoDirection.screen_to_ground(entity.global_position - exit)
+		if absf(offset.x) < 0.5 and absf(offset.y) < 0.5:
+			return true
+	return false
 
 
 func _set_object_state(point: Node, state: int) -> Node:
