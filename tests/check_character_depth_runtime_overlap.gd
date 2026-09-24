@@ -47,6 +47,9 @@ func _run() -> void:
 	_check_separation_restores_bodies()
 	if _failed:
 		return
+	_check_a_lifted_body_takes_its_depth_from_the_lift()
+	if _failed:
+		return
 
 	_cleanup()
 	quit(0)
@@ -68,6 +71,47 @@ func _check_separation_restores_bodies() -> void:
 	_assert_false(_compositor.visible, "separated compositor hidden")
 	_assert_true(_player.sprite.visible, "separated player body visible")
 	_assert_true(_npc.sprite.visible, "separated npc body visible")
+
+
+# ASSCOPY on level 3: the player's node stays on the floor at y 849.6 while his height of 1.8
+# draws him 43.2 px up. sub_41A2D0 derives the depth base from that lifted anchor, so it is
+# ceil(806 / 2) = 403, not the 425 the node's own y would give -- on the GPU path and in the
+# CPU composite alike.
+func _check_a_lifted_body_takes_its_depth_from_the_lift() -> void:
+	_npc.global_position = Vector2(2000.0, 2000.0)
+	_player.global_position = Vector2(584.4, 849.6)
+	_compositor.update_composition()
+	_assert_equal(_shader_base(), 425.0, "a player on the floor bases his depth on his own y")
+
+	_player.height = 1.8
+	_compositor.update_composition()
+	_assert_equal(_shader_base(), 403.0, "a lifted player bases his depth on the lifted sprite")
+
+	_npc.global_position = _player.global_position + Vector2(6.0, -40.0)
+	_compositor.update_composition()
+	_assert_false(_player.sprite.visible, "the lifted player overlaps the npc and is composited")
+	var texture_path: String = _player.sprite.texture.resource_path
+	var composited := -1.0
+	for part in String(_compositor._surface_signatures[0]).split(";"):
+		if part.begins_with(texture_path + "|"):
+			composited = float(part.get_slice("|", 5))
+	_assert_equal(composited, 403.0, "the CPU composite uses the same lifted base")
+
+	_player.height = 0.0
+	_npc.global_position = Vector2(2000.0, 2000.0)
+	_compositor.update_composition()
+
+
+func _shader_base() -> float:
+	var material := _player.sprite.material as ShaderMaterial
+	if material == null:
+		return -1.0
+	return float(material.get_shader_parameter("base_y"))
+
+
+func _assert_equal(actual: float, expected: float, label: String) -> void:
+	if not is_equal_approx(actual, expected):
+		_fail("%s: expected %s, got %s" % [label, expected, actual])
 
 
 func _cleanup() -> void:

@@ -10,6 +10,18 @@ var is_mouse_movement_active: bool = false
 # Set while a prank is running: the original plays an animation there and takes input away.
 var input_locked: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
+# Logical units above the floor. sub_41A2D0 takes 24 px a unit off the projected y before it
+# derives both the draw anchor and the depth base, and sub_41D500 draws the shadow from that
+# same anchor. The node stays on the ground, so reach, sight, being noticed and the camera
+# all still measure from x/z as the original does.
+var height := 0.0:
+	set(value):
+		height = value
+		var lift := Vector2(0.0, -24.0 * value)
+		for child in [^"Sprite2D", ^"Shadow"]:
+			var node := get_node_or_null(child) as Node2D
+			if node != null:
+				node.position = lift
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer

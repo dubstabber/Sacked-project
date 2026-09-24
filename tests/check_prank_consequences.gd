@@ -6,6 +6,8 @@ extends SceneTree
 
 const CONTROLLER := preload("res://scenes/player/prank_controller.gd")
 const POINT := preload("res://scenes/npc/npc_activity_point.gd")
+const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
+const JOBLESS := preload("res://scenes/player/profiles/jobless.tres")
 
 class ProfileStub extends Resource:
 	var id: StringName = &"male-employee-1"
@@ -27,9 +29,10 @@ func _run() -> void:
 	_check_the_cubicle_rule()
 	_check_locking_someone_in()
 	_check_the_reposition_picks_its_side()
+	_check_the_reposition_lands_on_the_copier()
 	_check_the_start_state_actions_level_2_places()
 	if _failures == 0:
-		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and the start-state actions passed")
+		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift and the start-state actions passed")
 	quit(1 if _failures else 0)
 
 
@@ -197,8 +200,10 @@ func _check_locking_someone_in() -> void:
 func _check_the_reposition_picks_its_side() -> void:
 	var offsets: Dictionary = CONTROLLER.REPOSITION_OFFSETS
 	_expect(offsets.size() == 2, "the reposition offers the two recovered sides")
-	_expect(offsets[0].is_equal_approx(Vector2(0.80, 0.85)), "orientation 0 steps to (0.80, 0.85)")
-	_expect(offsets[1].is_equal_approx(Vector2(0.85, 0.80)), "any other orientation steps to (0.85, 0.80)")
+	# 0x41B4AF adds [0x4658F0] = 0.8 to z and 0x41B4BD adds [0x4658EC] = 0.85 to x.
+	_expect(offsets[0].is_equal_approx(Vector2(0.85, 0.80)), "orientation 0 steps to (x + 0.85, z + 0.80)")
+	_expect(offsets[1].is_equal_approx(Vector2(0.80, 0.85)), "any other orientation steps to (x + 0.80, z + 0.85)")
+	_expect(is_equal_approx(CONTROLLER.REPOSITION_HEIGHT, 1.8), "sub_42B330 lifts the player to a height of 1.8")
 	# The side index lines up with the two clip views, so one cannot be reordered alone.
 	var facings: Array = CONTROLLER.ASSCOPY_FACINGS
 	_expect(facings.size() == offsets.size(), "each side has a view to face")
@@ -211,6 +216,104 @@ func _check_the_reposition_picks_its_side() -> void:
 	controller._step_back()
 	_expect(not controller._return_position.is_finite(), "stepping back with nothing saved is harmless")
 	_drop(fixture)
+
+
+# A real player rather than a stand-in: the lift lives in player.gd's height setter, and a
+# stub without it would take the controller's set("height", ...) silently.
+func _player_fixture() -> Dictionary:
+	var world := Node2D.new()
+	root.add_child(world)
+	var player := PLAYER_SCENE.instantiate()
+	player.profile = JOBLESS
+	world.add_child(player)
+	player.set_physics_process(false)
+	player.get_node("FootstepPlayer").stop_footsteps()
+	player.get_node("FootstepPlayer").stream = null
+	var controller := player.get_node("PrankController")
+	# Nothing here should depend on what the pointer happens to be over.
+	controller.set_process(false)
+	return {"world": world, "player": player, "controller": controller}
+
+
+func _item(world: Node2D, ground: Vector2, interaction: Vector2, orientation: int, action_ids: Array) -> Node2D:
+	var object := ObjectStub.new()
+	object.name = "Item"
+	object.position = IsoDirection.ground_to_screen(ground)
+	world.add_child(object)
+	var point := POINT.new()
+	point.name = "InteractionPoint"
+	point.position = IsoDirection.ground_to_screen(interaction)
+	point.orientation = orientation
+	point.action_ids = PackedInt32Array(action_ids)
+	point.reset_actions()
+	object.add_child(point)
+	return point
+
+
+func _open_and_commit(controller: Node, point: Node, action_id: int) -> void:
+	controller.focus_point = point
+	controller.entries = controller.build_entries(point)
+	controller.open_menu()
+	for index in range(controller.entries.size()):
+		if int(controller.entries[index]["action_id"]) == action_id:
+			controller.set_highlighted(index)
+	controller.confirm()
+
+
+func _playing(player: Node) -> String:
+	return String(player.get_node("AnimationController").current_animation)
+
+
+# sub_41B240 0x41B460: the base is the copier's own position, not its interaction point one
+# tile out, and sub_42B330(x, 1.8, z) lifts the player 43.2 pixels onto the glass. States 4
+# and 5 both put him back on the floor where he stood.
+func _check_the_reposition_lands_on_the_copier() -> void:
+	# Level 3's copier 122. Every placed copier's interaction offset is one whole tile, along
+	# x for orientation 0 and along z for the odd orientations.
+	var copier := Vector2(21.9375, 10.8125)
+	for orientation in [0, 1]:
+		var fixture := _player_fixture()
+		var player: Node2D = fixture["player"]
+		var controller: Node = fixture["controller"]
+		var side := 0 if orientation == 0 else 1
+		var interaction := Vector2(1, 0) if side == 0 else Vector2(0, 1)
+		var point := _item(fixture["world"], copier, interaction, orientation, [126])
+		var start: Vector2 = point.global_position
+		player.global_position = start
+
+		_open_and_commit(controller, point, 126)
+		_expect(controller.state == CONTROLLER.State.ACTING, "orientation %d: the copier's action starts" % orientation)
+		var offset: Vector2 = CONTROLLER.REPOSITION_OFFSETS[side]
+		var landed := IsoDirection.screen_to_ground(player.global_position)
+		_expect(
+			landed.is_equal_approx(copier + offset),
+			"orientation %d: the player lands at the copier + %s, got %s" % [orientation, offset, landed - copier]
+		)
+		_expect(is_equal_approx(player.height, CONTROLLER.REPOSITION_HEIGHT), "orientation %d: the player is lifted to 1.8" % orientation)
+		for part in ["Sprite2D", "Shadow"]:
+			var lift: Vector2 = (player.get_node(part) as Node2D).position
+			_expect(
+				lift.is_equal_approx(Vector2(0.0, -43.2)),
+				"orientation %d: the %s is drawn 24 px a unit higher, got %s" % [orientation, part, lift]
+			)
+		_expect(
+			player.last_direction == CONTROLLER.ASSCOPY_FACINGS[side],
+			"orientation %d: the player faces %s, got %s" % [orientation, CONTROLLER.ASSCOPY_FACINGS[side], player.last_direction]
+		)
+		var view := "down-right" if side == 0 else "down-left"
+		_expect(_playing(player).ends_with("asscopy-" + view), "orientation %d: ASSCOPY plays its %s view, got %s" % [orientation, view, _playing(player)])
+
+		# State 5 on one side, state 4 on the other: both restore the saved position.
+		if side == 0:
+			controller.abort_action()
+		else:
+			controller._advance_action(controller._duration)
+		_expect(controller.state == CONTROLLER.State.FREE, "orientation %d: the action is over" % orientation)
+		_expect(player.global_position.is_equal_approx(start), "orientation %d: the player is put back where he stood" % orientation)
+		_expect(is_zero_approx(player.height), "orientation %d: and back on the floor" % orientation)
+		for part in ["Sprite2D", "Shadow"]:
+			_expect((player.get_node(part) as Node2D).position == Vector2.ZERO, "orientation %d: the %s drops back with him" % [orientation, part])
+		_drop(fixture)
 
 
 # Most actions set the object's state when they finish. A few set it the moment they begin,

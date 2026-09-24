@@ -163,9 +163,11 @@ icon, its name and the slot index in `m_actionMap` (`player+972`).
 The `+0x18` selector maps to animation slots through `sub_41A510`:
 `0→3, 1→4, 2→5, 3→6, 4→19, 5→17, 6→9, 7→10, 8→16, 9→15, 10→13, 11→14, 13→18, 14→20`, and
 `12` picks slot 8 with a randomised facing (the urination actions). Selector 5 additionally
-repositions the player onto the object (+0.8/+0.85 tiles, facing chosen from the object's
-orientation) — entering a toilet cubicle — and state 4/5 restore the saved position when the
-current slot is 17. `sub_41A510` indexes `entity + 4*(direction + 8*(slot+4))`, so slot
+repositions the player onto the copier — the item's own position plus `(0.85, 0.80)` or
+`(0.80, 0.85)` tiles and a height of 1.8, side and facing chosen from the object's
+orientation (see "The reposition, recovered" in
+[player-action-reference.md](player-action-reference.md)) — and state 4/5 restore the saved
+position when the current slot is 17. `sub_41A510` indexes `entity + 4*(direction + 8*(slot+4))`, so slot
 numbers are entity animation-array indices. Which clip each slot holds is named by the
 21-entry table at `0x46EC04`, recovered under "The player's animation slots" in
 [player-action-reference.md](player-action-reference.md).

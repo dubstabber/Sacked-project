@@ -234,22 +234,45 @@ copier before photocopying himself.
 
 ### The reposition, recovered
 
-`sub_41B240`'s selector-5 branch at `0x41B484` reads the focused item's orientation, a signed
-16-bit quarter-turn index at `item+196`, multiplies it by 90.0 and compares the result with
-90.0 again. Orientation 0 takes one branch and everything else the other:
+`sub_41B240`'s selector-5 branch (`0x41B460`–`0x41B50B`) starts from **the focused item's
+own position** — `sub_42B370(item)` at `0x41B46B`, which copies `item+20/+24/+28` — and not
+from the interaction position `sub_410030` would give (`item + item+208/+212`). Every
+copier's interaction offset is a whole tile, so the difference is a tile. The branch saves
+the player's position into `player+1132`, then reads the item's orientation, a signed 16-bit
+quarter-turn index at `item+196` (`kind & 3`, stored by `sub_40FED0`), multiplies it by 90.0
+and compares the result with 90.0 again (`0x41B484`). Orientation 0 takes one branch and
+everything else the other:
 
-| Orientation | Facing set | Offset added to the player |
+| Orientation | Facing set | New position (x, height, z) |
 | --- | --- | --- |
-| 0 | 2, the `090` view | `(+0.80, +0.85)` |
-| 1, 2, 3 | 4, the `180` view | `(+0.85, +0.80)` |
+| 0 | 2, the `090` view | `(x + 0.85, 1.8, z + 0.80)` |
+| 1, 2, 3 | 4, the `180` view | `(x + 0.80, 1.8, z + 0.85)` |
 
 The two facings are exactly the two views `ASSCOPY` ships, which is why it has two rather
-than eight. The move itself is a third call taking the new x, the new y and **1.8**, and the
-branch ends by pushing animation slot 17. The constants are at `0x4658F4` (90.0), `0x4658F0`
-(0.8) and `0x4658EC` (0.85), with 1.8 as an immediate.
+than eight. The constants are at `0x4658EC` (0.85), `0x4658F0` (0.8) and `0x4658F4` (90.0);
+`0x41B4AF` adds 0.8 to z and `0x41B4BD` adds 0.85 to x on the orientation-0 side. The move
+is `sub_42B330(x, 1.8, z)` with 1.8 as the immediate `0x3FE66666` — a plain SetPosition of
+`+20/+24/+28`, so **1.8 is a height**. The player's projection `sub_41A2D0` (vtable
+`0x4658BC`, slot +16) computes `screen_y = 24·(dx + dz) − 24·y` and derives both the draw
+anchor and the depth base `49152 − screen_y / 2` from it, so the player is drawn 43.2 pixels
+higher with his depth base 21.6 units further back — sitting on the copier's glass — and
+`sub_41D500` draws his shadow (`player+1088`) from the same lifted anchor at depth 65000.
+The branch then copies the new position into the old one (`sub_42B2F0`), so the collision
+sweep sees no motion, turns static collision off (`player+100 = 0`) and plays slot 17.
+States 4 and 5 put him back — `sub_42B350` from `player+1132`, `sub_42B2F0`,
+`player+100 = 1` — but only when the slot playing is 17 (`0x41B802`, `0x41BAC3`).
 
-The port's level manifests already carry each object's orientation as its `variant` field,
-and level 2's single copier is orientation 0, so it takes the first row.
+The port's level manifests carry each object's orientation as its `variant` field. The
+copier is orientation 0 on levels 2, 3 and 5 (and `5s`) and orientation 1 on level 8 (and
+`8s`). `PrankController._step_onto_object` moves the player node to the item plus the
+offset and sets `player.height = 1.8`, which lifts `Sprite2D` and `Shadow` by `−24 · height`
+pixels while the node stays on the floor, so reach, sight, being noticed and the camera
+keep measuring from x/z as they do in the original. `CharacterDepthCompositor` takes the
+depth base from the sprite's own position, so the lift reaches it too: with the camera on the
+player the base comes out two units behind the copier's on all four placed copiers (403
+against 405 on level 3, 299/301, 250/252, 190/192), the same gap the original's Z planes
+give. `_step_back` restores the position and the height. Checked by
+`check_prank_consequences.gd` and `check_character_depth_runtime_overlap.gd`.
 
 The campaign reaches selectors 0–14, and the port imports all fifteen clips for both
 characters — 109 views each, listed in `tools/character_action_clips.json`, which the frame

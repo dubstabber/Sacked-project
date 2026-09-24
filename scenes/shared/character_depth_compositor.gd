@@ -253,8 +253,9 @@ func _make_actor(node: Node2D, sprite: Sprite2D, actor_index: int) -> Dictionary
 		"depth_path": depth_path,
 		"position": _sprite_draw_position(sprite, size),
 		"size": size,
-		# sub_41A2D0: base Z = trunc(49152 - projected_y / 2).
-		"base_y": ceilf(float(int(node.global_position.y)) * 0.5),
+		# sub_41A2D0: base Z = trunc(49152 - projected_y / 2), where projected_y is already
+		# lifted by the entity's height -- the same anchor its sprite is drawn from.
+		"base_y": ceilf(float(int(sprite.global_position.y)) * 0.5),
 	}
 	if _opaque_rects.has(color_path):
 		actor["opaque_rect"] = _opaque_rects[color_path]

@@ -35,15 +35,19 @@ const BLACKOUT_RATE := 10.0
 
 # sub_41D820's fourth rule reads the cubicle's occupant: 43, 44 and 138 need it empty, 110
 # needs an occupant who is not the boss, and 112 needs the boss.
-# sub_41B240's selector-5 branch steps the player onto the object before photocopying. The
-# object's quarter-turn index picks the side: orientation 0 takes the 090 view and the
-# (0.8, 0.85) offset, anything else the 180 view and (0.85, 0.8). Those two views are the
-# only ones ASSCOPY ships. See docs/player-action-reference.md.
+# sub_41B240's selector-5 branch (0x41B460) steps the player onto the copier before
+# photocopying. It starts from the focused item's own position (sub_42B370), not the
+# interaction position sub_410030 adds item+208/+212 to, and item+196 picks the side:
+# orientation 0 takes the 090 view and (x + 0.85, z + 0.80), anything else the 180 view and
+# (x + 0.80, z + 0.85). Those two views are the only ones ASSCOPY ships. sub_42B330 then sets
+# the height to 1.8, which sub_41A2D0 projects 24 px a unit up into both the draw anchor and
+# the depth base. See docs/player-action-reference.md.
 const REPOSITION_SELECTOR := 5
 const REPOSITION_OFFSETS := {
-	0: Vector2(0.80, 0.85),
-	1: Vector2(0.85, 0.80),
+	0: Vector2(0.85, 0.80),
+	1: Vector2(0.80, 0.85),
 }
+const REPOSITION_HEIGHT := 1.8
 
 const CUBICLE_GATED_IDS := [43, 44, 110, 112, 138]
 const CUBICLE_FREE_IDS := [43, 44, 138]
@@ -648,25 +652,31 @@ func _first_object_in_reach(item_type: int, point: Node) -> Node:
 	return null
 
 
-# sub_41B240 state 2 for selector 5: the player is placed on the object and faces the view
-# the object's orientation chooses.
+# sub_41B240 state 2 for selector 5: the player is placed on the object, lifted onto it, and
+# faces the view the object's orientation chooses.
 func _step_onto_object(action_id: int) -> void:
 	if _player == null or _acting_point == null or not is_instance_valid(_acting_point):
 		return
 	if int(ActionTable.get_action(action_id).get("player_animation", -1)) != REPOSITION_SELECTOR:
 		return
+	var object := _object_of(_acting_point) as Node2D
+	if object == null:
+		return
 	var orientation := int(_acting_point.get("orientation"))
 	var side := 0 if orientation == 0 else 1
 	var offset: Vector2 = REPOSITION_OFFSETS[side]
 	_return_position = _player.global_position
-	var ground := IsoDirection.screen_to_ground((_acting_point as Node2D).global_position) + offset
+	var ground := IsoDirection.screen_to_ground(object.global_position) + offset
 	_player.global_position = IsoDirection.ground_to_screen(ground)
+	_player.set("height", REPOSITION_HEIGHT)
 	_player.set("last_direction", ASSCOPY_FACINGS[side])
 
 
-# sub_41B240 states 4 and 5 both put the player back where they were.
+# sub_41B240 states 4 and 5 both put the player back where they were, when the clip playing
+# is slot 17 -- only the reposition above saves a position, so that is the same test.
 func _step_back() -> void:
 	if _player == null or not _return_position.is_finite():
 		return
 	_player.global_position = _return_position
+	_player.set("height", 0.0)
 	_return_position = Vector2.INF
