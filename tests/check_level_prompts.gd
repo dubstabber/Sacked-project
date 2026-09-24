@@ -48,11 +48,14 @@ func _run() -> void:
 	await _check_pause_stops_the_level()
 	await _check_quit_prompt()
 	await _check_what_carries_on_behind_the_prompt()
+	await _check_the_ring_cancel_waits_behind_the_pause_key()
+	await _check_a_button_held_behind_the_pause_walks()
 	await _check_the_answer_keys_follow_the_language()
+	await _check_yes_drops_a_cancel_owed_to_the_ring()
 	await _check_yes_leaves_the_running_level()
 	paused = false
 	if _failures == 0:
-		print("Level prompts: pause stops the clock, the panel restates the level, and the quit prompt pauses it and answers T/N")
+		print("Level prompts: pause stops the clock, the panel restates the level, the quit prompt pauses it and answers T/N, and the ring's cancel and the walk carry across the pause key")
 	quit(1 if _failures else 0)
 
 
@@ -241,6 +244,184 @@ func _check_what_carries_on_behind_the_prompt() -> void:
 	level.free()
 
 
+# Through the Input singleton, the way the game's own input arrives: it updates the action
+# state the prank controller polls, then reaches the GUI and the unhandled handlers.
+func _send(event: InputEvent) -> void:
+	Input.parse_input_event(event)
+	await process_frame
+	await process_frame
+
+
+func _tap(code: Key) -> void:
+	for pressed in [true, false]:
+		var event := InputEventKey.new()
+		event.keycode = code
+		event.physical_keycode = code
+		event.pressed = pressed
+		await _send(event)
+
+
+func _right_button(pressed: bool, at: Vector2) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_RIGHT
+	event.button_mask = MOUSE_BUTTON_MASK_RIGHT if pressed else 0
+	event.pressed = pressed
+	event.position = at
+	event.global_position = at
+	await _send(event)
+
+
+func _open_ring(level: Node) -> void:
+	var player := level.get_node("World/Player") as Node2D
+	var controller: Node = level.get_node("World/Player/PrankController")
+	var point := level.get_node("World/Objects/Object010MonitorTastaturFrontal/InteractionPoint") as Node2D
+	player.global_position = point.global_position
+	controller.focus_point = point
+	controller.entries = controller.build_entries(point)
+	controller.open_menu()
+
+
+# The pause key leaves screen 1's handler running (sub_404990 case 1 calls sub_403FB0), and
+# escape's own case (0x40410A) and the end-of-frame test for the down arrow and the right
+# button (0x4044F9-0x404520) write state 5 without reading the pause bit. The frozen world
+# only acts on it once the level runs again, so the ring shuts on the unpause even when the
+# key was let go first. The quit prompt never calls sub_403FB0 (0x404914).
+func _check_the_ring_cancel_waits_behind_the_pause_key() -> void:
+	var saved_size := root.size
+	root.size = Vector2i(800, 600)
+	var level := _level()
+	await process_frame
+	var prompts: Node = level.get_node("LevelRuntime/LevelPrompts/Panels")
+	var player: Node = level.get_node("World/Player")
+	var controller: Node = level.get_node("World/Player/PrankController")
+	var cursor: Node = level.get_node("World/Player/MovementArrow")
+	player.set_physics_process(false)
+	# Inside the console band, where the pointer the pause leaves hidden may well be.
+	var console_point := Vector2(400.0, 560.0)
+
+	var cancels := {
+		"escape": func() -> void: await _tap(KEY_ESCAPE),
+		"the down arrow": func() -> void: await _tap(KEY_DOWN),
+		"the right button": func() -> void:
+			await _right_button(true, console_point)
+			await _right_button(false, console_point),
+	}
+	for name: String in cancels:
+		_open_ring(level)
+		_expect(controller.menu_open, "the ring opens on the keyboard (%s)" % name)
+		_key(KEY_P)
+		await cancels[name].call()
+		_expect(paused and controller.menu_open, "the ring stays up, frozen, behind the pause key after %s" % name)
+		_expect(cursor.is_menu_captured() and cursor.requested_mouse_mode == Input.MOUSE_MODE_HIDDEN, "and keeps the pointer hidden (%s)" % name)
+		_key(KEY_P)
+		_expect(not paused, "P resumes the level (%s)" % name)
+		_expect(not controller.menu_open and controller.highlighted == -1, "%s pressed and let go behind P shuts the ring on the unpause" % name)
+		_expect(not player.menu_open, "and lets go of the player (%s)" % name)
+		_expect(
+			not cursor.is_menu_captured() and cursor.requested_mouse_mode == Input.MOUSE_MODE_VISIBLE,
+			"and hands the pointer back, shown (%s), got captured %s mode %d" % [name, cursor.is_menu_captured(), cursor.requested_mouse_mode]
+		)
+		_expect(not player.is_mouse_movement_active, "a button let go behind the pause starts no walk (%s)" % name)
+		await process_frame
+
+	# Screen 10 reads only its answers, and a key-down it eats is gone for good.
+	for name: String in cancels:
+		_open_ring(level)
+		_key(KEY_Q)
+		await cancels[name].call()
+		_key(KEY_N)
+		await process_frame
+		_expect(not paused and controller.menu_open, "%s behind the quit prompt leaves the ring up after N" % name)
+		controller.close_menu()
+		await process_frame
+
+	# No clears the pause bit however it was set (0x40742F), so a cancel owed from before Q
+	# is paid when N lets the level run.
+	_open_ring(level)
+	_key(KEY_P)
+	await _tap(KEY_ESCAPE)
+	_key(KEY_Q)
+	_expect(prompts.is_quit_prompt_open and controller.menu_open, "Q asks over a ring still owed its cancel")
+	_key(KEY_N)
+	_expect(not paused and not controller.menu_open, "N lets the level run and the owed cancel shuts the ring")
+	_expect(not cursor.is_menu_captured() and cursor.requested_mouse_mode == Input.MOUSE_MODE_VISIBLE, "and the pointer comes back")
+	await process_frame
+
+	# The ring can only be cancelled while it is up; an escape behind P with nothing open is
+	# not saved for the next ring.
+	_key(KEY_P)
+	await _tap(KEY_ESCAPE)
+	_key(KEY_P)
+	_open_ring(level)
+	await process_frame
+	_expect(controller.menu_open, "an escape behind P with no ring up does not shut a later one")
+	controller.close_menu()
+
+	# The duel stops the tree without the pause bit and runs no input handler that cancels.
+	_open_ring(level)
+	paused = true
+	await _tap(KEY_ESCAPE)
+	paused = false
+	await process_frame
+	_expect(controller.menu_open, "escape behind the duel's pause leaves the ring up")
+	controller.close_menu()
+
+	paused = false
+	root.remove_child(level)
+	level.free()
+	root.size = saved_size
+
+
+# sub_403FB0 rebuilds the walk bit from the polled right button every frame (0x403FE4,
+# 0x4043CC), so a button pressed behind the pause key or the quit prompt and still held when
+# they end walks the player -- once a ring it was cancelling has shut.
+func _check_a_button_held_behind_the_pause_walks() -> void:
+	var saved_size := root.size
+	root.size = Vector2i(800, 600)
+	var level := _level()
+	await process_frame
+	var player: Node = level.get_node("World/Player")
+	var controller: Node = level.get_node("World/Player/PrankController")
+	var cursor: Node = level.get_node("World/Player/MovementArrow")
+	player.set_physics_process(false)
+	var point := Vector2(600.0, 150.0)
+
+	for opener: Key in [KEY_P, KEY_Q]:
+		var name := OS.get_keycode_string(opener)
+		var closer := KEY_P if opener == KEY_P else KEY_N
+		_key(opener)
+		await _right_button(true, point)
+		_expect(not player.is_mouse_movement_active, "a paused player does not walk off a press behind %s" % name)
+		_key(closer)
+		_expect(player.is_mouse_movement_active, "a right button held behind %s walks the player once the level runs" % name)
+		await _right_button(false, point)
+		_expect(not player.is_mouse_movement_active, "and letting it go ends the walk (%s)" % name)
+
+		_key(opener)
+		await _right_button(true, point)
+		await _right_button(false, point)
+		_key(closer)
+		_expect(not player.is_mouse_movement_active, "a right button let go behind %s starts no walk" % name)
+
+	_open_ring(level)
+	_key(KEY_P)
+	await _right_button(true, point)
+	_key(KEY_P)
+	_expect(not controller.menu_open, "a right button held behind P shuts the ring")
+	_expect(player.is_mouse_movement_active, "and walks the player")
+	_expect(
+		not cursor.is_menu_captured() and cursor.requested_mouse_mode == Input.MOUSE_MODE_HIDDEN,
+		"with the pointer let go and hidden for the walk, got captured %s mode %d" % [cursor.is_menu_captured(), cursor.requested_mouse_mode]
+	)
+	await _right_button(false, point)
+	_expect(not player.is_mouse_movement_active and cursor.requested_mouse_mode == Input.MOUSE_MODE_VISIBLE, "letting go ends the walk and shows the pointer")
+
+	paused = false
+	root.remove_child(level)
+	level.free()
+	root.size = saved_size
+
+
 # The quit prompt names its own answer keys, so switching language has to move them. Pressing
 # the yes key leaves the level, so the binding is read rather than driven; what is driven is
 # that the Polish key stops working.
@@ -322,6 +503,43 @@ func _check_yes_leaves_the_running_level() -> void:
 		)
 	OS.remove_logger(error_log)
 	_i18n().set_language(&"pl")
+
+
+# Yes leaves the level whatever the ring was owed: the teardown (sub_407140) clears the pause
+# bit with every other flag, so nothing hands the pointer back over a level on its way out.
+func _check_yes_drops_a_cancel_owed_to_the_ring() -> void:
+	var manager := root.get_node("ScreenManager")
+	var error_log := ErrorLog.new()
+	OS.add_logger(error_log)
+	manager.start_level(1)
+	await process_frame
+	await process_frame
+	var level := current_scene
+	if level == null or level.scene_file_path != manager.level_scene_path(1):
+		_expect(false, "start_level(1) makes the level the current scene")
+		OS.remove_logger(error_log)
+		return
+	var prompts: Node = level.get_node("LevelRuntime/LevelPrompts/Panels")
+	var controller: Node = level.get_node("World/Player/PrankController")
+	var closes := [0]
+	controller.menu_closed.connect(func() -> void: closes[0] += 1)
+	_open_ring(level)
+	_expect(controller.menu_open, "the ring opens in the running level")
+	_key(KEY_P)
+	await _tap(KEY_ESCAPE)
+	_key(KEY_Q)
+	_expect(prompts.is_quit_prompt_open and controller.menu_open, "Q asks over a ring still owed its cancel")
+
+	var mark := error_log.count()
+	_key(prompts._yes_key)
+	var closes_on_answer: int = closes[0]
+	for i in range(3):
+		await process_frame
+	var errors := error_log.since(mark)
+	_expect(errors.is_empty(), "answering yes over an owed cancel raises no error: %s" % [errors])
+	_expect(closes_on_answer == 0, "yes does not shut the ring, so the pointer is not warped mid-teardown")
+	_expect(manager.current == manager.Screen.MAIN_MENU and not paused, "yes still goes to the main menu")
+	OS.remove_logger(error_log)
 
 
 # The autoload exists in the tree even though its global name is not bound at compile time.

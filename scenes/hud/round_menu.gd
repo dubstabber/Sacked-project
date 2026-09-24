@@ -25,7 +25,8 @@ const RADIUS_RATE := 150.0
 const ROTATION_RATE := 5.0
 const SETTLED_EPSILON := 0.01
 # sub_403FB0 raises the ring's two step bits from a mouse motion whose dx runs past eight
-# pixels -- the ring turns under a fixed cursor rather than the cursor moving over it.
+# raw DirectInput counts -- the ring turns under a fixed cursor rather than the cursor moving
+# over it.
 const STEP_THRESHOLD := 8.0
 # sub_45BC90 tints the selected button and leaves the rest white, but only once this+120
 # reaches 255, and sub_4066D0 feeds that radius / 60 * 254 + 1. So the colour arrives with
@@ -116,9 +117,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	var motion := event as InputEventMouseMotion
 	if motion == null:
 		return
-	if motion.relative.x < -STEP_THRESHOLD:
+	# sub_403FB0 compares DIMOUSESTATE.lX itself (0x40435B, 0x40436F; c_dfDIMouse2 at 0x467778,
+	# no SetProperty), and sub_415400 adds the same lX to the 800x600 cursor 1:1. relative is
+	# divided by the window's stretch, screen_relative is not, so a bigger window cannot make
+	# the swipe longer.
+	if motion.screen_relative.x < -STEP_THRESHOLD:
 		_step_down = true
-	elif motion.relative.x > STEP_THRESHOLD:
+	elif motion.screen_relative.x > STEP_THRESHOLD:
 		_step_up = true
 
 

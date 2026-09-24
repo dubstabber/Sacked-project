@@ -36,6 +36,8 @@ var is_quit_prompt_open := false
 var _session: Node
 var _yes_key := KEY_NONE
 var _no_key := KEY_NONE
+# The ring's cancel, pressed behind the pause key and still owed when the level runs again.
+var _ring_cancel_owed := false
 
 
 func _ready() -> void:
@@ -48,6 +50,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	_note_ring_cancel(event)
 	if not (event is InputEventKey):
 		return
 	# Answering yes changes scene, and change_scene_to_file takes the level out of the tree
@@ -88,15 +91,56 @@ func _answer_quit_prompt(key: Key) -> void:
 # sub_403780 returns immediately while the pause bit is set, so the clock, the console and
 # every agent stop together; only the drawing carries on.
 func set_paused(paused: bool) -> void:
+	if not paused:
+		_pay_ring_cancel()
 	is_paused = paused
 	get_tree().paused = paused
 	queue_redraw()
 
 
+# The pause key leaves screen 1's handler running (sub_404990 case 1 calls sub_403FB0), and
+# neither escape's own case (0x40410A) nor the end-of-frame test for a held down arrow or
+# right button (0x4044F9-0x404520) reads the pause bit, so the ring's cancel still writes
+# state 5 behind it. Only the frozen world leaves state 5 (sub_41B240, gated at 0x4025B7),
+# so the cancel waits for the unpause even when the key was let go first. Screen 10 never
+# calls sub_403FB0 (0x404914), so nothing is noted behind the quit prompt.
+func _note_ring_cancel(event: InputEvent) -> void:
+	if not is_paused or is_quit_prompt_open:
+		return
+	var cancels := (
+		event.is_action_pressed("ui_cancel")
+		or event.is_action_pressed("move_down")
+		or event.is_action_pressed("mouse-movement")
+	)
+	if not cancels:
+		return
+	var controller := _ring_controller()
+	if controller != null and controller.get("menu_open") == true:
+		_ring_cancel_owed = true
+
+
+# Paid before the tree runs again, so the ring lets go of the pointer while the pause still
+# has it hidden. No clears the pause bit however it was set (0x40742F), so a cancel owed from
+# before Q is paid by N too.
+func _pay_ring_cancel() -> void:
+	if not _ring_cancel_owed:
+		return
+	_ring_cancel_owed = false
+	var controller := _ring_controller()
+	if controller != null and controller.get("menu_open") == true:
+		controller.call("close_menu")
+
+
+func _ring_controller() -> Node:
+	return get_tree().get_first_node_in_group("player_actions")
+
+
 # sub_407370's case 3: the main menu, after the teardown (sub_407140) that clears the pause
-# bit with every other flag.
+# bit with every other flag -- and with it any cancel still owed to the ring, so leaving
+# never hands the pointer back over a level on its way out.
 func _leave_level() -> void:
 	is_quit_prompt_open = false
+	_ring_cancel_owed = false
 	set_paused(false)
 	var screen_manager := get_node_or_null("/root/ScreenManager")
 	if screen_manager != null:

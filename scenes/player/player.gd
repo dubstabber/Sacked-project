@@ -45,12 +45,19 @@ func _exit_tree() -> void:
 	movement_cursor.show_main_cursor()
 
 
-# A paused player never sees the right button's release, but sub_403FB0 rebuilds the walk bit
-# from the polled button every frame (0x403FE4, 0x4043CC), so a walk never outlives the button
-# across the pause key, the quit prompt or the duel.
+# A paused player never sees the right button's press or release, but sub_403FB0 rebuilds the
+# walk bit from the polled button every frame (0x403FE4, 0x4043CC), so a walk never outlives
+# the button across the pause key, the quit prompt or the duel, and a button still held when
+# they end walks the player. An open ring takes that same bit as its cancel (0x40450C) and
+# the walk follows once it has shut, as a press on the ring does in _input.
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_UNPAUSED and is_mouse_movement_active and not Input.is_action_pressed("mouse-movement"):
+	if what != NOTIFICATION_UNPAUSED:
+		return
+	var held := Input.is_action_pressed("mouse-movement")
+	if is_mouse_movement_active and not held:
 		stop_mouse_movement()
+	elif held and not is_mouse_movement_active and not input_locked:
+		start_mouse_movement()
 
 
 func _input(event: InputEvent) -> void:

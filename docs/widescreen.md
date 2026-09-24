@@ -147,7 +147,10 @@ a full-map bake in world space with no viewport coupling, and `character_depth.g
 indexes it by world pixel, never by `SCREEN_UV`. A wider view costs more rasterisation and
 lets more objects animate at once, but it cannot change what is occluded. The movement
 cursor already warps through the live canvas transform, and both mouse-picking paths
-already invert it.
+already invert it. The ring's swipe is counted before the stretch: `round_menu.gd` compares
+`screen_relative`, which the stretch leaves alone, with `sub_403FB0`'s ±8 raw counts, so the
+same hand motion turns it at any window size (see
+[player-action-reference.md](player-action-reference.md)).
 
 ## Open questions
 

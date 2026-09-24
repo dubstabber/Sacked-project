@@ -31,6 +31,7 @@ func _run() -> void:
 	_check_keyboard_resumes_after_mouse_release()
 	_check_idle_without_movement_input()
 	_check_open_ring_holds_the_player()
+	_check_the_right_button_is_polled_across_a_pause()
 
 	_free_player()
 	_release_movement_actions()
@@ -105,6 +106,51 @@ func _check_open_ring_holds_the_player() -> void:
 	var expected_direction: Vector2 = _player.snap_to_8_directions(Vector2.RIGHT)
 	_assert_vector_close(_player.velocity.normalized(), expected_direction, "the arrows walk again once the ring shuts")
 	Input.action_release("move_right")
+
+
+# A paused player never sees the right button's press or release, but sub_403FB0 rebuilds
+# the walk bit from the polled button every frame (0x403FE4, 0x4043CC): a button held when the
+# tree runs again walks the player, one let go does not, and an action in progress keeps it.
+func _check_the_right_button_is_polled_across_a_pause() -> void:
+	_player.menu_open = false
+	paused = true
+	Input.action_press("mouse-movement")
+	_assert_false(_player.is_mouse_movement_active, "a paused player does not walk off a press")
+	paused = false
+	_assert_true(_player.is_mouse_movement_active, "a right button held when the pause lifts walks the player")
+	_assert_equal(_player.movement_cursor.requested_mouse_mode, Input.MOUSE_MODE_HIDDEN, "the walk hides the pointer")
+
+	paused = true
+	Input.action_release("mouse-movement")
+	paused = false
+	_assert_false(_player.is_mouse_movement_active, "a right button let go behind the pause ends the walk")
+	_assert_equal(_player.movement_cursor.requested_mouse_mode, Input.MOUSE_MODE_VISIBLE, "and shows the pointer again")
+
+	paused = true
+	Input.action_press("mouse-movement")
+	Input.action_release("mouse-movement")
+	paused = false
+	_assert_false(_player.is_mouse_movement_active, "a press let go behind the pause starts no walk")
+
+	# 0x4043B1: while the player is mid-action (mode 1, state not 1) the button sets nothing.
+	_player.input_locked = true
+	paused = true
+	Input.action_press("mouse-movement")
+	paused = false
+	_assert_false(_player.is_mouse_movement_active, "an action in progress keeps a held button from walking")
+	_player.input_locked = false
+	Input.action_release("mouse-movement")
+
+	# With the ring up (state 1) the same bit is the ring's cancel (0x40450C), and the walk
+	# follows it the way a press on the ring does in _input.
+	_player.menu_open = true
+	paused = true
+	Input.action_press("mouse-movement")
+	paused = false
+	_assert_true(_player.is_mouse_movement_active, "a right button held over the ring walks the player as the ring shuts")
+	Input.action_release("mouse-movement")
+	_player.stop_mouse_movement()
+	_player.menu_open = false
 
 
 func _release_movement_actions() -> void:

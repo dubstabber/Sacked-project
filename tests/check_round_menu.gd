@@ -44,9 +44,10 @@ func _run() -> void:
 	_check_entry_geometry()
 	_check_stepping_through_the_entries()
 	_check_the_arrow_keys_turn_the_ring()
+	_check_the_swipe_is_counted_before_the_stretch()
 	_check_the_selected_entry_is_tinted()
 	if _failures == 0:
-		print("Round menu: the original pitch, radius ramp, rotation ease, stepping, arrow keys and tint passed")
+		print("Round menu: the original pitch, radius ramp, rotation ease, stepping, arrow keys, raw swipe counts and tint passed")
 	quit(1 if _failures else 0)
 
 
@@ -79,13 +80,15 @@ func _settle(menu: Node) -> void:
 	_expect(false, "the ring settles within a couple of seconds")
 
 
+# At 4:3 the stretch is the identity and the two fields agree.
 func _swipe(menu: Node, dx: float) -> void:
 	var motion := InputEventMouseMotion.new()
 	motion.relative = Vector2(dx, 0.0)
+	motion.screen_relative = Vector2(dx, 0.0)
 	menu._unhandled_input(motion)
 
 
-# sub_403FB0 sets the step bits from a mouse motion past eight pixels, and sub_4066D0 takes
+# sub_403FB0 sets the step bits from a mouse motion past eight counts, and sub_4066D0 takes
 # at most one step a frame and only once the ring has stopped turning.
 func _check_stepping_through_the_entries() -> void:
 	var fixture := _fixture()
@@ -136,6 +139,60 @@ func _check_stepping_through_the_entries() -> void:
 	menu.advance(0.016)
 	_expect(controller.highlighted == frozen, "a closing ring cannot be turned, got %d" % controller.highlighted)
 	_free(fixture)
+
+
+# sub_403FB0 compares DIMOUSESTATE.lX itself against 8 (0x40435B, 0x40436F), and the
+# original's 800x600 surface is the screen, so a swipe is the same hand motion at any window
+# size. Godot divides relative by the window's stretch and leaves screen_relative alone.
+func _check_the_swipe_is_counted_before_the_stretch() -> void:
+	var fixture := _fixture()
+	var menu = fixture["menu"]
+	var controller = fixture["controller"]
+	controller.open(8)
+	menu.advance(1.0)
+
+	# 9 counts at the 1920x1004 stretch of 1.674 arrive as a relative of 5.38; 8 counts do
+	# not step even when relative has been blown up past the threshold.
+	_expect(_steps(menu, controller, MENU.STEP_THRESHOLD + 1.0, (MENU.STEP_THRESHOLD + 1.0) / 1.673932) == 1, "nine counts step the ring whatever relative says")
+	_expect(_steps(menu, controller, MENU.STEP_THRESHOLD, 40.0) == 0, "eight counts do not step the ring whatever relative says")
+
+	# The same through the root window's own stretch, bigger and smaller than 4:3.
+	var saved_size := root.size
+	for case in [
+		[Vector2i(1920, 1004), MENU.STEP_THRESHOLD + 1.0, 1],
+		[Vector2i(1920, 1004), MENU.STEP_THRESHOLD, 0],
+		[Vector2i(400, 300), 5.0, 0],
+		[Vector2i(400, 300), MENU.STEP_THRESHOLD + 1.0, 1],
+	]:
+		root.size = case[0]
+		var motion := InputEventMouseMotion.new()
+		motion.relative = Vector2(case[1], 0.0)
+		motion.screen_relative = motion.relative
+		var stepped := _steps(menu, controller, 0.0, 0.0, motion)
+		_expect(
+			stepped == case[2],
+			"%d counts in a %s window (stretch %f) take %d steps, got %d" % [
+				int(case[1]), case[0], root.get_final_transform().x.x, case[2], stepped
+			]
+		)
+	root.size = saved_size
+	_free(fixture)
+
+
+# How far one motion turns a settled ring: handed to the menu directly, or pushed through the
+# root window when an event is given.
+func _steps(menu: Node, controller: Node, counts: float, relative: float, pushed: InputEventMouseMotion = null) -> int:
+	_settle(menu)
+	var before: int = controller.highlighted
+	if pushed != null:
+		root.push_input(pushed)
+	else:
+		var motion := InputEventMouseMotion.new()
+		motion.screen_relative = Vector2(counts, 0.0)
+		motion.relative = Vector2(relative, 0.0)
+		menu._unhandled_input(motion)
+	menu.advance(0.016)
+	return int(controller.highlighted) - before
 
 
 func _press(menu: Node, action: StringName) -> void:

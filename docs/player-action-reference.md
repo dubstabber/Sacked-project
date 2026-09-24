@@ -219,8 +219,9 @@ button  = (menu+8 - 16 + sin theta * R, menu+12 + cos theta * R), layer menu+16
   close passes write to `+108`.
 
 The port follows all of this in `scenes/hud/round_menu.gd`, checked by
-`tests/check_round_menu.gd`. It steps on `InputEventMouseMotion.relative.x` and on the
-`move_left` / `move_right` arrows, both through the same one-step, settled-only gate.
+`tests/check_round_menu.gd`. It steps on `InputEventMouseMotion.screen_relative.x` (see
+below for why not `relative.x`) and on the `move_left` / `move_right` arrows, both through
+the same one-step, settled-only gate.
 
 ### The pointer and the keys while the ring is up
 
@@ -234,6 +235,16 @@ flag**: `sub_415500` draws nothing unless it is 1 (`0x41551A`).
   (`0x4066B0`) and never calls `sub_4155F0`. The hidden cursor keeps integrating the
   deltas, and a `dx` past ±8 turns the ring (`0x40435B`–`0x40437D`). Focus picking needs the
   flag (`0x4032A6`), so nothing is picked while the ring is up.
+- **A swipe is counted in device counts.** `sub_45D7D0` gives the mouse the `c_dfDIMouse2`
+  format (`0x467778`) and calls no `SetProperty` on it, and `sub_45D850` reads `DIMOUSESTATE2`
+  with one `GetDeviceState` per poll (`0x45D86D`) and passes `lX` on unscaled, as one motion
+  event per `sub_403FB0`. The ±8 are strict signed compares on that `lX` (`0x40435B`,
+  `0x40436F`), so 9 counts step and 8 do not. `sub_415400` adds the same `lX` to the cursor,
+  clamped to the 800 × 600 surface (`0x41541C`–`0x41543C`), so a count is also a pixel of the
+  original's own screen, and no window stretch sits in between. Whether Windows' pointer
+  speed reaches a non-exclusive device's counts cannot be read from the binary. The ±8 is a
+  per-frame sum, and the original's frame rate is not established (no cap was found in
+  `WinMain`'s active loop), so the hand speed a swipe needs is still open.
 - **Closing shows it again, centred.** `sub_4066D0`'s closing branch sets the flag back
   (`0x406854`) and `sub_4155F0` (`0x40685A`) puts the cursor in the middle of its surface,
   `(w/2, h/2)`, zeroing the delta — on every frame of the 0.4-second shrink.
@@ -260,13 +271,33 @@ flag**: `sub_415500` draws nothing unless it is 1 (`0x41551A`).
   from opening at all, and since `sub_41B240`'s state 1 only rewrites the hover text, the
   player does not walk while it is up. A cancel shows as the ring closing and the player
   walking from the next frame, on the movement bits still held.
-- **A pause freezes it hidden.** The pause key and the quit prompt (`sub_407370(10)`,
-  `0x4075A9`) set the pause bit, which stops `sub_403780` (`0x40378D`) and the world
-  (`0x4025B0`) and leaves the flag at 0. The walk does not outlive the right button across
-  it: `sub_403FB0` clears bit `0x100` every frame (`0x403FE4`) and sets it again only from
-  the polled button (`0x4043CC`), so a button let go behind the prompt ends the walk. The
-  port's paused player never sees that release, so it re-reads the button on
-  `NOTIFICATION_UNPAUSED`.
+- **A pause freezes it hidden.** The pause key (`0x404156`–`0x404167`) and the quit prompt
+  (`sub_407370(10)`, `0x4075A9`) set the pause bit, which stops `sub_403780` (`0x40378D`)
+  and the world (`0x4025B7`) and leaves the flag at 0. Steps and commits behind it are
+  dropped: the `12740` edges are masked every frame (`0x403FE1`), `sub_4066D0` is frozen,
+  and the ring's own key slots (`+68` / `+72` of the `CGUIRoundMenu` vtable at `0x467324`)
+  both point at `sub_45B660`, which returns at once.
+- **The pause key still takes the cancel.** The screen stays 1, so `sub_404990` case 1 keeps
+  calling `sub_403FB0` (`0x4049AB`), and neither escape's own case (`0x40410A`) nor the
+  end-of-frame test (`0x4044F9`–`0x404520`) reads the pause bit: escape, a held down arrow
+  or a held right button still write state 5. Every other writer of `player+0x388` sits
+  behind `0x40378D` or `0x4025B7`, so state 5 is latched, and the cancel lands even when the
+  key was let go before the unpause. On the unpause frame U `sub_403780` skips the ring
+  (state 5 is excluded at `0x403A5B` and `0x403AA4`) and the world's `sub_41B240` case 5
+  clears `player+920` and sets mode and state to 0 (`0x41BBB9`–`0x41BBC6`). On U+1
+  `sub_403780` closes the ring (`14792 = 2`, `0x403B48`) and `sub_4066D0` shows and centres
+  the cursor as above. The quit prompt (screen 10, `0x404914`) reads only its answers and
+  the duel (screen 5) runs `sub_404680`, so neither calls `sub_403FB0` and nothing is
+  cancelled behind them; a key-down eaten there is gone, because the keyboard is buffered
+  (`GetDeviceData` in `sub_45DA40`). No (`sub_407370` case 1) clears the pause bit however
+  it was set (`0x40742F`), so a cancel latched behind the pause key before Q still lands
+  after N.
+- **The walk follows the polled button across a pause.** `sub_403FB0` clears bit `0x100`
+  every frame (`0x403FE4`) and sets it again from the polled button (`0x4043CC`) while the
+  mode is 0, or while it is not and the state is 1 (`0x4043B1`–`0x4043BB`), where it is the
+  ring's cancel (`0x40450C`). So a button let go behind a pause ends the walk, and one still
+  held when the pause lifts walks the player, once a ring it cancelled has shut; mid-action
+  it sets nothing.
 - **The duel shows it.** `sub_402470` only catches in the acting states {2, 3}, {11, 12}
   and {21, 22} (`0x4024C0`, see [catch-reference.md](catch-reference.md)), never in state 1,
   so the ring is never open at the catch itself. The caught pause still runs the ordinary input handler
@@ -285,19 +316,33 @@ is captured, so the warp follows the release. While the ring holds the pointer, 
 release only hides the walk arrow. `player.menu_open` holds the keyboard walk;
 `PrankController` polls the held down arrow and right button, commits on `move_up`, and
 refuses to open while either is held; `round_menu.gd` takes the arrows as steps.
+`round_menu.gd` steps on `InputEventMouseMotion.screen_relative.x`, not `relative.x`:
+Godot divides `relative` by the window's stretch, so at 1920 × 1004 (a stretch of 1.674) a
+9-count swipe arrives as 5.4 and a 14-count one was needed, while `screen_relative` is the
+driver's own delta (under capture, X11's raw motion), the same hand motion at any window
+size (see [widescreen.md](widescreen.md)). The paused controller hears nothing behind the
+pause key, so `LevelPrompts` (which keeps processing) notes escape, `move_down` or the right
+button pressed while the pause bit is set on screen 1 — `is_paused` and not
+`is_quit_prompt_open`, which the duel's bare tree pause never sets — and the ring is up, and
+pays that owed cancel with `close_menu()` just before `set_paused(false)` lets the tree run.
+The ring therefore lets go of the pointer while the pause still has it hidden. P and N both
+pay it; yes drops it, so leaving the level never warps the pointer mid-teardown. The paused
+player re-reads the right button on `NOTIFICATION_UNPAUSED`: it ends a walk the button no
+longer holds and starts one it does, unless an action holds the player.
 `CatchWatch._open_duel` releases the pointer before it pauses the tree, so the duel's
 answers get a visible pointer and nothing captures it again; the ring itself stays open, as
 in the original. `check_player_interaction.gd`, `check_round_menu.gd`,
-`check_movement_cursor.gd`, `check_player_keyboard_movement.gd` and `check_catch_trigger.gd`
-cover it. Known differences:
+`check_movement_cursor.gd`, `check_player_keyboard_movement.gd`, `check_level_prompts.gd`
+and `check_catch_trigger.gd` cover it. Known differences:
 
 - The pointer is warped once on close rather than pinned for the whole shrink, which would
   stall a right-button walk that reads the absolute pointer.
 - The ring closes and the walk starts on the press frame, one frame earlier than the
-  original.
-- The original still takes escape, down and the right button during a pause
-  (`sub_404990` case 1 keeps running `sub_403FB0`) and applies the abort on unpause; the
-  port's paused controller ignores them.
+  original, and a cancel owed from behind the pause key shuts it on the unpause frame U
+  rather than U+1.
+- A down arrow pressed behind the quit prompt and still held at N cancels the ring (the
+  poll) and walks the player; the original's screen 10 eats that buffered key-down, so
+  neither happens there.
 - The left button opens and commits on press, the original on release.
 - The numpad camera pan is not ported.
 
