@@ -78,7 +78,7 @@ This was measured in a window at 800 × 600, with the NPCs frozen and the pulse'
 - **Copier, clustered stands:** it clusters with the player at 8 of its 15 reachable stands. There it lit 5706–6896 px where it is in front and **0 px** where the player is. With the cluster test forced off, the same stands put 3783 px of copier on the player.
 - **Radio, stove and aquarium:** they cluster at 4, 13 and 14 stands. They lit 0 px on the player in front at every one of them, against 120, 4979 and 11537 px with the test off.
 
-`tests/check_looping_object_focus.gd` pins the pick, the layer and the cluster test.
+`tests/check_looping_object_focus.gd` pins the pick, the layer and the uniforms the cluster test reads. The discard itself was measured by hand, as above: a headless run never executes a shader.
 
 Characters are tested against that buffer on the GPU. `CharacterDepthCompositor` gives every character sprite a `ShaderMaterial` running `scenes/shared/character_depth.gdshader`, which decodes the sprite's own depth plane, compares `base_y - pixel_depth` against the static score at the same world pixel, and discards the fragment when the world is in front. The shader snaps its quad to whole pixels and samples with nearest filtering so the result matches the original's integer blitter. Because the static composite is one sprite drawn after the characters, shaded character sprites sit one z-index above it.
 

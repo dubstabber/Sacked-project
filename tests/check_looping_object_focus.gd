@@ -53,7 +53,7 @@ func _run() -> void:
 	root.remove_child(_level)
 	_level.free()
 	if _failures == 0:
-		print("Looping object focus: the copier, the radio and the stove stay picked, focused and lit through their loops, and the pulse depth-tests the surface it shares with the player")
+		print("Looping object focus: the copier, the radio and the stove stay picked, focused and lit through their loops, and the pulse is handed the scores of the surface it shares with the player")
 	quit(1 if _failures else 0)
 
 

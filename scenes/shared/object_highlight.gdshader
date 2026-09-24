@@ -7,11 +7,12 @@ render_mode unshaded, blend_add;
 // to it, which is what makes the highlight pulse. See docs/player-action-reference.md.
 //
 // The depth test is the same one characters use, so the pulse only reaches the pixels where
-// the object is actually visible; the object stays in the static world composite underneath.
-// An object drawn as an actor that overlaps a character is drawn on the character
-// compositor's CPU surface instead, so the pass tests that surface's scores as well: the
-// original's copy is Z-buffered right after the item (sub_411E20), so a character standing
-// in front of it is never lit.
+// the object is actually visible. Underneath, the object is either baked into the static
+// world composite or, while a looping clip runs, drawn as a depth-tested actor. An object
+// drawn as an actor that overlaps a character is drawn on the character compositor's CPU
+// surface instead, so the pass tests that surface's scores as well: the original's copy is
+// Z-buffered right after the item (sub_411E20), so a character standing in front of it is
+// never lit.
 
 uniform sampler2D depth_map : filter_nearest, repeat_disable;
 uniform sampler2D world_depth : filter_nearest, repeat_disable;
@@ -47,7 +48,8 @@ void fragment() {
 		if (world_depth_enabled) {
 			vec2 texel = floor(world_position) - world_depth_origin;
 			if (texel.x >= 0.0 && texel.y >= 0.0 && texel.x < world_depth_size.x && texel.y < world_depth_size.y) {
-				// The object put these very scores in the buffer, so a tie is its own pixel.
+				// A baked object put these very scores in the buffer, so a tie is its own pixel;
+				// an actor is tested against what the world has in front of it.
 				if (score < texture(world_depth, (texel + 0.5) / world_depth_size).r) {
 					discard;
 				}

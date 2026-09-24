@@ -494,8 +494,11 @@ ends the program.
 
 `sub_407370` starts a track only on four cases: `Menu1` on screens 2 and 3, `Menu2` on
 screens **13 and 14** only. The tree, the description screen and character select start
-nothing and simply keep whatever is playing, which is `Menu1` because every route to them
-passes through the main menu.
+nothing and keep whatever is playing: `Menu1` when they are reached from the main menu, and
+the level's theme after a win. `Następny poziom` goes straight to screen 15, and nothing on
+the way stops the music: `sub_42AC30`'s only caller is case 5, and cases 15 and 16 request
+no track. The port stops the theme when the level ends and starts `Menu1` at the tree
+instead, which is its own choice; see [sound-reference.md](sound-reference.md).
 
 ## What the port builds on this
 
