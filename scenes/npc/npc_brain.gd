@@ -445,7 +445,16 @@ func _route_end(point: Vector2) -> Vector2:
 
 func _refresh_social_route() -> void:
 	_social_refresh = SOCIAL_REFRESH_SECONDS
-	if not _actor.call("navigate_to", _social_destination(_target)):
+	if _actor.call("navigate_to", _social_destination(_target)):
+		return
+	# sub_416960 fails (0x416D3F) with the old route already freed, but goal 5 stays and so
+	# does sub_416660's 10-16 s busy timer, which does not run while a route is walked.
+	# Without a route it does, and sub_4165D0 then completes the goal: the agent stands
+	# where it stopped, still facing the way it walked.
+	var facing: Vector2 = _actor.get("last_direction")
+	if _actor.call("start_activity", &"idle", _random.randf_range(10.0, 16.0), facing):
+		_state = State.ACTING
+	else:
 		_on_navigation_failed()
 
 
@@ -491,7 +500,9 @@ func _on_destination_reached() -> void:
 	var claim: Node2D = null
 	var seated := false
 	var relaxed := false
-	var focus := _target
+	# sub_417730 turns an arriving agent toward +1112 or +1116 (0x417809-0x4178F8), which
+	# sub_416660 cleared for the social goal, so it keeps the heading it walked in on.
+	var focus: Node2D = null if _goal == SOCIAL_GOAL else _target
 	var active_handled := false
 	if is_instance_valid(_active):
 		var active_type := int(_active.get("item_type"))

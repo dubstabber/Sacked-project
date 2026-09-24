@@ -293,10 +293,35 @@ func _check_social_target() -> void:
 	brain._physics_process(2.1)
 	_expect(actor.destination.is_finite(), "a social route is rebuilt once its refresh elapses")
 
+	# sub_416660 clears +1112 and +1116 for the social goal, so sub_417730 turns the arriving
+	# agent toward nothing: it keeps the heading it walked in on.
+	actor.last_direction = Vector2(0, 1)
 	actor.destination_reached.emit()
 	_expect(actor.activity.get("animation") == &"idle", "a social visit stands and talks")
 	_expect(float(actor.activity.get("duration", 0.0)) >= 10.0 and float(actor.activity.get("duration", 0.0)) <= 16.0, "a social visit keeps the default action timer")
-	_expect(actor.activity.get("facing") == (partner.global_position - actor.global_position).normalized(), "a social visit faces the other agent, not its parent")
+	_expect(actor.activity.get("facing") == Vector2(0, 1), "a social visit keeps its walking heading rather than turning to the other agent, got %s" % actor.activity.get("facing"))
+	brain._needs[5] = 1.0
+	actor.finish_activity()
+	_expect(brain._state == BRAIN.State.IDLE and brain._needs[5] >= 60.0, "the visit completes the social goal")
+
+	# A refresh that finds no route (sub_416960 returning 0 at 0x416D3F) keeps goal 5 and the
+	# busy timer, which only runs down without a route; when it does, sub_4165D0 completes it.
+	brain._attempt_goal(5)
+	_expect(brain._state == BRAIN.State.NAVIGATING and brain._goal == 5, "a second visit sets off")
+	actor.last_direction = Vector2(-1, 0)
+	actor.navigation_available = false
+	brain._physics_process(3.1)
+	_expect(brain._state == BRAIN.State.ACTING and brain._goal == 5, "a failed refresh keeps the social goal, got state %d goal %d" % [brain._state, brain._goal])
+	_expect(brain._pending_goal == -1 and brain._retries == 0, "a failed refresh is not a failed start")
+	_expect(actor.activity.get("animation") == &"idle", "the agent stands where the route ran out")
+	var waited := float(actor.activity.get("duration", 0.0))
+	_expect(waited >= 10.0 and waited <= 16.0, "for the default 10-16 s timer, got %f" % waited)
+	_expect(actor.activity.get("facing") == Vector2(-1, 0), "still facing the way it walked")
+	actor.navigation_failed.emit()
+	_expect(brain._state == BRAIN.State.ACTING, "the actor's own failure signal does not undo the wait")
+	brain._needs[5] = 1.0
+	actor.finish_activity()
+	_expect(brain._state == BRAIN.State.IDLE and brain._goal == -1 and brain._needs[5] >= 60.0, "the wait completes the social goal")
 	world.free()
 
 
