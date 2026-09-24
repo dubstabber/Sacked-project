@@ -100,7 +100,14 @@ func play_effect(sound_id: String, looping := false, quiet := false) -> AudioStr
 	if stream == null:
 		return null
 	if stream is AudioStreamWAV:
-		(stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD if looping else AudioStreamWAV.LOOP_DISABLED
+		var wav := stream as AudioStreamWAV
+		wav.loop_mode = AudioStreamWAV.LOOP_FORWARD if looping else AudioStreamWAV.LOOP_DISABLED
+		if looping:
+			# sub_42A6A0's loop flag becomes Play(0, 0, DSBPLAY_LOOPING) (sub_45F9B0), which loops
+			# the whole buffer. The imported clips carry no loop points, and Godot never starts
+			# a forward loop that ends at sample 0.
+			wav.loop_begin = 0
+			wav.loop_end = roundi(wav.get_length() * wav.mix_rate)
 	var player := _warning if looping else _make_player(&"SFX", true)
 	player.stream = stream
 	player.volume_db = linear_to_db(QUIET_SCALE) if quiet else 0.0

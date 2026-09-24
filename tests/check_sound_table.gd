@@ -18,8 +18,9 @@ func _run() -> void:
 	_check_every_level_action_sound_resolves()
 	_check_the_duel_and_the_win_sounds_resolve()
 	_check_one_shots_belong_to_the_sound_handler()
+	await _check_the_warning_loops()
 	if _failures == 0:
-		print("Sound table: the buses, the index, every sound a level and its duel ask for, and the one-shot handler passed")
+		print("Sound table: the buses, the index, every sound a level and its duel ask for, the one-shot handler and the warning loop passed")
 	quit(1 if _failures else 0)
 
 
@@ -145,6 +146,31 @@ func _check_one_shots_belong_to_the_sound_handler() -> void:
 	_expect(
 		fallback != null and fallback.get_parent() == audio,
 		"without the autoload the level plays its one-shots itself"
+	)
+	root.remove_child(audio)
+	audio.free()
+
+
+# sub_403780 starts S1012 with the loop flag, which sub_45F9B0 turns into DSBPLAY_LOOPING over
+# the whole clip. The imported clip has no loop points of its own, and a forward loop that
+# ends at sample 0 never starts at all.
+func _check_the_warning_loops() -> void:
+	var audio: Node = AUDIO.new()
+	root.add_child(audio)
+	var warning: AudioStreamPlayer = audio.play_effect("S1012", true)
+	var wav := warning.stream as AudioStreamWAV if warning != null else null
+	_expect(wav != null and wav.loop_mode == AudioStreamWAV.LOOP_FORWARD, "the warning loops")
+	if wav != null:
+		_expect(
+			wav.loop_begin == 0 and wav.loop_end == roundi(wav.get_length() * wav.mix_rate),
+			"over the whole clip, got %d to %d" % [wav.loop_begin, wav.loop_end]
+		)
+	var start := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - start < 300:
+		await process_frame
+	_expect(
+		warning != null and warning.playing and warning.get_playback_position() > 0.0,
+		"and it is actually heard: the playback has moved on"
 	)
 	root.remove_child(audio)
 	audio.free()

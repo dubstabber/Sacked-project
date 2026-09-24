@@ -31,11 +31,13 @@ being skipped quietly. None of them is named by an action record.
 
 `sub_42A6A0(handler, name, loop, quiet)` takes a free slot out of 128
 (`slot >= 0 && slot < 128`), matches the name case-insensitively, loads on first use, and
-plays. `loop` goes straight to the player. `quiet` starts that slot at **0.1** of the effects
-volume; everything else plays at the full effects volume from `handler+3892`. The last flag is
-really positional: `sub_42A970` recomputes the volume of flagged slots from their distance to
-a listener it is handed. That listener was not traced, and nothing on the duel or result
-path sets the flag. `sub_42A7C0(slot, 0)` stops one again.
+plays. `loop` goes straight to the buffer's `Play(0, 0, loop != 0)` at vtable offset 48,
+so a looping sound is `DSBPLAY_LOOPING` over the whole clip (`sub_45E7E0` → `sub_45EE60` →
+`sub_45F9B0`). `quiet` starts that slot at **0.1** of the effects volume; everything else
+plays at the full effects volume from `handler+3892`. The last flag is really positional:
+`sub_42A970` recomputes the volume of flagged slots from their distance to a listener it is
+handed. That listener was not traced, and nothing on the duel or result path sets the flag.
+`sub_42A7C0(slot, 0)` stops one again.
 
 The handler is the game object's own, `game+15136`, and it outlives every screen. Only its
 shutdown (`sub_42A180` → `sub_42AA40`) stops all its slots. Otherwise a slot stops when its
@@ -181,12 +183,14 @@ the port's copy of the game's handler. Its players are children of the autoload,
 always processes, so a sound plays on under a pause and over a scene change, as the lost
 duel's `S1001` does into the lose screen. Each player frees itself when its sound ends.
 `LevelAudio` plays a one-shot itself only when there is no `ScreenManager` autoload. The
-warning loop stays in `LevelAudio`, which stops it when the level ends,
-as cases 7 and 8 do. `LevelAudio`'s own players also run with the tree paused, so the pause
-key and the quit prompt leave them playing. Only its `_process`, which starts the warning,
-stops with the level. `ScreenManager.report_level_finished` plays `S1100` on a win before it
-changes screen. `CatchWatch` holds the theme for the duel and lets it go on a win; the warning
-keeps looping.
+warning loop stays in `LevelAudio`, which stops it when the level ends, as cases 7 and 8 do.
+The imported clips carry no loop points, and Godot never starts a forward loop that ends at
+sample 0, so `LevelAudio` loops the whole clip itself. Until it did, the warning was never
+heard. `LevelAudio`'s own players also run with the tree paused, so the pause key and the
+quit prompt leave them playing. Only its `_process`, which starts the warning, stops with
+the level. `ScreenManager.report_level_finished` plays `S1100` on a win before it changes
+screen. `CatchWatch` holds the theme for the duel and lets it go on a win; the warning keeps
+looping.
 
 **One port decision.** `LevelAudio` stops the theme when the level ends, and the tree then
 starts `Menu1`. The original stops nothing there. Its theme plays on under the result screen
