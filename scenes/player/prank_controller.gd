@@ -128,15 +128,27 @@ func _process(delta: float) -> void:
 	if state == State.ACTING:
 		_advance_action(delta)
 		return
-	if state == State.FREE:
-		_update_hover()
+	if state == State.MENU:
+		if _menu_cancel_held():
+			close_menu()
+		return
+	_update_hover()
+
+
+# sub_403FB0 ends every frame (0x404502) by aborting an open ring while movement bit 0x80 --
+# the down arrow -- or the right button's 0x100 is held. The same test lands before the tick
+# would open the ring, so holding either keeps it from opening at all.
+func _menu_cancel_held() -> bool:
+	return Input.is_action_pressed("move_down") or Input.is_action_pressed("mouse-movement")
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if state == State.ACTING:
 		return
 	if menu_open:
-		if event.is_action_pressed("interact"):
+		# sub_4066D0 commits on 12740 & 0x14 (0x406802): space, the click, and the up arrow's
+		# bit 2. Left and right turn the ring in round_menu.gd.
+		if event.is_action_pressed("interact") or event.is_action_pressed("move_up"):
 			confirm()
 			get_viewport().set_input_as_handled()
 		elif event.is_action_pressed("ui_cancel") or event.is_action_pressed("mouse-movement"):
@@ -149,7 +161,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func open_menu() -> void:
-	if menu_open or focus_point == null or entries.is_empty():
+	if menu_open or focus_point == null or entries.is_empty() or _menu_cancel_held():
 		return
 	menu_open = true
 	state = State.MENU
@@ -157,6 +169,7 @@ func open_menu() -> void:
 	# State 0 turns to the item before the ring comes up, and the idle then holds that view.
 	if _player != null:
 		_player.set("last_direction", _facing_toward_item(focus_point))
+	_hold_for_menu(true)
 	menu_opened.emit(entries)
 	highlight_changed.emit(entries[0])
 
@@ -171,9 +184,28 @@ func close_menu(keep_selection := false) -> void:
 	menu_open = false
 	if state == State.MENU:
 		state = State.FREE
+	_hold_for_menu(false)
 	menu_closed.emit()
 	if not keep_selection:
 		clear_selection()
+
+
+# sub_406510 hides the cursor while the ring is up and sub_41B240's state 1 only rewrites the
+# hover text, so the player stands still and the pointer is the ring's until it shuts.
+func _hold_for_menu(open: bool) -> void:
+	if _player == null:
+		return
+	_player.set("menu_open", open)
+	var cursor := _player.get_node_or_null("MovementArrow")
+	if cursor == null or not cursor.has_method("capture_for_menu"):
+		return
+	if open:
+		cursor.capture_for_menu()
+	else:
+		cursor.release_from_menu(
+			_player.call("get_player_viewport_position"),
+			_player.get("is_mouse_movement_active") == true
+		)
 
 
 func clear_selection() -> void:
@@ -370,7 +402,13 @@ func build_entries(point: Node) -> Array:
 
 
 func _update_hover() -> void:
-	var object := _object_under_cursor()
+	# Main_RenderUpdate only picks in cursor mode 0 (0x403298), so nothing new is focused
+	# while the right button walks the player. The original leaves the last focus standing
+	# (0x40345F re-applies it); the port drops it, so the pulse does not freeze mid-swing and
+	# a click mid-walk has nothing to open.
+	var object: Node2D = null
+	if _player == null or _player.get("is_mouse_movement_active") != true:
+		object = _object_under_cursor()
 	var point: Node = null
 	var tint := TINT_NO_ACTION
 	if object != null:

@@ -42,6 +42,7 @@ func _run() -> void:
 	_check_constants(brain)
 	await _check_notice_geometry(agent, brain, player, layer)
 	await _check_only_mid_prank(world, player)
+	_check_the_duel_gets_the_pointer(world, player)
 	_finish()
 
 
@@ -49,7 +50,7 @@ func _finish() -> void:
 	if is_instance_valid(_level):
 		_level.free()
 	if _failures == 0:
-		print("Catch trigger: notice radius, cone, the two-tile bypass, sight and the mid-prank gate passed")
+		print("Catch trigger: notice radius, cone, the two-tile bypass, sight, the mid-prank gate and the duel's pointer passed")
 	quit(1 if _failures else 0)
 
 
@@ -169,6 +170,50 @@ func _check_only_mid_prank(world: Node, player: Node2D) -> void:
 	prank.state = PrankController.State.FREE
 
 	_expect(watch.EXCLAMATIONS.size() == 4, "sub_407990 picks one of four exclamations")
+
+
+# sub_402470 only catches in states 2 and 3, so the ring is never open at the catch itself,
+# but the caught pause still reads input and the ring can be opened under the banner.
+# sub_407370 case 5 then shows and re-centres the cursor (0x40757C, 0x407582) whatever the
+# ring is doing, and a duel played with the mouse must not inherit the ring's capture.
+func _check_the_duel_gets_the_pointer(world: Node, player: Node2D) -> void:
+	var watch := _level.get_node_or_null("LevelRuntime/CatchWatch")
+	var minigame := _level.get_node_or_null("LevelRuntime/CatchMinigame")
+	var prank = get_first_node_in_group("player_actions")
+	var cursor := player.get_node_or_null("MovementArrow")
+	var point := _prankable_point(world, prank, player)
+	if watch == null or minigame == null or cursor == null or point == null:
+		_expect(false, "level 2 carries the duel, the cursor and something to prank")
+		return
+
+	prank.focus_point = point
+	prank.entries = prank.build_entries(point)
+	prank.open_menu()
+	_expect(prank.menu_open and cursor.is_menu_captured(), "the ring holds the pointer before the duel")
+
+	watch._open_duel()
+	_expect(paused, "the duel pauses the level")
+	_expect(not cursor.is_menu_captured(), "the duel opens with the pointer handed back")
+	_expect(prank.menu_open, "and leaves the ring itself alone, as screen 5 does")
+
+	minigame.set_process(false)
+	minigame.visible = false
+	watch._on_duel_finished(true)
+	_expect(not paused, "a won duel resumes the level")
+	_expect(not cursor.is_menu_captured(), "nothing takes the pointer back after the duel")
+	prank.close_menu()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _prankable_point(world: Node, prank: Node, player: Node2D) -> Node2D:
+	for node in world.get_node("Objects").get_children():
+		var point := node.get_node_or_null("InteractionPoint") as Node2D
+		if point == null or (point.get("action_ids") as PackedInt32Array).is_empty():
+			continue
+		player.global_position = point.global_position
+		if not prank.build_entries(point).is_empty():
+			return point
+	return null
 
 
 func _expect(condition: bool, message: String) -> void:

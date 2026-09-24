@@ -9,6 +9,9 @@ const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
 var is_mouse_movement_active: bool = false
 # Set while a prank is running: the original plays an animation there and takes input away.
 var input_locked: bool = false
+# Set while the action ring is up: sub_41B240's state 1 only rewrites the hover text, so the
+# player stands and the arrow keys belong to the ring.
+var menu_open: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
 # Logical units above the floor. sub_41A2D0 takes 24 px a unit off the projected y before it
 # derives both the draw anchor and the depth base, and sub_41D500 draws the shadow from that
@@ -65,7 +68,7 @@ func _physics_process(delta: float) -> void:
 		var mouse_pos = get_global_mouse_position()
 		raw_mouse_movement_direction = (mouse_pos - global_position).normalized()
 		movement_direction = snap_to_8_directions(raw_mouse_movement_direction)
-	else:
+	elif not menu_open:
 		movement_direction = get_keyboard_movement_direction()
 
 	if movement_direction != Vector2.ZERO:

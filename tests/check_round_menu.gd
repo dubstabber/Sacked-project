@@ -43,9 +43,10 @@ func _run() -> void:
 	await _check_the_ring_opens_and_shuts()
 	_check_entry_geometry()
 	_check_stepping_through_the_entries()
+	_check_the_arrow_keys_turn_the_ring()
 	_check_the_selected_entry_is_tinted()
 	if _failures == 0:
-		print("Round menu: the original pitch, radius ramp, rotation ease, stepping and tint passed")
+		print("Round menu: the original pitch, radius ramp, rotation ease, stepping, arrow keys and tint passed")
 	quit(1 if _failures else 0)
 
 
@@ -134,6 +135,53 @@ func _check_stepping_through_the_entries() -> void:
 	_swipe(menu, 40.0)
 	menu.advance(0.016)
 	_expect(controller.highlighted == frozen, "a closing ring cannot be turned, got %d" % controller.highlighted)
+	_free(fixture)
+
+
+func _press(menu: Node, action: StringName) -> void:
+	var event := InputEventAction.new()
+	event.action = action
+	event.pressed = true
+	menu._unhandled_input(event)
+
+
+# DIK_LEFT and DIK_RIGHT arrive in sub_403FB0 as codes 111 and 112 (the table at 0x4734CC)
+# and set the same two step bits a swipe does, so they share the swipe's gating.
+func _check_the_arrow_keys_turn_the_ring() -> void:
+	var fixture := _fixture()
+	var menu = fixture["menu"]
+	var controller = fixture["controller"]
+	controller.open(3)
+	menu.advance(1.0)
+
+	_press(menu, &"move_right")
+	menu.advance(0.016)
+	_expect(controller.highlighted == 1, "the right arrow steps to the next entry, got %d" % controller.highlighted)
+	_press(menu, &"move_right")
+	menu.advance(0.016)
+	_expect(controller.highlighted == 1, "an arrow is dropped while the ring is still turning, got %d" % controller.highlighted)
+	_settle(menu)
+
+	_press(menu, &"move_left")
+	menu.advance(0.016)
+	_expect(controller.highlighted == 0, "the left arrow steps back, got %d" % controller.highlighted)
+	_settle(menu)
+	_press(menu, &"move_left")
+	menu.advance(0.016)
+	_expect(controller.highlighted == 0, "the left arrow stops on the first entry, got %d" % controller.highlighted)
+	_settle(menu)
+
+	# Up commits and down cancels in the prank controller; neither turns the ring.
+	_press(menu, &"move_up")
+	_press(menu, &"move_down")
+	menu.advance(0.016)
+	_expect(controller.highlighted == 0 and menu.is_settled(), "up and down do not turn the ring")
+
+	controller.close()
+	var frozen: int = controller.highlighted
+	_press(menu, &"move_right")
+	menu.advance(0.016)
+	_expect(controller.highlighted == frozen, "a closing ring ignores the arrows, got %d" % controller.highlighted)
 	_free(fixture)
 
 

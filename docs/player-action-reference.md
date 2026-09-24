@@ -43,8 +43,9 @@ separately as `item+244+slot`.
 ## Choosing the focus item
 
 `Main_RenderUpdate` (`0x4028C0`) does this every frame, immediately before drawing the quit
-prompt. It runs only when `game+15028 == 0`, `game+15084 == 1` (no round menu open) and the
-player's mode `+900` is 0:
+prompt. It runs only when the cursor mode `game+15028` is 0 (not while the right button walks
+the player, nor while the clock shows), the cursor's visible flag `game+15084` is 1 (no round
+menu open) and the player's mode `+900` is 0 (`0x403298`–`0x4032C0`):
 
 1. `sub_4132E0(game+15012, game+15016)` picks the item under the mouse cursor.
 2. The item must answer 1 to `vtbl+44`, and is marked hovered with `item+204 = 1`.
@@ -66,6 +67,13 @@ quarter cells, converting each sample to a cell with `>> 2` and stopping at the 
 that blocks; it tests every sample from the start to the destination inclusive, so an
 interaction position inside a sight-blocking cell can never be focused. None of level 1's
 38 are.
+
+When the gate is shut the pick is skipped rather than failed: `game+14692` keeps last
+frame's value and `sub_41D7F0` re-applies it at `0x40345F`, so the focus is left standing
+while the ring is up (the menu is built from it) and during a right-button walk. The port
+picks nothing during that walk either, but drops the focus instead of freezing it, so the
+highlight's pulse does not stop mid-swing; with the right button held the ring cannot open
+in either game (see "The pointer and the keys while the ring is up").
 
 **The player never walks to an object.** There is no pathfinding on this route: an object
 out of range simply tints yellow and cannot be acted on until the player has walked close
@@ -161,10 +169,10 @@ button  = (menu+8 - 16 + sin theta * R, menu+12 + cos theta * R), layer menu+16
   was too busy for is dropped rather than queued.
 - **The steps come from horizontal mouse motion.** In `sub_403FB0` the mouse-motion event
   carries `(dx, dy)` — `sub_415400` adds them to the cursor, so they are relative — and
-  `dx < -8` raises bit 0 while `dx > 8` raises bit 1. Two unidentified scancodes, 111 and
-  112, raise the same bits. Commit is bit 4, which is **space (scancode 57) or the mouse
-  button**, or bit 2, scancode 109. The port's `interact` action is already space and the
-  left button, so committing needed no change.
+  `dx < -8` raises bit 0 while `dx > 8` raises bit 1. **The left and right arrows raise the
+  same bits** (codes 111 and 112, below). Commit is bit 4, which is **space (scancode 57) or
+  the left button's release**, or bit 2, **the up arrow** (code 109) — `sub_4066D0` tests
+  `12740 & 0x14` at `0x406802`.
 - **The highlight is a tint, not a dimming.** The draw writes `(255, 255, 128)` into the
   selected button's colour fields at `+1160..1162` and `(255, 255, 255)` into every other
   one. When the menu's byte at `+120` is not `0xFF` it writes `(0, 0, 0)` instead, which
@@ -175,8 +183,83 @@ button  = (menu+8 - 16 + sin theta * R, menu+12 + cos theta * R), layer menu+16
   close passes write to `+108`.
 
 The port follows all of this in `scenes/hud/round_menu.gd`, checked by
-`tests/check_round_menu.gd`. It steps on `InputEventMouseMotion.relative.x` and leaves the
-two unidentified scancodes unbound.
+`tests/check_round_menu.gd`. It steps on `InputEventMouseMotion.relative.x` and on the
+`move_left` / `move_right` arrows, both through the same one-step, settled-only gate.
+
+### The pointer and the keys while the ring is up
+
+The cursor is the game's own sprite, not the Windows one: `sub_4114C0` calls `ShowCursor(0)`
+(`0x4115C0`), the mouse is a DirectInput device at cooperative level 6 (`sub_45D7D0`), and
+`sub_415400` adds every motion event's relative `(dx, dy)` to the cursor object at
+`game+15000` (`0x40433F`), ring open or not. `game+15084` (cursor `+0x54`) is its **visible
+flag**: `sub_415500` draws nothing unless it is 1 (`0x41551A`).
+
+- **Opening hides the cursor without moving it.** `sub_406510` writes `game+15084 = 0`
+  (`0x4066B0`) and never calls `sub_4155F0`. The hidden cursor keeps integrating the
+  deltas, and a `dx` past ±8 turns the ring (`0x40435B`–`0x40437D`). Focus picking needs the
+  flag (`0x4032A6`), so nothing is picked while the ring is up.
+- **Closing shows it again, centred.** `sub_4066D0`'s closing branch sets the flag back
+  (`0x406854`) and `sub_4155F0` (`0x40685A`) puts the cursor in the middle of its surface,
+  `(w/2, h/2)`, zeroing the delta — on every frame of the 0.4-second shrink.
+- **The keys.** `sub_45DA40` translates DirectInput codes through the (DIK, code) word pairs
+  at `0x4734CC`, and `sub_403FB0` handles the result:
+
+  | Key | DIK | Code | Sets |
+  | --- | --- | --- | --- |
+  | Up arrow | `0xC8` | 109 | movement `0x40`; `12740` bit 2, commit |
+  | Left arrow | `0xCB` | 111 | movement `0x10`; `12740` bit 0, previous entry |
+  | Right arrow | `0xCD` | 112 | movement `0x20`; `12740` bit 1, next entry |
+  | Down arrow | `0xD0` | 114 | movement `0x80`; `12740` bit 3 (`0x4041D0`), which nothing reads |
+  | Numpad 8, 4, 6, 2 | `0x48`, `0x4B`, `0x4D`, `0x50` | 72, 75, 77, 80 | camera pan `0x4`, `0x1`, `0x2`, `0x8` |
+  | Pause | `0xC5` | 121 | the pause bit `12740 & 0x20` |
+  | Escape, `Q`, space | `0x01`, `0x10`, `0x39` | 1, 16, 57 | cancel, quit prompt, act |
+
+  The `12740` bits are one-frame edges (the mask at `0x403FE1`); the movement bits stay set
+  while the key is held and clear on key-up (`0x4042B9`–`0x4042D7`). At the end of every
+  frame (`0x404502`–`0x404520`) a player in state 1 goes to state 5 if escape was pressed,
+  or the down arrow's `0x80` or the right button's `0x100` is held. So with the ring up
+  **left and right turn it, up commits, and down, escape or the right button cancel**. The
+  abort lands before the tick would open the ring (`WinMain` runs input at `0x411945`, the
+  HUD at `0x411957`, the world at `0x411969`), so holding down or the right button keeps it
+  from opening at all, and since `sub_41B240`'s state 1 only rewrites the hover text, the
+  player does not walk while it is up. A cancel shows as the ring closing and the player
+  walking from the next frame, on the movement bits still held.
+- **A pause freezes it hidden.** The pause key and the quit prompt (`sub_407370(10)`,
+  `0x4075A9`) set the pause bit, which stops `sub_403780` (`0x40378D`) and the world
+  (`0x4025B0`) and leaves the flag at 0.
+- **The duel shows it.** `sub_402470` only catches in the acting states {2, 3}, {11, 12}
+  and {21, 22} (`0x4024C0`, see [catch-reference.md](catch-reference.md)), never in state 1,
+  so the ring is never open at the catch itself. The caught pause still runs the ordinary input handler
+  (`sub_404990` case 4 calls `sub_403FB0`), so a ring can be opened under the banner
+  (inferred: the tick and the world run there too). `sub_407370` case 5 sets the flag to 1
+  and re-centres (`0x40757C`, `0x407582`) without touching the ring (`game+14792`) or the
+  player's mode, and case 1 shows it again on the way back (`0x4073FB`).
+
+The port: `MovementArrow` (`scenes/player/movement_cursor.gd`) owns the OS pointer.
+`capture_for_menu()` puts it in `MOUSE_MODE_CAPTURED` — hidden, with relative motion that
+does not stop at the window edge — and `release_from_menu()` shows it again (or keeps it
+hidden, if a right-button walk is what closed the ring) and warps it onto the player, who is
+at the viewport centre because the camera follows him. X11 ignores a warp while the pointer
+is captured, so the warp follows the release. While the ring holds the pointer, a paused tree
+(P, the quit prompt) makes it `HIDDEN` and unpausing captures it again; a stray right-button
+release only hides the walk arrow. `player.menu_open` holds the keyboard walk;
+`PrankController` polls the held down arrow and right button, commits on `move_up`, and
+refuses to open while either is held; `round_menu.gd` takes the arrows as steps.
+`CatchWatch._open_duel` releases the pointer before it pauses the tree, so the duel's
+answers get a visible pointer and nothing captures it again; the ring itself stays open, as
+in the original. `check_player_interaction.gd`, `check_round_menu.gd`,
+`check_movement_cursor.gd`, `check_player_keyboard_movement.gd` and `check_catch_trigger.gd`
+cover it. Known differences:
+
+- The pointer is warped once on close rather than pinned for the whole shrink, which would
+  stall a right-button walk that reads the absolute pointer.
+- The ring closes and the walk starts on the press frame, one frame earlier than the
+  original.
+- The original still takes escape, down and the right button during a pause
+  (`sub_404990` case 1 keeps running `sub_403FB0`) and applies the abort on unpause; the
+  port's paused controller ignores them.
+- The left button opens and commits on press, the original on release.
+- The numpad camera pan is not ported.
 
 ## How the highlight is drawn
 
@@ -354,8 +437,8 @@ mask is first reduced to its low four bits.
 
 | Bit | Meaning |
 | --- | --- |
-| `0x0001` … `0x0008` | Camera pan left / right / up / down (arrow scancodes 75, 77, 72, 80) |
-| `0x0010`, `0x0020`, `0x0040`, `0x0080` | The four movement axes, combined for diagonals |
+| `0x0001` … `0x0008` | Camera pan left / right / up / down (numpad 4, 6, 8, 2: codes 75, 77, 72, 80) |
+| `0x0010`, `0x0020`, `0x0040`, `0x0080` | The four movement axes, combined for diagonals: the left, right, up and down arrows (codes 111, 112, 109, 114), or the right-button walk below |
 | `0x0100` | Right mouse button held |
 | `0x0200` | Camera follows the player — the default, set at `0x401362`, `0x40468E`, `0x4047AE` |
 | `0x0400` | **Act**: start the item action |
@@ -377,9 +460,10 @@ That branch is gated on the player being in free mode or with the menu open, whi
 right-clicking doubles as the menu's cancel.
 
 **Cancelling the menu.** At the end of `sub_403FB0`, if escape was pressed (`game+12740`
-bit `0x40`), or movement bit `0x80` is set, or the right button is held (`0x100`), a player
-in state 1 is moved to state 5. Escape itself is scancode 1, and it only cancels: it is not
-a quit key.
+bit `0x40`), or movement bit `0x80` — the down arrow — is held, or the right button is held
+(`0x100`), a player in state 1 is moved to state 5. Escape itself is scancode 1, and it only
+cancels: it is not a quit key. The other arrows turn the ring and commit instead; see "The
+pointer and the keys while the ring is up".
 
 **Cursor**, via `sub_4154B0(game+15000, mode)`:
 
@@ -390,7 +474,8 @@ a quit key.
 | 2 | Right button held — the directional walk arrow |
 
 Mouse movement also feeds `sub_415400(game+15000, dx, dy)`, and a horizontal delta past ±8
-sets `game+12740` bit 1 or 2.
+sets `game+12740` bit 1 or 2. Whichever mode is set, nothing is drawn while the cursor's
+visible flag `game+15084` is 0, which is the whole time the ring is up.
 
 ## Pause, quit and the camera
 
@@ -412,10 +497,13 @@ labelled `Y` on a QWERTZ keyboard) in both builds, goes to the main menu;
 anything. See [game-rules-reference.md](game-rules-reference.md) for the codes and what the
 port binds.
 
-Scancodes 1, 16, 57 and the arrows 72/75/77/80 are standard set-1 codes. The remaining
-handled codes — 109, 111, 112, 114 and 121 — set camera and debug bits and the pause flag,
-but which physical keys they are on the original's target layout is not recovered; 121 is
-the pause toggle whatever it is labelled.
+The codes are DirectInput scancodes remapped through the (DIK, code) table at 0x4734CC,
+which keeps most keys as they are and gives the extended ones codes of their own: 109, 111,
+112 and 114 are the arrows Up, Left, Right and Down, which set the movement bits
+`0x40`/`0x10`/`0x20`/`0x80` and the ring's one-frame `12740` bits (see "The pointer and the
+keys while the ring is up"), and 121 is **Pause/Break** (DIK_PAUSE, 0xC5). Codes 1, 16 and
+57 are Escape, `Q` and Space, and 72/75/77/80 are the numpad's 8, 4, 6 and 2, which set the
+camera-pan bits `0x4`/`0x1`/`0x2`/`0x8`. The port's `P` stands in for the Pause key.
 
 **Camera.** `game+12744` is the camera and `game+14700` its follow target. With bit `0x200`
 set the target is the player; otherwise the target is cleared and the camera free-pans, its

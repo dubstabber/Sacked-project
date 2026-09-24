@@ -28,6 +28,50 @@ const MOVEMENT_ARROW_OFFSETS := {
 	315: Vector2(-19, -22),
 }
 
+var _menu_capture := false
+
+
+func _notification(what: int) -> void:
+	if not _menu_capture:
+		return
+	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_UNPAUSED:
+		Input.mouse_mode = menu_pointer_mode()
+
+
+func is_menu_captured() -> bool:
+	return _menu_capture
+
+
+# sub_406510 zeroes game+15084 (0x4066B0), the flag sub_415500 tests (0x41551A) before it
+# draws any cursor, while sub_415400 keeps integrating the raw deltas that turn the ring.
+# CAPTURED is both: no pointer, and relative motion that does not stop at the window edge.
+func capture_for_menu() -> void:
+	_menu_capture = true
+	Input.mouse_mode = menu_pointer_mode()
+
+
+# sub_4066D0's closing branch sets the flag back (0x406854) and sub_4155F0 re-centres the
+# cursor on the screen (0x40685A), which is where the camera keeps the player. A walk the
+# right button started keeps the pointer hidden.
+func release_from_menu(player_viewport_pos: Vector2, dragging: bool) -> void:
+	if not _menu_capture:
+		return
+	_menu_capture = false
+	if dragging:
+		hide_main_cursor()
+	else:
+		show_main_cursor()
+	# X11 ignores a warp while the pointer is captured, so it has to follow the release.
+	get_viewport().warp_mouse(player_viewport_pos)
+
+
+# The pause key and the quit prompt freeze the ring with the cursor still hidden. A frozen
+# ring cannot be turned, so it gives the pointer back to the desktop without showing it.
+func menu_pointer_mode() -> Input.MouseMode:
+	if is_inside_tree() and get_tree().paused:
+		return Input.MOUSE_MODE_HIDDEN
+	return Input.MOUSE_MODE_CAPTURED
+
 
 func show_arrow(raw_direction: Vector2, snapped_direction: Vector2) -> void:
 	var arrow_direction := raw_direction
@@ -55,6 +99,9 @@ func start_drag() -> void:
 
 func stop_drag(player_viewport_pos: Vector2) -> void:
 	hide_arrow()
+	# A release that lands while the ring holds the pointer must not hand it back.
+	if _menu_capture:
+		return
 	get_viewport().warp_mouse(player_viewport_pos)
 	show_main_cursor()
 

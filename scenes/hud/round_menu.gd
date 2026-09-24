@@ -105,6 +105,14 @@ func _apply_step() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible or _closing:
 		return
+	# DIK_LEFT and DIK_RIGHT reach sub_403FB0 as codes 111 and 112 through the table at
+	# 0x4734CC, and raise the same two step bits a swipe does.
+	if event.is_action_pressed("move_left"):
+		_step_down = true
+		return
+	if event.is_action_pressed("move_right"):
+		_step_up = true
+		return
 	var motion := event as InputEventMouseMotion
 	if motion == null:
 		return

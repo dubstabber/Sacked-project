@@ -4,8 +4,14 @@ extends SceneTree
 const CursorScript := preload("res://scenes/player/movement_cursor.gd")
 const EPSILON := 0.001
 
+var _failures := 0
+
 
 func _init() -> void:
+	call_deferred("_run")
+
+
+func _run() -> void:
 	var cursor := Sprite2D.new()
 	cursor.set_script(CursorScript)
 
@@ -28,8 +34,43 @@ func _init() -> void:
 	if first_position.distance_to(second_position) <= 1.0:
 		_fail("nearby phases should still move the arrow smoothly")
 
-	cursor.free()
-	quit(0)
+	root.add_child(cursor)
+	await _check_the_ring_holds_the_pointer(cursor)
+
+	cursor.queue_free()
+	await process_frame
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	quit(1 if _failures else 0)
+
+
+# sub_406510 hides the cursor for as long as the ring is up (game+15084 = 0 at 0x4066B0) and
+# sub_4066D0's close shows and re-centres it. Headless, Input.mouse_mode always reads back as
+# visible, so these read the cursor's own bookkeeping instead.
+func _check_the_ring_holds_the_pointer(cursor: Sprite2D) -> void:
+	_assert_false(cursor.is_menu_captured(), "the pointer starts free")
+
+	cursor.capture_for_menu()
+	_assert_true(cursor.is_menu_captured(), "opening the ring captures the pointer")
+	_assert_equal(cursor.menu_pointer_mode(), Input.MOUSE_MODE_CAPTURED, "a running ring takes relative motion")
+
+	# P and the quit prompt freeze the ring with the cursor still hidden.
+	paused = true
+	await process_frame
+	_assert_true(cursor.is_menu_captured(), "a pause does not close the ring")
+	_assert_equal(cursor.menu_pointer_mode(), Input.MOUSE_MODE_HIDDEN, "a paused ring hands the pointer back, hidden")
+	paused = false
+	await process_frame
+	_assert_equal(cursor.menu_pointer_mode(), Input.MOUSE_MODE_CAPTURED, "unpausing captures it again")
+
+	# A stray right-button release must not show the pointer over an open ring.
+	cursor.stop_drag(Vector2(400.0, 300.0))
+	_assert_true(cursor.is_menu_captured(), "a release while the ring is up leaves the pointer captured")
+	_assert_false(cursor.visible, "and still hides the walk arrow")
+
+	cursor.release_from_menu(Vector2(400.0, 300.0), false)
+	_assert_false(cursor.is_menu_captured(), "closing the ring releases the pointer")
+	cursor.release_from_menu(Vector2(400.0, 300.0), false)
+	_assert_false(cursor.is_menu_captured(), "releasing twice is harmless")
 
 
 func _assert_vector_close(actual: Vector2, expected: Vector2, label: String) -> void:
@@ -42,6 +83,16 @@ func _assert_equal(actual: int, expected: int, label: String) -> void:
 		_fail("%s expected %d, got %d" % [label, expected, actual])
 
 
+func _assert_true(value: bool, label: String) -> void:
+	if not value:
+		_fail("%s expected true" % label)
+
+
+func _assert_false(value: bool, label: String) -> void:
+	if value:
+		_fail("%s expected false" % label)
+
+
 func _fail(message: String) -> void:
+	_failures += 1
 	push_error(message)
-	quit(1)

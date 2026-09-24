@@ -29,6 +29,7 @@ func _run() -> void:
 	_check_mouse_movement_wins_over_keyboard()
 	_check_keyboard_resumes_after_mouse_release()
 	_check_idle_without_movement_input()
+	_check_open_ring_holds_the_player()
 
 	_free_player()
 	_release_movement_actions()
@@ -79,6 +80,30 @@ func _check_idle_without_movement_input() -> void:
 
 	_assert_vector_close(_player.velocity, Vector2.ZERO, "idle velocity")
 	_assert_false(_player.movement_cursor.visible, "idle arrow hidden")
+
+
+# sub_41B240's state 1 only rewrites the hover text: with the ring up the arrows belong to it
+# and the player stands, facing wherever state 0 turned him.
+func _check_open_ring_holds_the_player() -> void:
+	var facing: Vector2 = _player.snap_to_8_directions(Vector2.UP)
+	_player.last_direction = facing
+	_player.menu_open = true
+	Input.action_press("move_right")
+	_player._physics_process(0.016)
+
+	_assert_vector_close(_player.velocity, Vector2.ZERO, "an open ring holds the player still")
+	_assert_vector_close(_player.last_direction, facing, "an open ring keeps the facing")
+	_assert_false(_player.movement_cursor.visible, "an open ring shows no walk arrow")
+	_assert_true(
+		String(_player.animation_controller.current_animation).ends_with("-up"),
+		"an open ring leaves the player idling, got %s" % _player.animation_controller.current_animation
+	)
+
+	_player.menu_open = false
+	_player._physics_process(0.016)
+	var expected_direction: Vector2 = _player.snap_to_8_directions(Vector2.RIGHT)
+	_assert_vector_close(_player.velocity.normalized(), expected_direction, "the arrows walk again once the ring shuts")
+	Input.action_release("move_right")
 
 
 func _release_movement_actions() -> void:

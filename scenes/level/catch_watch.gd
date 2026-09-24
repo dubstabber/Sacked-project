@@ -133,7 +133,20 @@ func _open_duel() -> void:
 	if not _minigame.is_connected("finished", _on_duel_finished):
 		_minigame.connect("finished", _on_duel_finished)
 	_minigame.call("open", _catcher_id(), character, casts)
+	_show_pointer_for_duel()
 	get_tree().paused = true
+
+
+# sub_407370 case 5 shows the cursor and re-centres it (0x40757C, 0x407582) whatever the
+# player was doing, and leaves the ring's own state alone. A ring opened under the caught
+# banner must therefore not keep the pointer captured over a duel played with the mouse, and
+# it has to let go before the pause, or the pause would only hide it.
+func _show_pointer_for_duel() -> void:
+	var cursor := _player.get_node_or_null("MovementArrow") if _player != null else null
+	if cursor == null or not cursor.has_method("release_from_menu"):
+		return
+	cursor.release_from_menu(_player.call("get_player_viewport_position"), false)
+	cursor.show_main_cursor()
 
 
 func _catcher_id() -> StringName:

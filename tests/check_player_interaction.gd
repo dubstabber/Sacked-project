@@ -24,7 +24,7 @@ func _run() -> void:
 	_check_availability_filter()
 	await _check_level_focus_rules()
 	if _failures == 0:
-		print("Player interaction: sight ray, availability filter, reach rule and menu cancel passed")
+		print("Player interaction: sight ray, availability filter, reach rule, menu cancel and the ring's pointer and keys passed")
 	quit(1 if _failures else 0)
 
 
@@ -132,9 +132,114 @@ func _check_level_focus_rules() -> void:
 	_expect(_controller.highlighted == -1, "cancelling the ring drops the selection")
 	_expect(not _controller.menu_open and _controller.highlighted == -1, "cancelling closes the ring")
 
+	await _check_the_ring_holds_the_pointer_and_the_keys()
 	_check_action_applies()
 	_check_pickup_opens_a_gated_action()
 	_level.free()
+	_release_ring_keys()
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func _release_ring_keys() -> void:
+	for action in ["move_up", "move_down", "move_left", "move_right", "mouse-movement"]:
+		Input.action_release(action)
+
+
+func _action_event(action: StringName) -> InputEventAction:
+	var event := InputEventAction.new()
+	event.action = action
+	event.pressed = true
+	return event
+
+
+func _open_on(point: Node) -> void:
+	_player.global_position = (point as Node2D).global_position
+	_controller.focus_point = point
+	_controller.entries = _controller.build_entries(point)
+	_controller.open_menu()
+
+
+# sub_406510 hides the cursor while the ring is up and the ring keeps the raw motion; the
+# arrows are the ring's keys (DIK table 0x4734CC into sub_403FB0): left and right turn it, up
+# commits (sub_4066D0, 0x406802), and a held down arrow, a held right button or escape
+# cancel it (0x404502). Main_RenderUpdate picks no focus while the right button walks the
+# player (0x403298). Headless, Input.mouse_mode always reads back as visible, so the cursor's
+# own bookkeeping is what is checked.
+func _check_the_ring_holds_the_pointer_and_the_keys() -> void:
+	var object := _level.get_node_or_null("World/Objects/Object010MonitorTastaturFrontal") as Node2D
+	var cursor := _player.get_node_or_null("MovementArrow")
+	if object == null or cursor == null:
+		_expect(false, "level 1 places its keyboard and the player carries its cursor")
+		return
+	var point := object.get_node("InteractionPoint")
+	_player.set_physics_process(false)
+
+	_open_on(point)
+	_expect(_controller.menu_open, "the ring opens on the keyboard")
+	_expect(cursor.is_menu_captured(), "opening the ring captures the pointer")
+	_expect(_player.menu_open, "opening the ring holds the player")
+	var before := _player.global_position
+	Input.action_press("move_right")
+	_player._physics_process(0.016)
+	_expect(_player.velocity == Vector2.ZERO, "the right arrow does not walk the player while the ring is up")
+	Input.action_release("move_right")
+	_player.global_position = before
+
+	_controller._unhandled_input(_action_event(&"move_up"))
+	_expect(_controller.state == 2, "the up arrow commits the highlighted action")
+	_expect(not _controller.menu_open and not cursor.is_menu_captured(), "committing shuts the ring and hands the pointer back")
+	_expect(not _player.menu_open, "and lets go of the player")
+	_controller.abort_action()
+
+	_open_on(point)
+	Input.action_press("move_down")
+	_controller._process(0.016)
+	_expect(not _controller.menu_open, "a held down arrow cancels the ring")
+	_expect(_controller.highlighted == -1, "cancelling drops the selection")
+	_expect(not cursor.is_menu_captured() and not _player.menu_open, "cancelling hands back the pointer and the player")
+	_controller.open_menu()
+	_expect(not _controller.menu_open and not cursor.is_menu_captured(), "the ring does not open while the down arrow is held")
+	Input.action_release("move_down")
+
+	_open_on(point)
+	Input.action_press("mouse-movement")
+	_controller._process(0.016)
+	_expect(not _controller.menu_open and not cursor.is_menu_captured(), "a held right button cancels the ring")
+	Input.action_release("mouse-movement")
+
+	_open_on(point)
+	_controller._unhandled_input(_action_event(&"ui_cancel"))
+	_expect(not _controller.menu_open and not cursor.is_menu_captured(), "escape cancels the ring")
+
+	_open_on(point)
+	_controller._unhandled_input(_action_event(&"mouse-movement"))
+	_expect(not _controller.menu_open and not cursor.is_menu_captured(), "pressing the right button cancels the ring")
+
+	# Put the pointer over the keyboard so the drag gate below is not vacuous.
+	_player.global_position = (point as Node2D).global_position
+	await process_frame
+	var sprite := object.get_node("Sprite2D") as Sprite2D
+	var centre := Rect2(sprite.to_global(sprite.offset), sprite.texture.get_size()).get_center()
+	var viewport := _player.get_viewport()
+	var motion := InputEventMouseMotion.new()
+	motion.position = viewport.get_canvas_transform() * centre
+	motion.global_position = viewport.get_screen_transform() * motion.position
+	Input.parse_input_event(motion)
+	await process_frame
+	_controller.set_process(false)
+	_controller._update_hover()
+	_expect(_controller._hovered != null and _controller.focus_point != null, "the pointer over the keyboard focuses an object")
+	_player.is_mouse_movement_active = true
+	_controller._update_hover()
+	_expect(_controller._hovered == null and _controller.focus_point == null, "nothing is focused while the right button walks the player")
+	_controller._unhandled_input(_action_event(&"interact"))
+	_expect(not _controller.menu_open, "so a click mid-walk cannot open the ring")
+	_player.is_mouse_movement_active = false
+	_controller._update_hover()
+	_expect(_controller.focus_point != null, "the focus comes back once the walk ends")
+	_controller.set_process(true)
+	_controller.focus_point = null
+	_controller.entries = []
 
 
 # A pickup is the only way level 1 opens its item-gated rows: sub_41AF60 clears the whole
