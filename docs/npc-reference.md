@@ -215,9 +215,10 @@ Goals **8 and 9 are the reaction states**: `sub_416090` and `sub_416450` set goa
 `sub_4164E0` sets goal 9. The port's brain supports 0–7, so it raises the first eight; the
 bubble already carries all ten.
 
-`sub_417460` also draws two things the port does not yet: the agent's name over its head
-while `agent+1788` marks it as the one the cursor selected, and three jittered green copies
-of the sprite while `agent+1792` is set.
+`sub_417460` also draws two things the port does not yet. One is the agent's name over its
+head while `agent+1788` marks it as the coworker last clicked; the name, its pool and the
+selection rule are in [names-reference.md](names-reference.md). The other is three jittered
+green copies of the sprite while `agent+1792` is set.
 
 ## How angry the office gets
 

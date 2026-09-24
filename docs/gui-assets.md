@@ -92,6 +92,12 @@ bottom in yellow.
 
 That places `CO_GUI_SCREENS_PINKELSTRAHL_Piss#000..004`, five frames of 13 × 188, on the
 **loading screen** rather than only on the player's in-game urination actions, where the
-sprite group's name had previously suggested they belonged. The pot art is presumably drawn
-at successive fill levels, or masked. Neither the frame timing nor the fill mechanism is
-recovered; the port draws the still pot.
+sprite group's name had previously suggested they belonged.
+
+Both mechanisms are now recovered (`sub_422750`; details in
+[shell-reference.md](shell-reference.md)). `LOADING_ITEM1` is the **full** pot, and it is
+revealed from the bottom up by clipping its top `h − h × progress` rows away. The stream
+frame is `progress% mod 5`, drawn at (400, 300) less its sprite-header pivot `(3, −43)`.
+Every stream frame's header carries that pivot at `+0x204`/`+0x206`. `LOADING_ITEM1`'s
+header gives `(27, 25)`, but it is placed as a GUI image at its top left, (375, 487), so
+its pivot is not used. The port still draws the whole pot at once.

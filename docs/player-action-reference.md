@@ -364,7 +364,7 @@ sets `game+12740` bit 1 or 2.
 ## Pause, quit and the camera
 
 **Pause** is `game+12740` bit `0x20`, toggled by **scancode 121** and refused while screen
-`game+19044` is 4 (loading). `sub_403780` returns immediately while it is set, so the clock,
+`game+19044` is 4 (the caught pause). `sub_403780` returns immediately while it is set, so the clock,
 the HUD and every agent stop; `Main_RenderUpdate` keeps drawing and adds a panel spanning
 (49, 232) to (750, 372) with the level's target and time limit and the word `Pauza`,
 centred on x 400 with a two-pixel drop shadow at (402, +2). The points game prints the two

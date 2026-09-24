@@ -129,8 +129,10 @@ exporter checks them rather than merely noting them:
 | `action.143.name` | `Globus mit Klopapier umwickeln` |
 
 Those keep their German verbatim in the German column. `NAMES.DAT`'s fifteen coworker names
-are German puns the Polish release also left alone; when that screen is built they are proper
-nouns, not translatable text.
+are German puns the Polish release also left alone. Both builds embed the identical table,
+so they are proper nouns, not translatable text. The one port-visible literal beside them,
+the exhausted-pool placeholder `DEFAULT NAME`, is English in both builds and is not in the
+text table. See [names-reference.md](names-reference.md).
 
 ## Keys the original has no wording for
 

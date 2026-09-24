@@ -25,8 +25,11 @@ Two stores, and neither is a save file in the usual sense.
 
 The read happens once at start-up, from `sub_405430` at `0x4056db`, into exactly those four
 fields. A missing `NAME` zeroes 17 bytes rather than failing. Two neighbours are read the
-same way: `sub_4261A0` restores music and effects volume (`game+20690`, `game+20692`) and
-`sub_426230`/`sub_426310` keep a run counter that is incremented every start.
+same way. `sub_4261A0` restores the effects and music volumes (`game+20690` from
+`SOUNDVOLUME`, `game+20692` from `MUSICVOLUME`; see
+[sound-reference.md](sound-reference.md)). `sub_426230`/`sub_426310` keep a **launch
+counter** in `game+20704`, incremented on every start and stored under the misleading name
+`AUDIOVERSION` as a float's bits. Its only reader is the boot loading screen, below.
 
 The masks are written on **every win**, and also whenever the character-select screen
 commits a name or a character — `sub_403F20`'s case 12 re-saves the whole profile on
@@ -378,9 +381,103 @@ The port's font is proportional, so it right-aligns the column instead and drops
 
 Slot 206 (`22 do 28`) is never built, so the fourth page and its seven records stay dead.
 
-Slots 162–165 (`highscore.best_score_format` and friends) are **not** used here. Their only
-reference is `sub_4061C0`, the level loader, so they belong to the loading screen, which
-shows the level's records while it loads.
+Slots 162–165 (`highscore.best_score_format` and friends) are **not** used here, and they
+are shown nowhere else either. Their only reference is `sub_4061C0`, the level loader. On
+every load it formats `Najlepszy wynik: %d` (or `: ---`) from `game+19060` into
+`game+19132`, and `Najlepszy czas: %02d:%02d` (or `: --:--`, for 0 or the `12345.0`
+sentinel) from `game+19064` into `game+19068`, 64 bytes each. **Nothing reads either
+buffer**: a byte search of the whole image finds the displacements `0x4ABC` and `0x4A7C`
+only inside `sub_4061C0` itself. They are dead output, and there is no per-level loading
+screen to show them. See screen 4 below.
+
+## What every menu screen shares
+
+`CMenuBase` (`sub_423C50`) is the base of nine screen classes, whose constructors are
+`sub_41FFC0` (names), `sub_420A20` (highscores), `sub_421570`, `sub_421FE0`, `sub_4228C0`,
+`sub_422F40`, `sub_4245E0`, `sub_425050` (sound) and `sub_425BB0`. That covers every screen
+after boot except the level and the minigame. It creates three Arial fonts, and each screen
+picks from them:
+
+| field | size | used for |
+|---|---:|---|
+| `+1164` | 22 | the captions on `TGUIExtButton` buttons |
+| `+1168` | 32 | the text in `CGUIInput` boxes (volumes, names) |
+| `+1172` | 42 | the title |
+
+The base draw `sub_423F70` puts the title (`+1212`, set by `sub_4244E0`) **centred both
+ways** in its rect (`+1216`, set by `sub_424520`), in Arial 42. It draws a `(48, 48, 48)` copy
+three pixels right and down first, then the text in white.
+
+Screens 11 and 13 use the same two bottom positions as the result screens: `Główne menu` at
+(16, 536) and `Domyślne` at (624, 536), 160 × 48. Neither has a middle button. Their layouts
+are in [sound-reference.md](sound-reference.md) and [names-reference.md](names-reference.md).
+
+## The boot loading screen, 2
+
+Screen 2 is the only loading screen the original has. It is where the game starts:
+`sub_405430` ends with `sub_407370(game, 2)`. Case 2 builds `m_Screen_Loading` through
+`sub_406DC0` (`CLoadingScreen`, `sub_422630`), starts `Menu1`, applies the music volume, and
+zeroes the step counter `game+19048`.
+
+**What advances it.** `sub_403E20` is the whole tick. It adds 1 to `game+19048` each frame,
+writes `counter × 0.01` into the screen's progress (`+1172`), and loads an archive on four of
+the steps:
+
+| step | loads |
+|---:|---|
+| 20 | `CO_EFFECT.OGD` |
+| 40 | `CO_BACKGROUND.OGD` |
+| 60 | `CO_OBJECTS.OGD` |
+| 80 | `CO_CHARS.OGD` |
+| 100 | → screen 3 |
+
+`CO_GUI.OGD` is already loaded by then, since `sub_405430` loads it itself. So the screen
+lasts a hundred frames plus whatever the four loads block for. **It cannot be skipped**:
+screen 2's input handler (`0x4048B0`) resets the input mask and discards every queued event.
+
+**What it draws.** The background is `CO_GUI_SCREENS_LOADING`. On top of it:
+
+- `LOADING_ITEM1`, the **full** pot (55 × 51), is a GUI image at **(375, 487)** on layer
+  `0x8000`. The draw `sub_422750` sets its top clip (`+1152`, which the GUI image draw
+  `sub_45B820` honours) to `h − h × progress`. So the filled pot is revealed **from the
+  bottom up** as loading advances, over the empty pot painted into the background.
+- The stream `CO_GUI_SCREENS_PINKELSTRAHL` is drawn every frame at **(400, 300)** on layer
+  `32769`. `sub_42D780` subtracts each frame's own pivot, stored in the sprite header at
+  `+0x204`/`+0x206` and `(3, −43)` in all five frames, so the stream's top left lands at
+  (397, 343) and its ~188-pixel length ends inside the pot. The frame shown is
+  `(int)(progress × 100) % 5`. The stream changes frame once per step, so it is **driven by
+  loading progress, not by a clock**.
+
+**`LOADING_EVIL`.** `sub_422630` is handed the launch counter `game+20704`. When it is
+exactly **666** it uses `CO_GUI_SCREENS_LOADING_EVIL` as the background instead. The counter
+starts at 0 when the registry value is missing, and is incremented before the screen is
+built, so the evil screen shows **on the 666th launch** and never again. That is the whole
+trigger.
+
+This settles an old disagreement between the docs: screen 2 is not an intro. The game has no
+intro, video or splash screen. `boot_loading` is the right name for the port's scene.
+
+## Screen 4 is the caught pause, not a loading screen
+
+Case 4 of `sub_407370` only sets `game+19044` and returns. Nothing is built, because nothing
+new is drawn. Screen 4 is entered from exactly one place, `sub_402470`, when an agent
+catches the player (see [catch-reference.md](catch-reference.md)). While it is up:
+
+- the level keeps drawing (`sub_403710` routes 1, 4 and 10 to `Main_RenderUpdate`) under the
+  `AGGRO_UP` banner;
+- `WinMain` hands the level a **zero** time step (`game+60 = 0`), so agents, clock and
+  animations hold still, and accumulates real time in `game+72` instead;
+- at `game+72 >= 2.0` the tick hides the banner and `Main_RenderUpdate` switches to
+  screen 5, the minigame.
+
+**There is no level-loading screen.** Case 1 loads the level synchronously inside the switch,
+and the screen object from case 2 is never built again.
+
+## Quitting, screen 6
+
+Main-menu button 6 (`Wyjście`) calls `sub_407370(game, 6)`. Case 6 has no body. `WinMain`
+checks `game+19044` after every frame and leaves its message loop once it reads 6, which
+ends the program.
 
 ## Music
 
@@ -412,7 +509,11 @@ Two divergences worth naming:
 The description screen's `%s` splicing is shared with the pause panel through
 `scenes/shared/goal_text.gd`, since both show the same recovered sentence.
 
-## Not chased
+## The 9-slice window frame is never drawn
 
-The 9-slice `CO_GUI_WINDOWS_*` frame — which screens draw it — was left for the task that
-needs it.
+The archive ships nine `CO_GUI_WINDOWS_WINDOW_*_CAPTION` sprites, and the image carries the
+part names that would build them: a `char*` table at `0x4733F4` of `""`, `_BORDER`,
+`_CAPTION`, then `WINDOW_TOP_LEFT` … `WINDOW_BOTTOM_RIGHT`. **Nothing references that table**,
+neither code nor data, and no `CO_GUI_WINDOWS` prefix string exists to join to it. It is
+unused ODIN engine code. No screen draws a 9-slice frame, so the port has nothing to build
+here.

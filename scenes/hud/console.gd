@@ -123,8 +123,8 @@ func warn_of_aggravation() -> void:
 	_thermo.visible = true
 
 
-# sub_407990: the banner and one of four exclamations, for as long as the loading screen
-# that follows a catch. See docs/catch-reference.md. The Label translates the key itself.
+# sub_407990: the banner and one of four exclamations, for as long as the two-second caught
+# pause (screen 4) that follows a catch. See docs/catch-reference.md. The Label translates the key itself.
 func warn_of_catch(exclamation_key: StringName) -> void:
 	_aggro_up_text.text = String(exclamation_key)
 	_aggro_up_remaining = AGGRO_SECONDS

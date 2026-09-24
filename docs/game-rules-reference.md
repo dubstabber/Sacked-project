@@ -102,10 +102,11 @@ handle in `game+19056`, which is the countdown warning.
 | n | Screen |
 | --- | --- |
 | 1 | Playing a level. Loads the path `sub_408D00` prepared, or `test.col` if there is none |
-| 2 | Intro; starts `Menu1` |
+| 2 | Boot loading screen; starts `Menu1`, loads the archives, then goes to 3. There is no intro; see [shell-reference.md](shell-reference.md) |
 | 3 | Main menu; starts `Menu1` |
-| 4 | Loading |
+| 4 | Caught: the level holds still under the `AGGRO_UP` banner for 2 s, then goes to 5. Not a loading screen |
 | 5 | The catch minigame, entered 2 s after an agent catches the player. Winning returns to screen 1 and losing goes to screen 8; see [catch-reference.md](catch-reference.md) |
+| 6 | Quit; `WinMain` ends when it sees it |
 | 7 | Win; plays `S1100` |
 | 8 | Lose |
 | 9 | Restart the level, then falls through to screen 1 |
@@ -157,10 +158,11 @@ settles almost all of its layout:
 
 The per-level difficulty index is `byte_465270`, which is the level tree's own column minus
 one; see [shell-reference.md](shell-reference.md). Sound setup moves each
-volume by 5 and clamps to 0–100, with defaults of 75 for music and 65 for effects.
+volume by 5 and clamps to 0–100, with defaults of 75 for effects and 65 for music; see
+[sound-reference.md](sound-reference.md).
 
 Pause is `game+12740` bit `0x20`, toggled by **scancode 121** and refused while the screen
-is 4 (loading). `sub_403780` returns immediately while it is set, so the clock, the console
+is 4 (the caught pause). `sub_403780` returns immediately while it is set, so the clock, the console
 and every agent stop together and only the drawing carries on. `Main_RenderUpdate` then adds
 a panel spanning (49, 232) to (750, 372) restating the level's own CONDITION and the word
 `Pauza`, centred on x 400 with a two-pixel drop shadow. The time game writes

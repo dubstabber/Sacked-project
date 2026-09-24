@@ -144,8 +144,11 @@ On a hit `sub_402470` does four things, in order:
 2. The player's state is pushed to that mode's abort state: `<= 3` → 5, `11..12` → 14,
    `>= 21` → 24. The action is cancelled rather than completed, so a prank interrupted by
    being caught pays nothing.
-3. `sub_407370(game, 4)` — the **loading** screen. Case 4 is the one case that only sets
-   `game+19044` and returns.
+3. `sub_407370(game, 4)` — the **caught pause**. Case 4 is the one case that only sets
+   `game+19044` and returns: nothing new is built, the level keeps drawing, and `WinMain`
+   gives it a zero time step so everything holds still (see
+   [shell-reference.md](shell-reference.md)). Earlier notes called it the loading screen;
+   the original has none.
 4. `sub_407990`.
 
 `sub_407990` shows `game+14752` — the `CO_GUI_CONSOLE_AGGRO_UP` overlay that `sub_405930`
@@ -164,7 +167,7 @@ from `off_46BFD0`:
 Both `sub_403780` (`0x403ba0`) and `Main_RenderUpdate` (`0x4035f6`) then watch `game+72`
 while the screen is 4. At **2.0 seconds** (`flt_4652C4`) the tick hides `AGGRO_UP` again and
 the render update calls `sub_407370(game, 5)`. The banner is therefore up for exactly the
-length of that loading screen, and the minigame follows it.
+length of that pause, and the minigame follows it.
 
 ## Screen 5 and its result
 
@@ -391,7 +394,7 @@ Three details the port had to add rather than reuse:
   action without scoring it, clears an `in_use` mark and undoes a start-time result state.
 
 `Console.warn_of_catch()` raises the exported `AGGRO_UP` banner with one of the four
-exclamations for 2.0 seconds, the length of the loading screen the original spends there.
+exclamations for 2.0 seconds, the length of the caught pause the original spends there.
 
 **The hand-off is wired.** `hands_off_to_minigame` defaults on, and survives only so a check
 can drive the trigger without the duel opening over it. A win unpauses the level that is
