@@ -30,9 +30,10 @@ func _run() -> void:
 	_check_locking_someone_in()
 	_check_the_reposition_picks_its_side()
 	_check_the_reposition_lands_on_the_copier()
+	_check_the_turn_toward_the_item()
 	_check_the_start_state_actions_level_2_places()
 	if _failures == 0:
-		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift and the start-state actions passed")
+		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift, the turn toward the item and the start-state actions passed")
 	quit(1 if _failures else 0)
 
 
@@ -313,6 +314,40 @@ func _check_the_reposition_lands_on_the_copier() -> void:
 		_expect(is_zero_approx(player.height), "orientation %d: and back on the floor" % orientation)
 		for part in ["Sprite2D", "Shadow"]:
 			_expect((player.get_node(part) as Node2D).position == Vector2.ZERO, "orientation %d: the %s drops back with him" % [orientation, part])
+		_drop(fixture)
+
+
+# sub_41B240 state 0 (0x41B290) turns toward the item's own position as the ring opens, in
+# 45-degree sectors of the ground plane (sub_41A400), and the clip then plays from that view.
+func _check_the_turn_toward_the_item() -> void:
+	var item := Vector2(10.0, 10.0)
+	# The player's ground offset from the item, and the view he must end up in.
+	var cases := [
+		[Vector2(1.0, 0.0), "up-left", "standing on an interaction point one tile along x faces the 270 view"],
+		[Vector2(-1.0, -0.45), "down", "a ground delta of (1, 0.45) falls in the 135 sector"],
+		[Vector2(0.0, 1.0), "up-right", "one tile along z faces the 000 view"],
+		[Vector2(-0.4, 0.3), "right", "a short diagonal takes the 045 sector"],
+	]
+	# The screen-space snap the port used to take lands the second case on 090 instead.
+	var snapped := IsoDirection.snap_to_8_directions(IsoDirection.ground_to_screen(Vector2(1.0, 0.45)))
+	_expect(snapped.is_equal_approx(Vector2(48.0, 24.0).normalized()), "the second case is one a screen-space snap gets wrong")
+	for case in cases:
+		var fixture := _player_fixture()
+		var player: Node2D = fixture["player"]
+		var controller: Node = fixture["controller"]
+		# Action 13 is selector 0, STAND#USE, which ships all eight views.
+		var point := _item(fixture["world"], item, Vector2(1.0, 0.0), 0, [13])
+		player.global_position = IsoDirection.ground_to_screen(item + case[0])
+		player.last_direction = Vector2.LEFT
+
+		controller.focus_point = point
+		controller.entries = controller.build_entries(point)
+		controller.open_menu()
+		player._physics_process(0.016)
+		_expect(_playing(player).ends_with("idle1-atmen-" + case[1]), "%s: the idle turns as the ring opens, got %s" % [case[2], _playing(player)])
+		controller.confirm()
+		_expect(_playing(player).ends_with("stand-use-" + case[1]), "%s, got %s" % [case[2], _playing(player)])
+		controller.abort_action()
 		_drop(fixture)
 
 

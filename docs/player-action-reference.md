@@ -315,7 +315,15 @@ length of the action, releasing both when it applies.
 in [prank-reference.md](prank-reference.md). Corrections and additions found here:
 
 - **State 0** turns to face the item with
-  `180 - atan2(item_x - player_x, item_z - player_z) * 57.29579`, then plays slot 0.
+  `180 - atan2(item_x - player_x, item_z - player_z) * 57.29579` (`0x41B290`–`0x41B2B7`,
+  `0x4657C0` = 180.0), then plays slot 0. The target is the item's own position, not its
+  interaction point, and `sub_41A400` bins the heading into `int((a + 22.5) / 45) & 7`
+  (`0x4658B4` = 22.5, `0x4658B0` = 1/45), the index of the `_NNN` view — so the sectors are
+  45° of the ground plane, not of the screen. It runs as the ring opens, and every selector
+  but 5 and 12 keeps that facing for its clip. The port turns the player in
+  `PrankController.open_menu`, so the idle holds that view while the ring is up, and plays the
+  clip from the same `_facing_toward_item`; it used to aim at the interaction point in screen
+  space, which chose a different view for about half of all placements.
 - **The urination facings come from `player+988`.** Selector 12 picks slot 8 and, with the
   flag set, one of directions 2/3/4; with it clear, one of 0/6/7 — which is exactly the
   split between Anne's `PISS` views (090/135/180) and Jo's (000/270/315). Each choice is a

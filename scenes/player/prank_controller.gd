@@ -154,6 +154,9 @@ func open_menu() -> void:
 	menu_open = true
 	state = State.MENU
 	highlighted = 0
+	# State 0 turns to the item before the ring comes up, and the idle then holds that view.
+	if _player != null:
+		_player.set("last_direction", _facing_toward_item(focus_point))
 	menu_opened.emit(entries)
 	highlight_changed.emit(entries[0])
 
@@ -451,10 +454,7 @@ func _play_action_animation(action: Dictionary) -> void:
 		return
 	var selector := int(action.get("player_animation", -1))
 	var clip := String(SELECTOR_CLIPS.get(selector, ""))
-	var facing: Vector2 = (_acting_point as Node2D).global_position - _player.global_position
-	if facing == Vector2.ZERO:
-		facing = _player.get("last_direction")
-	facing = IsoDirection.snap_to_8_directions(facing)
+	var facing := _facing_toward_item(_acting_point)
 	if selector == 12:
 		var views: Array = PISS_FACINGS.get(String(_player.get("profile").get("id")), [])
 		if not views.is_empty():
@@ -484,6 +484,19 @@ func _set_acting(acting: bool) -> void:
 
 func _object_of(point: Node) -> Node:
 	return point.get_parent() if point != null else null
+
+
+# sub_41B240 state 0 (0x41B290) aims at the focused item's own position, not its interaction
+# point: 180 - atan2(dx, dz) in logical units, which sub_41A400 bins into
+# int((a + 22.5) / 45) & 7, the index of the _NNN view.
+func _facing_toward_item(point: Node) -> Vector2:
+	var object := _object_of(point) as Node2D
+	if _player == null or object == null:
+		var current = _player.get("last_direction") if _player != null else null
+		return current if current is Vector2 else Vector2.RIGHT
+	var delta := IsoDirection.screen_to_ground(object.global_position - _player.global_position)
+	var heading := 180.0 - rad_to_deg(atan2(delta.x, delta.y))
+	return IsoDirection.get_screen_directions()[int((heading + 22.5) / 45.0) & 7]
 
 
 func _is_within_reach(point: Node) -> bool:
