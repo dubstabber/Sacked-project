@@ -110,7 +110,7 @@ handle in `game+19056`, which is the countdown warning.
 | 7 | Win; plays `S1100` |
 | 8 | Lose |
 | 9 | Restart the level, then falls through to screen 1 |
-| 10 | Pause; sets `game+12740 |= 0x20` rather than switching away |
+| 10 | The quit prompt, drawn over the level; entering it also sets the pause bit `0x20` in `game+12740`, so the level stops behind it; see the quit prompt below |
 | 11 | Sound setup |
 | 12 | Player setup |
 | 13 | Coworker names; starts `Menu2` |
@@ -170,15 +170,39 @@ a panel spanning (49, 232) to (750, 372) restating the level's own CONDITION and
 writes `Zdobądź jak najwięcej puntków w ciągu %d minut.` / `Potrzebujesz przynajmniej %d
 punktów!`. Limit and target fall back to 1200 s and 10000 exactly as the tick does.
 
-The quit prompt is **scancode 16 (`Q`)**, also refused on screen 4, and reaches screen 10:
-an overlay from (49, 150) to (750, 230) holding `Czy na pewno chcesz wyjść?` and
-`(T)ak lub (N)ie`, with the level still running behind it. The port answers it with `T`
-and `N`, the initials the prompt itself names.
+The quit prompt is **scancode 16 (`Q`)**, also refused on screen 4 (0x40412F), and reaches
+screen 10 through `sub_407370`'s case 10, which **sets the pause bit** (`or al, 20h` at
+0x4075AF). So the level stops behind the prompt exactly as it does for the pause key.
+`sub_403710` hands screen 10 to `Main_RenderUpdate` like screen 1, so both panels are drawn
+together: the pause panel, because the bit is set (0x402D13), and above it an overlay from
+(49, 150) to (750, 230) holding `Czy na pewno chcesz wyjść?` and `(T)ak lub (N)ie`, because
+the screen is 10 (0x403478).
 
-**Still not recovered:** which physical key scancode 121 is. Scancodes 1, 16, 57 and the
-arrows 72/75/77/80 are standard set-1 codes, but 109, 111, 112, 114 and 121 fall in a range
-no Polish or German keyboard uses for those functions, and the install ships no manual. The
-port binds pause to `P`, for `Pauza`, as a stand-in until the key is identified.
+Screen 10 has an input handler of its own, `sub_404990`'s case 10 (0x404910–0x404983). It
+reads key-down events and nothing else; `sub_403FB0` is not called, so neither `Q` nor the
+pause key does anything while the prompt is up:
+
+| Engine code | Key | Result |
+| --- | --- | --- |
+| 20; 36 in `Gefeuert.exe` (VA 0x4048FB) | `T`; `J` | `sub_407370(game, 3)`, the **main menu**. Case 3 runs the level teardown `sub_407140` when leaving screen 7, 8 or 10 (it zeroes `game+12740`, the pause bit with it), builds the menu with `sub_406D20` and starts `Menu1` |
+| 44 | DIK_Z, the key labelled `Y` on a QWERTZ keyboard | the same, in both builds |
+| 49, 28, 57 | `N`, Enter, Space | `sub_407370(game, 1)`, back to the level. Coming from screen 10, case 1 skips the reload and clears bit `0x20` unconditionally (0x40742F), so answering no also ends a pause the pause key had set before `Q` |
+
+The port pauses the tree for the prompt, draws both panels, and swallows every key but the
+answers while it is up. Yes is the initial its own wording names (`T`, `Y` or `J` by
+language) and goes to the main menu; no is `N`, Enter or Space and always resumes the level.
+It does not bind the second yes code 44. Only the main Enter answers: the numpad's is DIK
+0x9C, which the table at 0x4734CC turns into code 102. `Q` and the pause key are refused while a
+catch is in progress, which covers screen 4 and the duel on screen 5, where `sub_404990`
+does not call `sub_403FB0` either.
+
+**Which keys the codes are.** They are DirectInput scancodes: `sub_45DA40` reads them with
+`IDirectInputDevice::GetDeviceData` and remaps each `dwOfs` through a (DIK, engine code)
+WORD-pair table at 0x4734CC. Most keys map to themselves; the extended ones get codes of
+their own. The arrows Up, Left, Right and Down (DIK 0xC8, 0xCB, 0xCD, 0xD0) become 109, 111,
+112 and 114, the numpad's Enter (0x9C) becomes 102, and **Pause/Break (DIK_PAUSE, 0xC5)
+becomes 121**, the pause toggle. So 72, 75, 77 and 80 are the numpad's 8, 4, 6 and 2, not
+the arrows. The port binds pause to `P`, for `Pauza`, as a stand-in for the Pause key.
 
 ## What the console shows
 

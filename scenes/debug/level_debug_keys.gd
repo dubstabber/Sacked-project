@@ -20,6 +20,9 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
 		return
+	# F5 can finish the level, and the report changes scene before advance() returns: the
+	# level is out of the tree by then and its get_viewport() is null.
+	var viewport := get_viewport()
 	match event.keycode:
 		KEY_F5:
 			if _session != null:
@@ -31,7 +34,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_cycle_state_under_cursor()
 		_:
 			return
-	get_viewport().set_input_as_handled()
+	viewport.set_input_as_handled()
 
 
 # Steps the object under the cursor through the states it ships art for, so a transition can

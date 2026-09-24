@@ -372,8 +372,14 @@ values on separate lines (`Format_0`, `Format_1`); the time game uses one line (
 Limit and target fall back to 1200 s and 10000 exactly as the tick does.
 
 **Quit** is **scancode 16 (`Q`)**, also refused on screen 4, and calls `sub_407370(game, 10)`.
-Screen 10 is drawn by `Main_RenderUpdate` as an overlay panel from (49, 150) to (750, 230)
-holding the prompt and `(T)ak lub (N)ie`; the rest of the game keeps running behind it.
+That case sets the pause bit (0x4075AF), so the game **stops behind the prompt**, and
+`Main_RenderUpdate` draws the pause panel together with screen 10's overlay from (49, 150)
+to (750, 230) holding the prompt and `(T)ak lub (N)ie`. While it is up only
+`sub_404990`'s case 10 reads keys: `T` (`J` in the German build), or code 44 (DIK_Z,
+labelled `Y` on a QWERTZ keyboard) in both builds, goes to the main menu;
+`N`, Enter or Space go back to the level with the pause bit cleared; nothing else does
+anything. See [game-rules-reference.md](game-rules-reference.md) for the codes and what the
+port binds.
 
 Scancodes 1, 16, 57 and the arrows 72/75/77/80 are standard set-1 codes. The remaining
 handled codes — 109, 111, 112, 114 and 121 — set camera and debug bits and the pause flag,

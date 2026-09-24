@@ -1,10 +1,11 @@
 extends Control
 
-# The two panels Main_RenderUpdate draws over a running level: the pause panel, which
-# restates what the level asks for, and the quit confirmation. Both are centred on x 400 of
-# the original's 800-wide viewport with a two-pixel drop shadow; see
-# docs/game-rules-reference.md. The port recentres them on the live width, which is the same
-# x on a 4:3 canvas -- see docs/widescreen.md.
+# The two panels Main_RenderUpdate draws over a level: the pause panel, which restates what
+# the level asks for, whenever the pause bit is set (0x402D13), and the quit confirmation
+# while the screen is 10 (0x403478). Opening the prompt sets that same bit, so the two are up
+# together. Both are centred on x 400 of the original's 800-wide viewport with a two-pixel
+# drop shadow; see docs/game-rules-reference.md. The port recentres them on the live width,
+# which is the same x on a 4:3 canvas -- see docs/widescreen.md.
 
 # (49, 232)-(750, 372) for the pause panel, (49, 150)-(750, 230) for the quit prompt.
 const ORIGINAL_WIDTH := 800.0
@@ -25,6 +26,9 @@ const QUIT_ANSWER := &"prompt.quit_answer"
 # part of the translation rather than constants: T/N in Polish, Y/N in English, J/N in German.
 const QUIT_YES_KEY := &"prompt.quit_yes_key"
 const QUIT_NO_KEY := &"prompt.quit_no_key"
+# Screen 10 also takes Enter and Space for no (sub_404990, 0x404955). Only the main Enter:
+# the table at 0x4734CC gives the numpad's its own engine code, which the prompt ignores.
+const QUIT_NO_ALSO: Array[Key] = [KEY_ENTER, KEY_SPACE]
 
 var is_paused := false
 var is_quit_prompt_open := false
@@ -44,27 +48,41 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not (event is InputEventKey) or not event.pressed or event.echo:
+	if not (event is InputEventKey):
 		return
+	# Answering yes changes scene, and change_scene_to_file takes the level out of the tree
+	# before it returns, so the viewport has to be in hand first.
+	var viewport := get_viewport()
 	var key := (event as InputEventKey).keycode
+	var is_press: bool = event.pressed and not event.echo
 	if is_quit_prompt_open:
-		if key == _yes_key:
-			_leave_level()
-		elif key == _no_key:
-			is_quit_prompt_open = false
-			queue_redraw()
-		else:
-			return
-		get_viewport().set_input_as_handled()
+		# Screen 10 reads nothing but its own answers (sub_404990, 0x404930), so no other key
+		# reaches the level paused behind it -- the pause key included.
+		viewport.set_input_as_handled()
+		if is_press:
+			_answer_quit_prompt(key)
+		return
+	if not is_press or _is_catch_running():
 		return
 	if key == KEY_Q:
+		# sub_407370's case 10 sets the pause bit on the way in (0x4075AF).
 		is_quit_prompt_open = true
+		set_paused(true)
 	elif key == KEY_P:
 		set_paused(not is_paused)
 	else:
 		return
-	queue_redraw()
-	get_viewport().set_input_as_handled()
+	viewport.set_input_as_handled()
+
+
+func _answer_quit_prompt(key: Key) -> void:
+	if key == _yes_key:
+		_leave_level()
+	elif key == _no_key or QUIT_NO_ALSO.has(key):
+		# sub_407370's case 1, coming from screen 10, clears the pause bit whether or not the
+		# pause key had set it before Q (0x40742F).
+		is_quit_prompt_open = false
+		set_paused(false)
 
 
 # sub_403780 returns immediately while the pause bit is set, so the clock, the console and
@@ -75,12 +93,23 @@ func set_paused(paused: bool) -> void:
 	queue_redraw()
 
 
+# sub_407370's case 3: the main menu, after the teardown (sub_407140) that clears the pause
+# bit with every other flag.
 func _leave_level() -> void:
 	is_quit_prompt_open = false
 	set_paused(false)
 	var screen_manager := get_node_or_null("/root/ScreenManager")
 	if screen_manager != null:
-		screen_manager.call("change_to_level_tree")
+		screen_manager.call("change_to_main_menu")
+
+
+# sub_403FB0 refuses Q and the pause key while the player is caught (screen 4; 0x40412F,
+# 0x404150), and sub_404990 does not call it at all during the duel that follows (screen 5).
+func _is_catch_running() -> bool:
+	if _session == null:
+		return false
+	var watch := _session.get_node_or_null("CatchWatch")
+	return watch != null and watch.get("caught_by") != null
 
 
 func _draw() -> void:
