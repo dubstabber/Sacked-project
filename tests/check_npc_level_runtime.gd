@@ -14,8 +14,9 @@ const CUBICLE := "Object015Toikabine"
 const COWORKER := "Npc079MaleEmployee1"
 # sub_418D20 blocks the cell of every other entity before a route search, the player's
 # included, and the player spawns on (12, 9): the interaction cell of the cardboard cutout,
-# the boss's only decoration. A player who never moved would pin his goal 2 at 0 and starve
-# every goal after it, so the long runs park the frozen player off the map.
+# the only decoration any level-1 agent has. A player who never moved would pin every
+# agent's goal 2 at 0 and starve every goal after it, the coworkers' work included, so the
+# long runs park the frozen player off the map.
 const CUTOUT := "Object031Pappaufsteller01"
 const PARKED_PLAYER := Vector2(-100000, -100000)
 

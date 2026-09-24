@@ -502,7 +502,7 @@ func _scan_candidates(category: int, goal: int) -> Array[Node2D]:
 
 # Neither sub_417120 nor sub_410EA0 reads item+216: a seat, cubicle or copier someone is
 # using stays a candidate, and sub_417B00 only finds out on arrival (0x417D64, 0x417EDB,
-# 0x417F16), leaving the agent standing for sub_416660's 10-16 s. That is also what lets a
+# 0x417F16), leaving the agent standing for sub_416660's 10-16 s at a seat or cubicle. That is also what lets a
 # colleague reach a cubicle whose occupant has been locked in, and file its repair.
 func _candidates(goal: int, alternate_work := false) -> Array[Node2D]:
 	var pool: Array = _alternate_candidates if alternate_work else _goal_candidates[goal]
@@ -935,8 +935,9 @@ func is_blind() -> bool:
 
 # sub_417B00 asks sub_4180F0 for a janitor (+1740 == 3, 0x417BCF): one of the thirty types its
 # jump table answers yes for, both cubicles among them, locked or not. Everyone else goes to
-# sub_4181F0, which only takes a type-173 cubicle whose occupant has been shut in (0x418203),
-# so the lockable type 262 waits for the janitor. See docs/npc-reference.md.
+# sub_4181F0, which only takes a type-173 cubicle whose occupant has been shut in (0x418203).
+# The janitor never walks to a cubicle -- his toilet need never decays -- so an inmate of the
+# lockable type 262 is never let out. See docs/npc-reference.md.
 func _can_repair(item: Node2D) -> bool:
 	if not is_instance_valid(item):
 		return false

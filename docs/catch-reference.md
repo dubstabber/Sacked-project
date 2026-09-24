@@ -259,8 +259,13 @@ below depends on. `sub_40FEF0`, the separate full item reset, clears `item+200`,
 
 The job is filed by `sub_417B00`, as `npc-reference.md` describes: through `sub_4180F0` for
 a janitor (`+1740 == 3`), and through `sub_4181F0` for anyone else, which takes only a
-type-173 cubicle with `item+224` set (`0x418203`). A locked type-262 cubicle waits for the
-janitor, whose list below holds both types.
+type-173 cubicle with `item+224` set (`0x418203`). The janitor's list below holds both types,
+but he never walks to a cubicle. His toilet rate in `0x46E7D8` is 0, `sub_415D50` starts his
+needs at 20–100 and reactions reset them to 60–100, `sub_4165D0` only queues a need below 15,
+and his failing work goal starves goals 4–7 anyway. So a colleague locked in a type-262
+cubicle is never let out before the level is reloaded; that is inferred from these rules,
+not observed. A type-173 inmate is freed by whichever coworker, secretary or boss walks up to
+it next.
 
 `sub_4180F0` is not a plain switch: the compiler built it as a jump table. The item type from
 `sub_40FE90` is biased by −102, bounds-checked against 167, used to index a 168-byte selector
