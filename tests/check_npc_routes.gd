@@ -10,6 +10,13 @@ const COLLISION_SCRIPT := preload("res://scenes/shared/collision_map_layer.gd")
 const COLLISION_TILESET := preload("res://resources/tilemaps/sacked-collision.tres")
 const EPSILON := 0.02
 
+class CountingLayer extends CollisionMapLayer:
+	var lookups := 0
+
+	func is_blocked(cell: Vector2i) -> bool:
+		lookups += 1
+		return super(cell)
+
 var _failures := 0
 
 
@@ -23,12 +30,13 @@ func _run() -> void:
 	await _check_unreachable_destination()
 	await _check_step_back_from_a_return_point()
 	await _check_other_entities_block_routes()
+	await _check_retries_do_not_search_again()
 	await _check_seated_activity_and_cancellation()
 	await _check_missing_seated_view_uses_original_fallback()
 	await _check_turning_the_view()
 	await _check_fidgeting()
 	if _failures == 0:
-		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles, seated activities, turning the view and IDLE#2 passed")
+		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles, retries that search nothing new, seated activities, turning the view and IDLE#2 passed")
 	quit(1 if _failures else 0)
 
 
@@ -200,6 +208,53 @@ func _check_other_entities_block_routes() -> void:
 			break
 	_expect(events.reached == 1, "the agent arrives past the occupied cell")
 	_expect(not entered, "the agent never walks through the occupied cell")
+	world.free()
+
+
+# sub_4165D0 queues a failed goal again on the very next tick (0x416644), so an agent whose way
+# is shut retries its search every tick. Until somebody whose cell refused the search moves,
+# frees it or leaves, a retry searches nothing; somebody moving about out of its way changes
+# nothing. And a start the search accepts is not searched a second time from its cell's centre.
+func _check_retries_do_not_search_again() -> void:
+	var world := _make_world()
+	var layer := _make_corridor(world, true, CountingLayer.new()) as CountingLayer
+	var npc := _make_npc(_world_position(layer, Vector2(1, 1)), 8.0)
+	world.add_child(npc)
+	var goal := _world_position(layer, Vector2(5, 1))
+	var gap := _entity(world, layer, Vector2(3, 4), false)
+	var passer_by := _entity(world, layer, Vector2(5, 5), false)
+	layer.lookups = 0
+	_expect(not npc.navigate_to(goal), "an agent in the only gap shuts the way")
+	var searched := layer.lookups
+	_expect(searched > 100, "the first attempt searches the whole near side, %d lookups" % searched)
+	for tick in range(30):
+		await physics_frame
+		if tick == 10:
+			passer_by.position = _world_position(layer, Vector2(6, 5))
+		if tick == 20:
+			_entity(world, layer, Vector2(6, 2), false)
+		_expect(not npc.navigate_to(goal), "retry %d still finds the way shut" % tick)
+	_expect(layer.lookups == searched, "thirty retries, one a tick, search nothing again, %d more lookups" % (layer.lookups - searched))
+	gap.position = _world_position(layer, Vector2(4, 6))
+	_expect(npc.navigate_to(goal), "the way opens the moment the agent in the gap steps out")
+	_expect(layer.lookups > searched, "and that attempt searches again")
+	npc.cancel_commands()
+	gap.position = _world_position(layer, Vector2(3, 4))
+	_expect(not npc.navigate_to(goal), "an agent back in the gap shuts it again")
+	gap.free()
+	_expect(npc.navigate_to(goal), "and it opens again when that agent is gone")
+	npc.cancel_commands()
+
+	var stranger := _entity(world, layer, Vector2(3, 4), false)
+	layer.lookups = 0
+	_expect(not npc.navigate_to(_world_position(layer, Vector2(5, 2))), "a start on its cell's centre floods once")
+	var centred := layer.lookups
+	npc.global_position = _world_position(layer, Vector2(1.3, 1))
+	layer.lookups = 0
+	_expect(not npc.navigate_to(_world_position(layer, Vector2(5, 3))), "so does a start off it")
+	_expect(layer.lookups < centred * 3 / 2, "without a second flood from the cell's centre: %d lookups against %d" % [layer.lookups, centred])
+	stranger.free()
+	await process_frame
 	world.free()
 
 
@@ -381,8 +436,9 @@ func _navigation_events(npc: Node) -> Dictionary:
 	return events
 
 
-func _make_corridor(world: Node2D, open_gap: bool) -> TileMapLayer:
-	var layer := COLLISION_SCRIPT.new() as TileMapLayer
+func _make_corridor(world: Node2D, open_gap: bool, layer: TileMapLayer = null) -> TileMapLayer:
+	if layer == null:
+		layer = COLLISION_SCRIPT.new() as TileMapLayer
 	layer.tile_set = COLLISION_TILESET
 	world.add_child(layer)
 	for coordinate in range(-1, 8):

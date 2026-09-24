@@ -69,6 +69,11 @@ var _route_done := false
 var _route_retry := 0.0
 var _warned_actions: Dictionary = {}
 var _fidgeting := false
+# Targets whose search failed from _refusals_start on the layer _refusals_layer, each with the
+# cells of other entities that refused it and who stood there; see _still_refused.
+var _refusals: Dictionary = {}
+var _refusals_layer := 0
+var _refusals_start := Vector2i.ZERO
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -228,28 +233,65 @@ func _find_navigation_path(target: Vector2) -> PackedVector2Array:
 		var goal := IsoDirection.screen_to_ground(layer.to_local(target) - origin)
 		var start_cell := Vector2i(floori(start.x + 0.5), floori(start.y + 0.5))
 		var goal_cell := Vector2i(floori(goal.x + 0.5), floori(goal.y + 0.5))
+		if _still_refused(layer, origin, start_cell, target):
+			return PackedVector2Array()
 		var bounds: Rect2i = layer.get_used_rect().grow(1)
 		bounds = bounds.expand(start_cell)
 		bounds = bounds.expand(goal_cell)
 		var occupied := _occupied_cells(layer, origin, start_cell)
+		var refused := {}
+		var is_blocked := func(cell: Vector2i) -> bool:
+			if occupied.has(cell):
+				refused[cell] = occupied[cell]
+				return true
+			return layer.is_blocked(cell)
+		var path := PackedVector2Array()
 		if occupied.has(goal_cell):
-			return PackedVector2Array()
-		var is_blocked := func(cell: Vector2i) -> bool: return occupied.has(cell) or layer.is_blocked(cell)
-		var path: PackedVector2Array = NAVIGATION.find_path(start, goal, is_blocked, bounds)
-		if path.is_empty() and (start != Vector2(start_cell) or layer.is_blocked(start_cell)):
-			path = _step_back_path(start_cell, goal, is_blocked, bounds)
+			refused[goal_cell] = occupied[goal_cell]
+		else:
+			path = NAVIGATION.find_path(start, goal, is_blocked, bounds)
+			# The step back is for a start the search refuses outright, footprint or first leg
+			# onto its own cell's centre. From any other start the search above has already
+			# flooded from that cell with the same cells blocked.
+			if path.is_empty() and NAVIGATION.find_path(start, Vector2(start_cell), is_blocked, bounds).is_empty():
+				path = _step_back_path(start_cell, goal, is_blocked, bounds)
+		if path.is_empty():
+			_refusals[target] = refused
+			return path
 		for index in range(path.size()):
 			path[index] = layer.to_global(origin + IsoDirection.ground_to_screen(path[index]))
 		return path
 	return PackedVector2Array([target])
 
 
+# sub_4165D0 queues a failed goal again with +1124 cleared on the very next tick (0x416644), so
+# an agent whose way is shut retries its search every tick. The search depends only on the
+# start cell, the target and which cells are blocked, the map never changes in play, and
+# blocking more cells can only shrink what it reaches. So a failed search stays failed for as
+# long as everyone whose cell refused it still stands in that cell, and is not run again.
+func _still_refused(layer: Node, origin: Vector2, start_cell: Vector2i, target: Vector2) -> bool:
+	if layer.get_instance_id() != _refusals_layer or start_cell != _refusals_start:
+		_refusals.clear()
+		_refusals_layer = layer.get_instance_id()
+		_refusals_start = start_cell
+		return false
+	if not _refusals.has(target):
+		return false
+	var world: Node = layer.get_parent()
+	var refused: Dictionary = _refusals[target]
+	for cell: Vector2i in refused:
+		var entity = refused[cell]
+		if not is_instance_valid(entity) or not world.is_ancestor_of(entity) or _cell_of(layer, origin, entity) != cell:
+			_refusals.erase(target)
+			return false
+	return true
+
+
 # sub_4161E0 and sub_416090 stand an agent back on the exact interaction point, which can be
 # flush against a wall or even inside a blocked cell, and the footprint test then refuses
 # every route from there. sub_416D50 plans from the agent's rounded cell (0x416D8A) and
 # sub_41EE70 never tests that cell, so this does the same and steps back onto its centre
-# first. Only the search exempts the cell; walking keeps its collision. A start already on a
-# free cell's centre gets the same search from the plain attempt, so it is not repeated.
+# first. Only the search exempts the cell; walking keeps its collision.
 func _step_back_path(start_cell: Vector2i, goal: Vector2, blocked: Callable, bounds: Rect2i) -> PackedVector2Array:
 	var is_blocked := func(cell: Vector2i) -> bool: return cell != start_cell and blocked.call(cell)
 	var path: PackedVector2Array = NAVIGATION.find_path(Vector2(start_cell), goal, is_blocked, bounds)
@@ -264,16 +306,20 @@ func _step_back_path(start_cell: Vector2i, goal: Vector2, blocked: Callable, bou
 # cell someone stands on stops the route when it is the goal or on the way, never when it is
 # the agent's own. Nor does the port's start footprint refuse a route over one: a start it
 # refuses falls back to the step back, whose search from the cell's centre tests only that
-# unmarked cell.
+# unmarked cell. Each cell maps to an entity standing in it.
 func _occupied_cells(layer: Node, origin: Vector2, start_cell: Vector2i) -> Dictionary:
 	var cells := {}
 	for entity in NPC_BRAIN.world_entities(layer.get_parent()):
 		if entity == self:
 			continue
-		var ground := IsoDirection.screen_to_ground(layer.to_local(entity.global_position) - origin)
-		cells[Vector2i(floori(ground.x + 0.5), floori(ground.y + 0.5))] = true
+		cells[_cell_of(layer, origin, entity)] = entity
 	cells.erase(start_cell)
 	return cells
+
+
+static func _cell_of(layer: Node, origin: Vector2, entity: Node2D) -> Vector2i:
+	var ground := IsoDirection.screen_to_ground(layer.to_local(entity.global_position) - origin)
+	return Vector2i(floori(ground.x + 0.5), floori(ground.y + 0.5))
 
 
 func _follow_navigation(delta: float) -> void:
