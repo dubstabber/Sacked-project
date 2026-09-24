@@ -75,7 +75,7 @@ Before pathfinding, `sub_418D20` temporarily marks other entity positions as occ
 
 `sub_415D50` initializes need values to random 20–100, except goal 3 starts at 10. While there is no route or active action, `sub_416770` decreases each of the eight needs by `delta * rate * 0.5`, clamped to 0–100. `sub_415FF0` chooses the lowest need whose disabled flag at agent `+1020 + 4 * goal` is clear, falling back to goal 2 when every goal is disabled; `sub_4165D0` queues that goal when its value is below 15. After completing a goal, its need is reset to random 60–100. This is a changing needs-based routine, not an endless repeat of one workstation action.
 
-The decay cadence matters. `sub_416540`, the last handler in `sub_416770`'s chain, reports "busy" while the shared timer at `+1124` is positive, so needs hold still during an action and during a retry delay. Once that timer reaches zero it starts the queued goal through `sub_416660`. A **failed** start returns zero, so the same tick still decays every need and calls `sub_4165D0`, which re-queues the lowest need and resets `+1124` to zero — the 0.5–1.5 second retry delay only survives when nothing is queued. An agent whose queued goal can never succeed therefore keeps decaying its other needs and moves on as soon as one of them drops lower, instead of stalling on the goal it cannot reach.
+The decay cadence matters. `sub_416540`, the last handler in `sub_416770`'s chain, reports "busy" while the shared timer at `+1124` is positive, so needs hold still during an action and during a retry delay. Once that timer reaches zero it starts the queued goal through `sub_416660`. A **failed** start returns zero, so the same tick still decays every need and calls `sub_4165D0`, which re-queues the lowest need and resets `+1124` to zero — the 0.5–1.5 second retry delay only survives when nothing is queued. An agent whose queued goal can never succeed therefore keeps decaying its other needs and moves on while one of them is lower, instead of stalling on the goal it cannot reach — until that goal's own need reaches 0, after which nothing can drop below it (see "When a goal can never succeed" below).
 
 `sub_4187F0` sets the disabled flag for goals 0, 1, 2, 3, 4 and 7 whose candidate list came out empty, and calls `sub_416040` to zero that goal's decay rate so its need can never become the lowest again. Goals 5 and 6 are never disabled this way.
 
@@ -113,7 +113,7 @@ Janitor:   11,  11,  76,  22, 128,  92,  12, 72
 Coworkers: 11,  11,  76,   5, 128,  76,  12, 72
 ```
 
-`sub_417120` chooses randomly among eligible targets. For goal 3, if an assigned workstation exists, `(rand() & 0xfff) < 0xe00` selects it (7/8 of the range); otherwise it chooses alternate category-2 work equipment. It can return both active-monitor and passive-chair pointers, with the chair's interaction position preferred for the walking destination. Without an assignment, goal 3 returns no target unless the internal variant at `+1748` equals 3. None of the ordinary spawned boss, janitor, secretary, or coworker variants uses that value. Boss and janitor therefore fail the initial work request and move on as another need becomes lower; they do not select arbitrary desks.
+`sub_417120` chooses randomly among eligible targets. For goal 3, if an assigned workstation exists, `(rand() & 0xfff) < 0xe00` selects it (7/8 of the range); otherwise it chooses alternate category-2 work equipment. It can return both active-monitor and passive-chair pointers, with the chair's interaction position preferred for the walking destination. Without an assignment, goal 3 returns no target unless the internal variant at `+1748` equals 3. None of the ordinary spawned boss, janitor, secretary, or coworker variants uses that value. Boss and janitor therefore fail every work request; they do not select arbitrary desks. For the boss that costs little: his work need starts at 10 and his rate for it is 0, so any other need that decays below 10 takes the turn. The janitor's rate is 50, so his work need falls to 0 within a second of idling and stays there, and from then on it wins every tie against goals 4–7 (see "When a goal can never succeed" below): he only ever pursues goals 0, 1 and 2, plus the repairs a reaction files.
 
 `sub_416660` sets a successful action's default duration to random **10–16 seconds**, then starts the route. The action timer only decreases when no route is active. A failed route waits random **0.5–1.5 seconds** before retrying, and abandons the queued goal after five failures.
 
@@ -157,7 +157,7 @@ Coworker animation slots are `0 IDLE#1#ATMEN`, `1 IDLE#2`, `2 WALK`, `3 SIT#IDLE
 
 `sub_41A510` resolves a slot against the agent's current eight-direction index. A slot with no clip for that view falls back to the clip for view `000`, and a slot with no clip at all falls back to the idle slot. Each coworker variant ships only one of `SPECIAL#1` and `SPECIAL#2`, so goal 6 plays the idle fallback for the variant-1 coworkers in `LEVEL_00`.
 
-Panic, cleanup, anger progression, and the complete social interaction state machine remain outside this reference's recovered subset; the reaction to a tampered object is covered below. A port implementing only workstation behavior should identify that limit rather than describing it as the complete original NPC AI.
+No tick has a panic branch. The secretary's table names `PANIC`, `PANIC#WET` and `PANIC#FOAM` at slots 3–5, but no caller of `sub_41A510` asks her for them: her factory `sub_404EC0` starts her on slot 2 (`0x404F5F`) and `sub_41E360` picks only slots 0, 1, 2, 6, 7 and 9. No tick has a cleanup branch either; the janitor's only job is the repair a reaction files (below). The social goal is recovered in full above, the anger meter under "How angry the office gets", and the reaction to a tampered object under "Reacting to a sabotaged object".
 
 ## Implemented autonomous subset
 
@@ -169,7 +169,7 @@ All eight goals are implemented. On arrival the brain runs `sub_417B00`'s dispat
 
 Goal 5 walks to a point 1.2 tiles in front of the last opposite-gender agent within eight tiles and stands there for the default 10–16 seconds, rebuilding the route every three seconds while it walks. Goal 6 asks a coworker for slot 6 `SPECIAL#2` (`sub_419CE0`, `0x419DF1`); the other three ticks have no goal-6 branch, so the boss, the secretary and the janitor stand at an ashtray in their idle slot. Neither `LEVEL_00` coworker variant ships that clip, so on that map it plays the idle fallback exactly as `sub_41A510` does; male employee 2 and female employee 2 do ship it. Female employee 2's copy is missing its `180` view alone, and `sub_41A510`'s own fallback to view `000` covers that, which is what `npc.gd`'s `_action_clip` reproduces. She ships no `SPECIAL#1` at all, so the special-action item types drop her to idle the way they already do for male employee 2. Neither goal is ever disabled, matching `sub_4187F0`.
 
-Coworkers use `SIT#USE` throughout work instead of the original rare per-tick `SIT#IDLE` selection, because reproducing a per-tick clip swap needs the original's clock-driven action playback, which this port has not verified for action clips. The copier is put into its own state 9 while an agent photocopies at it, which is what makes its `DESTROYED_1` loop run in ordinary play with no prank involved; the brain restores state 0 when the activity ends, is interrupted or the agent is stopped. Panic, cleanup and anger progression remain unimplemented; the `+1064` speed increase and reacting to a tampered object are implemented and described below.
+Coworkers use `SIT#USE` throughout work instead of the original rare per-tick `SIT#IDLE` selection, because reproducing a per-tick clip swap needs the original's clock-driven action playback, which this port has not verified for action clips. The copier is put into its own state 9 while an agent photocopies at it, which is what makes its `DESTROYED_1` loop run in ordinary play with no prank involved; the brain restores state 0 when the activity ends, is interrupted or the agent is stopped. The anger meter, the `+1064` speed increase and reacting to a tampered object are implemented and described below.
 
 ### Where a route ends
 
@@ -181,9 +181,28 @@ The other end is the point an agent is stood back on. `sub_4161E0` (seats) and `
 
 Before routes ended on cells the port walked to the exact point, and the footprint test refused every target whose point sits within 0.85 tiles of a blocked cell. On `LEVEL_00` that was the toilet cubicle `(11.68, 0.99)` against blocked `(11, 1)`, the sink `(7.99, 13.34)` against `(8, 14)` and the sofa `(12.21, 6.13)` against `(13, 6)` — which is why the boss never sat on the sofa — and on levels 1–8 some fifty candidate points in all, among them the secretary's own chair on level 2, seven coworkers' chairs on levels 4, 6 and 7, the only drink on levels 5 and 6, every relax seat on level 3 and the toilets on levels 3 and 8. The original reaches all of them.
 
-`LEVEL_00`'s only standing ashtray sits at tile `(12.79, 5.21)` and its interaction offset of `+0.6` in X keeps the approach inside cell `(13, 5)`, which the original collision grid marks blocked. Goal 6 therefore cannot complete on this map in the original either. The port reproduces that: the attempt fails, the agent keeps decaying its other needs, and the tie-break in `sub_415FF0` — first index wins — hands the turn to a lower-numbered goal once that need also reaches zero.
+### When a goal can never succeed
 
-**What to expect from the level-1 boss.** He now uses the toilet every few minutes, but the sofa only now and then, and in some level starts never. Once his smoking need has decayed to 0 against the unreachable ashtray it stays there — only a completed goal, or the end of a reaction, which resets all eight needs (`sub_416450`), lifts a need again — and `sub_415FF0` takes a need only when it is strictly lower (`0x41600B`), so goal 6 wins every tie against goal 7 from then on; the social goal, whose front cell is often blocked, does the same while it keeps failing. So he sits down early in a level, after being provoked, or not at all. Over 900 simulated seconds he sat on it once with seeds 42 and 7 (at 26.9 s and 30.1 s), twice with seed 11, and never with seeds 1037 and 99. That follows from the recovered rules; the original game was not run to compare, and nothing should be added to make it more frequent.
+`sub_415FF0` starts from 999 and takes a need only when it is **strictly** lower (`0x41600B`), so among equal needs the lowest goal index wins. Needs clamp at 0 (`sub_416770`), and only two things lift one again: completing its goal (`sub_4165D0`, 60–100) and the end of a reaction (`sub_416450`, all eight). `sub_415FD0`, the need setter, has no other caller besides the constructor `sub_415D50`. `sub_416660` drops a failing goal from the queue after five failures but never touches its need, and `sub_4165D0` queues the lowest need again on the very next tick. So a goal whose every candidate is out of reach **for that agent** pins its need at 0 for good, and from then on it beats every higher-numbered goal, which is never pursued again until a reaction resets the needs. One unreachable candidate among reachable ones only costs retries, because `sub_417120` draws a new random candidate on every attempt. Goals 5 and 6 are never disabled, so an empty goal-6 list pins its need just the same.
+
+A candidate is out of reach in the original when its interaction point's cell is blocked, since the search never enters one. On the imported maps (levels 1–8 and the 5s and 8s points layouts, searched from each agent's spawn with the port's own search) every candidate of a goal is out of reach here:
+
+| Level | Goal | Agents | Why |
+| --- | --- | --- | --- |
+| 1 | 6, smoking | everyone | the only ashtray, `STANDASCHER02`, has its interaction cell `(13, 5)` blocked |
+| 2 | 1, drinks | the boss | his only drink (mask 266: rooms 1, 3 and 8) is the `WASSERKOCHER` at blocked `(2, 25)` |
+| 2 | 6 | everyone | the boss has no ashtray in his rooms; the others only `STANDASCHER01`, at blocked `(4, 17)` |
+| 2 | 7, relaxing | everyone | `SOFA01` at `(2, 5)` and `SESSEL01` at `(2, 4)` are both blocked |
+| 3 | 1 | everyone | the only drink, a `WASSERKOCHER` at blocked `(9, 2)` |
+| 3 | 2, decoration | everyone | all five candidates are blocked |
+| 4–8 | 6 | everyone | no ashtray in anyone's rooms: an empty list, which is never disabled |
+| 8 | 1 | everyone but the boss | the only drink in their rooms, `KAFFEEMASCHI`, at blocked `(1, 13)` |
+
+The janitor's work goal belongs on the same list on every map he is on, as above. The effect is largest on level 3: once need 1 reaches 0 it outranks work too, and over 600 simulated seconds (seed 4091) none of the coworkers sat down to work after about 250 s; they only ate, and retried the kettle on 26–40 % of their ticks. On levels 2 and 4–8 goal 6 starves goal 7, so nobody relaxes except early in a level or after a reaction. All of this is inferred from the recovered rules; the original game was not run to compare, and the port adds nothing to soften it.
+
+`LEVEL_00`'s only standing ashtray sits at tile `(12.79, 5.21)` and its interaction offset of `+0.6` in X keeps the approach inside cell `(13, 5)`, which the original collision grid marks blocked. Goal 6 therefore cannot complete on this map in the original either, and the port reproduces that: over 900 simulated seconds on five seeds the boss spends 2–8 % of his ticks retrying it.
+
+**What to expect from the level-1 boss.** He uses the toilet every few minutes, but the sofa only now and then, and in some level starts never. Once his smoking need has decayed to 0 against the ashtray, goal 6 wins every tie against goal 7; the social goal, whose front cell is often blocked, does the same while it keeps failing. So he sits down early in a level, after being provoked, or not at all. Over 900 simulated seconds he sat on it once with seeds 42 and 7 (at 26.9 s and 30.1 s), twice with seed 11, and never with seeds 1037 and 99.
 
 ### What the wider cast changed
 
@@ -320,8 +339,9 @@ targets without consulting `+228`, so an agent has to walk all the way to a brok
 before it can be angry about it.
 
 `sub_41DEA0` adds its 25 to `player+984`, the score, and calls `sub_40A0D0` to float the
-number at the agent's position. The port awards the score; it has no floating score text
-anywhere yet, for pranks either.
+number at the agent's position. The port does both: `_start_reaction` passes the agent's
+position to `LevelSession.add_score`, which floats the number through
+`scenes/effects/score_popup.gd` (see [hud-reference.md](hud-reference.md)).
 
 ### Animation
 
