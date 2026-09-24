@@ -31,9 +31,17 @@ being skipped quietly. None of them is named by an action record.
 
 `sub_42A6A0(handler, name, loop, quiet)` takes a free slot out of 128
 (`slot >= 0 && slot < 128`), matches the name case-insensitively, loads on first use, and
-plays. `loop` goes straight to the player. `quiet` scales the effects volume by **0.1** for
-that slot; everything else plays at the full effects volume from `handler+3892`.
-`sub_42A7C0(slot, 0)` stops one again.
+plays. `loop` goes straight to the player. `quiet` starts that slot at **0.1** of the effects
+volume; everything else plays at the full effects volume from `handler+3892`. The last flag is
+really positional: `sub_42A970` recomputes the volume of flagged slots from their distance to
+a listener it is handed. That listener was not traced, and nothing on the duel or result
+path sets the flag. `sub_42A7C0(slot, 0)` stops one again.
+
+The handler is the game object's own, `game+15136`, and it outlives every screen. Only its
+shutdown (`sub_42A180` → `sub_42AA40`) stops all its slots. Otherwise a slot stops when its
+sound ends or when something stops it by name: the warning slot, and the player's own four
+held slots (`player+1108`–`1120`, stopped by the player's destructor `0x41AE90`). So a
+one-shot that is still playing when the level ends plays on into the next screen.
 
 ## What a level plays
 
@@ -41,13 +49,21 @@ that slot; everything else plays at the full effects volume from `handler+3892`.
   and `Theme3`. The shell has two tracks: `sub_407370` asks for one on four cases only,
   `Menu1` on the loading and menu screens and `Menu2` on the coworker-names and highscore
   screens. Every other screen keeps whatever is already playing, which is why the level
-  tree, the description screen and character select are silent about music and still run
-  under `Menu1` — every route to them passes through the menu. The port mirrors this with a
-  per-screen stream map in `ScreenManager`; the names screen is not built yet, so `Menu2` is
-  reached only from the highscore board. See docs/shell-reference.md.
+  tree, the description screen and character select ask for no music. After the menu they
+  run under `Menu1`. After a win they run under the level's theme, because `Następny poziom`
+  goes straight to the tree (screen 15) and nothing stops the theme on the way. The port
+  mirrors the requests with a per-screen stream map in `ScreenManager`; the names screen is
+  not built yet, so `Menu2` is reached only from the highscore board. See
+  docs/shell-reference.md.
 - **Warning.** `sub_403780` starts `S1012` looping once `limit - elapsed <= 10`, keeping the
   slot in `game+19056` so it is only started once.
-- **Win.** Screen 7 plays `S1100`.
+- **Win and loss.** `sub_407370` case 7 stops the warning slot (`sub_42A7C0` at `0x4075E3`,
+  then `game+19056 = -1`). It then plays `S1100` through the handler at `0x407601`, before
+  `sub_406E70` records the win and builds the win screen. Case 8 stops the same slot at
+  `0x407639` and plays nothing. Neither case stops another effect or the music.
+  `sub_42AC30`'s only caller is case 5. `sub_42AA60` changes the track only in cases 2, 3,
+  13 and 14 and in `sub_406AF0`, and it ignores a request for the track already playing
+  (`0x42AA7A`). So the theme plays on under both result screens.
 - **Actions.** Each action record names its sound at `+0x44` and says at `+0x48` whether it
   plays when the action starts or when it applies. All 32 sounds level 1's actions name
   resolve to a shipped file.
@@ -56,9 +72,12 @@ that slot; everything else plays at the full effects volume from `handler+3892`.
   at `0x4025AB`, before its own pause test at `0x4025B0`, and the music streams on its own
   thread (`sub_42AA60` → `sub_45E420` → `sub_45F450`, `_beginthreadex`). So the theme, the
   warning loop and any effect still sounding play on behind either one.
-- **The duel.** `sub_407370` case 5 stops the music (`sub_42AC30` at `0x407571` →
-  `sub_45F4F0`) and `sub_4027B0` resumes it when the duel ends (`sub_42AC40` →
-  `sub_45F530`). What screen 5 does to the effect channels is not recovered.
+- **The duel.** `sub_407370` case 5 pauses only the music stream (`sub_42AC30` at
+  `0x407571` → `sub_45F4F0`, the buffer's `Stop`). It touches no effect slot, so a warning
+  that has started loops on through the duel. `sub_4027B0` calls `sub_42A970(0)` only to reap
+  finished slots, and it resumes the music (`sub_42AC40` → `sub_45F530`) after either outcome:
+  at `0x402839` when the duel is won and at `0x40284D` when it is lost. The duel's own sounds
+  are in [minigame-reference.md](minigame-reference.md).
 
 ## The two volumes
 
@@ -153,9 +172,23 @@ The store also holds the language the player picked and whether the window is fu
 Neither is the original's: it ships one language per build and has no display option. So
 the sound-setup screen's `Domyślne` puts only the two volumes back, and deliberately leaves
 those two rows alone.
-`scenes/level/level_audio.gd` picks the theme, starts the warning loop, plays the win cue and
-plays each action's sound at the end the record asks for. Its players run with the tree
-paused, so the pause key and the quit prompt leave them playing; only its own `_process`,
-which starts the warning, stops with the level. `CatchWatch` holds the theme for the duel
-and lets it go on a win, and the warning with it — the one choice here not taken from the
-binary, since it keeps the warning as silent in the duel as it was before.
+
+### What a level plays
+
+`scenes/level/level_audio.gd` picks the theme, starts the warning loop and plays each action's
+sound at the end the record asks for. Every one-shot goes through `ScreenManager.play_effect`,
+the port's copy of the game's handler. Its players are children of the autoload, which
+always processes, so a sound plays on under a pause and over a scene change, as the lost
+duel's `S1001` does into the lose screen. Each player frees itself when its sound ends.
+`LevelAudio` plays a one-shot itself only when there is no `ScreenManager` autoload. The
+warning loop stays in `LevelAudio`, which stops it when the level ends,
+as cases 7 and 8 do. `LevelAudio`'s own players also run with the tree paused, so the pause
+key and the quit prompt leave them playing. Only its `_process`, which starts the warning,
+stops with the level. `ScreenManager.report_level_finished` plays `S1100` on a win before it
+changes screen. `CatchWatch` holds the theme for the duel and lets it go on a win; the warning
+keeps looping.
+
+**One port decision.** `LevelAudio` stops the theme when the level ends, and the tree then
+starts `Menu1`. The original stops nothing there. Its theme plays on under the result screen
+and, after a win, under the tree and the description screen until a screen asks for another
+track.

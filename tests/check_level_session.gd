@@ -6,6 +6,8 @@ const LEVEL_1_TIME := 360.0
 const LEVEL_1_TIME_TARGET := 4000
 const LEVEL_1_POINTS := 300.0
 const LEVEL_1_POINTS_TARGET := 3000
+const TEST_PATH := "user://check_level_session_progress.cfg"
+const WIN_CUE := "res://audio/sfx/s1100.wav"
 
 var _failures := 0
 
@@ -25,6 +27,12 @@ func _init() -> void:
 
 
 func _run() -> void:
+	# The real level's win records progress, so it goes to a file of the check's own.
+	var store := root.get_node("ProgressStore")
+	var restore_path: String = store.path
+	store.path = TEST_PATH
+	DirAccess.remove_absolute(TEST_PATH)
+	store.reload()
 	_check_level_1_conditions()
 	_check_time_mode_wins_on_reaching_the_target()
 	_check_time_mode_loses_past_the_limit()
@@ -35,6 +43,9 @@ func _run() -> void:
 	_check_warning_lead()
 	_check_level_reports_its_outcome()
 	await _check_a_lost_duel_ends_the_level()
+	store.path = restore_path
+	store.reload()
+	DirAccess.remove_absolute(TEST_PATH)
 	if _failures == 0:
 		print("Level session: original CONDITION values, both mode predicates, the fallbacks and the lost duel passed")
 	quit(1 if _failures else 0)
@@ -157,6 +168,8 @@ func _check_level_reports_its_outcome() -> void:
 		return
 	runtime.enabled = false
 	root.add_child(level)
+	var audio: Node = level.get_node_or_null("LevelRuntime/LevelAudio")
+	var cues_before := _win_cues(manager).size()
 	var reported: Array = []
 	runtime.finished.connect(func(won: bool) -> void: reported.append(won))
 	runtime.mode = &"time"
@@ -164,9 +177,21 @@ func _check_level_reports_its_outcome() -> void:
 	runtime.advance(1.0)
 	_expect(reported == [true], "the level's own session reports its win")
 	_expect(manager.last_level_won, "the autoload records the outcome for the result screen")
+	# sub_407370 case 7 plays S1100 through the game's own handler, which outlives the level.
+	var cues := _win_cues(manager)
+	_expect(cues.size() == cues_before + 1, "the win plays S1100 once, from the autoload")
+	_expect(audio != null and _win_cues(audio).is_empty(), "and not from the level the result screen replaces")
+	for cue in cues.slice(cues_before):
+		cue.free()
 	manager.last_level_won = false
 	root.remove_child(level)
 	level.free()
+
+
+func _win_cues(holder: Node) -> Array:
+	return holder.get_children().filter(
+		func(child): return child is AudioStreamPlayer and child.stream != null and child.stream.resource_path == WIN_CUE
+	)
 
 
 func _check_warning_lead() -> void:

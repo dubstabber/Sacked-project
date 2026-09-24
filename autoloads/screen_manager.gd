@@ -37,6 +37,10 @@ const _PROFILES := {
 const _MENU1: AudioStream = preload("res://audio/music/menu1.ogg")
 const _MENU2: AudioStream = preload("res://audio/music/menu2.ogg")
 
+const LevelAudioScript := preload("res://scenes/level/level_audio.gd")
+# sub_407370 case 7 plays this on its way to the win screen (0x407601); case 8 plays nothing.
+const WIN_SOUND := "S1100"
+
 const DEFAULT_CHARACTER: StringName = &"jobless"
 const DEFAULT_PLAYER_NAMES := {
 	&"jobless": "Jo Bless",
@@ -167,12 +171,33 @@ func begin_duel() -> int:
 # sub_406E70 records on the way past, and only for a win -- the loss path writes nothing.
 func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0.0) -> void:
 	last_level_won = won
+	if won:
+		play_effect(WIN_SOUND)
 	var progress := get_node_or_null("/root/ProgressStore")
 	if progress != null:
 		progress.call(
 			"record_result", selected_level, selected_game_mode, won, score, elapsed_seconds, player_name
 		)
 	change_to(Screen.LEVEL_RESULT)
+
+
+# The port's game+15136, the handler every one-shot goes through (sub_42A6A0). Nothing but its
+# shutdown stops all its slots (sub_42AA40), so a sound started here outlives the level and
+# plays on under a pause, because this node always processes.
+func play_effect(sound_id: String, quiet := false) -> AudioStreamPlayer:
+	var stream := LevelAudioScript.effect_stream(sound_id)
+	if stream == null:
+		return null
+	if stream is AudioStreamWAV:
+		(stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_DISABLED
+	var player := AudioStreamPlayer.new()
+	player.bus = &"SFX"
+	player.stream = stream
+	player.volume_db = linear_to_db(LevelAudioScript.QUIET_SCALE) if quiet else 0.0
+	add_child(player)
+	player.finished.connect(player.queue_free)
+	player.play()
+	return player
 
 
 func start_game_setup(game_mode: StringName) -> void:

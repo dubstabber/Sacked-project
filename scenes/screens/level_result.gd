@@ -8,8 +8,9 @@ extends Control
 # `Następny poziom` goes back to the **level tree**, where whatever this win just opened has
 # turned from locked to playable. See docs/shell-reference.md.
 #
-# The original starts S1100 on entering this screen; the port already plays it from
-# LevelAudio the moment the level reports its win, which is the same beat.
+# S1100 is not this screen's own: sub_407370 case 7 plays it through the game's sound handler
+# just before it builds the win screen (0x407601). The port plays it from
+# ScreenManager.report_level_finished, so it neither replays nor stops with this screen.
 
 const WIN_TEXTURE := preload("res://images/gui/screens/win.png")
 const LOSE_TEXTURE := preload("res://images/gui/screens/lose.png")

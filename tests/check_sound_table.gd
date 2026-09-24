@@ -16,8 +16,10 @@ func _run() -> void:
 	_check_buses()
 	_check_manifest()
 	_check_every_level_action_sound_resolves()
+	_check_the_duel_and_the_win_sounds_resolve()
+	_check_one_shots_belong_to_the_sound_handler()
 	if _failures == 0:
-		print("Sound table: the buses, the index and every sound level 1 can ask for resolved")
+		print("Sound table: the buses, the index, every sound a level and its duel ask for, and the one-shot handler passed")
 	quit(1 if _failures else 0)
 
 
@@ -90,3 +92,59 @@ func _level_manifest_paths() -> Array[String]:
 			paths.append("res://resources/levels/" + name)
 	paths.sort()
 	return paths
+
+
+# The seven casts and their answers are S1004 to S1010; the duel's own outcome is S1002 or
+# S1001, and the win screen's is S1100. See docs/minigame-reference.md.
+func _check_the_duel_and_the_win_sounds_resolve() -> void:
+	var names := ["S1001", "S1002", "S1100"]
+	for index in range(7):
+		names.append("S%04d" % (1004 + index))
+	for sound_id in names:
+		_expect(AUDIO.effect_stream(sound_id) != null, "%s resolves" % sound_id)
+
+
+# sub_42A6A0 plays every one-shot through the game's own handler, which no screen change
+# flushes, so the port's copy lives on the ScreenManager autoload. Only the warning loops, and
+# it stays with the level so the result screens can stop it.
+func _check_one_shots_belong_to_the_sound_handler() -> void:
+	var screens: Node = root.get_node_or_null("ScreenManager")
+	_expect(screens != null, "the ScreenManager autoload is live")
+	if screens == null:
+		return
+	_expect(screens.play_effect("S9999") == null, "an unknown sound plays nothing")
+	var cue: AudioStreamPlayer = screens.play_effect("S1002")
+	_expect(cue != null and cue.get_parent() == screens, "a one-shot belongs to the autoload")
+	if cue != null:
+		_expect(cue.bus == &"SFX", "on the effects bus")
+		_expect(is_zero_approx(cue.volume_db), "at the full effects volume")
+		_expect((cue.stream as AudioStreamWAV).loop_mode == AudioStreamWAV.LOOP_DISABLED, "and it does not loop")
+		paused = true
+		_expect(cue.can_process(), "it plays on under a pause")
+		paused = false
+		cue.free()
+	var quiet: AudioStreamPlayer = screens.play_effect("S1002", true)
+	_expect(
+		quiet != null and is_equal_approx(quiet.volume_db, linear_to_db(AUDIO.QUIET_SCALE)),
+		"the quiet flag starts it at a tenth of the effects volume"
+	)
+	if quiet != null:
+		quiet.free()
+
+	var audio: Node = AUDIO.new()
+	root.add_child(audio)
+	_expect(audio.is_in_group("level_audio"), "the level's audio joins the group the duel looks it up by")
+	var shot: AudioStreamPlayer = audio.play_effect("S1004")
+	_expect(shot != null and shot.get_parent() == screens, "the level hands its one-shots to the autoload")
+	if shot != null:
+		shot.free()
+	var warning: AudioStreamPlayer = audio.play_effect("S1012", true)
+	_expect(warning == audio._warning, "the looping warning stays with the level")
+	audio._screens = null
+	var fallback: AudioStreamPlayer = audio.play_effect("S1004")
+	_expect(
+		fallback != null and fallback.get_parent() == audio,
+		"without the autoload the level plays its one-shots itself"
+	)
+	root.remove_child(audio)
+	audio.free()

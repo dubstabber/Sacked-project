@@ -2,9 +2,12 @@ extends SceneTree
 
 
 const ScreenManagerScript := preload("res://autoloads/screen_manager.gd")
+const TEST_PATH := "user://check_screen_flow_progress.cfg"
+const WIN_CUE := "res://audio/sfx/s1100.wav"
 
 var _failures := 0
 var _manager: Node
+var _restore_path := ""
 
 
 func _init() -> void:
@@ -20,6 +23,13 @@ func _run() -> void:
 		quit(1)
 		return
 	await process_frame
+	# Two of these runs win a level, and a win records progress, so it goes to a file of the
+	# check's own.
+	var store := root.get_node("ProgressStore")
+	_restore_path = store.path
+	store.path = TEST_PATH
+	DirAccess.remove_absolute(TEST_PATH)
+	store.reload()
 
 	_check_screens_resolve()
 	_check_level_selection()
@@ -32,12 +42,16 @@ func _run() -> void:
 	await _check_result_screen_shows_the_outcome()
 	await _check_lost_level_returns_to_a_fresh_run()
 	await _check_the_name_box_carries_the_original_caption()
+	await _check_only_a_win_plays_the_win_cue()
 
 	_manager.reset_player_setup()
 	_manager.selected_game_mode = &"time"
 	_manager.last_level_won = false
+	store.path = _restore_path
+	store.reload()
+	DirAccess.remove_absolute(TEST_PATH)
 	if _failures == 0:
-		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption and the retry round trip passed")
+		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip and the win cue passed")
 	quit(1 if _failures else 0)
 
 
@@ -279,4 +293,46 @@ func _check_points_mode_takes_the_variant_scene() -> void:
 		"the entered level keeps the scene its mode asked for"
 	)
 	_manager.selected_game_mode = restore_mode
+	_manager.selected_level = restore_level
+
+
+func _win_cues() -> Array:
+	return _manager.get_children().filter(
+		func(child): return child is AudioStreamPlayer and child.stream != null and child.stream.resource_path == WIN_CUE
+	)
+
+
+# sub_407370 case 7 plays S1100 through the game's own sound handler on its way to the win
+# screen (0x407601), and case 8 plays nothing. The handler outlives every screen, so the cue
+# belongs to the autoload and carries on over the result screen and whatever follows it.
+func _check_only_a_win_plays_the_win_cue() -> void:
+	var restore_level: int = _manager.selected_level
+	_manager.selected_level = 1
+	var before := _win_cues().size()
+	_manager.report_level_finished(false)
+	await process_frame
+	_expect(_win_cues().size() == before, "a lost level plays no win cue")
+
+	_manager.report_level_finished(true)
+	var cues := _win_cues()
+	_expect(cues.size() == before + 1, "a won level plays S1100 once")
+	if cues.size() != before + 1:
+		_manager.selected_level = restore_level
+		return
+	var cue: AudioStreamPlayer = cues.back()
+	_expect(cue.bus == &"SFX", "the win cue is an effect")
+	await process_frame
+	_expect(
+		_manager.current == ScreenManagerScript.Screen.LEVEL_RESULT and current_scene != null
+			and current_scene.scene_file_path == _manager.scene_path(ScreenManagerScript.Screen.LEVEL_RESULT),
+		"the win reaches the result screen"
+	)
+	_expect(is_instance_valid(cue) and cue.is_inside_tree(), "the cue outlives the change to the result screen")
+	_manager.change_to_level_tree()
+	await process_frame
+	await process_frame
+	_expect(is_instance_valid(cue) and cue.is_inside_tree(), "and the change to the screen after it")
+	if is_instance_valid(cue):
+		cue.free()
+	_manager.last_level_won = false
 	_manager.selected_level = restore_level

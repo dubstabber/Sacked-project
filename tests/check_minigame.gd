@@ -13,6 +13,18 @@ const STEP := 1.0 / 60.0
 var _failures := 0
 
 
+# Stands in for LevelAudio, which the duel finds by group, and keeps what it was asked to play.
+class SoundLog extends Node:
+	var calls: Array = []
+
+	func play_effect(sound_id: String, looping := false, quiet := false) -> AudioStreamPlayer:
+		calls.append([sound_id, looping, quiet])
+		return null
+
+	func named(sound_id: String) -> Array:
+		return calls.filter(func(call): return call[0] == sound_id)
+
+
 func _init() -> void:
 	call_deferred("_run")
 
@@ -24,9 +36,10 @@ func _run() -> void:
 	await _check_a_round_the_player_gets_right()
 	await _check_a_round_the_player_gets_wrong()
 	await _check_the_duel_lengthens_each_time()
+	await _check_the_duel_sounds()
 	await _check_the_banners_follow_the_language()
 	if _failures == 0:
-		print("Catch minigame: the button row, the portraits, both round outcomes, the energy rule and the banners passed")
+		print("Catch minigame: the button row, the portraits, both round outcomes, the energy rule, the sounds and the banners passed")
 	quit(1 if _failures else 0)
 
 
@@ -191,6 +204,57 @@ func _check_the_duel_lengthens_each_time() -> void:
 	_expect(screens.duels_fought == 9, "the counter stops at nine")
 	_expect(screens.begin_duel() == 11, "so a duel never runs past eleven casts")
 	screens.duels_fought = restore
+
+
+# sub_414870 plays three sounds, all through the game's handler with loop and quiet clear:
+# each cast's S(serial + 1004) once as it appears (0x414BEE), S1002 on a win (0x414EA0) and
+# S1001 on a loss (0x414F1E). Nothing plays for get ready, your turn or a round's outcome.
+func _check_the_duel_sounds() -> void:
+	var sounds := SoundLog.new()
+	root.add_child(sounds)
+	sounds.add_to_group("level_audio")
+
+	var minigame := _mount(9001)
+	await process_frame
+	minigame.open(&"janitor", &"jobless", 3)
+	_expect(minigame._audio == sounds, "the duel finds the level's audio by its group")
+	_advance_until(minigame, minigame.State.GET_READY)
+	_expect(sounds.calls.is_empty(), "nothing plays for get ready")
+	_advance_until(minigame, minigame.State.BUILD)
+	_advance_until(minigame, minigame.State.CASTING)
+	var casts: Array = []
+	for k in range(minigame.cast_count):
+		casts.append(["S%04d" % (1004 + int(minigame._serial[k])), false, false])
+	_expect(sounds.calls == casts, "each cast plays its own sound once, at full volume: %s" % str(sounds.calls))
+	sounds.calls.clear()
+	_expect(minigame.state == minigame.State.YOUR_TURN, "the casts hand over to the player")
+	minigame.answer(int(minigame._serial[0]))
+	_advance_until(minigame, minigame.State.YOUR_TURN)
+	_expect(sounds.calls.is_empty(), "a click before the answer clock runs plays nothing")
+	var rounds := 0
+	while minigame.state != minigame.State.WON and rounds < 6:
+		_play_round(minigame, true)
+		rounds += 1
+	_expect(sounds.named("S1002") == [["S1002", false, false]], "winning plays S1002 once")
+	_expect(sounds.named("S1001").is_empty(), "and never the losing cue")
+	_advance_until(minigame, minigame.State.WON)
+	_expect(sounds.named("S1002").size() == 1, "the result banner plays nothing more")
+	_drop(minigame)
+
+	sounds.calls.clear()
+	minigame = _mount(4242)
+	await process_frame
+	minigame.open(&"boss", &"anne", 2)
+	rounds = 0
+	while minigame.state != minigame.State.LOST and rounds < 6:
+		_play_round(minigame, false)
+		rounds += 1
+	_expect(sounds.named("S1001") == [["S1001", false, false]], "losing plays S1001 once")
+	_expect(sounds.named("S1002").is_empty(), "and never the winning cue")
+	_drop(minigame)
+
+	root.remove_child(sounds)
+	sounds.free()
 
 
 func _check_the_banners_follow_the_language() -> void:

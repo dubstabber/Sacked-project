@@ -43,6 +43,7 @@ func _run() -> void:
 	await _check_notice_geometry(agent, brain, player, layer)
 	await _check_only_mid_prank(world, player)
 	_check_the_duel_gets_the_pointer(world, player)
+	_check_the_duel_holds_only_the_theme()
 	_finish()
 
 
@@ -50,7 +51,7 @@ func _finish() -> void:
 	if is_instance_valid(_level):
 		_level.free()
 	if _failures == 0:
-		print("Catch trigger: notice radius, cone, the two-tile bypass, sight, the mid-prank gate and the duel's pointer passed")
+		print("Catch trigger: notice radius, cone, the two-tile bypass, sight, the mid-prank gate, the duel's pointer and its sound passed")
 	quit(1 if _failures else 0)
 
 
@@ -203,6 +204,37 @@ func _check_the_duel_gets_the_pointer(world: Node, player: Node2D) -> void:
 	_expect(not cursor.is_menu_captured(), "nothing takes the pointer back after the duel")
 	prank.close_menu()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+# The duel finds the level's audio by group. sub_407370 case 5 pauses the music stream and
+# nothing else (0x407571), so a warning that has started loops on through the duel.
+func _check_the_duel_holds_only_the_theme() -> void:
+	var watch := _level.get_node_or_null("LevelRuntime/CatchWatch")
+	var minigame := _level.get_node_or_null("LevelRuntime/CatchMinigame")
+	var audio := _level.get_node_or_null("LevelRuntime/LevelAudio")
+	if watch == null or minigame == null or audio == null:
+		_expect(false, "level 2 carries the duel and the level's audio")
+		return
+	_expect(audio.is_in_group("level_audio"), "the level's audio is in the group the duel looks in")
+	audio.play_effect("S1012", true)
+	var screens := root.get_node("ScreenManager")
+	var restore: int = screens.duels_fought
+
+	watch._open_duel()
+	minigame.set_process(false)
+	_expect(minigame._audio == audio, "the duel plays through the level's audio")
+	_expect(audio._theme.stream_paused, "the duel holds the theme")
+	_expect(not audio._warning.stream_paused, "and leaves the warning looping")
+	var cast: AudioStreamPlayer = audio.play_effect("S1004")
+	_expect(audio._theme.stream_paused, "a sound played in the duel leaves the theme held")
+	if cast != null:
+		cast.free()
+
+	minigame.visible = false
+	watch._on_duel_finished(true)
+	_expect(not audio._theme.stream_paused, "a won duel lets the theme go")
+	audio._warning.stop()
+	screens.duels_fought = restore
 
 
 func _prankable_point(world: Node, prank: Node, player: Node2D) -> Node2D:

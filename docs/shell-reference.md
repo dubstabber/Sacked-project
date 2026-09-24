@@ -314,7 +314,14 @@ Two corrections to earlier assumptions:
   override it. So each is its background picture plus its two buttons — no score, no time,
   no caption.
 
-The win screen plays sound `S1100` on entry and stops whatever `game+19056` was playing.
+**Sound.** Case 7 stops the countdown warning's slot, `game+19056` (`sub_42A7C0` at
+`0x4075E3`, then −1). It then plays `S1100` through the game's own sound handler at
+`0x407601`, before `sub_406E70` records the win and builds the screen. Case 8 stops the same
+slot at `0x407639` and plays nothing. Neither case stops anything else, so any other effect
+and the level's theme play on under both screens. The port plays `S1100` from
+`ScreenManager.report_level_finished` on a win, not from the screen, and `LevelAudio` stops
+the warning when the level ends. It also stops the theme there, which is the port's own
+choice; see [sound-reference.md](sound-reference.md).
 
 ### Screen 9, restart
 

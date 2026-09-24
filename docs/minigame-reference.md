@@ -135,6 +135,28 @@ to screen 1**, back into the level that is still in memory, and **everything els
 8**, the lose screen. Nothing here touches the level's score or the office's aggression, so
 winning costs only the interrupted prank and the time.
 
+## What the duel plays
+
+Every duel sound goes through `sub_42A6A0` on the game's own sound handler, `game+15136`.
+`sub_406430` passes it to the constructor as the last argument (`0x4064A8`), and the
+constructor keeps it at `+0` (`0x413DB1`). Every call passes loop 0 and quiet 0, which means
+a one-shot at the full effects volume. These four are the only duel call sites among
+`sub_42A6A0`'s cross-references:
+
+| When | Sound | Where |
+| --- | --- | --- |
+| each cast, once as it appears (`+192` guards it) | `S%04i` of serial value + 1004, `S1004`–`S1010` | `sub_414870`, `0x414BEE` |
+| each accepted answer click | `S%04i` of button index + 997: the same `S1004`–`S1010` as the cast it answers | `sub_413C80`, `0x413D27` |
+| the duel won, entering state 8 | `S1002` | `0x414EA0` |
+| the duel lost, entering state 9 | `S1001` | `0x414F1E` |
+
+Nothing plays for get ready, your turn, or a round won or lost. The constructor `sub_413D40`
+and the destructor `sub_414820` neither play nor stop anything. On the way in, `sub_407370`
+case 5 pauses the music stream (`sub_42AC30` at `0x407571`) and leaves every effect slot
+alone. `sub_4027B0` resumes the music after either outcome (`0x402839`, `0x40284D`). The
+handler outlives the screen, so `S1001`, which runs 7.5 s, keeps playing into the lose screen
+after the 3.0 s banner.
+
 ## Not recovered
 
 - The button's own click handler. Everything it must do is pinned by how the tick reads
@@ -159,8 +181,15 @@ sprite tables and the button layout split into `catch_minigame_art.gd` so each c
 on its own. It is an **overlay inside the level**, not a separate scene: a win resumes the
 level that is still in memory, which changing scene would have thrown away. `CatchWatch`
 holds the banner for its two seconds, opens the duel, pauses the tree, and on the way out
-either unpauses or ends the level through `LevelSession.lose()` — the same `finished` the
-clock raises, so the music stops and the run's own score and time reach the result screen.
+either unpauses or ends the level through `LevelSession.lose()`. That raises the same
+`finished` the clock raises, so the run's own score and time reach the result screen. The
+port also stops the theme there, which the original does not do (see
+[sound-reference.md](sound-reference.md)).
+
+The duel finds `LevelAudio` through the `level_audio` group and plays its sounds through it.
+`LevelAudio` hands each one-shot to `ScreenManager.play_effect`, the port's copy of the
+game's handler, so `S1001` also plays on into the lose screen. `CatchWatch` holds only the
+theme for the duel. A countdown warning that has already started keeps looping.
 
 Every constant above is used as recovered: the two-second banner, the one-second step and its
 quarter-second gap, the 4.3-second answer clock, eight energy in steps of three, and the
