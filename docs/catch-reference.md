@@ -218,7 +218,7 @@ interrupted action and the time, and losing it ends the level outright.
 ```c
 if (!agent+1816) return 0;            // no repair job filed
 if (agent+1124 > 0.0)                 // the ordinary busy timer
-    agent+1080 = 9;                   // the REPAIR goal, so the REPAIR bubble
+    agent+1080 = 9;                   // the REPAIR goal (0x416535) -- never reached
 else {
     job = agent+1832;
     agent+1816 = 0;
@@ -226,6 +226,14 @@ else {
     agent+1832 = 0;
 }
 ```
+
+The first branch is dead code. Both writes of `+1816` (`0x417BEA`, `0x417C2B`) fall through
+to `0x417C86`, which raises the reaction flag `+1820`, so a filed job always comes with a
+reaction. `sub_416770` asks `sub_416450` first (`0x4168C8`) and stops there while it
+reports busy, which it does, holding goal 8, for as long as the timer runs. At expiry it
+clears `+1820` and returns 0, and only then does `sub_4164E0` run (`0x4168D4`), with the
+timer already spent. **So the `REPAIR` bubble never shows.** A filed repair looks exactly
+like any other reaction, `ANGRY` bubble included, and the item is reset when it ends.
 
 `sub_4100B0` is the item's own action reset — the same call `npc_activity_point.gd` already
 makes from `_ready`. Decoded in full it does four things, in order:
@@ -245,8 +253,10 @@ completed repair releases a colleague locked in a cubicle**, which is what the c
 below depends on. `sub_40FEF0`, the separate full item reset, clears `item+200`, `+216`,
 `+220`, `+224`, `+228` and `+232` and then randomises `item+236`.
 
-The job is filed by `sub_417B00`, as `npc-reference.md` describes, through `sub_4180F0` for a
-janitor and `sub_4181F0` for anyone meeting a flagged cubicle.
+The job is filed by `sub_417B00`, as `npc-reference.md` describes: through `sub_4180F0` for
+a janitor (`+1740 == 3`), and through `sub_4181F0` for anyone else, which takes only a
+type-173 cubicle with `item+224` set (`0x418203`). A locked type-262 cubicle waits for the
+janitor, whose list below holds both types.
 
 `sub_4180F0` is not a plain switch: the compiler built it as a jump table. The item type from
 `sub_40FE90` is biased by −102, bounds-checked against 167, used to index a 168-byte selector
@@ -259,7 +269,7 @@ reads the selector table rather than transcribing the result, which is:
 173 177 190 191 192 197 237 240 248 250 255 262 267 268 269
 ```
 
-Those include the four workstation types 152–155 and the toilet cubicle 173.
+Those include the four workstation types 152–155 and both toilet cubicles, 173 and 262.
 
 Note that none of the four per-tick functions has a branch for the repair job, so an agent
 filing one keeps whatever clip its other flags choose — the janitor's `STAND#USE` (slot 3)

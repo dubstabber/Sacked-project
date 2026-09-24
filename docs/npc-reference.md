@@ -242,9 +242,10 @@ The table's ten entries therefore line up with the goals one for one:
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | FOOD | COFFEE | HAPPY | BACKTOWORK | TOILETT | SOCIAL | CIGARETTE | RELAX | ANGRY | REPAIR |
 
-Goals **8 and 9 are the reaction states**: `sub_416090` and `sub_416450` set goal 8, and
-`sub_4164E0` sets goal 9. The port's brain supports 0–7, so it raises the first eight; the
-bubble already carries all ten.
+Goal **8 is the reaction state**: `sub_416090` and `sub_416450` set it. Goal 9 is written in
+one place only, `sub_4164E0` at `0x416535`, and that write is never reached (see "Reacting to
+a sabotaged object" below), so the `REPAIR` bubble is never seen. The port's brain raises
+goals 0–8; the bubble carries all ten.
 
 `sub_417460` also draws two things the port does not yet. One is the agent's name over its
 head while `agent+1788` marks it as the coworker last clicked; the name, its pool and the
@@ -373,19 +374,31 @@ Both ship 8 views and both loop. They are imported through
 `sub_417B00` does two more things in that branch that hook into systems the port does not
 have yet:
 
-- **`agent+1816` and `agent+1832`**: a janitor (`agent+1740 == 3`) whose broken item is one
-  of the 30 types `sub_4180F0` lists files it as a repair job, and everyone else does the
-  same through `sub_4181F0` for a flagged cubicle (type 173 with `item+224` set). Both
+- **`agent+1816` and `agent+1832`**: a janitor (`agent+1740 == 3`, tested at `0x417BCF`)
+  whose broken item is one of the 30 types `sub_4180F0` lists files it as a repair job.
+  Everyone else goes through `sub_4181F0` instead, which answers only for a type-173 cubicle
+  (`0x418203`) with `item+224` set. The janitor's list holds both cubicles, 173 and 262, and
+  he files them whether or not anyone is locked in. A locked type-262 cubicle
+  (`TOIKABINE&EIMER`, lockable on levels 4 and 6) therefore waits for the janitor. Both
   branches also write `agent+1124`, but the unconditional 10-to-12-second write below them
   overwrites it, so the reaction is always the same length.
 
+  **The job never shows the `REPAIR` bubble.** `sub_416770` runs its handlers as one
+  short-circuit chain, `sub_416450` (`0x4168C8`) before `sub_4164E0` (`0x4168D4`), each ending
+  the chain when it reports busy. The reaction flag `+1820` is raised at `0x417C86` whenever a job is
+  filed (`+1816` is only written at `0x417BEA` and `0x417C2B`, and both fall through to it),
+  so while the timer runs `sub_416450` sets goal 8 and ends the chain. At expiry it clears
+  `+1820`, resets the needs and returns 0. `sub_4164E0` then sees the timer spent and takes
+  its expiry branch, `sub_4100B0` on `+1832`. The `+1080 = 9` write at `0x416535` is
+  unreachable.
+
   **Both halves are implemented.** `npc_brain.gd` files `_repair_job` in `_start_reaction`
-  when the agent is a janitor and the item's type is in the exported table, or — for any
-  agent at all — when the item carries the `item+224` cubicle lock,
-  holds goal 9 for the reaction instead of goal 8 — which is what raises the `REPAIR` bubble
-  rather than the `ANGRY` one — and on `_on_activity_finished` puts the item back: the
-  activity point's `reset_actions()` plus state 0 on the object. The clip stays the
-  reaction's own, because no per-tick function has a repair branch.
+  when the agent is a janitor and the item's type is in the exported table, or when anyone
+  else meets a locked type-173 cubicle. It holds goal 8, the `ANGRY` bubble, for the
+  reaction like any other. On `_on_activity_finished` it puts the item back: the activity
+  point's `reset_actions()` plus state 0 on the object. The clip stays the reaction's own,
+  because no per-tick function has a repair branch. The port used to raise goal 9 for a
+  filed job, and let anyone file for any locked item, type 262 included.
 
   The cubicle route only works because picks ignore occupation (see "Goals and target
   selection"). While the brain dropped taken points from its candidate lists, a locked

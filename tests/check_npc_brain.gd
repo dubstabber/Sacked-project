@@ -567,9 +567,11 @@ func _expect(condition: bool, label: String) -> void:
 		push_error(label)
 
 
-# Goal 9. sub_417B00 files the job for a janitor whose broken item is one of the thirty types
-# sub_4180F0 lists, sub_4164E0 shows the REPAIR bubble while the reaction's timer runs, and
-# its expiry puts the item back through sub_4100B0. See docs/npc-reference.md.
+# sub_417B00 files the job for a janitor whose broken item is one of the thirty types
+# sub_4180F0 lists. The reaction runs as any other, goal 8 and the ANGRY bubble: sub_416770
+# asks sub_416450 first and stops there while it is busy, so sub_4164E0's goal 9 is never
+# shown. sub_4164E0 only sees the timer's end, and puts the item back through sub_4100B0.
+# See docs/npc-reference.md.
 func _check_repairing_a_broken_item() -> void:
 	var session := SessionStub.new()
 	root.add_child(session)
@@ -595,7 +597,7 @@ func _check_repairing_a_broken_item() -> void:
 	brain._goal = 2
 	actor.destination_reached.emit()
 
-	_expect(brain._goal == BRAIN.REPAIR_GOAL, "a janitor at a broken repairable item holds goal 9, got %d" % brain._goal)
+	_expect(brain._goal == BRAIN.REACTION_GOAL, "a janitor filing a repair holds goal 8, the ANGRY bubble, got %d" % brain._goal)
 	# No tick has a repair branch, so the janitor is angry rather than busy.
 	_expect(actor.activity.get("animation") == &"pissed", "the janitor still plays the reaction clip")
 	_expect(brain._repair_job == point, "the job names the item it will put back")
@@ -632,8 +634,33 @@ func _check_repairing_a_broken_item() -> void:
 	_expect(unlisted["brain"]._goal == BRAIN.REACTION_GOAL, "a janitor holds goal 8 at an unrepairable item")
 	_expect(unlisted["brain"]._repair_job == null, "an unrepairable item files no job")
 
+	# The cubicles. sub_4181F0 takes only a locked type 173 (0x418203) from anyone but the
+	# janitor; sub_4180F0 takes both types from the janitor, locked or merely tampered with.
+	var cases := [
+		[&"male-employee-1", 173, true, true],
+		[&"male-employee-1", 173, false, false],
+		[&"male-employee-1", 262, true, false],
+		[&"janitor", 173, false, true],
+		[&"janitor", 262, true, true],
+		[&"janitor", 262, false, true],
+	]
+	var cubicles: Array = []
+	for case in cases:
+		var cubicle := _point_fixture(8, case[1], 7, true, case[0])
+		cubicles.append(cubicle)
+		cubicle["point"].set("tampered", true)
+		cubicle["point"].set("locked_in", case[2])
+		cubicle["brain"]._target = cubicle["point"]
+		cubicle["brain"]._active = cubicle["point"]
+		cubicle["brain"]._state = BRAIN.State.NAVIGATING
+		cubicle["brain"]._goal = 4
+		(cubicle["actor"] as Actor).destination_reached.emit()
+		var label := "%s at a %s type-%d cubicle" % [case[0], "locked" if case[2] else "tampered", case[1]]
+		_expect((cubicle["brain"]._repair_job != null) == case[3], "%s %s" % [label, "files a repair" if case[3] else "files no repair"])
+		_expect(cubicle["brain"]._goal == BRAIN.REACTION_GOAL, "%s holds goal 8" % label)
+
 	for key in ["world"]:
-		for owned in [fixture, other, unlisted]:
+		for owned in [fixture, other, unlisted] + cubicles:
 			var node: Node = owned[key]
 			root.remove_child(node)
 			node.queue_free()
@@ -685,6 +712,7 @@ func _check_rescuing_a_locked_in_colleague() -> void:
 	actor.destination_reached.emit()
 	_expect(actor.activity.get("animation") == &"pissed", "the colleague finds it tampered with and reacts")
 	_expect(brain._repair_job == cubicle, "sub_4181F0 files the locked cubicle as the colleague's repair job")
+	_expect(brain._goal == BRAIN.REACTION_GOAL, "the rescuer shows the ANGRY bubble, not REPAIR")
 	_expect(cubicle.get("occupant") == inmate, "the colleague does not take the cubicle")
 	inmate_brain._physics_process(0.1)
 	_expect(cubicle.get("occupant") == inmate, "the inmate stays locked in while the repair runs")

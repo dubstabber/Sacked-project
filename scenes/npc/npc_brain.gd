@@ -13,13 +13,11 @@ const SUPPORTED_GOALS := [0, 1, 2, 3, 4, 5, 6, 7]
 const SOCIAL_GOAL := 5
 const SMOKING_GOAL := 6
 # sub_417B00 sets agent+1820 when the item it walked to is tampered with, and sub_416450
-# holds goal 8 -- the ANGRY bubble -- for as long as the busy timer it starts.
+# holds goal 8 -- the ANGRY bubble -- for as long as the busy timer it starts. A filed repair
+# job shows it too: sub_416770 asks sub_416450 before sub_4164E0 and stops at the first that
+# is busy, so sub_4164E0's goal 9, the REPAIR bubble (0x416535), is never reached. It only
+# ever sees the timer run out, and resets the item. See docs/npc-reference.md.
 const REACTION_GOAL := 8
-# sub_4164E0: a filed repair job shows goal 9 -- the REPAIR bubble -- for as long as the
-# reaction's own busy timer runs, and resets the item when it expires. sub_417B00 files it
-# for a janitor whose broken item is one of the thirty types sub_4180F0 lists.
-# See docs/npc-reference.md.
-const REPAIR_GOAL := 9
 const REPAIRABLE_TYPES_PATH := "res://resources/original/repairable_types.json"
 const JANITOR_PROFILE: StringName = &"janitor"
 # sub_41DEA0(25, agent x, agent y): the player scores for every agent it catches out.
@@ -120,6 +118,7 @@ static func profiles() -> Dictionary:
 const WORK_SEATS := [68, 69, 70, 71, 72, 73, 74, 86, 93, 94, 121, 122]
 const MONITOR_TYPES := [152, 153, 154, 155]
 const CUBICLE_TYPES := [173, 262]
+const LOCKED_CUBICLE_REPAIR_TYPE := 173
 const COPIER_TYPES := [129]
 # The state sub_417B00 gives the copier while an agent photocopies at it.
 const COPIER_IN_USE_STATE := 9
@@ -568,11 +567,10 @@ func _start_reaction() -> void:
 	if not started:
 		_on_navigation_failed()
 		return
-	# sub_417B00 files the job before the reaction, and sub_4164E0 then shows goal 9 for as
-	# long as the same timer runs. No tick has a repair branch, so the clip stays the
-	# reaction's own -- the janitor is angry, not busy.
+	# sub_417B00 files the job before the reaction, which then runs as any other: goal 8 and
+	# the reaction's own clip, as no tick has a repair branch. Only the timer's end differs.
 	_repair_job = _active if _can_repair(_active) else null
-	_goal = REPAIR_GOAL if _repair_job != null else REACTION_GOAL
+	_goal = REACTION_GOAL
 	_state = State.ACTING
 	var session := get_tree().get_first_node_in_group("level_session")
 	if session != null:
@@ -657,7 +655,7 @@ func _on_activity_finished() -> void:
 		# sub_4165D0 completes goal 8, whose need slot lies past the eight sub_416770
 		# decays, so a freed inmate still wants the toilet it never got to use.
 		_shut_in = false
-	elif _goal == REACTION_GOAL or _goal == REPAIR_GOAL:
+	elif _goal == REACTION_GOAL:
 		# sub_416450 ends the reaction by resetting every need, not just the one it was
 		# after, so a provoked agent walks away with nothing left to want.
 		for goal in range(_needs.size()):
@@ -781,22 +779,23 @@ func _noticed_value(field: String, step: float) -> float:
 
 
 # sub_416090 raises agent+1824 while the agent is inside a toilet cubicle, and only clears
-# it when it steps back out -- which an agent locked in by action 110 or 112 never does.
+# it when it steps back out -- which an agent locked in by action 110 or 112 does only once a
+# repair has let it out.
 func is_blind() -> bool:
 	return _inside_cubicle or is_locked_in()
 
 
-# sub_4180F0 files the job for a janitor whose broken item is one of the thirty types its
-# jump table answers yes for. sub_4181F0 is the other route, open to anyone: a cubicle whose
-# occupant has been shut in. See docs/npc-reference.md.
+# sub_417B00 asks sub_4180F0 for a janitor (+1740 == 3, 0x417BCF): one of the thirty types its
+# jump table answers yes for, both cubicles among them, locked or not. Everyone else goes to
+# sub_4181F0, which only takes a type-173 cubicle whose occupant has been shut in (0x418203),
+# so the lockable type 262 waits for the janitor. See docs/npc-reference.md.
 func _can_repair(item: Node2D) -> bool:
 	if not is_instance_valid(item):
 		return false
-	if bool(item.get("locked_in")):
-		return true
-	if _profile_id != JANITOR_PROFILE:
-		return false
-	return repairable_types().has(int(item.get("item_type")))
+	var item_type := int(item.get("item_type"))
+	if _profile_id == JANITOR_PROFILE:
+		return repairable_types().has(item_type)
+	return item_type == LOCKED_CUBICLE_REPAIR_TYPE and bool(item.get("locked_in"))
 
 
 # sub_4164E0's expiry branch: the job is cleared and the item put back the way sub_4100B0
