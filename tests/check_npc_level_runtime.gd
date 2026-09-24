@@ -207,16 +207,18 @@ func _check_actor_frame(actor: CharacterBody2D, layer: TileMapLayer, activity_po
 
 
 # Between two frames in the idle branch nothing but sub_4187A0 moves the view, and it moves it
-# one step at a time.
+# one step at a time. A cubicle's occupant and the copier's first user are in that branch too,
+# but faced back every frame, and the port leaves their turn out.
 func _count_looking_around(actor: CharacterBody2D, brain: Node, stats: Dictionary) -> void:
 	var idle: bool = brain._in_idle_branch()
+	var turning: bool = idle and not brain._copying and not brain._inside_cubicle
 	var view: int = actor.view_index()
-	if idle and stats.was_idle:
+	if turning and stats.was_idle:
 		stats.idle_frames += 1
 		if view != stats.last_view:
 			stats.idle_turns += 1
 			_expect(posmod(view - int(stats.last_view), 8) in [1, 7], "%s turns one step at a time, from %d to %d" % [actor.profile.id, stats.last_view, view])
-	stats.was_idle = idle
+	stats.was_idle = turning
 	stats.last_view = view
 	var fidgeting: bool = actor.is_fidgeting()
 	if fidgeting and not stats.was_fidgeting:

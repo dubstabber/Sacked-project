@@ -116,6 +116,7 @@ func _run() -> void:
 	_check_looking_around()
 	_check_who_looks_around()
 	_check_fidgeting()
+	_check_fidgeting_at_the_copier_and_in_a_cubicle()
 	if _failures == 0:
 		print("NPC brain: source needs, target filters, arrival actions, retry limits, claim cleanup, looking around and fidgeting passed")
 	quit(1 if _failures else 0)
@@ -970,6 +971,35 @@ func _seed_where(predicate: Callable) -> int:
 			return candidate
 	_expect(false, "no seed satisfies the roll")
 	return 0
+
+
+# No tick reads the copier's +1808 or a cubicle's +1796, so the copier's first user and an
+# occupant roll IDLE#2 at 7/4096 like anyone standing about, and it plays out: sub_416340 and
+# sub_416090 only rewrite the view through sub_41A400, which does not re-resolve the clip.
+# They are faced back every frame, so the port leaves out their turn; and once the cubicle
+# timer is spent, an agent held inside is left still.
+func _check_fidgeting_at_the_copier_and_in_a_cubicle() -> void:
+	var count := 120000
+	var rate := 7.0 / 4096.0
+	for profile_id: StringName in [&"male-employee-1", &"secretary"]:
+		for kind in ["copying", "cubicle"]:
+			var fixture := _settle(profile_id, kind)
+			var brain: Node = fixture["brain"]
+			var actor: Actor = fixture["actor"]
+			brain._frame_random.seed = 4091
+			for frame in range(count):
+				brain._run_frame()
+			_expect(absf(actor.fidgets - count * rate) < 4.0 * sqrt(count * rate), "%s %s starts IDLE#2 on 7/4096 of its frames: %d in %d, expected %.0f" % [profile_id, kind, actor.fidgets, count, count * rate])
+			_expect(actor.turns.is_empty(), "%s %s never turns, got %d" % [profile_id, kind, actor.turns.size()])
+			if kind == "cubicle":
+				fixture["point"].set("locked_in", true)
+				actor.finish_activity()
+				_expect(brain._held_inside and brain._state == BRAIN.State.ACTING, "%s is held inside a locked cubicle" % profile_id)
+				actor.fidgets = 0
+				for frame in range(20000):
+					brain._run_frame()
+				_expect(actor.fidgets == 0 and actor.turns.is_empty(), "%s held inside keeps still, got %d fidgets and %d turns" % [profile_id, actor.fidgets, actor.turns.size()])
+			fixture["world"].free()
 
 
 # Which branch of its tick an agent is in decides whether it looks around, not the clip it

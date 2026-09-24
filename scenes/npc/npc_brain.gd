@@ -208,6 +208,8 @@ var _alternate_candidates: Array[Node2D] = []
 var _has_claim := false
 # agent+1824, raised by sub_416090 while the agent is inside a toilet cubicle.
 var _inside_cubicle := false
+# Kept inside once the cubicle timer is spent, locked in or waiting for the door to clear.
+var _held_inside := false
 # Set once the cubicle timer has run out on a locked door and sub_416090 turned the goal to 8.
 var _shut_in := false
 # agent+1812, which sub_417B00 raises at a special-action item for the length of its timer.
@@ -346,24 +348,28 @@ func _run_frame() -> void:
 			return
 		if (_frame_random.randi() & 0xFFF) > FIDGET_ROLL and bool(_actor.call("fidget")):
 			_showing_idle = false
+	if _copying or _inside_cubicle:
+		return
 	_look_around()
 
 
 # The branch of each tick that calls sub_4187A0: the boss's at 0x41983B, the coworkers' at
 # 0x419EBF, the janitor's at 0x41A99C and the secretary's at 0x41E4FE. Walking and sitting
-# come first in all four. After that only the coworkers' sub_419CE0 branches on the
+# (+1800) come first in all four. After that only the coworkers' sub_419CE0 branches on the
 # special-action flag +1812 and on goal 6, whatever clip those resolve to; the boss's
 # sub_419740 and the janitor's sub_41A8D0 branch only on the reaction flag +1820, and the
-# secretary's sub_41E360 on neither, so she looks around while she is angry. A cubicle's
-# occupant is faced back out of it and the copier's first user away from the copier on every
-# frame (sub_416090, sub_416340), so a look-around there would barely show; the port leaves
-# them still. See docs/npc-reference.md.
+# secretary's sub_41E360 on neither, so she looks around while she is angry. No tick reads a
+# cubicle's +1796 or the copier's +1808, so those agents roll IDLE#2 like anyone standing
+# about. sub_416090 faces the occupant back out and sub_416340 the copier's first user away
+# from the copier on every frame, so a look-around there would barely show: _run_frame leaves
+# out only the turn. An occupant held inside once its timer is spent is left still. See
+# docs/npc-reference.md.
 func _in_idle_branch() -> bool:
 	if _state == State.NAVIGATING:
 		return false
 	if _state == State.IDLE:
 		return true
-	if _has_claim or _copying:
+	if (_has_claim and not _inside_cubicle) or _held_inside:
 		return false
 	if _profile_id in COWORKER_PROFILES:
 		return not _special_action and _goal != REACTION_GOAL and _goal != SMOKING_GOAL
@@ -660,6 +666,7 @@ func _on_destination_reached() -> void:
 		# sub_416090 keeps agent+1824 raised while the agent is shut in a cubicle, so a
 		# colleague in there notices nothing. See docs/catch-reference.md.
 		_inside_cubicle = int(claim.get("item_type")) in CUBICLE_TYPES
+		_held_inside = false
 	if _goal == SMOKING_GOAL and _profile_id in COWORKER_PROFILES:
 		# sub_419CE0 plays slot 6 for goal 6; sub_41A510 drops to idle without it.
 		animation = &"special-2"
@@ -823,6 +830,7 @@ func _release_seat() -> void:
 	_claimed_seat = null
 	_has_claim = false
 	_inside_cubicle = false
+	_held_inside = false
 
 
 func _stop() -> void:
@@ -959,6 +967,7 @@ func _finish_repair() -> void:
 # when the agent is first caught out -- and it does not file a repair on its own cubicle:
 # sub_4181F0's route belongs to whoever walks up to it next.
 func _hold_inside() -> void:
+	_held_inside = true
 	var placement := _placement(_claimed_seat, false, false, null)
 	if not bool(_actor.call(
 		"start_activity", &"idle", 0.0, placement["facing"], placement["anchor"], placement["return"]
