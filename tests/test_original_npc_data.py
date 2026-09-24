@@ -3,6 +3,17 @@ import struct
 import unittest
 from pathlib import Path
 
+from tools.export_npc_profiles import (
+    CANDIDATE_SCAN_VA,
+    EXE_REL,
+    IMAGE_BASE,
+    OUTPUT_REL,
+    PROFILE_LOADER_VA,
+    build_table,
+    read_exe,
+    replay_room_masks,
+    room_masks,
+)
 from tools.import_original_level import (
     ObjectDefinition,
     build_npcs,
@@ -15,6 +26,7 @@ from tools.import_original_level import (
 ROOT = Path(__file__).resolve().parents[1]
 ORIGINAL_LEVEL = ROOT / "extract-sacked-assets/sacked/Levels/LEVEL_00.col"
 ORIGINAL_OBJECTS = ROOT / "extract-sacked-assets/sacked/CO_OBJECTS.DAT"
+ORIGINAL_EXE = ROOT / EXE_REL
 
 
 def item(instance_id, item_type, x, y):
@@ -125,6 +137,62 @@ class OriginalNpcDataTests(unittest.TestCase):
         self.assertEqual(definitions[0x00060980].interaction_offset, (1.0, 0.0))
         self.assertEqual(definitions[0x01000480].interaction_offset, (-1.0, 0.0))
         self.assertAlmostEqual(definitions[0x03090130].interaction_offset[0], 0.7)
+
+
+def initialiser(body: bytes, start: int = 0x401000) -> bytes:
+    """A fake image whose code at `start` calls sub_4184B0, runs `body`, then calls sub_4187F0."""
+    code = bytearray()
+
+    def call(target: int) -> None:
+        code.extend(b"\xE8" + struct.pack("<i", target - (start + len(code) + 5)))
+
+    code.extend(b"\x53\x8B\xD9")  # push ebx; mov ebx, ecx
+    call(PROFILE_LOADER_VA)
+    code.extend(body)
+    call(CANDIDATE_SCAN_VA)
+    image = bytearray(start - IMAGE_BASE)
+    image.extend(code)
+    return bytes(image)
+
+
+def store(offset: int, value: int) -> bytes:
+    return b"\xC7\x83" + struct.pack("<II", offset, value)
+
+
+class RoomMaskReplayTests(unittest.TestCase):
+    # sub_41A830's own sequence: eax carries 11 into the first two masks.
+    JANITOR = (b"\xB8" + struct.pack("<I", 11) + b"\x8B\xCB"
+               + b"\x89\x83" + struct.pack("<I", 1864) + b"\x89\x83" + struct.pack("<I", 1868)
+               + store(1872, 76) + store(1876, 22) + store(1880, 128) + store(1884, 92)
+               + store(1888, 12) + store(1892, 72))
+
+    def test_replays_the_three_mov_forms_between_the_two_calls(self):
+        self.assertEqual(replay_room_masks(initialiser(self.JANITOR), 0x401000), [11, 11, 76, 22, 128, 92, 12, 72])
+
+    def test_refuses_anything_outside_the_whitelist(self):
+        with self.assertRaises(SystemExit):
+            replay_room_masks(initialiser(b"\x90" + self.JANITOR), 0x401000)
+
+    def test_refuses_a_mask_left_unwritten(self):
+        with self.assertRaises(SystemExit):
+            replay_room_masks(initialiser(self.JANITOR[: -len(store(1892, 72))]), 0x401000)
+
+
+@unittest.skipUnless(ORIGINAL_EXE.is_file(), "Original game is a local, untracked reference")
+class OriginalRoomMaskTests(unittest.TestCase):
+    def test_each_archetype_has_its_own_initialisers_masks(self):
+        # sub_41E2C0 and sub_41A830 differ from the coworkers' sub_419C10 in goals 3 and 5.
+        masks = {archetype: (hex(address), rooms) for archetype, (address, rooms) in room_masks(read_exe(ROOT)).items()}
+        self.assertEqual(masks, {
+            "boss": ("0x4196a0", [10, 266, 328, 256, 128, 76, 264, 72]),
+            "secretary": ("0x41e2c0", [11, 11, 76, 4, 128, 332, 12, 72]),
+            "janitor": ("0x41a830", [11, 11, 76, 22, 128, 92, 12, 72]),
+            "coworker": ("0x419c10", [11, 11, 76, 5, 128, 76, 12, 72]),
+        })
+
+    def test_committed_profile_table_is_current(self):
+        committed = json.loads((ROOT / OUTPUT_REL).read_text(encoding="utf-8"))
+        self.assertEqual(committed, build_table(read_exe(ROOT)))
 
 
 if __name__ == "__main__":

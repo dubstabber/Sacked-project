@@ -79,6 +79,7 @@ func _init() -> void:
 func _run() -> void:
 	_check_work_cycle()
 	_check_filters()
+	_check_room_masks()
 	_check_cleanup()
 	_check_arrival_actions()
 	_check_reacting_to_a_tampered_item()
@@ -194,6 +195,31 @@ func _check_filters() -> void:
 	_expect(chair.get("occupant") == other_world, "another actor's chair claim is preserved")
 	fixture["world"].free()
 	other_world.free()
+
+
+# Each archetype's initialiser writes its own eight room masks, exported from the binary by
+# tools/export_npc_profiles.py. Goal 3's mask is where they part: rooms 0 and 2 for
+# coworkers (5), room 2 for the secretary (4, sub_41E2C0), rooms 1, 2 and 4 for the janitor
+# (22, sub_41A830). On level 8 the coworkers' row put a room-0 flipchart on her list.
+func _check_room_masks() -> void:
+	for profile_id in BRAIN.profiles():
+		_expect(BRAIN.profiles()[profile_id]["rooms"].size() == 8, "%s has eight exported room masks" % profile_id)
+	var expected := {
+		&"male-employee-1": ["Room0", "Room2"],
+		&"secretary": ["Room2"],
+		&"janitor": ["Room1", "Room2", "Room4"],
+	}
+	for profile_id: StringName in expected:
+		var fixture := _fixture(profile_id)
+		var world: Node2D = fixture["world"]
+		for room in range(5):
+			_point(world, "Room%d" % room, Vector2(6 + room, 5), Vector2.ZERO, 2, 128, room, true)
+		fixture["brain"]._build_candidates()
+		var names: Array[String] = []
+		for point in fixture["brain"]._alternate_candidates:
+			names.append(String(point.get_parent().name))
+		_expect(names == expected[profile_id], "%s picks alternate work in %s, got %s" % [profile_id, expected[profile_id], names])
+		world.free()
 
 
 func _check_cleanup() -> void:

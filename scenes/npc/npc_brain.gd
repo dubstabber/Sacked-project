@@ -58,19 +58,10 @@ const SOCIAL_APPROACH_TILES := 1.2
 const SOCIAL_RANGE_TILES := 8.0
 # sub_416770 rebuilds a social route every three seconds while it is walking.
 const SOCIAL_REFRESH_SECONDS := 3.0
-# The decay rates, speeds and notice constants come out of sub_4184B0's table at 0x46E7D8
-# through tools/export_npc_profiles.py. The room masks are compiled-in immediates rather
-# than table columns, so they stay here. See docs/npc-reference.md.
+# The decay rates, speeds and notice constants come out of sub_4184B0's table at 0x46E7D8,
+# and the room masks out of each archetype's initialiser, through
+# tools/export_npc_profiles.py. See docs/npc-reference.md.
 const PROFILE_TABLE_PATH := "res://resources/original/npc_profiles.json"
-const ROOM_MASKS := {
-	&"boss": [10, 266, 328, 256, 128, 76, 264, 72],
-	&"secretary": [11, 11, 76, 5, 128, 76, 12, 72],
-	&"janitor": [11, 11, 76, 5, 128, 76, 12, 72],
-	&"male-employee-1": [11, 11, 76, 5, 128, 76, 12, 72],
-	&"male-employee-2": [11, 11, 76, 5, 128, 76, 12, 72],
-	&"female-employee-1": [11, 11, 76, 5, 128, 76, 12, 72],
-	&"female-employee-2": [11, 11, 76, 5, 128, 76, 12, 72],
-}
 
 static var _profile_table: Dictionary = {}
 static var _repairable_types: Dictionary = {}
@@ -108,15 +99,18 @@ static func profiles() -> Dictionary:
 		return _profile_table
 	for id in parsed.get("profiles", {}):
 		var entry: Dictionary = parsed["profiles"][id]
-		var key := StringName(id)
-		if not ROOM_MASKS.has(key):
-			continue
 		var rates: Array = []
 		for rate in entry.get("rates", []):
 			rates.append(float(rate))
-		_profile_table[key] = {
+		var rooms: Array = []
+		for mask in entry.get("rooms", []):
+			rooms.append(int(mask))
+		if rates.size() != 8 or rooms.size() != 8:
+			push_warning("NPC profile %s lacks its eight rates and room masks: %s" % [id, PROFILE_TABLE_PATH])
+			continue
+		_profile_table[StringName(id)] = {
 			"rates": rates,
-			"rooms": ROOM_MASKS[key],
+			"rooms": rooms,
 			"speed_tiles": float(entry.get("speed_tiles", 0.0)),
 			"notice_radius_tiles": float(entry.get("notice_radius_tiles", 0.0)),
 			"notice_cone_degrees": float(entry.get("notice_cone_degrees", 0.0)),

@@ -10,8 +10,11 @@ into a saved base that the per-tick functions add the aggression band to:
     column 2  notice cone, deg    -> agent+1072  (base kept at agent+1860)
     columns 3..10  the eight goal decay rates -> agent+940 onwards
 
-The room masks are compiled-in immediates rather than table columns, so they stay documented
-constants in scenes/npc/npc_brain.gd. See docs/npc-reference.md and docs/catch-reference.md.
+The eight room masks at agent+1864 are not in that table. Each archetype's initialiser, its
+vtbl+28, writes them as immediates straight after calling sub_4184B0 and just before calling
+sub_4187F0, which scans the candidates through them. This tool finds each initialiser through
+its vtable slot and replays that stretch with a whitelist of three mov forms, refusing
+anything else. See docs/npc-reference.md and docs/catch-reference.md.
 """
 
 import argparse
@@ -45,6 +48,23 @@ SPAWN_IDS = {
     7: "female-employee-2",
 }
 
+# Each archetype's vtbl+28 slot; the slot after it, vtbl+32, is the archetype's tick, which
+# pins the pairing: CObj_Boss (sub_4196A0, tick sub_419740), CObj_Secretary (sub_41E2C0,
+# sub_41E360), CObj_Housekeeper (sub_41A830, sub_41A8D0) and the four coworker variants, which
+# share one class (sub_419C10, sub_419CE0).
+ROOM_MASK_SLOTS = {
+    "boss": (0x46532C, 0x419740),
+    "secretary": (0x465394, 0x41E360),
+    "janitor": (0x465360, 0x41A8D0),
+    "coworker": (0x4653C8, 0x419CE0),
+}
+COWORKER_IDS = ("male-employee-1", "male-employee-2", "female-employee-1", "female-employee-2")
+PROFILE_LOADER_VA = 0x4184B0  # sub_4184B0
+CANDIDATE_SCAN_VA = 0x4187F0  # sub_4187F0
+ROOM_MASK_OFFSET = 1864  # agent+1864 + 4 * goal
+# The call to sub_4184B0 sits a few dozen bytes into every initialiser.
+LOADER_CALL_WINDOW = 0x100
+
 # sub_415D50 seeds every agent before its profile overwrites these.
 DEFAULT_NOTICE_RADIUS = 5.0
 DEFAULT_NOTICE_CONE = 60.0
@@ -69,17 +89,82 @@ def read_exe(root: Path) -> bytes:
     return data
 
 
+def dword(data: bytes, va: int) -> int:
+    return struct.unpack_from("<I", data, va - IMAGE_BASE)[0]
+
+
+def call_target(data: bytes, va: int):
+    """The target of an `E8 rel32` at va, or None when va is not one."""
+    if data[va - IMAGE_BASE] != 0xE8:
+        return None
+    return (va + 5 + struct.unpack_from("<i", data, va + 1 - IMAGE_BASE)[0]) & 0xFFFFFFFF
+
+
+def replay_room_masks(data: bytes, initialiser: int) -> list:
+    """Replay the masks an initialiser writes between its sub_4184B0 and sub_4187F0 calls.
+
+    Only three forms occur there -- mov eax, imm32; mov [ebx+disp32], imm32 and
+    mov [ebx+disp32], eax -- plus mov ecx, ebx to pass `this` on. Anything else stops the export.
+    """
+    va = next(
+        (at + 5 for at in range(initialiser, initialiser + LOADER_CALL_WINDOW) if call_target(data, at) == PROFILE_LOADER_VA),
+        None,
+    )
+    if va is None:
+        raise SystemExit(f"sub_{initialiser:X} does not call sub_{PROFILE_LOADER_VA:X}")
+    eax = None
+    stores = {}
+    while True:
+        op = data[va - IMAGE_BASE]
+        modrm = data[va + 1 - IMAGE_BASE]
+        if op == 0xE8:
+            if call_target(data, va) != CANDIDATE_SCAN_VA:
+                raise SystemExit(f"sub_{initialiser:X} calls {call_target(data, va):#x} at {va:#x} before sub_{CANDIDATE_SCAN_VA:X}")
+            break
+        if op == 0xB8:  # mov eax, imm32
+            eax = dword(data, va + 1)
+            va += 5
+        elif op == 0x8B and modrm == 0xCB:  # mov ecx, ebx
+            va += 2
+        elif op == 0xC7 and modrm == 0x83:  # mov dword ptr [ebx+disp32], imm32
+            stores[dword(data, va + 2)] = dword(data, va + 6)
+            va += 10
+        elif op == 0x89 and modrm == 0x83 and eax is not None:  # mov [ebx+disp32], eax
+            stores[dword(data, va + 2)] = eax
+            va += 6
+        else:
+            raise SystemExit(f"sub_{initialiser:X}: unexpected opcode {op:#04x} at {va:#x}")
+    offsets = [ROOM_MASK_OFFSET + 4 * goal for goal in range(GOAL_COUNT)]
+    if sorted(stores) != offsets:
+        raise SystemExit(f"sub_{initialiser:X} writes {sorted(stores)}, expected the eight masks at {offsets}")
+    return [stores[offset] for offset in offsets]
+
+
+def room_masks(data: bytes) -> dict:
+    masks = {}
+    for archetype, (slot, tick) in ROOM_MASK_SLOTS.items():
+        initialiser = dword(data, slot)
+        if dword(data, slot + 4) != tick:
+            raise SystemExit(f"vtable slot {slot + 4:#x} is not {archetype}'s tick sub_{tick:X}")
+        masks[archetype] = (initialiser, replay_room_masks(data, initialiser))
+    return masks
+
+
 def build_table(data: bytes) -> dict:
+    masks = room_masks(data)
     profiles = {}
     for spawn_id, name in sorted(SPAWN_IDS.items()):
         offset = PROFILE_TABLE_VA - IMAGE_BASE + (spawn_id - 1) * PROFILE_FLOATS * 4
         values = struct.unpack_from("<%df" % PROFILE_FLOATS, data, offset)
+        initialiser, rooms = masks["coworker" if name in COWORKER_IDS else name]
         profiles[name] = {
             "spawn_id": spawn_id,
             "speed_tiles": round(values[0], 6),
             "notice_radius_tiles": round(values[1], 6),
             "notice_cone_degrees": round(values[2], 6),
             "rates": [round(value, 6) for value in values[3:]],
+            "rooms": rooms,
+            "rooms_written_by": "sub_%X" % initialiser,
         }
     return {
         "generated_by": "tools/export_npc_profiles.py",
@@ -115,6 +200,12 @@ def validate(table: dict) -> list:
         for rate in profile["rates"]:
             if rate < 0.0 or rate > 100.0:
                 failures.append(f"{name} has decay rate {rate} outside 0..100")
+        if len(profile["rooms"]) != GOAL_COUNT:
+            failures.append(f"{name} has {len(profile['rooms'])} room masks, expected {GOAL_COUNT}")
+        for mask in profile["rooms"]:
+            # sub_4187F0 tests `mask & (1 << room)` for the 32 rooms a level can name.
+            if not 0 < mask < 1 << 32:
+                failures.append(f"{name} has room mask {mask}, which admits no room")
     return failures
 
 
@@ -137,7 +228,7 @@ def main() -> int:
         if failures:
             print("NPC profile check failed:\n" + "\n".join(f"  {line}" for line in failures))
             return 1
-        print(f"Verified {len(table['profiles'])} NPC profiles from {table['table_address']}.")
+        print(f"Verified {len(table['profiles'])} NPC profiles from {table['table_address']} and their room masks.")
         return 0
 
     if failures:
