@@ -208,9 +208,22 @@ func _advance_target() -> void:
 
 
 func navigate_to(target_global: Vector2) -> bool:
+	var path := PackedVector2Array()
+	var standing := _command == Command.NONE and _activity_return == Vector2.INF
+	if standing:
+		# sub_416660's failed start (0x416712-0x41675E) and sub_416D50's failure exits never
+		# reach sub_41A510, so a start that finds no route leaves the clip alone, IDLE#2 too.
+		# Dropping an activity can stand the agent back on its return point, so that search
+		# waits for the drop.
+		path = _find_navigation_path(target_global)
+		if path.is_empty():
+			navigation_failed.emit.call_deferred()
+			return false
 	cancel_commands()
+	if not standing:
+		path = _find_navigation_path(target_global)
 	_navigation_target = target_global
-	_navigation_path = _find_navigation_path(target_global)
+	_navigation_path = path
 	_navigation_index = 0
 	_stuck_seconds = 0.0
 	if _navigation_path.is_empty():

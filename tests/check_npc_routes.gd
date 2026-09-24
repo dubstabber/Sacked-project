@@ -35,8 +35,9 @@ func _run() -> void:
 	await _check_missing_seated_view_uses_original_fallback()
 	await _check_turning_the_view()
 	await _check_fidgeting()
+	await _check_a_failed_start_keeps_idle_2()
 	if _failures == 0:
-		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles, retries that search nothing new, seated activities, turning the view and IDLE#2 passed")
+		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles, retries that search nothing new, seated activities, turning the view, IDLE#2 and a failed start leaving it playing passed")
 	quit(1 if _failures else 0)
 
 
@@ -392,6 +393,37 @@ func _check_fidgeting() -> void:
 	world.add_child(boss)
 	await physics_frame
 	_expect(not boss.fidget() and not boss.is_fidgeting(), "the boss has no IDLE#2 to play")
+	world.free()
+
+
+# sub_416660's failed start (0x416712-0x41675E) and sub_416D50's failure exits never call
+# sub_41A510, so IDLE#2 plays on through a goal start that finds no route. A start that finds
+# one ends it, and an agent stood up from a seat still plans from where it is stood back.
+func _check_a_failed_start_keeps_idle_2() -> void:
+	var world := _make_world()
+	var layer := _make_corridor(world, false)
+	var npc := _make_npc(_world_position(layer, Vector2(1, 1)), 1.5)
+	npc.profile = EMPLOYEE_PROFILE
+	world.add_child(npc)
+	await physics_frame
+	_expect(npc.fidget(), "a coworker starts IDLE#2")
+	var clip := String(npc.animation_player.current_animation)
+	_expect(not npc.navigate_to(_world_position(layer, Vector2(5, 1))), "a start across the shut wall finds no route")
+	_expect(npc.is_fidgeting() and String(npc.animation_player.current_animation) == clip, "and leaves IDLE#2 playing, got %s" % npc.animation_player.current_animation)
+	for frame in range(3):
+		await physics_frame
+		npc.navigate_to(_world_position(layer, Vector2(5, 1)))
+	_expect(npc.is_fidgeting() and String(npc.animation_player.current_animation) == clip, "a retry every tick does not cut it either")
+	_expect(npc.navigate_to(_world_position(layer, Vector2(1, 5))), "a start on the near side finds a route")
+	_expect(not npc.is_fidgeting() and String(npc.animation_controller.current_animation).contains("walk"), "and ends IDLE#2 for the walk, got %s" % npc.animation_controller.current_animation)
+	npc.cancel_commands()
+
+	var stood_back := _world_position(layer, Vector2(1, 1))
+	_expect(npc.start_activity(&"sit-use", 10.0, Vector2.RIGHT, _world_position(layer, Vector2(5, 1)), stood_back), "the coworker sits down on the far side")
+	_expect(npc.navigate_to(_world_position(layer, Vector2(1, 5))), "and gets up to a route that starts from its return point")
+	_expect_vector(npc.global_position, stood_back, "stood back on it first")
+	npc.cancel_commands()
+	await process_frame
 	world.free()
 
 
