@@ -72,11 +72,15 @@ not need a vision cone alone.
 whether the player may act on an object, described in `collision-reference.md:64`. A wall
 between the two hides the player even at one tile.
 
-**The facing is continuous, not the eight-way sprite index.** `agent+1848` is a float in
-degrees that `sub_4179B0` turns smoothly toward the target heading and wraps into
-`[0, 360)`; `sub_41A400` separately quantises an angle into the sprite index at `agent+124`
-with `floor((angle + 22.5) / 45) & 7`. The notice test reads the continuous value, so an
-agent part-way through a turn sees where it is actually looking.
+**The facing is a heading that follows the eight-way sprite index, not the index itself.**
+`agent+1848` is a float in degrees. Every frame `sub_402260` calls `sub_4179B0` for every
+agent, which aims it at the sprite's view, `45 * agent+124`, plus a sway of
+`10 * sin(agent+1844 + agent+72)`, and moves it 1/8 of the short way there (`sub_45E270`,
+`0x417A4C`), wrapped into `[0, 360)`. It never feeds back into the index: `sub_41A400` sets
+`agent+124` from a walking or facing direction with `floor((angle + 22.5) / 45) & 7`, and the
+look-around steps it. So the cone sways ten degrees either side of the view the sprite shows,
+and an agent that has just turned still sees roughly where it was looking. The details, and the
+60 Hz the port runs them at, are in [npc-reference.md](npc-reference.md).
 
 ## Where the radius and the cone come from
 
@@ -394,11 +398,12 @@ which is the same `sub_412E30` ray the player's own reach test uses.
 
 Three details the port had to add rather than reuse:
 
-- **A continuous facing.** The actor kept only `last_direction`, snapped to the eight sprite
-  views. `facing_screen` now records the unsnapped heading beside it, and the brain converts
-  it into logical tiles through the collision layer, because an angle is not preserved by the
-  isometric projection. `sub_4179B0` turns `agent+1848` smoothly toward the heading and that
-  rate is not recovered, so the port follows the heading directly.
+- **A notice heading.** The actor keeps only `last_direction` for its sprite, snapped to the
+  eight views. `notice_heading` beside it is `agent+1848`, eased toward that view plus the sway
+  once per 1/60 s. `facing_screen` is its screen direction, and the brain converts it into
+  logical tiles through the collision layer, because an angle is not preserved by the
+  isometric projection. The port used to aim the cone straight along the unsnapped walking or
+  activity direction.
 - **Cubicle blindness.** `_inside_cubicle` mirrors `agent+1824`, raised when the brain claims
   a cubicle and cleared when it releases the seat.
 - **An abort.** `PrankController.abort_action()` is the mode's abort state: it drops the

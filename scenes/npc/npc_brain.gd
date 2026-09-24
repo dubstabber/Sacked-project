@@ -247,6 +247,8 @@ func _initialize() -> void:
 	else:
 		_random.seed = random_seed
 		_frame_random.seed = hash(random_seed)
+		# sub_415D50's sway phase (0x415EB8), so a seeded agent's notice cone sways the same way.
+		_actor.set("sway_phase", _frame_random.randf())
 	for goal in range(8):
 		_needs.append(_random.randf_range(20.0, 100.0))
 		_rates.append(float(_configuration["rates"][goal]))
@@ -884,8 +886,8 @@ func _heading_degrees(direction: Vector2) -> float:
 	return 180.0 - rad_to_deg(atan2(direction.x, direction.y))
 
 
-# The actor keeps its heading in screen space; the map is a linear projection, so two
-# converted points give the same direction in logical tiles.
+# The actor keeps its eased heading, agent+1848, as a screen direction; the map is a linear
+# projection, so two converted points give the same direction in logical tiles.
 func _facing_tiles(layer: Node) -> Vector2:
 	var screen: Vector2 = _actor.get("facing_screen")
 	if screen == null or screen == Vector2.ZERO:

@@ -204,10 +204,12 @@ an object changes nothing, and at most one agent carries the flag. The hover tin
 independent: it follows the cursor every frame and says nothing about selection.
 
 The same flag feeds one more system, not recovered further here. `sub_402260` runs each frame
-from `Main_RenderUpdate`. For the selected agent, when `agent − player` is below 12.0
-(`flt_4652CC`) on both logical axes, it calls `sub_4179B0(1)`, which sweeps the agent's view
-heading and has `sub_428BC0` rasterise a 113 × 113 field-of-view mask octant by octant, and
-then `sub_417440` → `sub_4298E0`. The comparisons are signed, so there is no lower bound. This
+from `Main_RenderUpdate` and calls `sub_4179B0` for every agent, which eases the agent's
+notice heading `agent+1848` (see [npc-reference.md](npc-reference.md)). It passes 0 for all
+but the selected agent. For that one, when `agent − player` is below 12.0 (`flt_4652CC`) on
+both logical axes, it passes 1 (`0x4022FA`), and `sub_4179B0` then also has `sub_428BC0`
+rasterise a 113 × 113 field-of-view mask octant by octant around that heading. After that comes
+`sub_417440` → `sub_4298E0`. The comparisons are signed, so there is no lower bound. This
 is the selected coworker's line-of-sight overlay. It belongs with the camera and effects work,
 not with names.
 

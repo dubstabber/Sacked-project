@@ -17,6 +17,9 @@ const NAVIGATION := preload("res://scenes/shared/grid_navigation.gd")
 const NPC_BRAIN := preload("res://scenes/npc/npc_brain.gd")
 # Slot 1 of the coworkers' and the secretary's tables, IDLE#2.
 const FIDGET_ACTION := &"idle-2"
+# sub_4179B0's sway and easing (0x4179D7, 0x417A4C).
+const SWAY_DEGREES := 10.0
+const HEADING_EASING := 0.125
 
 enum Command { NONE, TRAVEL, ACTIVITY }
 
@@ -31,11 +34,23 @@ enum Command { NONE, TRAVEL, ACTIVITY }
 # agent+1064, which sub_402350 writes from the office-wide mean every frame.
 var aggression_band := 0
 var last_direction: Vector2 = Vector2.RIGHT
-# The unsnapped heading behind last_direction. sub_4179B0 turns agent+1848 smoothly
-# toward its target and sub_41A400 quantises that into the eight-way sprite index; the
-# turn rate is not recovered, so this follows the heading directly. The notice cone in
-# sub_418310 reads the continuous value, not the index. See docs/catch-reference.md.
+# agent+1848, the heading sub_418310 tests the player against, in the original's degrees:
+# 180 - atan2(dx, dz), so 0 is view _000 and 45 is _045. It follows the view, never the other
+# way round. sub_402260 calls sub_4179B0 for every agent each frame, which aims at the view,
+# 45 * agent+124, plus a sway of 10 * sin(agent+1844 + agent+72), and moves 1/8 of the short
+# way there (sub_45E270, 0x417A4C). It starts at 0 (0x415EC4), so a new agent's cone swings
+# in from _000. See docs/npc-reference.md.
+var notice_heading := 0.0
+# agent+1844: rand() / 32767 (0x415EB8), a phase of 0 to 1 radian rather than a full turn. A
+# seeded brain draws it again from its own stream.
+var sway_phase := randf()
+# notice_heading as a screen direction, which the brain turns back into logical tiles for the
+# notice test. See docs/catch-reference.md.
 var facing_screen: Vector2 = Vector2.RIGHT
+# agent+72, the game clock the tick last ran at, the same for every agent; the port counts it
+# from the level's start, in whole original frames.
+var _sway_clock := 0.0
+var _heading_debt := 0.0
 var _patrol_origin := Vector2.ZERO
 var _patrol_targets: Array[Vector2] = []
 var _target_index := 0
@@ -64,7 +79,7 @@ func _ready() -> void:
 	add_to_group("depth_composited_characters")
 	add_to_group("npc_agents")
 	last_direction = IsoDirection.snap_to_8_directions(initial_direction)
-	facing_screen = initial_direction.normalized() if initial_direction != Vector2.ZERO else facing_screen
+	facing_screen = _heading_screen(notice_heading)
 	_patrol_origin = global_position
 	_build_patrol_targets()
 	apply_profile(profile)
@@ -83,6 +98,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_ease_notice_heading(delta)
 	if _command == Command.TRAVEL:
 		_follow_navigation(delta)
 		return
@@ -124,7 +140,6 @@ func _physics_process(delta: float) -> void:
 
 	var snapped_direction := IsoDirection.snap_to_8_directions(to_target.normalized())
 	last_direction = snapped_direction
-	facing_screen = to_target.normalized()
 	velocity = IsoDirection.screen_velocity(to_target, get_move_speed_tiles())
 	animation_controller.play_walk(snapped_direction)
 	velocity = MAP_COLLISION.constrain_body_motion(self, velocity * delta) / delta
@@ -274,7 +289,6 @@ func _follow_navigation(delta: float) -> void:
 			destination_reached.emit()
 		return
 	last_direction = IsoDirection.snap_to_8_directions(to_target.normalized())
-	facing_screen = to_target.normalized()
 	animation_controller.play_walk(last_direction)
 	var motion := IsoDirection.screen_velocity(to_target, get_move_speed_tiles()) * delta
 	if motion.length_squared() > to_target.length_squared():
@@ -291,7 +305,6 @@ func start_activity(animation: StringName, duration: float, facing: Vector2, anc
 	cancel_commands()
 	if facing != Vector2.ZERO:
 		last_direction = IsoDirection.snap_to_8_directions(facing.normalized())
-		facing_screen = facing.normalized()
 	_show_clip(animation)
 	if anchor != Vector2.INF:
 		global_position = anchor
@@ -321,7 +334,6 @@ func _show_clip(animation: StringName) -> void:
 func turn_view(step: int) -> void:
 	var directions := IsoDirection.get_screen_directions()
 	last_direction = directions[posmod(view_index() + step, directions.size())]
-	facing_screen = last_direction
 	if _fidgeting:
 		animation_controller.play_animation(_action_clip(FIDGET_ACTION))
 	elif _command != Command.TRAVEL:
@@ -348,6 +360,33 @@ func _on_animation_finished(animation_name: StringName) -> void:
 	if _fidgeting and String(animation_name) == animation_controller.current_animation:
 		_fidgeting = false
 		animation_controller.play_idle(last_direction)
+
+
+# sub_4179B0, once per original frame at the port's nominal 60 Hz (see npc_brain.gd).
+func _ease_notice_heading(delta: float) -> void:
+	_heading_debt += delta
+	while _heading_debt >= NPC_BRAIN.ORIGINAL_FRAME_SECONDS:
+		_heading_debt -= NPC_BRAIN.ORIGINAL_FRAME_SECONDS
+		_sway_clock += NPC_BRAIN.ORIGINAL_FRAME_SECONDS
+		var target := fposmod(45.0 * view_index() + SWAY_DEGREES * sin(sway_phase + _sway_clock), 360.0)
+		notice_heading = fposmod(notice_heading - HEADING_EASING * heading_difference(notice_heading, target), 360.0)
+		facing_screen = _heading_screen(notice_heading)
+
+
+# sub_45E270: heading minus target the short way round, within (-180, 180].
+static func heading_difference(heading: float, target: float) -> float:
+	if heading == target:
+		return 0.0
+	if target <= heading:
+		var behind := heading - target
+		return behind - 360.0 if behind > 180.0 else behind
+	var ahead := target - heading
+	return 360.0 - ahead if ahead > 180.0 else -ahead
+
+
+static func _heading_screen(heading: float) -> Vector2:
+	var radians := deg_to_rad(heading)
+	return IsoDirection.ground_to_screen(Vector2(sin(radians), -cos(radians))).normalized()
 
 
 # agent+124: the eight-way view, numbered as the sprite suffixes are, _000 through _315.
