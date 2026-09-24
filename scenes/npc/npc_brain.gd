@@ -176,6 +176,8 @@ var _alternate_candidates: Array[Node2D] = []
 var _has_claim := false
 # agent+1824, raised by sub_416090 while the agent is inside a toilet cubicle.
 var _inside_cubicle := false
+# Set once the cubicle timer has run out on a locked door and sub_416090 turned the goal to 8.
+var _shut_in := false
 var _initialized := false
 
 
@@ -248,6 +250,11 @@ func _physics_process(delta: float) -> void:
 			_on_navigation_failed()
 		elif _state == State.ACTING and (not is_instance_valid(_target) or (_has_claim and not is_instance_valid(_claimed_seat))):
 			_stop()
+		elif _shut_in and not is_locked_in():
+			# Past its timer sub_416090 tests item+224 on every tick, so the repair that
+			# clears it lets the inmate out at once rather than after another sulk.
+			_actor.call("cancel_commands")
+			_on_activity_finished()
 		return
 	# sub_416540 gates a queued start on the same timer that holds the retry delay.
 	if _retry_delay > 0.0:
@@ -350,12 +357,6 @@ func _select_target(goal: int) -> Dictionary:
 			# variant 3 falls back to picking an arbitrary desk.
 			return {}
 		if _random.randf() < 0.875:
-			if is_instance_valid(workstation) and not _available(workstation):
-				return {}
-			if is_instance_valid(chair) and not _available(chair):
-				chair = null
-			if workstation == null and chair == null:
-				return {}
 			return {"active": workstation, "passive": chair}
 	var candidates := _candidates(goal, goal == 3)
 	if candidates.is_empty():
@@ -391,11 +392,15 @@ func _scan_candidates(category: int, goal: int) -> Array[Node2D]:
 	return result
 
 
+# Neither sub_417120 nor sub_410EA0 reads item+216: a seat, cubicle or copier someone is
+# using stays a candidate, and sub_417B00 only finds out on arrival (0x417D64, 0x417EDB,
+# 0x417F16), leaving the agent standing for sub_416660's 10-16 s. That is also what lets a
+# colleague reach a cubicle whose occupant has been locked in, and file its repair.
 func _candidates(goal: int, alternate_work := false) -> Array[Node2D]:
 	var pool: Array = _alternate_candidates if alternate_work else _goal_candidates[goal]
 	var result: Array[Node2D] = []
 	for point in pool:
-		if _available(point):
+		if is_instance_valid(point):
 			result.append(point)
 	return result
 
@@ -648,7 +653,11 @@ func _on_activity_finished() -> void:
 	_release_seat()
 	_finish_repair()
 	_clear_object_state()
-	if _goal == REACTION_GOAL or _goal == REPAIR_GOAL:
+	if _shut_in:
+		# sub_4165D0 completes goal 8, whose need slot lies past the eight sub_416770
+		# decays, so a freed inmate still wants the toilet it never got to use.
+		_shut_in = false
+	elif _goal == REACTION_GOAL or _goal == REPAIR_GOAL:
 		# sub_416450 ends the reaction by resetting every need, not just the one it was
 		# after, so a provoked agent walks away with nothing left to want.
 		for goal in range(_needs.size()):
@@ -686,6 +695,7 @@ func _stop() -> void:
 	_release_seat()
 	_clear_object_state()
 	_repair_job = null
+	_shut_in = false
 	_state = State.IDLE
 	_goal = -1
 	_pending_goal = -1
@@ -803,17 +813,21 @@ func _finish_repair() -> void:
 	_repair_job = null
 
 
-# The occupant of a locked cubicle keeps sulking where it sits. It does not re-score the
-# player -- sub_41DEA0 pays once, when the agent is first caught out -- and it does not file
-# a repair on its own cubicle: sub_4181F0's route belongs to whoever walks up to it next.
+# The occupant of a locked cubicle keeps sulking inside it: sub_416090 sets goal 8 at
+# 0x416143 and never moves it off the item's anchor. It does not re-score the player --
+# sub_41DEA0 pays once, when the agent is first caught out -- and it does not file a repair
+# on its own cubicle: sub_4181F0's route belongs to whoever walks up to it next.
 func _stay_shut_in() -> void:
 	var animation := REACTION_CLIPS.get(_profile_id, &"pissed") as StringName
-	var facing: Vector2 = _actor.get("last_direction")
-	if not bool(_actor.call("start_activity", animation, _random.randf_range(10.0, 12.0), facing)):
+	var placement := _placement(_claimed_seat, false, false, null)
+	if not bool(_actor.call(
+		"start_activity", animation, _random.randf_range(10.0, 12.0), placement["facing"], placement["anchor"], placement["return"]
+	)):
 		_state = State.IDLE
 		return
 	_goal = REACTION_GOAL
 	_state = State.ACTING
+	_shut_in = true
 
 
 func _set_object_state(point: Node, state: int) -> Node:

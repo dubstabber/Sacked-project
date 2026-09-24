@@ -82,8 +82,10 @@ func _run() -> void:
 	_check_room_masks()
 	_check_cleanup()
 	_check_arrival_actions()
+	_check_arriving_at_a_taken_target()
 	_check_reacting_to_a_tampered_item()
 	_check_repairing_a_broken_item()
+	_check_rescuing_a_locked_in_colleague()
 	_check_social_target()
 	_check_routes_end_on_cell_centres()
 	_check_interrupted_activity()
@@ -187,7 +189,7 @@ func _check_filters() -> void:
 	_expect(brain._candidates(2) == [valid], "targets obey goal category, room mask and current world")
 	_expect(brain._candidates(0) == [fridge], "a special-action item is an ordinary candidate for its goal")
 	valid.set("occupant", other_world)
-	_expect(brain._candidates(2).is_empty(), "claimed activity points are unavailable to another NPC")
+	_expect(brain._candidates(2) == [valid], "sub_417120 keeps a claimed point on the list; only the arrival tests it")
 	var chair: Node2D = fixture["chair"]
 	chair.set("occupant", other_world)
 	_begin_work(fixture)
@@ -426,6 +428,48 @@ func _arrive(fixture: Dictionary, goal := 2) -> Dictionary:
 	return result
 
 
+# sub_417120 picks without reading item+216, so an agent walks to a seat or cubicle somebody
+# else holds. sub_417B00 finds it taken only on arrival (0x417D64 cubicles, 0x417F16 relaxed
+# seats), and the agent stands there for sub_416660's 10-16 s before the goal completes.
+func _check_arriving_at_a_taken_target() -> void:
+	for spec in [[8, 173, 7, true, 4], [7, 182, 3, false, 7]]:
+		var fixture := _point_fixture(spec[0], spec[1], spec[2], spec[3])
+		var brain: Node = fixture["brain"]
+		var actor: Actor = fixture["actor"]
+		var point: Node2D = fixture["point"]
+		var goal: int = spec[4]
+		var holder := Node2D.new()
+		fixture["world"].add_child(holder)
+		point.set("occupant", holder)
+		_expect(brain._select_target(goal).values().has(point), "goal %d still picks the taken type %d" % [goal, spec[1]])
+		brain._attempt_goal(goal)
+		_expect(brain._state == BRAIN.State.NAVIGATING and brain._target == point, "goal %d walks to the taken type %d" % [goal, spec[1]])
+		actor.destination_reached.emit()
+		var duration := float(actor.activity.get("duration", 0.0))
+		_expect(actor.activity.get("animation") == &"idle", "type %d, taken: the agent stands idle" % spec[1])
+		_expect(duration >= 10.0 and duration <= 16.0, "type %d, taken: the default 10-16 s timer runs, got %f" % [spec[1], duration])
+		_expect(actor.activity.get("anchor", Vector2.INF) == Vector2.INF, "type %d, taken: the agent stays where it arrived" % spec[1])
+		_expect(point.get("occupant") == holder, "type %d, taken: the holder keeps its claim" % spec[1])
+		brain._needs[goal] = 1.0
+		actor.finish_activity()
+		_expect(brain._state == BRAIN.State.IDLE and brain._needs[goal] >= 60.0, "type %d, taken: the wait still completes goal %d" % [spec[1], goal])
+		fixture["world"].free()
+
+	# Goal 3's pair comes back whole even when the assigned chair is taken; the monitor's own
+	# seat search (sub_418230, tested in _check_filters) is what skips it.
+	var work := _fixture()
+	var chair: Node2D = work["chair"]
+	chair.set("occupant", work["world"])
+	var pairs := 0
+	for attempt in range(16):
+		var selection: Dictionary = work["brain"]._select_target(3)
+		if selection.get("active") == work["monitor"]:
+			pairs += 1
+			_expect(selection.get("passive") == chair, "the assigned pair keeps its taken chair")
+	_expect(pairs > 0, "the assigned pair is drawn 7 times in 8")
+	work["world"].free()
+
+
 # sub_417B00 checks the item it arrived at for tampering before it looks at the type, and
 # sub_416450 runs the reaction from there. See docs/npc-reference.md.
 func _check_reacting_to_a_tampered_item() -> void:
@@ -595,3 +639,61 @@ func _check_repairing_a_broken_item() -> void:
 			node.queue_free()
 	root.remove_child(session)
 	session.free()
+
+
+# Actions 110 and 112 lock a cubicle's occupant in. sub_417120 still hands that cubicle to the
+# next colleague who needs it; the colleague finds it tampered with, reacts, and files the
+# repair through sub_4181F0 (type 173 with item+224 set). The repair's expiry resets the item
+# (sub_4100B0), and on its next tick sub_416090 lets the inmate out.
+func _check_rescuing_a_locked_in_colleague() -> void:
+	var fixture := _point_fixture(8, 173, 7, true)
+	var world: Node2D = fixture["world"]
+	var brain: Node = fixture["brain"]
+	var actor: Actor = fixture["actor"]
+	var cubicle: Node2D = fixture["point"]
+	var item := (cubicle.get_parent() as Node2D).global_position
+
+	var inmate := Actor.new()
+	inmate.name = "Inmate"
+	var inmate_brain := BRAIN.new()
+	inmate_brain.name = "Brain"
+	inmate_brain.random_seed = 7
+	inmate.add_child(inmate_brain)
+	world.add_child(inmate)
+	inmate_brain._initialize()
+	inmate_brain.set_physics_process(false)
+	inmate_brain._target = cubicle
+	inmate_brain._active = cubicle
+	inmate_brain._state = BRAIN.State.NAVIGATING
+	inmate_brain._goal = 4
+	inmate.destination_reached.emit()
+	_expect(cubicle.get("occupant") == inmate and inmate.global_position.is_equal_approx(item), "the inmate goes into the cubicle")
+	# The prank's lock, and the tampered mark sub_41B240 leaves after any action.
+	cubicle.set("locked_in", true)
+	cubicle.set("tampered", true)
+	var toilet_need: float = inmate_brain._needs[4]
+	inmate.finish_activity()
+	_expect(inmate_brain._goal == BRAIN.REACTION_GOAL and inmate_brain.is_locked_in(), "a locked-in occupant turns angry when its timer runs out")
+	_expect(inmate.global_position.is_equal_approx(item), "the locked-in occupant stays inside the cubicle")
+	_expect(inmate_brain.is_blind(), "and sees nothing from in there")
+	inmate.finish_activity()
+	_expect(cubicle.get("occupant") == inmate and inmate.global_position.is_equal_approx(item), "sulking longer does not let it out")
+
+	_expect(brain._candidates(4) == [cubicle], "the locked, tampered, occupied cubicle is still a goal-4 candidate")
+	brain._attempt_goal(4)
+	_expect(brain._state == BRAIN.State.NAVIGATING and brain._target == cubicle, "a colleague who needs the toilet walks to it")
+	actor.destination_reached.emit()
+	_expect(actor.activity.get("animation") == &"pissed", "the colleague finds it tampered with and reacts")
+	_expect(brain._repair_job == cubicle, "sub_4181F0 files the locked cubicle as the colleague's repair job")
+	_expect(cubicle.get("occupant") == inmate, "the colleague does not take the cubicle")
+	inmate_brain._physics_process(0.1)
+	_expect(cubicle.get("occupant") == inmate, "the inmate stays locked in while the repair runs")
+	actor.finish_activity()
+	_expect(not bool(cubicle.get("locked_in")) and not bool(cubicle.get("tampered")), "the finished repair resets the cubicle")
+	_expect(brain._repair_job == null, "the repair job is done")
+	inmate_brain._physics_process(0.1)
+	_expect(cubicle.get("occupant") == null, "the inmate leaves on its next tick")
+	_expect(inmate.global_position.is_equal_approx(cubicle.global_position), "the inmate steps out onto the interaction point")
+	_expect(inmate_brain._state == BRAIN.State.IDLE and not inmate_brain.is_blind(), "the inmate is free and can see again")
+	_expect(inmate_brain._needs[4] == toilet_need, "being let out completes goal 8, not the toilet goal")
+	world.free()

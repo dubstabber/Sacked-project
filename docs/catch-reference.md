@@ -133,7 +133,8 @@ Only `sub_416090`, the toilet-cubicle behaviour, ever raises it. An agent that h
 into a cubicle sets it to 1 while its timer runs (`0x4161c1`) and clears it when it steps
 back out (`0x41612f`); `sub_415D50` starts it at 0 and `sub_416770` clears it. An agent
 locked in by actions 110 or 112 — the cubicle's `item+224` — never reaches the clearing
-branch, so **locking a colleague in a cubicle also blinds them for the rest of the level**.
+branch, so **locking a colleague in a cubicle also blinds them until a repair lets them
+out** (goal 9 below).
 
 ## The hand-off
 

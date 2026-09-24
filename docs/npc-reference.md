@@ -121,7 +121,7 @@ The secretary and the janitor differ from the coworkers only in goal 3 (work) an
 
 `sub_417320` picks the social partner: it walks the whole agent list and keeps the **last** agent that is not itself, whose gender at `+1744` differs from its own, and which lies within **8 logical tiles** — not the nearest one. `sub_416960` then aims at a point **1.2 tiles in front** of that agent, derived from the agent's own eight-direction facing, and `sub_416770` rebuilds that route every **three seconds** while it walks. Boss and male coworkers have gender 0; female coworkers have gender 1 (`sub_404B90`, `sub_405010`).
 
-Note that `sub_4187F0` builds each goal's candidate list **once**, at startup, and `sub_417120` draws a random index from that stored list. It does not rescan the item list per attempt, and it does not filter on occupation at selection time — occupation is only checked when the action starts.
+Note that `sub_4187F0` builds each goal's candidate list **once**, at startup, and `sub_417120` draws a random index from that stored list. It does not rescan the item list per attempt, and it does not filter on occupation at selection time — occupation is only checked when the action starts. Neither `sub_417120` nor its lookup `sub_410EA0` reads `item+216`, and goal 3's assigned pair comes back whole even when the chair is taken. `sub_417B00` tests `+216` only on arrival: at `0x417D64` for cubicles, `0x417EDB` for work chairs 68–71 and `0x417F16` for relaxed seats, plus `sub_418230`'s own test (`0x418285`) in the monitor's seat search. An agent that finds its target taken claims nothing and stands there for the 10–16 seconds `sub_416660` set when the goal started; `sub_4165D0` then completes the goal as usual. The port used to drop taken points from the candidate list, which the original never does.
 
 ## Workstations and seated actions
 
@@ -303,7 +303,16 @@ stretch, and ends by resetting **all eight needs** to a random 60–100 rather t
 one it was pursuing.
 
 `sub_416090` is a separate goal-8 case: an agent inside a cubicle whose `item+224` is set —
-the flag actions 110 and 112 apply — is angry for as long as it stays locked in.
+the flag actions 110 and 112 apply — is angry for as long as it stays locked in. Once its
+cubicle timer has run out, every tick sets goal 8 (`0x416143`) and returns busy without
+moving the agent off the item's anchor, so it stays inside. The first tick after `item+224`
+clears, which only an item reset does (a finished repair, below), it steps back out onto the
+interaction point and releases the cubicle. `sub_4165D0` then completes goal 8, and
+`sub_415FD0` writes that goal's need slot, which lies past the eight needs `sub_416770`
+decays (`0x4168F0`). So being let out satisfies nothing: the inmate still wants the toilet
+it never got to use. The port does all of this. Its locked-in agent used to be stood back on
+the interaction point at the end of its first timer and sulk outside the cubicle, and a
+repair would only have let it out at the end of the current 10–12 second sulk.
 
 The arrival path in `sub_417B00` awards **25 points** through `sub_41DEA0(0x19, x, y)` at the
 agent's own position, which confirms the published walkthrough's "+25 when a colleague tries
@@ -377,6 +386,13 @@ have yet:
   rather than the `ANGRY` one — and on `_on_activity_finished` puts the item back: the
   activity point's `reset_actions()` plus state 0 on the object. The clip stays the
   reaction's own, because no per-tick function has a repair branch.
+
+  The cubicle route only works because picks ignore occupation (see "Goals and target
+  selection"). While the brain dropped taken points from its candidate lists, a locked
+  cubicle, whose inmate keeps its claim, could never be picked. `sub_4181F0` then never
+  fired, and nobody locked in by action 110 or 112 was ever let out.
+  `tests/check_npc_brain.gd` now runs the whole rescue: a colleague picks the locked, tampered,
+  occupied cubicle, reacts, files the repair, and the repair's end lets the inmate out.
 
   The 30 types come from `tools/export_repairable_types.py`, which decodes `sub_4180F0`'s
   jump table out of the binary. What a finished repair does to the item, including that it
