@@ -770,6 +770,44 @@ def points_file_differences(level: Dict[str, object], points_level: Dict[str, ob
     return [key for key in sorted(level) if key != "condition" and level[key] != points_level.get(key)]
 
 
+# ITEM records the original loads but never lets the player see, left out of the scene. Keyed
+# by (level file, record) to the kind and tile position the record must still have.
+#
+# The original keeps an item wherever it sits: sub_412FB0 hands every ITEM chunk to sub_412AB0,
+# whose sub_410550 / sub_42B330 take the raw position with no bounds test, and sub_411E20 /
+# sub_41A2D0 / sub_40FCE0 cull only against the camera rect (item+232, the one hide flag, is set
+# only during actions). That rect is 800 x 600, centred on the player's ground position with no
+# clamp (sub_405750 0x405870-0x405885, CIsoCamera 0x409240, sub_402590 0x402771-0x4027A3,
+# sub_403780 0x4037B0). Level 3's spare monitor stands five tiles off the map, and from the
+# closest spot the player can reach at most a ~10 px sliver of its transparent-tapered keyboard
+# tip enters that rect; the port's wider canvas would show all of it floating in the void.
+# LEVEL_02s.col repeats the record and matters only if level 3 ever earns a points build.
+# LEVEL_10s.col ITEM132, the only other record off the map, is fully visible at 4:3 and stays.
+# See docs/widescreen.md.
+PARKED_RECORDS: Dict[Tuple[str, str], Tuple[int, float, float]] = {
+    ("LEVEL_02.col", "ITEM22"): (0x00060980, -5.0, 16.0),
+    ("LEVEL_02s.col", "ITEM22"): (0x00060980, -5.0, 16.0),
+}
+
+
+def parked_record_names(source_name: str, items: List[Dict[str, object]]) -> set:
+    """The records of one level file that PARKED_RECORDS leaves out of its scene.
+
+    Every entry for the file must still match its record exactly, so a changed level file
+    fails the import instead of quietly dropping, or keeping, the wrong item.
+    """
+    by_name = {item["record_name"]: item for item in items}
+    parked = set()
+    for (source, record_name), expected in PARKED_RECORDS.items():
+        if source != source_name:
+            continue
+        item = by_name.get(record_name)
+        if item is None or (int(item["kind"]), float(item["x"]), float(item["y"])) != expected:
+            raise ValueError(f"{source_name} {record_name} no longer matches its PARKED_RECORDS entry {expected}")
+        parked.add(record_name)
+    return parked
+
+
 def build_level(root: Path, number: int, context: ImportContext) -> LevelBuild:
     """One level, plus the second build its points-mode file earns when it diverges."""
     paths = level_paths(number)
@@ -815,12 +853,25 @@ def manifest_from_level(
     source_to_dest: Dict[Path, Path] = {}
     resolved_by_source: Dict[str, ResolvedTexture] = {}
     objects: List[Dict[str, object]] = []
+    parked_names = parked_record_names(paths.source_rel.name, level["items"])
+    parked_items: List[Dict[str, object]] = []
     for item in level["items"]:
         kind = int(item["kind"])
         object_id = kind & 0xFFFFFFF0
         definition = object_db.get(kind) or object_db.get(object_id)
         if definition is None:
             raise ValueError("No object definition for kind 0x%08x" % kind)
+        if item["record_name"] in parked_names:
+            parked_items.append(
+                {
+                    "record_name": item["record_name"],
+                    "instance_id": int(item["instance_id"]),
+                    "kind": "0x%08x" % kind,
+                    "sprite_name": definition.sprite_name,
+                    "tile_position": [round_float(float(item["x"])), round_float(float(item["y"]))],
+                }
+            )
+            continue
         variant = kind & 0xF
         interaction_offset = oriented_interaction_offset(definition.interaction_offset, variant)
         texture = resolve_texture(definition, variant, texture_candidates)
@@ -869,6 +920,15 @@ def manifest_from_level(
                 "flags": int(spawn["flags"]),
             }
         )
+
+    # sub_4185B0's startup search sees every item, parked or not, but a parked item has no
+    # node for build_level_scene.gd to point an assignment at.
+    npcs = build_npcs(level, object_db)
+    parked_ids = {entry["instance_id"] for entry in parked_items}
+    for npc in npcs:
+        for field in ("assigned_workstation_instance_id", "assigned_chair_instance_id"):
+            if npc[field] in parked_ids:
+                raise ValueError(f"{paths.source_rel.name} {npc['node_name']} is assigned parked item {npc[field]}")
 
     manifest = {
         "generated_by": "tools/import_original_level.py",
@@ -931,7 +991,9 @@ def manifest_from_level(
             },
         ],
         "objects": objects,
-        "npcs": build_npcs(level, object_db),
+        # Only a level that parks something carries this, so every other manifest is unchanged.
+        **({"parked_items": parked_items} if parked_items else {}),
+        "npcs": npcs,
         "spawns": spawns,
         "player_spawn_id": 0,
         "ignored_layers": {

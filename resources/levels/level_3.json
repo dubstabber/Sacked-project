@@ -2624,43 +2624,6 @@
       "display_name": "Tastatur frontal",
       "flags": 1,
       "height": 0.0,
-      "instance_id": 30,
-      "interaction_tile_position": [
-        -4.0,
-        16.0
-      ],
-      "kind": "0x00060980",
-      "node_name": "Object030MonitorTastaturFrontal",
-      "object_category": 5,
-      "object_id": "0x00060980",
-      "pivot": [
-        21,
-        89
-      ],
-      "record_name": "ITEM22",
-      "source_sprite": "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_000_MonitorFrontal#Idle#000#",
-      "sprite_name": "MONITOR&TASTATUR#FRONTAL",
-      "texture": "res://images/objects/aktiv-monitor-tastatur-frontal-000.png",
-      "texture_size": [
-        50,
-        52
-      ],
-      "tile_position": [
-        -5.0,
-        16.0
-      ],
-      "variant": 0
-    },
-    {
-      "action_ids": [
-        13,
-        14,
-        15,
-        58
-      ],
-      "display_name": "Tastatur frontal",
-      "flags": 1,
-      "height": 0.0,
       "instance_id": 31,
       "interaction_tile_position": [
         16.166666,
@@ -5955,6 +5918,18 @@
   ],
   "original_level_index": 2,
   "original_level_text": "extract-sacked-assets/sacked/Levels/Level_02.txt",
+  "parked_items": [
+    {
+      "instance_id": 30,
+      "kind": "0x00060980",
+      "record_name": "ITEM22",
+      "sprite_name": "MONITOR&TASTATUR#FRONTAL",
+      "tile_position": [
+        -5.0,
+        16.0
+      ]
+    }
+  ],
   "playable_level_number": 3,
   "player_spawn_id": 0,
   "source": "extract-sacked-assets/sacked/Levels/LEVEL_02.col",

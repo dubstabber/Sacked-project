@@ -1,18 +1,23 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from tools.import_original_level import (
     LEVEL_COUNT,
+    PARKED_RECORDS,
     LevelBuild,
     LevelPaths,
     build_level,
+    build_npcs,
     check_texture_union,
     every_build,
     imported_level_numbers,
     imported_manifest_paths,
     level_paths,
     load_import_context,
+    parked_record_names,
+    parse_level_file,
     points_file_differences,
     remove_stale_object_prefabs,
     remove_stale_object_textures,
@@ -204,6 +209,116 @@ class PointsVariantTests(unittest.TestCase):
         for number in DIVERGENT_POINTS_LEVELS:
             index = labels.index(str(number))
             self.assertEqual(labels[index + 1], "%ds" % number)
+
+
+def on_the_original_map(item, width: int, height: int) -> bool:
+    """The original's own map-membership test for an item.
+
+    sub_4187F0 looks an item up with sub_412AE0((int16)_ftol(x + 0.5), (int16)_ftol(y + 0.5)),
+    which answers 0 outside [0, w) x [0, h) (0x412AE9, 0x412B0F). int() truncates toward zero
+    like _ftol.
+    """
+    return 0 <= int(item["x"] + 0.5) < width and 0 <= int(item["y"] + 0.5) < height
+
+
+class ParkedRecordTests(unittest.TestCase):
+    """The original keeps every ITEM wherever it stands; the port leaves out only what the
+    original's 4:3 view never shows."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.context = load_import_context(ROOT)
+        cls.files = {}
+        for number in range(1, LEVEL_COUNT + 1):
+            for points in (False, True):
+                paths = level_paths(number, points=points)
+                cls.files[paths.label] = (paths, parse_level_file(ROOT / paths.source_rel))
+
+    def test_only_three_records_in_the_campaign_stand_off_the_map(self):
+        # Every one of the other 224 records past an edge is wall-hung and overhangs by at
+        # most a third of a tile, which the original's lookup still rounds onto the map.
+        off_map = {
+            (label, item["record_name"])
+            for label, (_, level) in self.files.items()
+            for item in level["items"]
+            if not on_the_original_map(item, level["width"], level["height"])
+        }
+        self.assertEqual(off_map, {("3", "ITEM22"), ("3s", "ITEM22"), ("11s", "ITEM132")})
+
+    def test_only_level_3s_spare_monitor_is_parked(self):
+        self.assertEqual(set(PARKED_RECORDS), {("LEVEL_02.col", "ITEM22"), ("LEVEL_02s.col", "ITEM22")})
+        for label in ("3", "3s"):
+            with self.subTest(label=label):
+                paths, level = self.files[label]
+                self.assertEqual(parked_record_names(paths.source_rel.name, level["items"]), {"ITEM22"})
+        # LEVEL_10s.col's cigarettes are off the map too, but the original shows them whole at
+        # 4:3, so they stay.
+        paths, level = self.files["11s"]
+        self.assertEqual(parked_record_names(paths.source_rel.name, level["items"]), set())
+        variant = campaign()[0][11].points_variant.manifest
+        self.assertIn(140, [entry["instance_id"] for entry in variant["objects"]])
+        self.assertNotIn("parked_items", variant)
+
+    def test_a_parked_record_that_no_longer_matches_fails_the_import(self):
+        paths, level = self.files["3"]
+        for field, value in (("x", -4.0), ("y", 15.0), ("kind", 0x00060990)):
+            with self.subTest(field=field):
+                items = [dict(item, **{field: value}) if item["record_name"] == "ITEM22" else item for item in level["items"]]
+                with self.assertRaisesRegex(ValueError, "PARKED_RECORDS"):
+                    parked_record_names(paths.source_rel.name, items)
+        without = [item for item in level["items"] if item["record_name"] != "ITEM22"]
+        with self.assertRaisesRegex(ValueError, "PARKED_RECORDS"):
+            parked_record_names(paths.source_rel.name, without)
+
+    def test_level_3_leaves_the_monitor_out_of_its_scene_but_not_out_of_the_npc_search(self):
+        manifest = campaign()[0][3].manifest
+        self.assertEqual(len(manifest["objects"]), 122)
+        self.assertNotIn(30, [entry["instance_id"] for entry in manifest["objects"]])
+        self.assertEqual(
+            manifest["parked_items"],
+            [
+                {
+                    "record_name": "ITEM22",
+                    "instance_id": 30,
+                    "kind": "0x00060980",
+                    "sprite_name": "MONITOR&TASTATUR#FRONTAL",
+                    "tile_position": [-5.0, 16.0],
+                }
+            ],
+        )
+        # sub_4185B0's startup search runs over every item, and still hands out the desks
+        # and chairs it did before the monitor was parked.
+        self.assertEqual(manifest["npcs"], build_npcs(self.files["3"][1], self.context.object_db))
+        self.assertEqual(
+            [(npc["assigned_workstation_instance_id"], npc["assigned_chair_instance_id"]) for npc in manifest["npcs"]],
+            [(118, 112), (33, 29), (117, 111), (31, 26), (32, 25)],
+        )
+
+    def test_no_other_build_parks_anything(self):
+        for built in every_build(campaign()[0]):
+            with self.subTest(label=built.paths.label):
+                self.assertEqual("parked_items" in built.manifest, built.paths.label == "3")
+
+    def test_wall_hung_items_that_overhang_the_edge_stay(self):
+        builds = campaign()[0]
+        for number, instance_id, sprite_name in (
+            (1, 21, "FENSTER01"),  # ITEM13 at (-0.052, 5.885)
+            (11, 8, "EINGANG"),  # ITEM0 at (-0.333, 10.083)
+            (15, 114, "BILD01"),  # ITEM106 at (-0.333, 8.458)
+            (20, 83, "FAHRSTUHL"),  # ITEM75 at (6.094, -0.260)
+        ):
+            with self.subTest(number=number):
+                objects = {entry["instance_id"]: entry for entry in builds[number].manifest["objects"]}
+                self.assertEqual(objects[instance_id]["sprite_name"], sprite_name)
+
+    def test_an_npc_assigned_a_parked_item_fails_the_import(self):
+        # Level 1's ITEM2 is the desk Npc079 sits at; parking it would leave the builder an
+        # assignment with no node to point at.
+        desk = next(item for item in self.files["1"][1]["items"] if item["record_name"] == "ITEM2")
+        entry = {("LEVEL_00.col", "ITEM2"): (int(desk["kind"]), float(desk["x"]), float(desk["y"]))}
+        with mock.patch.dict(PARKED_RECORDS, entry):
+            with self.assertRaisesRegex(ValueError, "assigned parked item 10"):
+                build(1, self.context)
 
 
 class TextureUnionTests(unittest.TestCase):

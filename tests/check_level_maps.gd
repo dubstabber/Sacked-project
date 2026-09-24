@@ -188,6 +188,25 @@ func _check_objects(world: Node, manifest: Dictionary, floor_layer: TileMapLayer
 		_fail("level %s object node count: expected %d got %d" % [label, entries.size(), objects_node.get_child_count(),
 		])
 		return
+	# PARKED_RECORDS in tools/import_original_level.py leaves out what the original's 4:3 view
+	# never shows. Such a record lies off the map by the original's own lookup, sub_412AE0 on
+	# (int)(x + 0.5), (int)(y + 0.5), and must not reach the scene.
+	var map_data: Dictionary = manifest.get("map", {})
+	for parked: Dictionary in manifest.get("parked_items", []):
+		var instance_id := int(parked.get("instance_id", -1))
+		var tile := _vector2(parked.get("tile_position", [0.0, 0.0]))
+		var cell := Vector2i(int(tile.x + 0.5), int(tile.y + 0.5))
+		if cell.x >= 0 and cell.y >= 0 and cell.x < int(map_data.get("width", 0)) and cell.y < int(map_data.get("height", 0)):
+			_fail("level %s parks instance %d although it stands on the map" % [label, instance_id])
+			return
+		for object_data: Dictionary in entries:
+			if int(object_data.get("instance_id", -1)) == instance_id:
+				_fail("level %s lists parked instance %d among its objects" % [label, instance_id])
+				return
+		for child in objects_node.get_children():
+			if int(child.get_meta("original_instance_id", -1)) == instance_id:
+				_fail("level %s scene still holds parked instance %d as %s" % [label, instance_id, child.name])
+				return
 	for object_data: Dictionary in entries:
 		var object_name := String(object_data.get("node_name", ""))
 		var object_node := objects_node.get_node_or_null(object_name) as Node2D

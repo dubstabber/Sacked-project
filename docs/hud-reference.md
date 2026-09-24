@@ -165,12 +165,11 @@ Polish UI. The port draws this text with Godot's default font at the same sizes.
 
 ## Not recovered
 
-The camera. Whether the world viewport is clipped above the console or simply drawn behind
-its transparent top edge, and what `CIsoCamera` clamps to at the map edges, are still open,
-so the port's camera is unchanged and the console is drawn over the world. A wider canvas
-shows more of the map, and more of the void past its edges, which makes the missing clamp
-easier to notice but no better understood; the port does not invent one. See
-[widescreen.md](widescreen.md) for the open question as filed.
+Whether the world viewport is clipped above the console or simply drawn behind its
+transparent top edge is still open, so the console is drawn over the world. The camera
+itself is recovered: it centres the player's ground anchor and clamps nothing at the map
+edges, which is what the port's bare `Camera2D` already does; see "The camera" in
+[widescreen.md](widescreen.md).
 
 ## What drives each element (implemented)
 

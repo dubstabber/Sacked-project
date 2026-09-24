@@ -390,8 +390,9 @@ the pause toggle whatever it is labelled.
 set the target is the player; otherwise the target is cleared and the camera free-pans, its
 direction taken from a 16-entry table at `0x46B424` (stride 12 bytes) indexed by the four
 pan bits remapped as `bit1→0, bit0→1, bit2→3, bit3→2`, scaled by `game+12804 × dt` into
-`game+12748/12752/12756`. What the camera clamps to at the map edges is still not
-recovered.
+`game+12748/12752/12756`. It clamps nothing: `CIsoCamera`'s virtual at `0x409240` only
+rebuilds its rectangle as ± the 400 / 300 half-extents, and `sub_402590` copies the follow
+target's position into it every tick; see "The camera" in [widescreen.md](widescreen.md).
 
 ## HUD bindings confirmed here
 

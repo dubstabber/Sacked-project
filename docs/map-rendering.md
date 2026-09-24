@@ -36,7 +36,7 @@ left running for eight seconds with its whole cast awake:
 | --- | --- | --- | --- | --- | --- |
 | 1 | 16 x 16 | 71 | 3 | 1.37 s | 8.33 ms |
 | 2 | 17 x 32 | 167 | 6 | 2.31 s | 8.36 ms |
-| 3 | 26 x 16 | 123 | 5 | 1.85 s | 8.32 ms |
+| 3 | 26 x 16 | 122 | 5 | 1.85 s | 8.32 ms |
 | 4 | 22 x 24 | 157 | 9 | 2.27 s | 8.36 ms |
 | 5 | 20 x 20 | 123 | 5 | 1.94 s | 8.33 ms |
 | 6 | 32 x 12 | 130 | 11 | 2.02 s | 8.39 ms |
@@ -44,7 +44,7 @@ left running for eight seconds with its whole cast awake:
 | 8 | 25 x 25 | 258 | 8 | 2.70 s | 9.53 ms |
 
 The load figure is the bake, and it tracks the composite's area rather than the object
-count: level 8 carries 258 objects against level 3's 123 and costs 0.85 s more because its
+count: level 8 carries 258 objects against level 3's 122 and costs 0.85 s more because its
 map is larger, not because of them. **Frame time is flat across all of them** at about
 8.3 ms, which is the 120 fps the display is capped to, and level 8 is the only map that
 measurably exceeds it.
@@ -68,5 +68,13 @@ Characters are tested against that buffer on the GPU. `CharacterDepthCompositor`
 Two characters whose opaque rectangles overlap cannot resolve each other this way — a 2D canvas has no shared depth buffer — so each connected overlap group still composites on the CPU, onto its own surface and bounded by that group alone. A character that overlaps nobody costs no CPU compositing at all. All rendering stays in Godot's 2D canvas.
 
 To verify runtime masks against the extracted source planes, run `python3 tools/export_world_depth_maps.py --check`. Without `--check`, that tool exports the object masks and wall atlas mask the imported levels need. It only reads the reference extraction. The original glass sprites have no extracted Z plane; glass is not part of this depth-mask pipeline.
+
+### Records left out of the scene
+
+The original keeps every `ITEM` wherever it stands. The loader has no bounds test, and an item is culled only against the camera rectangle; see [widescreen.md](widescreen.md) for the addresses. Level 3's `LEVEL_02.col` `ITEM22` is a spare `MONITOR&TASTATUR#FRONTAL` standing five tiles off the map at (−5, 16). The original's 800 × 600 view never shows more than a ~10 px sliver of it, but the port's wider canvas shows the whole thing floating in the void.
+
+`PARKED_RECORDS` in `tools/import_original_level.py` therefore lists that record, keyed by file and record name to its kind and position. The importer raises if the record ever stops matching. The record stays out of the manifest's `objects` and is listed under `parked_items` instead; only a manifest that parks something carries that key. `build_npcs` still runs over every item, as `sub_4185B0`'s startup search does, and the importer raises if a parked item would be an NPC's desk or chair.
+
+Only three records in the campaign fail the original's own map lookup (`sub_4187F0` → `sub_412AE0` on the truncated `x + 0.5`, `y + 0.5`): this monitor, its copy in `LEVEL_02s.col`, and `LEVEL_10s.col` `ITEM132`. `ITEM132` is a pack of cigarettes the original shows whole at 4:3, so it stays. The other 224 records past an edge are wall-hung and overhang by at most a third of a tile. `tests/test_level_import.py` pins that census.
 
 See [map-authoring.md](map-authoring.md) for creating maps with the Godot editor.
