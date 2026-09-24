@@ -120,8 +120,10 @@ const MONITOR_TYPES := [152, 153, 154, 155]
 const CUBICLE_TYPES := [173, 262]
 const LOCKED_CUBICLE_REPAIR_TYPE := 173
 const COPIER_TYPES := [129]
-# The state sub_417B00 gives the copier while an agent photocopies at it.
+# The state sub_416340 holds the copier in while its first user photocopies at it.
 const COPIER_IN_USE_STATE := 9
+# sub_417B00 writes 20.0 to +1124 at the copier on every arrival (0x417E8A).
+const COPIER_SECONDS := 20.0
 const SPECIAL_ACTIVE_TYPES := [139, 140, 146, 147, 150, 151]
 const SPECIAL_PASSIVE_TYPES := [5, 6, 7, 8, 9, 88, 97, 98, 115]
 const WORK_CHAIR_TYPES := [68, 69, 70, 71]
@@ -505,11 +507,13 @@ func _on_destination_reached() -> void:
 				duration = _random.randf_range(10.0, 15.0)
 				claim = _active
 		elif active_type in COPIER_TYPES:
-			if _available(_active):
-				duration = 20.0
-				claim = _active
-				# sub_417B00 puts the copier itself into state 9 while it is being used, so
-				# its DESTROYED_1 loop runs in ordinary play with no prank involved.
+			duration = COPIER_SECONDS
+			# Only the copier's first NPC user claims it (0x417E6E) and raises +1808, which has
+			# sub_416340 hold it in state 9, so its DESTROYED_1 loop runs in ordinary play with
+			# no prank involved. The claim is never let go, and every later visitor, the first
+			# one included, stands idle at it for the same 20 s.
+			if not bool(_active.get("copier_claimed")):
+				_active.set("copier_claimed", true)
 				_using_object = _set_object_state(_active, COPIER_IN_USE_STATE)
 		elif active_type in SPECIAL_ACTIVE_TYPES:
 			duration = 15.0

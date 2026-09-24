@@ -24,6 +24,11 @@ var locked_in := false
 # finished repair calls. An agent that walks to a tampered object reacts instead of using
 # it; see docs/npc-reference.md.
 var tampered := false
+# item+216 on the copier. sub_417B00 claims it for the first NPC to use it (0x417E6E) and
+# nothing frees it again before the level restarts: sub_416340 leaves it set, and so does
+# sub_4100B0 below. Seats and cubicles keep their claim in `occupant` instead.
+# See docs/npc-reference.md.
+var copier_claimed := false
 # item+252: one flag per slot, cleared as its action is used. sub_4100B0 enables every slot
 # that carries an action id, disables everything those slots unlock, then clears item+224
 # and item+228 and puts the object back to state 0.

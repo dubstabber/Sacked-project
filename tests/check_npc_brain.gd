@@ -69,6 +69,14 @@ class Actor extends Node2D:
 			global_position = _return_position
 		_return_position = Vector2.INF
 
+class ObjectStub extends Node2D:
+	var state := 0
+	var states: Array[int] = []
+
+	func set_state(value: int) -> void:
+		state = value
+		states.append(value)
+
 var _failures := 0
 
 
@@ -83,6 +91,7 @@ func _run() -> void:
 	_check_cleanup()
 	_check_arrival_actions()
 	_check_arriving_at_a_taken_target()
+	_check_the_copier()
 	_check_reacting_to_a_tampered_item()
 	_check_repairing_a_broken_item()
 	_check_rescuing_a_locked_in_colleague()
@@ -371,7 +380,7 @@ func _check_arrival_actions() -> void:
 
 	var copier := _arrive(_point_fixture(2, 129, 0, true))
 	_expect(is_equal_approx(copier["duration"], 20.0), "the copier runs for the original twenty seconds")
-	_expect(copier["claimed"], "using the copier claims it")
+	_expect(not copier["claimed"], "the copier's claim is its own flag, not a seat occupant")
 
 	var ashtray := _arrive(_point_fixture(1, 234, 3, false), 6)
 	_expect(ashtray["animation"] == &"special-2", "smoking asks for slot 6 and falls back to idle without it")
@@ -468,6 +477,66 @@ func _check_arriving_at_a_taken_target() -> void:
 			_expect(selection.get("passive") == chair, "the assigned pair keeps its taken chair")
 	_expect(pairs > 0, "the assigned pair is drawn 7 times in 8")
 	work["world"].free()
+
+
+# sub_417B00's case 129: 20 s on every arrival (0x417E8A), but only while item+216 is clear
+# does it claim the copier and raise +1808 (0x417E6E), which has sub_416340 hold the copier in
+# state 9. Nothing clears +216 before the level restarts -- not sub_416340 at the end, not the
+# repair reset sub_4100B0 -- so everyone after the first user just stands there.
+func _check_the_copier() -> void:
+	var fixture := _fixture()
+	var world: Node2D = fixture["world"]
+	var object := ObjectStub.new()
+	object.name = "Copier"
+	object.position = IsoDirection.ground_to_screen(Vector2(6, 5))
+	world.add_child(object)
+	var copier := POINT.new()
+	copier.name = "ActivityPoint"
+	copier.position = IsoDirection.ground_to_screen(Vector2(1, 0))
+	copier.category = 2
+	copier.item_type = 129
+	copier.active = true
+	object.add_child(copier)
+	var first: Node = fixture["brain"]
+	var first_actor: Actor = fixture["actor"]
+	var second := Actor.new()
+	second.name = "Second"
+	var second_brain := BRAIN.new()
+	second_brain.name = "Brain"
+	second_brain.random_seed = 7
+	second.add_child(second_brain)
+	world.add_child(second)
+	second_brain._initialize()
+	second_brain.set_physics_process(false)
+
+	var visit := func(brain: Node, actor: Actor) -> void:
+		brain._target = copier
+		brain._active = copier
+		brain._passive = null
+		brain._state = BRAIN.State.NAVIGATING
+		brain._goal = 3
+		actor.destination_reached.emit()
+
+	visit.call(first, first_actor)
+	_expect(is_equal_approx(float(first_actor.activity.get("duration", 0.0)), 20.0), "the first user photocopies for 20 s")
+	_expect(copier.copier_claimed and object.state == BRAIN.COPIER_IN_USE_STATE, "the first user claims the copier and puts it into state 9")
+	visit.call(second_brain, second)
+	_expect(is_equal_approx(float(second.activity.get("duration", 0.0)), 20.0), "a second user waits the same 20 s")
+	_expect(second.activity.get("animation") == &"idle", "a second user stands idle")
+	first_actor.finish_activity()
+	_expect(object.state == 0, "the copier goes back to state 0 when its user is done")
+	_expect(copier.copier_claimed, "sub_416340 never lets the copier's claim go")
+	second.finish_activity()
+	_expect(object.states == [BRAIN.COPIER_IN_USE_STATE, 0], "only the first user touched the copier's state, got %s" % [object.states])
+
+	copier.reset_actions()
+	_expect(copier.copier_claimed, "a repair's reset leaves the copier claimed")
+	visit.call(first, first_actor)
+	_expect(is_equal_approx(float(first_actor.activity.get("duration", 0.0)), 20.0), "the first user's next visit is 20 s too")
+	_expect(object.state == 0, "and does not raise state 9 again")
+	first.enabled = false
+	_expect(copier.copier_claimed, "stopping a brain does not free the copier either")
+	world.free()
 
 
 # sub_417B00 checks the item it arrived at for tampering before it looks at the type, and
