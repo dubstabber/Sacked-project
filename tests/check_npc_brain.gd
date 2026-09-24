@@ -562,9 +562,15 @@ func _check_the_copier() -> void:
 	visit.call(first, first_actor)
 	_expect(is_equal_approx(float(first_actor.activity.get("duration", 0.0)), 20.0), "the first user photocopies for 20 s")
 	_expect(copier.copier_claimed and object.state == BRAIN.COPIER_IN_USE_STATE, "the first user claims the copier and puts it into state 9")
+	# sub_416340 faces the first user along agent minus copier (0x4163CE-0x4163F2), away from
+	# it; everyone after keeps sub_417730's arrival turn toward it (0x4178F8).
+	var away: Vector2 = (first_actor.global_position - object.global_position).normalized()
+	_expect(first_actor.activity.get("facing") == away, "the first user faces away from the copier, got %s against %s" % [first_actor.activity.get("facing"), away])
 	visit.call(second_brain, second)
 	_expect(is_equal_approx(float(second.activity.get("duration", 0.0)), 20.0), "a second user waits the same 20 s")
 	_expect(second.activity.get("animation") == &"idle", "a second user stands idle")
+	var toward: Vector2 = (object.global_position - second.global_position).normalized()
+	_expect(second.activity.get("facing") == toward, "a second user faces the copier, got %s against %s" % [second.activity.get("facing"), toward])
 	first_actor.finish_activity()
 	_expect(object.state == 0, "the copier goes back to state 0 when its user is done")
 	_expect(copier.copier_claimed, "sub_416340 never lets the copier's claim go")
@@ -576,6 +582,7 @@ func _check_the_copier() -> void:
 	visit.call(first, first_actor)
 	_expect(is_equal_approx(float(first_actor.activity.get("duration", 0.0)), 20.0), "the first user's next visit is 20 s too")
 	_expect(object.state == 0, "and does not raise state 9 again")
+	_expect(first_actor.activity.get("facing") == (object.global_position - first_actor.global_position).normalized(), "and faces the copier like any later visitor")
 	first.enabled = false
 	_expect(copier.copier_claimed, "stopping a brain does not free the copier either")
 	world.free()

@@ -355,9 +355,9 @@ func _run_frame() -> void:
 # special-action flag +1812 and on goal 6, whatever clip those resolve to; the boss's
 # sub_419740 and the janitor's sub_41A8D0 branch only on the reaction flag +1820, and the
 # secretary's sub_41E360 on neither, so she looks around while she is angry. A cubicle's
-# occupant and the copier's first user are faced back the way they were on every frame
-# (sub_416090, sub_416340), so a look-around there would barely show; the port leaves them
-# still. See docs/npc-reference.md.
+# occupant is faced back out of it and the copier's first user away from the copier on every
+# frame (sub_416090, sub_416340), so a look-around there would barely show; the port leaves
+# them still. See docs/npc-reference.md.
 func _in_idle_branch() -> bool:
 	if _state == State.NAVIGATING:
 		return false
@@ -664,6 +664,11 @@ func _on_destination_reached() -> void:
 		# sub_419CE0 plays slot 6 for goal 6; sub_41A510 drops to idle without it.
 		animation = &"special-2"
 	var placement := _placement(claim, seated, relaxed, focus)
+	if copying:
+		# sub_417730's arrival turn faces the copier (0x4178F8), but from the next tick on
+		# sub_416340 faces its first user along agent minus copier (0x4163CE-0x4163F2), the
+		# walk heading's convention (0x41796E): away from the copier, for the whole 20 s.
+		placement["facing"] = (_actor.global_position - _focus_position(_active)).normalized()
 	if seated:
 		animation = SEATED_CLIPS.get(_profile_id, &"sit-easy" if relaxed else &"sit-use") as StringName
 	var started := bool(_actor.call(
