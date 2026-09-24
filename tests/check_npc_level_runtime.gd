@@ -6,10 +6,12 @@ const BRAIN_SCRIPT := preload("res://scenes/npc/npc_brain.gd")
 const EXPECTED_PROFILES := ["boss", "male-employee-1", "female-employee-1"]
 const SIMULATION_SECONDS := 120
 const CUBICLE_TYPES := [173, 262]
-# With this seed the boss's goal 7 comes up at about 27 simulated seconds.
-const SOFA_SEED := 42
-const SOFA_SECONDS := 40
+# The long run checks what must hold whatever the agents choose; which goals come up in it
+# depends on the seed, so the sofa and the toilet are driven directly instead.
+const LONG_RUN_SEED := 1037
 const SOFA := "Object060Sofa01"
+const CUBICLE := "Object015Toikabine"
+const COWORKER := "Npc079MaleEmployee1"
 # sub_418D20 blocks the cell of every other entity before a route search, the player's
 # included, and the player spawns on (12, 9): the interaction cell of the cardboard cutout,
 # the boss's only decoration. A player who never moved would pin his goal 2 at 0 and starve
@@ -19,6 +21,8 @@ const PARKED_PLAYER := Vector2(-100000, -100000)
 
 var _failures := 0
 var _stats: Dictionary = {}
+# Put in front of every failure, so a failure in the long run names its seed.
+var _context := ""
 
 
 func _init() -> void:
@@ -33,7 +37,7 @@ func _run() -> void:
 		if not child is CharacterBody2D or not child.has_node("Brain"):
 			continue
 		var brain := child.get_node("Brain")
-		brain.random_seed = 1037
+		brain.random_seed = LONG_RUN_SEED
 		actors.append(child)
 		var profile_id := String(child.profile.id)
 		_stats[profile_id] = {
@@ -64,14 +68,11 @@ func _run() -> void:
 	_check_the_player_blocks_the_cutout(world, player, collision_layer)
 	player.position = PARKED_PLAYER
 	var activity_points := get_nodes_in_group("npc_activity_points")
-	var toilet_users := {}
+	_context = "seed %d" % LONG_RUN_SEED
 	for frame in range(SIMULATION_SECONDS * Engine.physics_ticks_per_second):
 		await physics_frame
 		for actor in actors:
 			_check_actor_frame(actor, collision_layer, activity_points)
-			var seat: Node = _stats[String(actor.profile.id)].seat
-			if seat != null and int(seat.item_type) in CUBICLE_TYPES:
-				toilet_users[String(actor.profile.id)] = true
 		if _failures > 0:
 			break
 	_check_the_office_looks_around()
@@ -79,29 +80,24 @@ func _run() -> void:
 		_check_actor_result(actor)
 		actor.get_node("Brain").enabled = false
 		_expect(_find_claim(actor, activity_points) == null, "%s releases its seat when its brain is stopped" % actor.profile.id)
-	# The cubicle's interaction point is flush against a wall. The original walks to its
-	# free cell; before routes ended on cell centres the port refused it outright.
-	_expect(not toilet_users.is_empty(), "somebody on level 1 goes into the toilet cubicle")
+	_context = ""
 	_check_a_tampered_workstation_is_reacted_to(level)
 	level.free()
+	await _check_driven_goals()
 	if _failures == 0:
-		await _check_the_boss_sits_on_the_sofa()
-	if _failures == 0:
-		print("Original level NPC runtime: %d simulated seconds, all three brains moved and completed activities, the toilet was used, every agent stayed on free cells and released seat claims, and the boss sat on the sofa" % SIMULATION_SECONDS)
+		print("Original level NPC runtime: %d simulated seconds, all three brains moved and completed activities, every agent stayed on free cells and released seat claims; driven directly, the boss sat on the sofa with SIT#IDLE and a coworker went into the toilet cubicle" % SIMULATION_SECONDS)
 	quit(1 if _failures else 0)
 
 
-# The level-1 sofa's interaction point is 0.79 tiles from a blocked cell, so its footprint
-# overlaps it, but the cell it rounds to is free: sub_416D50 walks there and the boss sits
-# (goal 7, mask 72 covers its room). His tick plays SIT#IDLE on any seat. See
-# docs/npc-reference.md.
-func _check_the_boss_sits_on_the_sofa() -> void:
+# The sofa and the cubicle, each reached on the real map by driving the goal rather than
+# waiting for a seed to choose it. The sofa's interaction point is 0.79 tiles from a blocked
+# cell, so its footprint overlaps it, but the cell it rounds to is free: sub_416D50 walks there
+# and the boss sits (goal 7, mask 72 covers its room), playing SIT#IDLE on any seat. The
+# cubicle's point is flush against a wall; the original walks to its free cell, and before
+# routes ended on cell centres the port refused it outright. See docs/npc-reference.md.
+func _check_driven_goals() -> void:
 	var level := LEVEL_SCENE.instantiate()
 	var world := level.get_node("World")
-	for child in world.get_children():
-		if child is CharacterBody2D and child.has_node("Brain"):
-			child.get_node("Brain").random_seed = SOFA_SEED
-	var boss := world.get_node("Npc080Boss") as CharacterBody2D
 	root.add_child(level)
 	world.get_node("WorldDepthCompositor").set_process(false)
 	world.get_node("CharacterDepthCompositor").set_process(false)
@@ -110,17 +106,51 @@ func _check_the_boss_sits_on_the_sofa() -> void:
 	player.get_node("FootstepPlayer").stop_footsteps()
 	player.get_node("FootstepPlayer").stream = null
 	player.position = PARKED_PLAYER
+	var layer := world.get_node("CollisionTileMapLayer") as TileMapLayer
+
+	var boss := await _drive_goal(world, layer, "Npc080Boss", 7, SOFA)
 	var sofa := world.get_node("Objects/%s/InteractionPoint" % SOFA)
-	var seated_frames := 0
-	for frame in range(SOFA_SECONDS * Engine.physics_ticks_per_second):
-		await physics_frame
-		if sofa.occupant == boss and String(boss.current_activity).begins_with("sit-"):
-			seated_frames += 1
-			_expect(boss.current_activity == &"sit-idle", "the boss sits on the sofa with SIT#IDLE, got %s" % boss.current_activity)
-			if _failures > 0:
-				break
-	_expect(seated_frames > 0, "with seed %d the boss sits on %s within %d seconds" % [SOFA_SEED, SOFA, SOFA_SECONDS])
+	_expect(sofa.occupant == boss and boss.current_activity == &"sit-idle", "the boss sits on %s with SIT#IDLE, got %s" % [SOFA, boss.current_activity])
+
+	var coworker := await _drive_goal(world, layer, COWORKER, 4, CUBICLE)
+	var cubicle := world.get_node("Objects/%s/InteractionPoint" % CUBICLE)
+	var anchor: Vector2 = (cubicle.get_parent() as Node2D).global_position
+	_expect(cubicle.occupant == coworker and coworker.get_node("Brain")._inside_cubicle, "%s goes into %s" % [COWORKER, CUBICLE])
+	_expect(coworker.global_position.is_equal_approx(anchor), "%s stands on the cubicle's anchor %s, got %s" % [COWORKER, anchor, coworker.global_position])
 	level.free()
+
+
+# Only the named agent's brain runs. Its goal's candidates must be the one object, and the
+# agent must claim it within its route's walking time and a second.
+func _drive_goal(world: Node, layer: TileMapLayer, agent_name: String, goal: int, object_name: String) -> CharacterBody2D:
+	var point := world.get_node("Objects/%s/InteractionPoint" % object_name) as Node2D
+	for child in world.get_children():
+		if child is CharacterBody2D and child.has_node("Brain"):
+			var agent_brain := child.get_node("Brain")
+			agent_brain._initialize()
+			agent_brain.enabled = child.name == agent_name
+	var actor := world.get_node(agent_name) as CharacterBody2D
+	var brain := actor.get_node("Brain")
+	brain._stop()
+	var names: Array[String] = []
+	for candidate in brain._candidates(goal):
+		names.append(String(candidate.get_parent().name))
+	_expect(names == [object_name], "%s's only goal-%d candidate is %s, got %s" % [agent_name, goal, object_name, names])
+	brain._attempt_goal(goal)
+	_expect(brain._state == BRAIN_SCRIPT.State.NAVIGATING and brain._target == point, "%s sets off for %s" % [agent_name, object_name])
+	var tiles := 0.0
+	var from: Vector2 = layer.to_grid_position(actor.global_position)
+	for step in actor._navigation_path:
+		var to: Vector2 = layer.to_grid_position(step)
+		tiles += from.distance_to(to)
+		from = to
+	var limit: float = tiles / actor.get_move_speed_tiles() + 1.0
+	var frames := 0
+	while point.occupant != actor and frames < ceili(limit * Engine.physics_ticks_per_second):
+		await physics_frame
+		frames += 1
+	_expect(point.occupant == actor, "%s claims %s within %.1f s for a %.1f-tile route, got %s after %.1f s" % [agent_name, object_name, limit, tiles, point.occupant, float(frames) / Engine.physics_ticks_per_second])
+	return actor
 
 
 # The cutout's interaction point rounds to the player's spawn cell, so the boss cannot plan a
@@ -296,4 +326,4 @@ func _rounded_cell(layer: TileMapLayer, position: Vector2) -> Vector2i:
 func _expect(condition: bool, message: String) -> void:
 	if not condition:
 		_failures += 1
-		push_error(message)
+		push_error(message if _context.is_empty() else "%s: %s" % [_context, message])
