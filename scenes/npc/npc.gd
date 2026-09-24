@@ -15,6 +15,8 @@ const UNHURRIED_PROFILE := &"boss"
 const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
 const NAVIGATION := preload("res://scenes/shared/grid_navigation.gd")
 const NPC_BRAIN := preload("res://scenes/npc/npc_brain.gd")
+# Slot 1 of the coworkers' and the secretary's tables, IDLE#2.
+const FIDGET_ACTION := &"idle-2"
 
 enum Command { NONE, TRAVEL, ACTIVITY }
 
@@ -51,6 +53,7 @@ var _waypoint_index := 0
 var _route_done := false
 var _route_retry := 0.0
 var _warned_actions: Dictionary = {}
+var _fidgeting := false
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
@@ -66,6 +69,7 @@ func _ready() -> void:
 	_build_patrol_targets()
 	apply_profile(profile)
 	animation_controller.play_idle(last_direction)
+	animation_player.animation_finished.connect(_on_animation_finished)
 	if not route_path.is_empty():
 		_route = get_node_or_null(route_path) as Node2D
 		if _route == null or not _route.has_method("get_waypoints") or is_ancestor_of(_route):
@@ -85,7 +89,10 @@ func _physics_process(delta: float) -> void:
 	if _command == Command.ACTIVITY:
 		_activity_remaining = maxf(_activity_remaining - delta, 0.0)
 		if _activity_remaining == 0.0:
-			cancel_commands()
+			# The busy timer running out changes no slot, so an IDLE#2 under way plays on.
+			_drop_command()
+			if not _fidgeting:
+				animation_controller.play_idle(last_direction)
 			activity_finished.emit()
 		return
 	if _route != null:
@@ -96,7 +103,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if _patrol_targets.is_empty():
 		velocity = Vector2.ZERO
-		animation_controller.play_idle(last_direction)
+		if not _fidgeting:
+			animation_controller.play_idle(last_direction)
 		return
 
 	if _pause_remaining > 0.0:
@@ -314,8 +322,32 @@ func turn_view(step: int) -> void:
 	var directions := IsoDirection.get_screen_directions()
 	last_direction = directions[posmod(view_index() + step, directions.size())]
 	facing_screen = last_direction
-	if _command != Command.TRAVEL:
+	if _fidgeting:
+		animation_controller.play_animation(_action_clip(FIDGET_ACTION))
+	elif _command != Command.TRAVEL:
 		_show_clip(current_activity)
+
+
+# sub_419CE0 and sub_41E360 switch to slot 1, IDLE#2, and play it once: they clear its loop
+# flag +548 as they start it (0x419EA8, 0x41E4E7) and put slot 0 back once it has finished
+# (+556). The library imports it one-shot; the brain decides when.
+func fidget() -> bool:
+	var clip := _action_clip(FIDGET_ACTION)
+	if clip.is_empty():
+		return false
+	_fidgeting = true
+	animation_controller.play_animation(clip)
+	return true
+
+
+func is_fidgeting() -> bool:
+	return _fidgeting
+
+
+func _on_animation_finished(animation_name: StringName) -> void:
+	if _fidgeting and String(animation_name) == animation_controller.current_animation:
+		_fidgeting = false
+		animation_controller.play_idle(last_direction)
 
 
 # agent+124: the eight-way view, numbered as the sprite suffixes are, _000 through _315.
@@ -348,6 +380,13 @@ func _warn_missing_action(action: StringName) -> void:
 
 
 func cancel_commands() -> void:
+	_fidgeting = false
+	_drop_command()
+	if is_node_ready():
+		animation_controller.play_idle(last_direction)
+
+
+func _drop_command() -> void:
 	_command = Command.NONE
 	_navigation_path.clear()
 	velocity = Vector2.ZERO
@@ -355,8 +394,6 @@ func cancel_commands() -> void:
 		global_position = _activity_return
 	_activity_return = Vector2.INF
 	current_activity = &"idle"
-	if is_node_ready():
-		animation_controller.play_idle(last_direction)
 
 
 func _start_route_waypoint() -> void:

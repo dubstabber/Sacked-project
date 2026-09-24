@@ -38,10 +38,19 @@ class Actor extends Node2D:
 	var activity_available := true
 	var navigation_available := true
 	var turns: Array[int] = []
+	var fidgets := 0
+	var fidgeting := false
 	var _return_position := Vector2.INF
 
 	func turn_view(step: int) -> void:
 		turns.append(step)
+
+	func fidget() -> bool:
+		fidgets += 1
+		return true
+
+	func is_fidgeting() -> bool:
+		return fidgeting
 
 	func navigate_to(target_global: Vector2) -> bool:
 		if not navigation_available:
@@ -106,8 +115,9 @@ func _run() -> void:
 	_check_routes_and_retry_limit()
 	_check_looking_around()
 	_check_who_looks_around()
+	_check_fidgeting()
 	if _failures == 0:
-		print("NPC brain: source needs, target filters, arrival actions, retry limits, claim cleanup and looking around passed")
+		print("NPC brain: source needs, target filters, arrival actions, retry limits, claim cleanup, looking around and fidgeting passed")
 	quit(1 if _failures else 0)
 
 
@@ -897,7 +907,7 @@ func _check_leaving_a_cubicle() -> void:
 # view one step, back when (u8)rand() <= 0x80. At the port's nominal 60 Hz that is 95/4096 of
 # the frames, about 1.4 turns a second of standing about. See docs/npc-reference.md.
 func _check_looking_around() -> void:
-	var fixture := _fixture()
+	var fixture := _fixture(&"boss")
 	var brain: Node = fixture["brain"]
 	var actor: Actor = fixture["actor"]
 	var frames := 0
@@ -916,15 +926,21 @@ func _check_looking_around() -> void:
 	var back := actor.turns.count(-1)
 	_expect(absf(back - turns * 129.0 / 256.0) < 4.0 * sqrt(turns * 0.25), "129 turns in 256 go back a step: %d of %d" % [back, turns])
 	_expect(back + actor.turns.count(1) == turns, "every turn is a single step")
+	_expect(actor.fidgets == 0, "the boss's tick never plays an IDLE#2")
 	fixture["world"].free()
 
 	# sub_419CE0 and sub_41E360 spend the first idle frame after any other slot putting slot 0
-	# back, and roll nothing on it (0x419E12, 0x41E451). sub_419740 and sub_41A8D0 do not look.
-	var back_seed := _seed_where(func(rng: RandomNumberGenerator) -> bool: return (rng.randi() & 0xFFF) > 4000 and (rng.randi() & 0xFF) <= 0x80)
-	var on_seed := _seed_where(func(rng: RandomNumberGenerator) -> bool: return (rng.randi() & 0xFFF) > 4000 and (rng.randi() & 0xFF) > 0x80)
+	# back, and roll nothing on it (0x419E12, 0x41E451); the next frame rolls for IDLE#2 before
+	# it looks around. sub_419740 and sub_41A8D0 roll the look-around straight away.
+	var no_fidget := func(rng: RandomNumberGenerator) -> bool: return (rng.randi() & 0xFFF) <= 0xFF8
+	var looks := func(rng: RandomNumberGenerator, back: bool) -> bool: return (rng.randi() & 0xFFF) > 4000 and ((rng.randi() & 0xFF) <= 0x80) == back
+	var seeds := {
+		true: [_seed_where(func(rng): return no_fidget.call(rng) and looks.call(rng, true)), _seed_where(func(rng): return no_fidget.call(rng) and looks.call(rng, false))],
+		false: [_seed_where(func(rng): return looks.call(rng, true)), _seed_where(func(rng): return looks.call(rng, false))],
+	}
 	for profile_id: StringName in [&"male-employee-1", &"secretary", &"boss", &"janitor"]:
 		var reads_slot := profile_id in [&"male-employee-1", &"secretary"]
-		for spec in [[back_seed, -1], [on_seed, 1]]:
+		for spec in [[seeds[reads_slot][0], -1], [seeds[reads_slot][1], 1]]:
 			var agent := _fixture(profile_id)
 			var agent_brain: Node = agent["brain"]
 			var agent_actor: Actor = agent["actor"]
@@ -1013,3 +1029,53 @@ func _settle(profile_id: StringName, kind: String) -> Dictionary:
 	(fixture["actor"] as Actor).destination_reached.emit()
 	_expect(brain._state == BRAIN.State.ACTING, "%s %s is under way" % [profile_id, kind])
 	return fixture
+
+
+# sub_419CE0 and sub_41E360 start IDLE#2 from slot 0 on (rand() & 0xFFF) > 0xFF8, 7/4096 of
+# their idle frames, then look around on the same frame. While it plays, and on the frame after
+# it ends, their idle branch only waits and puts slot 0 back (0x419E05-0x419E2C).
+func _check_fidgeting() -> void:
+	var fixture := _fixture()
+	var brain: Node = fixture["brain"]
+	var actor: Actor = fixture["actor"]
+	brain._frame_random.seed = 4091
+	var count := 400000
+	for frame in range(count):
+		brain._run_frame()
+	var rate := 7.0 / 4096.0
+	_expect(absf(actor.fidgets - count * rate) < 4.0 * sqrt(count * rate), "a coworker starts IDLE#2 on 7/4096 of its idle frames: %d in %d, expected %.0f" % [actor.fidgets, count, count * rate])
+
+	var fidget_seed := _seed_where(func(rng: RandomNumberGenerator) -> bool: return (rng.randi() & 0xFFF) > 0xFF8 and (rng.randi() & 0xFFF) > 4000)
+	brain._showing_idle = true
+	brain._frame_random.seed = fidget_seed
+	actor.fidgets = 0
+	actor.turns.clear()
+	brain._run_frame()
+	_expect(actor.fidgets == 1 and actor.turns.size() == 1, "the frame that starts IDLE#2 still looks around")
+	actor.fidgeting = true
+	for frame in range(2000):
+		brain._run_frame()
+	_expect(actor.fidgets == 1 and actor.turns.size() == 1, "nothing else is rolled while IDLE#2 plays")
+	actor.fidgeting = false
+	brain._frame_random.seed = fidget_seed
+	brain._run_frame()
+	_expect(actor.fidgets == 1 and actor.turns.size() == 1, "the frame after it ends only puts slot 0 back")
+	brain._frame_random.seed = fidget_seed
+	brain._run_frame()
+	_expect(actor.fidgets == 2 and actor.turns.size() == 2, "and the next one rolls again")
+
+	# Outside the idle branch nothing is rolled, whatever clip shows.
+	brain._state = BRAIN.State.NAVIGATING
+	for frame in range(2000):
+		brain._run_frame()
+	_expect(actor.fidgets == 2, "walking never fidgets")
+	fixture["world"].free()
+
+	for profile_id: StringName in [&"secretary", &"janitor"]:
+		var other := _fixture(profile_id)
+		other["brain"]._frame_random.seed = 4091
+		for frame in range(20000):
+			other["brain"]._run_frame()
+		var fidgets: int = (other["actor"] as Actor).fidgets
+		_expect((fidgets > 0) == (profile_id == &"secretary"), "%s %s" % [profile_id, "plays IDLE#2" if profile_id == &"secretary" else "never plays the IDLE#2 his table names, got %d" % fidgets])
+		other["world"].free()

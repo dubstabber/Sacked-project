@@ -42,6 +42,7 @@ func _run() -> void:
 			"claims": 0, "releases": 0, "seat": null, "return_cell": null,
 			"walk_distance": 0.0, "last_position": child.position,
 			"idle_frames": 0, "idle_turns": 0, "was_idle": false, "last_view": -1,
+			"fidgets": 0, "was_fidgeting": false,
 		}
 		var stats: Dictionary = _stats[profile_id]
 		child.destination_reached.connect(func(): stats.destinations += 1)
@@ -217,6 +218,14 @@ func _count_looking_around(actor: CharacterBody2D, brain: Node, stats: Dictionar
 			_expect(posmod(view - int(stats.last_view), 8) in [1, 7], "%s turns one step at a time, from %d to %d" % [actor.profile.id, stats.last_view, view])
 	stats.was_idle = idle
 	stats.last_view = view
+	var fidgeting: bool = actor.is_fidgeting()
+	if fidgeting and not stats.was_fidgeting:
+		stats.fidgets += 1
+		_expect(idle, "%s starts IDLE#2 only while it stands about" % actor.profile.id)
+		_expect(actor.profile.id != &"boss", "the boss has no IDLE#2")
+	if fidgeting:
+		_expect(String(actor.animation_player.current_animation).contains("-idle-2-"), "%s shows IDLE#2 while it plays, got %s" % [actor.profile.id, actor.animation_player.current_animation])
+	stats.was_fidgeting = fidgeting
 
 
 # sub_4187A0 at the port's nominal 60 Hz: 95/4096 of the frames an agent spends standing about.
@@ -225,13 +234,21 @@ func _check_the_office_looks_around() -> void:
 	var turns := 0
 	for profile_id in _stats:
 		var stats: Dictionary = _stats[profile_id]
-		_expect(stats.idle_turns > 0, "%s looks around while it stands about" % profile_id)
+		# 300 idle frames without a turn is a 1-in-1000 chance.
+		_expect(stats.idle_frames < 300 or stats.idle_turns > 0, "%s looks around while it stands about: %d frames, no turn" % [profile_id, stats.idle_frames])
 		frames += int(stats.idle_frames)
 		turns += int(stats.idle_turns)
 	var rate := 95.0 / 4096.0
 	var expected := frames * rate
 	_expect(absf(turns - expected) < 5.0 * sqrt(expected), "idle agents turn on 95/4096 of their frames: %d turns in %d frames, expected %.0f" % [turns, frames, expected])
 	print("Looking around: %d turns in %d idle frames (%.2f a second)" % [turns, frames, turns * Engine.physics_ticks_per_second / maxf(frames, 1.0)])
+	var fidgets := 0
+	var fidget_frames := 0
+	for profile_id in _stats:
+		if profile_id != "boss":
+			fidgets += int(_stats[profile_id].fidgets)
+			fidget_frames += int(_stats[profile_id].idle_frames)
+	print("IDLE#2: %d in %d coworker idle frames" % [fidgets, fidget_frames])
 
 
 func _check_actor_result(actor: CharacterBody2D) -> void:
@@ -248,7 +265,7 @@ func _check_actor_result(actor: CharacterBody2D) -> void:
 	else:
 		_expect(stats.seated_frames > 0 and stats.claims > 0, "%s eventually performs its seated work activity" % profile_id)
 		_expect(stats.releases > 0, "%s releases a claimed seat after finishing work" % profile_id)
-	print("%s: %d destinations, %d completed activities, %d seat claims, %d seat releases, %d navigation retries" % [profile_id, stats.destinations, stats.finished, stats.claims, stats.releases, stats.navigation_failures])
+	print("%s: %d destinations, %d completed activities, %d seat claims, %d seat releases, %d navigation retries, %d idle frames, %d turns, %d IDLE#2" % [profile_id, stats.destinations, stats.finished, stats.claims, stats.releases, stats.navigation_failures, stats.idle_frames, stats.idle_turns, stats.fidgets])
 
 
 func _find_claim(actor: Node, activity_points: Array[Node]) -> Node:

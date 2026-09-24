@@ -40,7 +40,7 @@ func _run() -> void:
 		var library := AnimationLibrary.new()
 		for action in by_character[character]["clips"]:
 			for angle in action["angles"]:
-				var animation := _build_animation(character, String(action["source"]), String(action["action"]), String(angle))
+				var animation := _build_animation(character, action, String(angle))
 				if _failed:
 					quit(1)
 					return
@@ -56,8 +56,9 @@ func _run() -> void:
 	quit(0)
 
 
-func _build_animation(character: String, source_prefix: String, action: String, angle: String) -> Animation:
-	var source_path := "res://extract-sacked-assets/extracted/animations_godot/CO_CHARS_CO_CHARS_%s_%s_godot.json" % [source_prefix, angle]
+func _build_animation(character: String, row: Dictionary, angle: String) -> Animation:
+	var action := String(row["action"])
+	var source_path := "res://extract-sacked-assets/extracted/animations_godot/CO_CHARS_CO_CHARS_%s_%s_godot.json" % [String(row["source"]), angle]
 	var source := _read_source(source_path)
 	if source.is_empty():
 		return null
@@ -67,7 +68,9 @@ func _build_animation(character: String, source_prefix: String, action: String, 
 		return null
 	var animation := Animation.new()
 	animation.length = float(source["duration_seconds"])
-	animation.loop_mode = Animation.LOOP_LINEAR if source.get("loop", false) else Animation.LOOP_NONE
+	# A row may override the record's loop flag where the tick does: sub_419CE0 and sub_41E360
+	# clear +548 before they play IDLE#2 (0x419EA8, 0x41E4E7), though its OGD record loops.
+	animation.loop_mode = Animation.LOOP_LINEAR if row.get("loop", source.get("loop", false)) else Animation.LOOP_NONE
 	var texture_track := animation.add_track(Animation.TYPE_VALUE)
 	var offset_track := animation.add_track(Animation.TYPE_VALUE)
 	animation.track_set_path(texture_track, NodePath("Sprite2D:texture"))

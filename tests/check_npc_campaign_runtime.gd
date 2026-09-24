@@ -20,6 +20,9 @@ const TILE := Vector2(96.0, 48.0)
 
 var _failures := 0
 var _checked := 0
+# IDLE#2 across every level: starts, and the idle frames of the ticks that can start it.
+var _fidgets := 0
+var _fidget_frames := 0
 
 
 func _init() -> void:
@@ -47,7 +50,11 @@ func _run() -> void:
 		_expect(false, "no level beyond the two with their own fixtures is imported")
 		quit(1)
 		return
-	print("Campaign NPC runtime: %d level scene(s), %d simulated seconds each, every agent chose goals, walked, finished an activity, stayed on free cells and sat at its own desk" % [_checked, seconds])
+	_check_the_office_fidgets()
+	if _failures > 0:
+		quit(1)
+		return
+	print("Campaign NPC runtime: %d level scene(s), %d simulated seconds each, every agent chose goals, walked, finished an activity, stayed on free cells and sat at its own desk, and the coworkers and the secretary played IDLE#2 at its rate" % [_checked, seconds])
 	quit(0)
 
 
@@ -98,7 +105,7 @@ func _check_level(label: String, seconds: int) -> void:
 		stats[key] = {
 			"destinations": 0, "finished": 0, "walk_frames": 0, "goals": {}, "return_cell": null,
 			"assigned_chair": brain.get_node_or_null(brain.assigned_chair) if not brain.assigned_chair.is_empty() else null,
-			"sat_in_assigned_chair": false,
+			"sat_in_assigned_chair": false, "fidgeting": false, "fidgets": 0,
 		}
 		var entry: Dictionary = stats[key]
 		child.destination_reached.connect(func(): entry.destinations += 1)
@@ -142,6 +149,7 @@ func _check_level(label: String, seconds: int) -> void:
 				_rounded_cell_free(collision_layer, actor.global_position, entry.return_cell, label, actor.name)
 				if actor.current_activity == &"walking":
 					entry.walk_frames += 1
+			_count_fidgets(actor, entry, label)
 		if _failures > 0:
 			break
 
@@ -159,10 +167,35 @@ func _check_level(label: String, seconds: int) -> void:
 			if entry.assigned_chair != null:
 				_expect(entry.sat_in_assigned_chair, "%s sits down at its assigned chair %s" % [who, entry.assigned_chair.get_parent().name])
 			moved += int(entry.destinations)
-		print("  level %-3s %2d agents, %3d destinations reached" % [label, actors.size(), moved])
+		var fidgets := 0
+		for actor in actors:
+			fidgets += int(stats[actor.name].fidgets)
+		print("  level %-3s %2d agents, %3d destinations reached, %2d IDLE#2" % [label, actors.size(), moved, fidgets])
 	root.remove_child(level)
 	level.free()
 	_checked += 1
+
+
+# sub_419CE0 and sub_41E360 start IDLE#2 from their idle branch on 7/4096 of its frames at the
+# port's nominal 60 Hz; the boss's and the janitor's ticks never do.
+func _count_fidgets(actor: CharacterBody2D, entry: Dictionary, label: String) -> void:
+	var brain := actor.get_node("Brain")
+	var fidgeting: bool = actor.is_fidgeting()
+	var reads_slot := StringName(actor.profile.id) in BRAIN_SCRIPT.SLOT_READING_PROFILES
+	if fidgeting and not entry.fidgeting:
+		entry.fidgets += 1
+		_fidgets += 1
+		_expect(reads_slot, "level %s %s (%s) has no IDLE#2 to play" % [label, actor.name, actor.profile.id])
+		_expect(brain._in_idle_branch(), "level %s %s starts IDLE#2 only while it stands about" % [label, actor.name])
+	elif reads_slot and not fidgeting and brain._in_idle_branch():
+		_fidget_frames += 1
+	entry.fidgeting = fidgeting
+
+
+func _check_the_office_fidgets() -> void:
+	var expected := _fidget_frames * 7.0 / 4096.0
+	_expect(_fidgets > 0 and absf(_fidgets - expected) < 5.0 * sqrt(expected), "IDLE#2 starts on 7/4096 of the idle frames: %d in %d, expected %.0f" % [_fidgets, _fidget_frames, expected])
+	print("  IDLE#2: %d starts in %d idle frames, expected %.0f" % [_fidgets, _fidget_frames, expected])
 
 
 # sub_416D50 routes between cell centres and sub_41E910 never enters a blocked cell, so an

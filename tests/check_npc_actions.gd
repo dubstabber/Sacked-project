@@ -17,8 +17,9 @@ func _init() -> void:
 	call_deferred("_run")
 
 
-# [character, source prefix, action name, angles, library], for both libraries -- the NPC
-# action clips and the player's own, which share one exporter and one importer.
+# [character, source prefix, action name, angles, library, loop override or null], for both
+# libraries -- the NPC action clips and the player's own, which share one exporter and one
+# importer.
 func _load_specs() -> Array:
 	var file := FileAccess.open(SPEC_PATH, FileAccess.READ)
 	if file == null:
@@ -32,7 +33,7 @@ func _load_specs() -> Array:
 	for row in parsed.get("clips", []):
 		specs.append([
 			String(row["character"]), String(row["source"]), String(row["action"]),
-			row["angles"], String(row.get("library", "npc")),
+			row["angles"], String(row.get("library", "npc")), row.get("loop"),
 		])
 	return specs
 
@@ -102,7 +103,10 @@ func _check_clip(library: AnimationLibrary, spec: Array, angle: String) -> void:
 	var source: Dictionary = JSON.parse_string(file.get_as_text())
 	var animation := library.get_animation(clip)
 	_expect(absf(animation.length - float(source["duration_seconds"])) < 0.000001, "%s preserves original clip duration" % clip)
-	_expect(animation.loop_mode == (Animation.LOOP_LINEAR if source["loop"] else Animation.LOOP_NONE), "%s preserves its original loop flag" % clip)
+	# IDLE#2 plays once: sub_419CE0 and sub_41E360 clear its loop flag +548 before they start it
+	# (0x419EA8, 0x41E4E7), and the spec says so rather than the record.
+	var loops: bool = source["loop"] if spec[5] == null else spec[5]
+	_expect(animation.loop_mode == (Animation.LOOP_LINEAR if loops else Animation.LOOP_NONE), "%s keeps the loop flag its tick plays it with" % clip)
 	var texture_track := animation.find_track(NodePath("Sprite2D:texture"), Animation.TYPE_VALUE)
 	var offset_track := animation.find_track(NodePath("Sprite2D:offset"), Animation.TYPE_VALUE)
 	if texture_track < 0 or offset_track < 0:

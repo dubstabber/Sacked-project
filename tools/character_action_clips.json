@@ -61,6 +61,23 @@
     {
       "character": "female-employee-1",
       "library": "npc",
+      "source": "ANGESTELLTE#1_IDLE#2",
+      "action": "idle-2",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ],
+      "loop": false
+    },
+    {
+      "character": "female-employee-1",
+      "library": "npc",
       "source": "ANGESTELLTE#1_PISSED",
       "action": "pissed",
       "angles": [
@@ -125,6 +142,23 @@
         "270",
         "315"
       ]
+    },
+    {
+      "character": "female-employee-2",
+      "library": "npc",
+      "source": "ANGESTELLTE#2_IDLE#2",
+      "action": "idle-2",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ],
+      "loop": false
     },
     {
       "character": "female-employee-2",
@@ -240,6 +274,23 @@
     {
       "character": "male-employee-1",
       "library": "npc",
+      "source": "ANGESTELLTER#1_IDLE#2",
+      "action": "idle-2",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ],
+      "loop": false
+    },
+    {
+      "character": "male-employee-1",
+      "library": "npc",
       "source": "ANGESTELLTER#1_PISSED",
       "action": "pissed",
       "angles": [
@@ -308,6 +359,23 @@
     {
       "character": "male-employee-2",
       "library": "npc",
+      "source": "ANGESTELLTER#2_IDLE#2",
+      "action": "idle-2",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ],
+      "loop": false
+    },
+    {
+      "character": "male-employee-2",
+      "library": "npc",
       "source": "ANGESTELLTER#2_PISSED",
       "action": "pissed",
       "angles": [
@@ -372,6 +440,23 @@
         "270",
         "315"
       ]
+    },
+    {
+      "character": "secretary",
+      "library": "npc",
+      "source": "SEKRETAERIN_IDLE#2",
+      "action": "idle-2",
+      "angles": [
+        "000",
+        "045",
+        "090",
+        "135",
+        "180",
+        "225",
+        "270",
+        "315"
+      ],
+      "loop": false
     },
     {
       "character": "secretary",

@@ -54,8 +54,11 @@ const ORIGINAL_FRAME_SECONDS := 1.0 / 60.0
 const LOOK_AROUND_ROLL := 4000
 const LOOK_BACK_ROLL := 0x80
 # sub_419CE0 and sub_41E360 read the slot they are showing before they roll anything in their
-# idle branch (0x419DFE, 0x41E43D); the boss's and the janitor's ticks do not.
+# idle branch (0x419DFE, 0x41E43D), and only they play IDLE#2, on (rand() & 0xFFF) > 0xFF8:
+# 7/4096 of the idle frames. The boss's table has no IDLE#2, and the janitor's tick never
+# picks the one his names.
 const SLOT_READING_PROFILES := [&"male-employee-1", &"male-employee-2", &"female-employee-1", &"female-employee-2", &"secretary"]
+const FIDGET_ROLL := 0xFF8
 # sub_4187F0 splits a full meter across the goals the map can actually offer, and
 # sub_417B00 hands an agent one share the first time each of its goals is spoiled -- so an
 # agent is at its angriest once that many different goals have been.
@@ -333,11 +336,14 @@ func _run_frame() -> void:
 	if not _in_idle_branch():
 		_showing_idle = false
 		return
-	if _profile_id in SLOT_READING_PROFILES and not _showing_idle:
-		# The first idle frame after any other slot only puts slot 0 back (0x419E12, 0x41E451).
-		_showing_idle = true
-		return
-	_showing_idle = true
+	if _profile_id in SLOT_READING_PROFILES:
+		if not _showing_idle:
+			# IDLE#2 plays out, and the first idle frame after it or any other slot only puts
+			# slot 0 back (0x419E12, 0x41E451).
+			_showing_idle = not bool(_actor.call("is_fidgeting"))
+			return
+		if (_frame_random.randi() & 0xFFF) > FIDGET_ROLL and bool(_actor.call("fidget")):
+			_showing_idle = false
 	_look_around()
 
 

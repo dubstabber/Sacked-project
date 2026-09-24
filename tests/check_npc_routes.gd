@@ -26,8 +26,9 @@ func _run() -> void:
 	await _check_seated_activity_and_cancellation()
 	await _check_missing_seated_view_uses_original_fallback()
 	await _check_turning_the_view()
+	await _check_fidgeting()
 	if _failures == 0:
-		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles, seated activities and turning the view passed")
+		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles, seated activities, turning the view and IDLE#2 passed")
 	quit(1 if _failures else 0)
 
 
@@ -299,6 +300,43 @@ func _check_turning_the_view() -> void:
 	npc.turn_view(1)
 	_expect(String(npc.animation_player.current_animation) == "male-employee-1-actions/male-employee-1-pissed-down-right", "a turn mid-activity keeps its slot in the new view, got %s" % npc.animation_player.current_animation)
 	_expect(npc.current_activity == &"pissed", "and keeps the activity itself")
+	world.free()
+
+
+# IDLE#2 plays once (sub_419CE0 clears its loop flag at 0x419EA8) and slot 0 comes back when it
+# has finished. The busy timer running out does not cut it short; a new command does.
+func _check_fidgeting() -> void:
+	var world := _make_world()
+	var npc := _make_npc(Vector2(80, 80), 1.5)
+	npc.profile = EMPLOYEE_PROFILE
+	world.add_child(npc)
+	await physics_frame
+	npc.last_direction = IsoDirection.get_screen_directions()[1]
+	var clip := "male-employee-1-actions/male-employee-1-idle-2-right"
+	var start := Engine.get_physics_frames()
+	_expect(npc.fidget() and npc.is_fidgeting(), "a coworker starts IDLE#2")
+	_expect(String(npc.animation_player.current_animation) == clip, "in its current view, got %s" % npc.animation_player.current_animation)
+	_expect(npc.animation_player.get_animation(clip).loop_mode == Animation.LOOP_NONE, "IDLE#2 is imported to play once")
+	for frame in range(10):
+		await physics_frame
+	_expect(String(npc.animation_player.current_animation) == clip, "standing about does not replace IDLE#2 with the idle loop")
+	await _wait_until(func(): return not npc.is_fidgeting(), 240, "IDLE#2 finishes")
+	var elapsed := float(Engine.get_physics_frames() - start) / Engine.physics_ticks_per_second
+	_expect(absf(elapsed - 1.3125) < 0.15, "IDLE#2 plays its 21 frames at 16 fps once, took %.2f s" % elapsed)
+	_expect(String(npc.animation_controller.current_animation) == "male-employee-1/male-employee-1-idle1-atmen-right", "slot 0 comes back when it ends, got %s" % npc.animation_controller.current_animation)
+
+	_expect(npc.start_activity(&"idle", 0.1, Vector2.ZERO) and npc.fidget(), "IDLE#2 can start during an idle activity")
+	await _wait_until(func(): return npc.current_activity != &"idle" or npc._command == npc.Command.NONE, 30, "the idle activity's timer runs out")
+	_expect(npc.is_fidgeting() and String(npc.animation_player.current_animation).ends_with("idle-2-right"), "the activity's end leaves IDLE#2 playing")
+	npc.turn_view(1)
+	_expect(String(npc.animation_player.current_animation) == "male-employee-1-actions/male-employee-1-idle-2-down-right", "a turn shows IDLE#2 in the new view")
+	npc.cancel_commands()
+	_expect(not npc.is_fidgeting() and String(npc.animation_controller.current_animation).ends_with("idle1-atmen-down-right"), "a new command ends IDLE#2")
+
+	var boss := _make_npc(Vector2(200, 80), 1.5)
+	world.add_child(boss)
+	await physics_frame
+	_expect(not boss.fidget() and not boss.is_fidgeting(), "the boss has no IDLE#2 to play")
 	world.free()
 
 
