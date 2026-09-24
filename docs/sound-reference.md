@@ -60,7 +60,7 @@ next screen.
   run under `Menu1`. After a win they run under the level's theme, because `Następny poziom`
   goes straight to the tree (screen 15) and nothing stops the theme on the way. The port's
   `ScreenManager` maps the track each screen hears, as the original does after the menu (see
-  the port decision below); the names screen is not built yet, so `Menu2` is reached only
+  the port decision on the theme under "What a level plays" below); the names screen is not built yet, so `Menu2` is reached only
   from the highscore board. See docs/shell-reference.md.
 - **Warning.** `sub_403780` starts `S1012` looping once `limit - elapsed <= 10`, keeping the
   slot in `game+19056` so it is only started once.

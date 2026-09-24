@@ -160,8 +160,9 @@ func hold_music(held: bool) -> void:
 
 # sub_407370 cases 7 and 8 stop the warning slot (0x4075E3, 0x407639). Their teardown
 # sub_407140 (0x407017, 0x4070C6) deletes the player, whose destructor 0x41AE90 stops the
-# slots it holds, so a start sound still held goes too; the win cue is ScreenManager's. Stopping the theme is the port's choice: the original leaves it playing
-# under the result screens.
+# slots it holds, so a start sound still held goes too; the win cue is ScreenManager's.
+# Stopping the theme is the port's choice: the original leaves it playing under the result
+# screens.
 func _on_finished(_won: bool) -> void:
 	_theme.stop()
 	_warning.stop()
