@@ -63,8 +63,11 @@ func _input(event: InputEvent) -> void:
 
 
 func _ready() -> void:
+	# F1 has to reach _input under the pause key, the quit prompt and the duel too.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_menu_music_player = AudioStreamPlayer.new()
 	_menu_music_player.name = "MenuMusic"
+	_menu_music_player.process_mode = Node.PROCESS_MODE_PAUSABLE
 	_menu_music_player.bus = &"Music"
 	_menu_music_player.finished.connect(_on_menu_music_finished)
 	add_child(_menu_music_player)

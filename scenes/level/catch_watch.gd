@@ -134,6 +134,7 @@ func _open_duel() -> void:
 		_minigame.connect("finished", _on_duel_finished)
 	_minigame.call("open", _catcher_id(), character, casts)
 	_show_pointer_for_duel()
+	_hold_level_music(true)
 	get_tree().paused = true
 
 
@@ -147,6 +148,12 @@ func _show_pointer_for_duel() -> void:
 		return
 	cursor.release_from_menu(_player.call("get_player_viewport_position"), false)
 	cursor.show_main_cursor()
+
+
+func _hold_level_music(held: bool) -> void:
+	var audio := get_parent().get_node_or_null("LevelAudio") if get_parent() != null else null
+	if audio != null and audio.has_method("hold_music"):
+		audio.hold_music(held)
 
 
 func _catcher_id() -> StringName:
@@ -163,6 +170,7 @@ func _on_duel_finished(won: bool) -> void:
 	get_tree().paused = false
 	reset()
 	if won:
+		_hold_level_music(false)
 		return
 	if _session != null and _session.has_method("lose"):
 		_session.lose()

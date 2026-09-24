@@ -45,6 +45,14 @@ func _exit_tree() -> void:
 	movement_cursor.show_main_cursor()
 
 
+# A paused player never sees the right button's release, but sub_403FB0 rebuilds the walk bit
+# from the polled button every frame (0x403FE4, 0x4043CC), so a walk never outlives the button
+# across the pause key, the quit prompt or the duel.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_UNPAUSED and is_mouse_movement_active and not Input.is_action_pressed("mouse-movement"):
+		stop_mouse_movement()
+
+
 func _input(event: InputEvent) -> void:
 	if input_locked:
 		return

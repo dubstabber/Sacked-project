@@ -47,6 +47,7 @@ func _run() -> void:
 	_i18n().set_language(&"pl")
 	await _check_pause_stops_the_level()
 	await _check_quit_prompt()
+	await _check_what_carries_on_behind_the_prompt()
 	await _check_the_answer_keys_follow_the_language()
 	await _check_yes_leaves_the_running_level()
 	paused = false
@@ -178,6 +179,63 @@ func _check_quit_prompt() -> void:
 	watch.call("reset")
 	catcher.free()
 
+	paused = false
+	root.remove_child(level)
+	level.free()
+
+
+# The pause bit stops the level and nothing else: the music and effects play on, the port's
+# F1 still reaches the window, and a walk ends with its button even when the release lands
+# behind the prompt, because sub_403FB0 rebuilds the walk bit from the polled button.
+func _check_what_carries_on_behind_the_prompt() -> void:
+	var level := _level()
+	await process_frame
+	var prompts: Node = level.get_node("LevelRuntime/LevelPrompts/Panels")
+	var player: Node = level.get_node("World/Player")
+
+	Input.action_press("mouse-movement")
+	player.start_mouse_movement()
+	_key(KEY_Q)
+	Input.action_release("mouse-movement")
+	_key(KEY_N)
+	await process_frame
+	_expect(not player.is_mouse_movement_active, "a right button let go behind the prompt ends the walk")
+	Input.action_press("mouse-movement")
+	player.start_mouse_movement()
+	_key(KEY_Q)
+	_key(KEY_N)
+	await process_frame
+	_expect(player.is_mouse_movement_active, "a right button held through the prompt keeps walking")
+	Input.action_release("mouse-movement")
+	player.stop_mouse_movement()
+
+	var audio: Node = level.get_node("LevelRuntime/LevelAudio")
+	var music: Array = audio.get_children().filter(func(child): return child is AudioStreamPlayer and child.bus == &"Music")
+	_expect(music.size() == 1, "the level has one theme player")
+	_key(KEY_Q)
+	if music.size() == 1:
+		var theme: AudioStreamPlayer = music[0]
+		_expect(theme.can_process() and not theme.stream_paused, "the theme plays on behind the quit prompt")
+		var watch: Node = level.get_node("LevelRuntime/CatchWatch")
+		watch.call("_hold_level_music", true)
+		_expect(theme.stream_paused, "the duel stops the theme")
+		watch.call("_hold_level_music", false)
+		_expect(not theme.stream_paused, "and the end of the duel brings it back")
+
+	var settings: Node = root.get_node("SettingsStore")
+	var settings_path: String = settings.path
+	settings.path = "user://check_level_prompts_settings.cfg"
+	settings.reload()
+	var fullscreen: bool = settings.is_fullscreen()
+	_expect(_key(KEY_F1), "F1 is taken behind the quit prompt")
+	_expect(settings.is_fullscreen() != fullscreen, "F1 still toggles the window behind the quit prompt")
+	_expect(prompts.is_quit_prompt_open, "and leaves the prompt up")
+	_key(KEY_F1)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(settings.path))
+	settings.path = settings_path
+	settings.reload()
+
+	_key(KEY_N)
 	paused = false
 	root.remove_child(level)
 	level.free()

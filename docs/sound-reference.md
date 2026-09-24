@@ -51,6 +51,14 @@ that slot; everything else plays at the full effects volume from `handler+3892`.
 - **Actions.** Each action record names its sound at `+0x44` and says at `+0x48` whether it
   plays when the action starts or when it applies. All 32 sounds level 1's actions name
   resolve to a shipped file.
+- **Pause and the quit prompt.** Both only set `game+12740` bit `0x20` (the quit prompt at
+  `0x4075AF`), and no sound code reads it: `sub_402590` runs the channel update `sub_42A970`
+  at `0x4025AB`, before its own pause test at `0x4025B0`, and the music streams on its own
+  thread (`sub_42AA60` → `sub_45E420` → `sub_45F450`, `_beginthreadex`). So the theme, the
+  warning loop and any effect still sounding play on behind either one.
+- **The duel.** `sub_407370` case 5 stops the music (`sub_42AC30` at `0x407571` →
+  `sub_45F4F0`) and `sub_4027B0` resumes it when the duel ends (`sub_42AC40` →
+  `sub_45F530`). What screen 5 does to the effect channels is not recovered.
 
 ## The two volumes
 
@@ -146,4 +154,8 @@ Neither is the original's: it ships one language per build and has no display op
 the sound-setup screen's `Domyślne` puts only the two volumes back, and deliberately leaves
 those two rows alone.
 `scenes/level/level_audio.gd` picks the theme, starts the warning loop, plays the win cue and
-plays each action's sound at the end the record asks for.
+plays each action's sound at the end the record asks for. Its players run with the tree
+paused, so the pause key and the quit prompt leave them playing; only its own `_process`,
+which starts the warning, stops with the level. `CatchWatch` holds the theme for the duel
+and lets it go on a win, and the warning with it — the one choice here not taken from the
+binary, since it keeps the warning as silent in the duel as it was before.

@@ -4,6 +4,12 @@ extends Node
 # level starts; sub_403780 starts the looping warning ten seconds before the limit and the
 # win screen plays S1100. Effects are named by the action table's +0x44 field.
 # See docs/sound-reference.md.
+#
+# The pause key and the quit prompt only set game+12740 bit 0x20, which no sound code reads:
+# sub_402590 runs the channel update sub_42A970 before its pause test (0x4025AB, 0x4025B0)
+# and the music streams on its own thread (sub_42AA60 -> sub_45F450). So the players keep
+# playing while the tree is paused; only this node's _process, which starts the warning, stops
+# with it, as sub_403780 does.
 
 const MANIFEST_PATH := "res://resources/original/sounds.json"
 const THEMES := ["Theme1", "Theme2", "Theme3"]
@@ -100,6 +106,15 @@ func _on_action_applied(action: Dictionary, _point: Node) -> void:
 		play_effect(String(action.get("sound", "")))
 
 
+# sub_407370 case 5 stops the streamed music for the duel (sub_42AC30 -> sub_45F4F0 at
+# 0x407571) and sub_4027B0 resumes it when the duel ends (sub_42AC40 -> sub_45F530). What
+# screen 5 does to the effect channels is not recovered, so the warning stays as silent as it
+# was when the duel paused everything.
+func hold_music(held: bool) -> void:
+	_theme.stream_paused = held
+	_warning.stream_paused = held
+
+
 func _on_finished(won: bool) -> void:
 	_theme.stop()
 	_warning.stop()
@@ -110,6 +125,7 @@ func _on_finished(won: bool) -> void:
 func _make_player(bus: StringName, temporary := false) -> AudioStreamPlayer:
 	var player := AudioStreamPlayer.new()
 	player.bus = bus
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(player)
 	if temporary:
 		player.finished.connect(player.queue_free)

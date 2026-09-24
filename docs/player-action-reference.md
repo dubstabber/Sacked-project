@@ -226,7 +226,11 @@ flag**: `sub_415500` draws nothing unless it is 1 (`0x41551A`).
   walking from the next frame, on the movement bits still held.
 - **A pause freezes it hidden.** The pause key and the quit prompt (`sub_407370(10)`,
   `0x4075A9`) set the pause bit, which stops `sub_403780` (`0x40378D`) and the world
-  (`0x4025B0`) and leaves the flag at 0.
+  (`0x4025B0`) and leaves the flag at 0. The walk does not outlive the right button across
+  it: `sub_403FB0` clears bit `0x100` every frame (`0x403FE4`) and sets it again only from
+  the polled button (`0x4043CC`), so a button let go behind the prompt ends the walk. The
+  port's paused player never sees that release, so it re-reads the button on
+  `NOTIFICATION_UNPAUSED`.
 - **The duel shows it.** `sub_402470` only catches in the acting states {2, 3}, {11, 12}
   and {21, 22} (`0x4024C0`, see [catch-reference.md](catch-reference.md)), never in state 1,
   so the ring is never open at the catch itself. The caught pause still runs the ordinary input handler
