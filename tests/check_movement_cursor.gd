@@ -52,15 +52,18 @@ func _check_the_ring_holds_the_pointer(cursor: Sprite2D) -> void:
 	cursor.capture_for_menu()
 	_assert_true(cursor.is_menu_captured(), "opening the ring captures the pointer")
 	_assert_equal(cursor.menu_pointer_mode(), Input.MOUSE_MODE_CAPTURED, "a running ring takes relative motion")
+	_assert_equal(cursor.requested_mouse_mode, Input.MOUSE_MODE_CAPTURED, "opening the ring asks for a captured pointer")
 
 	# P and the quit prompt freeze the ring with the cursor still hidden.
 	paused = true
 	await process_frame
 	_assert_true(cursor.is_menu_captured(), "a pause does not close the ring")
 	_assert_equal(cursor.menu_pointer_mode(), Input.MOUSE_MODE_HIDDEN, "a paused ring hands the pointer back, hidden")
+	_assert_equal(cursor.requested_mouse_mode, Input.MOUSE_MODE_HIDDEN, "the pause itself hides the pointer")
 	paused = false
 	await process_frame
 	_assert_equal(cursor.menu_pointer_mode(), Input.MOUSE_MODE_CAPTURED, "unpausing captures it again")
+	_assert_equal(cursor.requested_mouse_mode, Input.MOUSE_MODE_CAPTURED, "the unpause itself captures it again")
 
 	# A stray right-button release must not show the pointer over an open ring.
 	cursor.stop_drag(Vector2(400.0, 300.0))
@@ -69,8 +72,15 @@ func _check_the_ring_holds_the_pointer(cursor: Sprite2D) -> void:
 
 	cursor.release_from_menu(Vector2(400.0, 300.0), false)
 	_assert_false(cursor.is_menu_captured(), "closing the ring releases the pointer")
+	_assert_equal(cursor.requested_mouse_mode, Input.MOUSE_MODE_VISIBLE, "closing the ring shows the pointer")
 	cursor.release_from_menu(Vector2(400.0, 300.0), false)
 	_assert_false(cursor.is_menu_captured(), "releasing twice is harmless")
+
+	# A right press closes the ring and starts a walk, which keeps the pointer hidden.
+	cursor.capture_for_menu()
+	cursor.release_from_menu(Vector2(400.0, 300.0), true)
+	_assert_equal(cursor.requested_mouse_mode, Input.MOUSE_MODE_HIDDEN, "a ring closed by a walk leaves the pointer hidden")
+	cursor.show_main_cursor()
 
 
 func _assert_vector_close(actual: Vector2, expected: Vector2, label: String) -> void:

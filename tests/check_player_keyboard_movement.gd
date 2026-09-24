@@ -6,6 +6,7 @@ const JoblessProfile := preload("res://scenes/player/profiles/jobless.tres")
 const EPSILON := 0.001
 
 var _player
+var _failures := 0
 
 
 func _init() -> void:
@@ -33,7 +34,7 @@ func _run() -> void:
 
 	_free_player()
 	_release_movement_actions()
-	quit(0)
+	quit(1 if _failures else 0)
 
 
 func _check_keyboard_movement_leaves_cursor_alone() -> void:
@@ -144,7 +145,5 @@ func _assert_false(value: bool, label: String) -> void:
 
 
 func _fail(message: String) -> void:
-	_release_movement_actions()
-	_free_player()
+	_failures += 1
 	push_error(message)
-	quit(1)

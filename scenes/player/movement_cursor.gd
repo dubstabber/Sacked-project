@@ -29,13 +29,15 @@ const MOVEMENT_ARROW_OFFSETS := {
 }
 
 var _menu_capture := false
+# Headless, Input.mouse_mode always reads back VISIBLE, so the checks read what was asked for.
+var requested_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_VISIBLE
 
 
 func _notification(what: int) -> void:
 	if not _menu_capture:
 		return
 	if what == NOTIFICATION_PAUSED or what == NOTIFICATION_UNPAUSED:
-		Input.mouse_mode = menu_pointer_mode()
+		_set_pointer_mode(menu_pointer_mode())
 
 
 func is_menu_captured() -> bool:
@@ -47,7 +49,7 @@ func is_menu_captured() -> bool:
 # CAPTURED is both: no pointer, and relative motion that does not stop at the window edge.
 func capture_for_menu() -> void:
 	_menu_capture = true
-	Input.mouse_mode = menu_pointer_mode()
+	_set_pointer_mode(menu_pointer_mode())
 
 
 # sub_4066D0's closing branch sets the flag back (0x406854) and sub_4155F0 re-centres the
@@ -112,12 +114,17 @@ func show_busy_cursor() -> void:
 
 
 func hide_main_cursor() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	_set_pointer_mode(Input.MOUSE_MODE_HIDDEN)
 
 
 func show_main_cursor() -> void:
 	Input.set_custom_mouse_cursor(POINTER_CURSOR_TEXTURE, Input.CURSOR_ARROW)
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_set_pointer_mode(Input.MOUSE_MODE_VISIBLE)
+
+
+func _set_pointer_mode(mode: Input.MouseMode) -> void:
+	requested_mouse_mode = mode
+	Input.mouse_mode = mode
 
 
 func get_movement_arrow_phase(direction: Vector2) -> float:
