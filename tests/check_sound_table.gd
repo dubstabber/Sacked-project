@@ -198,6 +198,10 @@ func _check_a_start_sound_lasts_only_while_its_prank_can() -> void:
 		_expect(false, "level 1 carries its audio, the prank controller and the keyboard")
 		_close_level(level)
 		return
+	if not ("_action_sound" in audio and prank.has_signal("action_aborted")):
+		_expect(false, "LevelAudio holds a prank's start sound and PrankController raises action_aborted")
+		_close_level(level)
+		return
 	_expect(bool(ActionTable.get_action(13).get("sound_at_start", false)), "action 13 sounds at the start")
 	_expect(not bool(ActionTable.get_action(14).get("sound_at_start", true)), "action 14 sounds when it applies")
 

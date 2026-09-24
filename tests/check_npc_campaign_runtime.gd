@@ -99,7 +99,9 @@ func _check_level(label: String, seconds: int) -> void:
 		if not child is CharacterBody2D or not child.has_node("Brain"):
 			continue
 		var brain := child.get_node("Brain")
-		brain.random_seed = RANDOM_SEED
+		# One stream per agent: the per-frame rolls draw from a stream seeded by random_seed, and
+		# a shared one would make every agent's IDLE#2 count the same draws.
+		brain.random_seed = RANDOM_SEED + actors.size()
 		actors.append(child)
 		var key := child.name
 		stats[key] = {

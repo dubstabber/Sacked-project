@@ -6,6 +6,7 @@ extends SceneTree
 
 const LEVEL_SCENE := preload("res://scenes/level_2.tscn")
 const PrankController := preload("res://scenes/player/prank_controller.gd")
+const LevelAudioScript := preload("res://scenes/level/level_audio.gd")
 
 var _failures := 0
 var _level: Node
@@ -42,6 +43,7 @@ func _run() -> void:
 	_check_constants(brain)
 	await _check_notice_geometry(agent, brain, player, layer)
 	await _check_only_mid_prank(world, player)
+	_check_a_catch_cuts_the_start_sound(world, player)
 	_check_the_duel_gets_the_pointer(world, player)
 	_check_the_duel_holds_only_the_theme()
 	_check_a_won_duel_keeps_the_count()
@@ -174,7 +176,8 @@ func _check_only_mid_prank(world: Node, player: Node2D) -> void:
 	_expect(watch.EXCLAMATIONS.size() == 4, "sub_407990 picks one of four exclamations")
 
 
-# sub_402470 only catches in states 2 and 3, so the ring is never open at the catch itself,
+# sub_402470 only catches in the acting states (2-3, 11-12, 21-22), so the ring is never open
+# at the catch itself,
 # but the caught pause still reads input and the ring can be opened under the banner.
 # sub_407370 case 5 then shows and re-centres the cursor (0x40757C, 0x407582) whatever the
 # ring is doing, and a duel played with the mouse must not inherit the ring's capture.
@@ -262,6 +265,45 @@ func _check_a_won_duel_keeps_the_count() -> void:
 	minigame.visible = false
 	watch._on_duel_finished(true)
 	screens.duels_fought = restore
+
+
+# A catch pushes the prank to its abort state (sub_402470, 0x402534), and the abort stops the
+# prank's own start sound in player+1112 (0x41BB61): the whole chain, not just abort_action.
+func _check_a_catch_cuts_the_start_sound(world: Node, player: Node2D) -> void:
+	var watch := _level.get_node_or_null("LevelRuntime/CatchWatch")
+	var audio := _level.get_node_or_null("LevelRuntime/LevelAudio")
+	var prank = get_first_node_in_group("player_actions")
+	var found := _start_sound_prank(world, prank, player)
+	if watch == null or audio == null or found.is_empty() or not ("_action_sound" in audio):
+		_expect(false, "level 2 carries the catch watch, the audio and a prank that sounds as it starts")
+		return
+	prank.focus_point = found["point"]
+	prank.entries = [found["entry"]]
+	prank.open_menu()
+	prank.confirm()
+	var held: AudioStreamPlayer = audio._action_sound
+	_expect(held != null and held.playing, "the prank's start sound plays")
+	var hands_off: bool = watch.hands_off_to_minigame
+	watch.hands_off_to_minigame = false
+	watch._catch(_first_agent(world))
+	watch.hands_off_to_minigame = hands_off
+	_expect(prank.state == PrankController.State.FREE, "the catch aborts the prank")
+	_expect(audio._action_sound == null, "the catch lets go of the start sound")
+	_expect(held == null or not is_instance_valid(held) or not held.playing, "and stops it")
+	watch.reset()
+
+
+func _start_sound_prank(world: Node, prank: Node, player: Node2D) -> Dictionary:
+	for node in world.get_node("Objects").get_children():
+		var point := node.get_node_or_null("InteractionPoint") as Node2D
+		if point == null or (point.get("action_ids") as PackedInt32Array).is_empty():
+			continue
+		player.global_position = point.global_position
+		for entry in prank.build_entries(point):
+			var action := ActionTable.get_action(int(entry["action_id"]))
+			if bool(action.get("sound_at_start", false)) and LevelAudioScript.effect_stream(String(action.get("sound", ""))) != null:
+				return {"point": point, "entry": entry}
+	return {}
 
 
 func _prankable_point(world: Node, prank: Node, player: Node2D) -> Node2D:
