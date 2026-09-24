@@ -3,7 +3,8 @@ extends SceneTree
 # Level 2 is the first map that spawns the secretary, the janitor and the second coworker
 # variant, all of which stood inert until their profiles and clips were imported. This runs
 # the whole cast on the real map and asserts each one chooses its own goals, walks to them
-# and finishes an activity, with a footprint that never enters a blocked cell.
+# and finishes an activity, standing on free cells the way the original's routes do, and
+# that everyone with a desk sits down at their own chair.
 #
 # check_npc_level_runtime.gd keeps the deeper level-1 assertions; the helpers here are
 # copied rather than shared, following the convention for the generated level fixtures.
@@ -38,7 +39,9 @@ func _run() -> void:
 		_stats[profile_id] = {
 			"destinations": 0, "finished": 0, "navigation_failures": 0,
 			"walk_frames": 0, "activity_frames": 0, "goals": {},
-			"last_position": child.position,
+			"last_position": child.position, "return_cell": null,
+			"assigned_chair": brain.get_node_or_null(brain.assigned_chair) if not brain.assigned_chair.is_empty() else null,
+			"sat_in_assigned_chair": false,
 		}
 		var stats: Dictionary = _stats[profile_id]
 		child.destination_reached.connect(func(): stats.destinations += 1)
@@ -80,11 +83,12 @@ func _run() -> void:
 	player.get_node("FootstepPlayer").stop_footsteps()
 	player.get_node("FootstepPlayer").stream = null
 	var collision_layer := world.get_node("CollisionTileMapLayer") as TileMapLayer
+	var activity_points := get_nodes_in_group("npc_activity_points")
 
 	for frame in range(SIMULATION_SECONDS * Engine.physics_ticks_per_second):
 		await physics_frame
 		for actor in actors:
-			_check_actor_frame(actor, collision_layer)
+			_check_actor_frame(actor, collision_layer, activity_points)
 		if _failures > 0:
 			break
 
@@ -92,24 +96,29 @@ func _run() -> void:
 		_check_actor_result(actor)
 	level.free()
 	if _failures == 0:
-		print("Level 2 NPC runtime: %d simulated seconds, all six brains chose goals, walked and completed activities" % SIMULATION_SECONDS)
+		print("Level 2 NPC runtime: %d simulated seconds, all six brains chose goals, walked, completed activities, stayed on free cells and sat at their own desks" % SIMULATION_SECONDS)
 	quit(1 if _failures else 0)
 
 
-func _check_actor_frame(actor: CharacterBody2D, layer: TileMapLayer) -> void:
+func _check_actor_frame(actor: CharacterBody2D, layer: TileMapLayer, activity_points: Array[Node]) -> void:
 	var profile_id := String(actor.profile.id)
 	var stats: Dictionary = _stats[profile_id]
 	var brain := actor.get_node("Brain")
 	_expect(actor.global_position.is_finite(), "%s position remains finite" % profile_id)
+	for point in activity_points:
+		if point.occupant == actor:
+			stats.return_cell = _rounded_cell(layer, point.global_position)
+			if point == stats.assigned_chair and String(actor.current_activity).begins_with("sit-"):
+				stats.sat_in_assigned_chair = true
 	if brain._state == BRAIN_SCRIPT.State.ACTING:
 		# An activity places the agent on the item's own anchor, which is deliberately not a
 		# cell it could have walked to: sub_4161E0 seats it on the furniture and sub_416090
-		# puts it inside the cubicle. Only walking has to keep its footprint clear.
+		# puts it inside the cubicle.
 		stats.activity_frames += 1
 		if String(actor.current_activity).begins_with("sit-"):
 			_expect(actor.animation_player.is_playing(), "%s seated action plays an available animation" % profile_id)
 	else:
-		_expect_footprint_clear(layer, actor.global_position, profile_id)
+		_expect_rounded_cell_free(layer, actor.global_position, stats.return_cell, profile_id)
 		if actor.current_activity == &"walking":
 			stats.walk_frames += 1
 	stats.last_position = actor.global_position
@@ -122,22 +131,28 @@ func _check_actor_result(actor: CharacterBody2D) -> void:
 	_expect(stats.destinations > 0, "%s reaches a destination" % profile_id)
 	_expect(stats.finished > 0, "%s completes an activity" % profile_id)
 	_expect(stats.goals.size() > 0, "%s raises at least one goal" % profile_id)
+	# The secretary's DREHSTUHL04 is flush against a wall: only a route that ends on its
+	# free cell, as sub_416D50's does, gets her into it.
+	if stats.assigned_chair != null:
+		_expect(stats.sat_in_assigned_chair, "%s sits down at its assigned chair %s" % [profile_id, stats.assigned_chair.get_parent().name])
 	print("%s: %d destinations, %d completed activities, %d distinct goals, %d navigation retries" % [
 		profile_id, stats.destinations, stats.finished, stats.goals.size(), stats.navigation_failures,
 	])
 
 
-func _expect_footprint_clear(layer: TileMapLayer, position: Vector2, profile_id: String) -> void:
+# sub_416D50 routes between cell centres and sub_41E910 never enters a blocked cell, so an
+# agent stands on a free cell -- except on the exact interaction point sub_4161E0 or
+# sub_416090 put it back on, and while it steps back off it.
+func _expect_rounded_cell_free(layer: TileMapLayer, position: Vector2, return_cell: Variant, profile_id: String) -> void:
+	var cell := _rounded_cell(layer, position)
+	if cell != return_cell and layer.get_cell_source_id(cell) >= 0:
+		_expect(false, "%s stands in blocked cell %s at %s" % [profile_id, cell, position])
+
+
+func _rounded_cell(layer: TileMapLayer, position: Vector2) -> Vector2i:
 	var relative := layer.to_local(position) - layer.map_to_local(Vector2i.ZERO)
 	var tile_position := Vector2(relative.x / 96 + relative.y / 48, -relative.x / 96 + relative.y / 48)
-	var center := Vector2i(floori(tile_position.x + 0.5), floori(tile_position.y + 0.5))
-	for y in range(center.y - 1, center.y + 2):
-		for x in range(center.x - 1, center.x + 2):
-			var cell := Vector2i(x, y)
-			var distance := (tile_position - Vector2(cell)).abs()
-			if distance.x < 0.8499 and distance.y < 0.8499 and layer.get_cell_source_id(cell) >= 0:
-				_expect(false, "%s walks inside blocked cell %s at %s" % [profile_id, cell, tile_position])
-				return
+	return Vector2i(floori(tile_position.x + 0.5), floori(tile_position.y + 0.5))
 
 
 func _expect(condition: bool, message: String) -> void:

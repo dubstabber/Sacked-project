@@ -202,14 +202,31 @@ func _find_navigation_path(target: Vector2) -> PackedVector2Array:
 		var origin: Vector2 = layer.map_to_local(Vector2i.ZERO)
 		var start := IsoDirection.screen_to_ground(layer.to_local(global_position) - origin)
 		var goal := IsoDirection.screen_to_ground(layer.to_local(target) - origin)
+		var start_cell := Vector2i(floori(start.x + 0.5), floori(start.y + 0.5))
 		var bounds: Rect2i = layer.get_used_rect().grow(1)
-		bounds = bounds.expand(Vector2i(floori(start.x + 0.5), floori(start.y + 0.5)))
+		bounds = bounds.expand(start_cell)
 		bounds = bounds.expand(Vector2i(floori(goal.x + 0.5), floori(goal.y + 0.5)))
 		var path: PackedVector2Array = NAVIGATION.find_path(start, goal, layer.is_blocked, bounds)
+		if path.is_empty() and (start != Vector2(start_cell) or layer.is_blocked(start_cell)):
+			path = _step_back_path(start_cell, goal, layer, bounds)
 		for index in range(path.size()):
 			path[index] = layer.to_global(origin + IsoDirection.ground_to_screen(path[index]))
 		return path
 	return PackedVector2Array([target])
+
+
+# sub_4161E0 and sub_416090 stand an agent back on the exact interaction point, which can be
+# flush against a wall or even inside a blocked cell, and the footprint test then refuses
+# every route from there. sub_416D50 plans from the agent's rounded cell (0x416D8A) and
+# sub_41EE70 never tests that cell, so this does the same and steps back onto its centre
+# first. Only the search exempts the cell; walking keeps its collision. A start already on a
+# free cell's centre gets the same search from the plain attempt, so it is not repeated.
+func _step_back_path(start_cell: Vector2i, goal: Vector2, layer: Node, bounds: Rect2i) -> PackedVector2Array:
+	var is_blocked := func(cell: Vector2i) -> bool: return cell != start_cell and layer.is_blocked(cell)
+	var path: PackedVector2Array = NAVIGATION.find_path(Vector2(start_cell), goal, is_blocked, bounds)
+	if not path.is_empty():
+		path.insert(0, Vector2(start_cell))
+	return path
 
 
 func _follow_navigation(delta: float) -> void:

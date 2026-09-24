@@ -3,8 +3,9 @@ extends SceneTree
 # Every imported level except 1 and 2, which keep their own deeper fixtures
 # (check_npc_level_runtime.gd and check_npc_level_2_runtime.gd). This one asserts only what
 # has to hold on any map: each agent is configured, chooses goals, walks to them, finishes
-# something, and never puts its footprint inside a blocked cell while walking. A points-mode
-# variant is checked too, because that is the scene the points game actually loads.
+# something, stands on free cells the way the original's routes do, and everyone with a desk
+# sits down at their own chair. A points-mode variant is checked too, because that is the
+# scene the points game actually loads.
 #
 # The simulation advances on the wall clock, so run it with --fixed-fps 10: the physics tick
 # and therefore every decision is unchanged, but 120 simulated seconds take about five
@@ -14,9 +15,8 @@ const LevelDir := "res://resources/levels"
 const BRAIN_SCRIPT := preload("res://scenes/npc/npc_brain.gd")
 const SIMULATION_SECONDS := 120
 const RANDOM_SEED := 4091
-# The grid pitch, and the clearance scenes/shared/grid_collision.gd requires.
+# The grid pitch.
 const TILE := Vector2(96.0, 48.0)
-const HALF_EXTENT := 0.8499
 
 var _failures := 0
 var _checked := 0
@@ -47,7 +47,7 @@ func _run() -> void:
 		_expect(false, "no level beyond the two with their own fixtures is imported")
 		quit(1)
 		return
-	print("Campaign NPC runtime: %d level scene(s), %d simulated seconds each, every agent chose goals, walked and finished an activity" % [_checked, seconds])
+	print("Campaign NPC runtime: %d level scene(s), %d simulated seconds each, every agent chose goals, walked, finished an activity, stayed on free cells and sat at its own desk" % [_checked, seconds])
 	quit(0)
 
 
@@ -95,7 +95,11 @@ func _check_level(label: String, seconds: int) -> void:
 		brain.random_seed = RANDOM_SEED
 		actors.append(child)
 		var key := child.name
-		stats[key] = {"destinations": 0, "finished": 0, "walk_frames": 0, "goals": {}}
+		stats[key] = {
+			"destinations": 0, "finished": 0, "walk_frames": 0, "goals": {}, "return_cell": null,
+			"assigned_chair": brain.get_node_or_null(brain.assigned_chair) if not brain.assigned_chair.is_empty() else null,
+			"sat_in_assigned_chair": false,
+		}
 		var entry: Dictionary = stats[key]
 		child.destination_reached.connect(func(): entry.destinations += 1)
 		child.activity_finished.connect(func(): entry.finished += 1)
@@ -119,14 +123,23 @@ func _check_level(label: String, seconds: int) -> void:
 	player.get_node("FootstepPlayer").stop_footsteps()
 	player.get_node("FootstepPlayer").stream = null
 	var collision_layer := world.get_node("CollisionTileMapLayer") as TileMapLayer
+	var activity_points: Array[Node] = []
+	for point in get_nodes_in_group("npc_activity_points"):
+		if level.is_ancestor_of(point):
+			activity_points.append(point)
 
 	for frame in range(seconds * Engine.physics_ticks_per_second):
 		await physics_frame
 		for actor in actors:
 			var entry: Dictionary = stats[actor.name]
 			_expect(actor.global_position.is_finite(), "level %s %s keeps a finite position" % [label, actor.name])
+			for point in activity_points:
+				if point.occupant == actor:
+					entry.return_cell = _rounded_cell(collision_layer, point.global_position)
+					if point == entry.assigned_chair and String(actor.current_activity).begins_with("sit-"):
+						entry.sat_in_assigned_chair = true
 			if actor.get_node("Brain")._state != BRAIN_SCRIPT.State.ACTING:
-				_footprint_clear(collision_layer, actor.global_position, label, actor.name)
+				_rounded_cell_free(collision_layer, actor.global_position, entry.return_cell, label, actor.name)
 				if actor.current_activity == &"walking":
 					entry.walk_frames += 1
 		if _failures > 0:
@@ -141,6 +154,10 @@ func _check_level(label: String, seconds: int) -> void:
 			_expect(entry.walk_frames > 0, "%s walks to a target of its own choosing" % who)
 			_expect(entry.destinations > 0, "%s reaches a destination" % who)
 			_expect(entry.finished > 0, "%s completes an activity" % who)
+			# Seven coworkers' chairs on levels 4, 6 and 7 are flush against a wall, and only a
+			# route that ends on the free cell, as sub_416D50's does, gets them seated.
+			if entry.assigned_chair != null:
+				_expect(entry.sat_in_assigned_chair, "%s sits down at its assigned chair %s" % [who, entry.assigned_chair.get_parent().name])
 			moved += int(entry.destinations)
 		print("  level %-3s %2d agents, %3d destinations reached" % [label, actors.size(), moved])
 	root.remove_child(level)
@@ -148,17 +165,19 @@ func _check_level(label: String, seconds: int) -> void:
 	_checked += 1
 
 
-func _footprint_clear(layer: TileMapLayer, position: Vector2, label: String, who: String) -> void:
+# sub_416D50 routes between cell centres and sub_41E910 never enters a blocked cell, so an
+# agent stands on a free cell -- except on the exact interaction point sub_4161E0 or
+# sub_416090 put it back on, and while it steps back off it.
+func _rounded_cell_free(layer: TileMapLayer, position: Vector2, return_cell: Variant, label: String, who: String) -> void:
+	var cell := _rounded_cell(layer, position)
+	if cell != return_cell and layer.get_cell_source_id(cell) >= 0:
+		_expect(false, "level %s %s stands in blocked cell %s at %s" % [label, who, cell, position])
+
+
+func _rounded_cell(layer: TileMapLayer, position: Vector2) -> Vector2i:
 	var relative := layer.to_local(position) - layer.map_to_local(Vector2i.ZERO)
 	var tile_position := Vector2(relative.x / TILE.x + relative.y / TILE.y, -relative.x / TILE.x + relative.y / TILE.y)
-	var center := Vector2i(floori(tile_position.x + 0.5), floori(tile_position.y + 0.5))
-	for y in range(center.y - 1, center.y + 2):
-		for x in range(center.x - 1, center.x + 2):
-			var cell := Vector2i(x, y)
-			var distance := (tile_position - Vector2(cell)).abs()
-			if distance.x < HALF_EXTENT and distance.y < HALF_EXTENT and layer.get_cell_source_id(cell) >= 0:
-				_expect(false, "level %s %s walks inside blocked cell %s at %s" % [label, who, cell, tile_position])
-				return
+	return Vector2i(floori(tile_position.x + 0.5), floori(tile_position.y + 0.5))
 
 
 func _expect(condition: bool, message: String) -> void:

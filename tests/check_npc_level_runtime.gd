@@ -5,6 +5,11 @@ const LEVEL_SCENE := preload("res://scenes/level_1.tscn")
 const BRAIN_SCRIPT := preload("res://scenes/npc/npc_brain.gd")
 const EXPECTED_PROFILES := ["boss", "male-employee-1", "female-employee-1"]
 const SIMULATION_SECONDS := 120
+const CUBICLE_TYPES := [173, 262]
+# With this seed the boss's goal 7 comes up at about 27 simulated seconds.
+const SOFA_SEED := 42
+const SOFA_SECONDS := 40
+const SOFA := "Object060Sofa01"
 
 var _failures := 0
 var _stats: Dictionary = {}
@@ -28,7 +33,7 @@ func _run() -> void:
 		_stats[profile_id] = {
 			"destinations": 0, "finished": 0, "navigation_failures": 0,
 			"walk_frames": 0, "idle_activity_frames": 0, "seated_frames": 0,
-			"claims": 0, "releases": 0, "seat": null,
+			"claims": 0, "releases": 0, "seat": null, "return_cell": null,
 			"walk_distance": 0.0, "last_position": child.position,
 		}
 		var stats: Dictionary = _stats[profile_id]
@@ -49,21 +54,61 @@ func _run() -> void:
 	player.get_node("FootstepPlayer").stream = null
 	var collision_layer := world.get_node("CollisionTileMapLayer") as TileMapLayer
 	var activity_points := get_nodes_in_group("npc_activity_points")
+	var toilet_users := {}
 	for frame in range(SIMULATION_SECONDS * Engine.physics_ticks_per_second):
 		await physics_frame
 		for actor in actors:
 			_check_actor_frame(actor, collision_layer, activity_points)
+			var seat: Node = _stats[String(actor.profile.id)].seat
+			if seat != null and int(seat.item_type) in CUBICLE_TYPES:
+				toilet_users[String(actor.profile.id)] = true
 		if _failures > 0:
 			break
 	for actor in actors:
 		_check_actor_result(actor)
 		actor.get_node("Brain").enabled = false
 		_expect(_find_claim(actor, activity_points) == null, "%s releases its seat when its brain is stopped" % actor.profile.id)
+	# The cubicle's interaction point is flush against a wall. The original walks to its
+	# free cell; before routes ended on cell centres the port refused it outright.
+	_expect(not toilet_users.is_empty(), "somebody on level 1 goes into the toilet cubicle")
 	_check_a_tampered_workstation_is_reacted_to(level)
 	level.free()
 	if _failures == 0:
-		print("Original level NPC runtime: %d simulated seconds, all three brains moved and completed activities with safe walking footprints and released seat claims" % SIMULATION_SECONDS)
+		await _check_the_boss_sits_on_the_sofa()
+	if _failures == 0:
+		print("Original level NPC runtime: %d simulated seconds, all three brains moved and completed activities, the toilet was used, every agent stayed on free cells and released seat claims, and the boss sat on the sofa" % SIMULATION_SECONDS)
 	quit(1 if _failures else 0)
+
+
+# The level-1 sofa's interaction point is 0.79 tiles from a blocked cell, so its footprint
+# overlaps it, but the cell it rounds to is free: sub_416D50 walks there and the boss sits
+# (goal 7, mask 72 covers its room). His tick plays SIT#IDLE on any seat. See
+# docs/npc-reference.md.
+func _check_the_boss_sits_on_the_sofa() -> void:
+	var level := LEVEL_SCENE.instantiate()
+	var world := level.get_node("World")
+	for child in world.get_children():
+		if child is CharacterBody2D and child.has_node("Brain"):
+			child.get_node("Brain").random_seed = SOFA_SEED
+	var boss := world.get_node("Npc080Boss") as CharacterBody2D
+	root.add_child(level)
+	world.get_node("WorldDepthCompositor").set_process(false)
+	world.get_node("CharacterDepthCompositor").set_process(false)
+	var player := world.get_node("Player")
+	player.set_physics_process(false)
+	player.get_node("FootstepPlayer").stop_footsteps()
+	player.get_node("FootstepPlayer").stream = null
+	var sofa := world.get_node("Objects/%s/InteractionPoint" % SOFA)
+	var seated_frames := 0
+	for frame in range(SOFA_SECONDS * Engine.physics_ticks_per_second):
+		await physics_frame
+		if sofa.occupant == boss and String(boss.current_activity).begins_with("sit-"):
+			seated_frames += 1
+			_expect(boss.current_activity == &"sit-idle", "the boss sits on the sofa with SIT#IDLE, got %s" % boss.current_activity)
+			if _failures > 0:
+				break
+	_expect(seated_frames > 0, "with seed %d the boss sits on %s within %d seconds" % [SOFA_SEED, SOFA, SOFA_SECONDS])
+	level.free()
 
 
 # The same arrival the long run exercises, but against an object the player has finished an
@@ -112,12 +157,18 @@ func _check_actor_frame(actor: CharacterBody2D, layer: TileMapLayer, activity_po
 		if seat != null:
 			stats.claims += 1
 		stats.seat = seat
+	if seat != null:
+		stats.return_cell = _rounded_cell(layer, seat.global_position)
 	if seated:
 		stats.seated_frames += 1
 		_expect(seat != null, "%s seated work holds an exclusive seat claim" % profile_id)
 		_expect(actor.animation_player.is_playing(), "%s seated action plays an available animation" % profile_id)
+		if profile_id == "boss":
+			_expect(actor.current_activity == &"sit-idle", "the boss sits with SIT#IDLE on any seat, got %s" % actor.current_activity)
 	else:
-		_expect_footprint_clear(layer, actor.global_position, profile_id)
+		# A claimed cubicle puts its occupant on the item's own anchor, inside the stall.
+		if seat == null:
+			_expect_rounded_cell_free(layer, actor.global_position, stats.return_cell, profile_id)
 		if actor.current_activity == &"walking":
 			stats.walk_frames += 1
 			stats.walk_distance += actor.global_position.distance_to(stats.last_position)
@@ -150,17 +201,20 @@ func _find_claim(actor: Node, activity_points: Array[Node]) -> Node:
 	return null
 
 
-func _expect_footprint_clear(layer: TileMapLayer, position: Vector2, profile_id: String) -> void:
+# The original's own invariant: sub_416D50 routes between cell centres and sub_41E910 never
+# enters a blocked cell, so an agent stands on a free cell -- except on the exact
+# interaction point sub_4161E0 or sub_416090 put it back on, and while it steps back off it.
+# A footprint test cannot hold here, because that point can be flush against a wall.
+func _expect_rounded_cell_free(layer: TileMapLayer, position: Vector2, return_cell: Variant, profile_id: String) -> void:
+	var cell := _rounded_cell(layer, position)
+	if cell != return_cell and layer.get_cell_source_id(cell) >= 0:
+		_expect(false, "%s stands in blocked cell %s at %s" % [profile_id, cell, position])
+
+
+func _rounded_cell(layer: TileMapLayer, position: Vector2) -> Vector2i:
 	var relative := layer.to_local(position) - layer.map_to_local(Vector2i.ZERO)
 	var tile_position := Vector2(relative.x / 96 + relative.y / 48, -relative.x / 96 + relative.y / 48)
-	var center := Vector2i(floori(tile_position.x + 0.5), floori(tile_position.y + 0.5))
-	for y in range(center.y - 1, center.y + 2):
-		for x in range(center.x - 1, center.x + 2):
-			var cell := Vector2i(x, y)
-			var distance := (tile_position - Vector2(cell)).abs()
-			if distance.x < 0.8499 and distance.y < 0.8499 and layer.get_cell_source_id(cell) >= 0:
-				_expect(false, "%s walks inside blocked cell %s at %s" % [profile_id, cell, tile_position])
-				return
+	return Vector2i(floori(tile_position.x + 0.5), floori(tile_position.y + 0.5))
 
 
 func _expect(condition: bool, message: String) -> void:

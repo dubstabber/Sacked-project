@@ -32,6 +32,14 @@ const REACTION_CLIPS := {
 	&"boss": &"explode",
 	&"secretary": &"idle",
 }
+# The seated slot is each tick's own choice too. sub_419740 plays the boss's SIT#IDLE on any
+# seat and never reads the relaxed flag +1804 (0x4197F1), and sub_41A8D0 plays the janitor's
+# SIT#EASY on any seat (0x41A969); sub_419CE0 and sub_41E360 take SIT#EASY when relaxed and
+# SIT#USE otherwise.
+const SEATED_CLIPS := {
+	&"boss": &"sit-idle",
+	&"janitor": &"sit-easy",
+}
 # sub_4187F0 splits a full meter across the goals the map can actually offer, and
 # sub_417B00 hands an agent one share the first time each of its goals is spoiled -- so an
 # agent is at its angriest once that many different goals have been.
@@ -300,7 +308,7 @@ func _attempt_goal(goal: int) -> void:
 	var passive := selection.get("passive") as Node2D
 	# sub_416D50 walks to the passive item when the pick produced one, else the active.
 	var target := passive if is_instance_valid(passive) else active
-	if not is_instance_valid(target) or not _actor.call("navigate_to", target.global_position):
+	if not is_instance_valid(target) or not _actor.call("navigate_to", _route_end(target.global_position)):
 		_fail_goal()
 		return
 	_goal = goal
@@ -413,7 +421,21 @@ func _social_agent() -> Node2D:
 func _social_destination(agent: Node2D) -> Vector2:
 	var facing: Vector2 = agent.get("last_direction")
 	var ahead := IsoDirection.screen_to_ground(facing).normalized() * SOCIAL_APPROACH_TILES
-	return agent.global_position + IsoDirection.ground_to_screen(ahead)
+	# sub_416960 rounds this point to its cell too (0x416A60/0x416A72).
+	return _route_end(agent.global_position + IsoDirection.ground_to_screen(ahead))
+
+
+# sub_416D50 rounds the interaction point to a cell with (__int64)(v + 0.5) at 0x416E2B, and
+# sub_417730 ends the route on that cell rather than on the point. A* never tests anything but
+# the cell itself, so a point flush against a wall is reachable whenever its cell is free,
+# which the port's footprint test would refuse at the exact point. See docs/npc-reference.md.
+func _route_end(point: Vector2) -> Vector2:
+	for layer in get_tree().get_nodes_in_group("collision_maps"):
+		if not layer.enabled or not layer.get_parent().is_ancestor_of(_actor):
+			continue
+		var grid: Vector2 = layer.to_grid_position(point)
+		return layer.to_global(layer.map_to_local(Vector2i(floori(grid.x + 0.5), floori(grid.y + 0.5))))
+	return point
 
 
 func _refresh_social_route() -> void:
@@ -518,7 +540,7 @@ func _on_destination_reached() -> void:
 		animation = &"special-2"
 	var placement := _placement(claim, seated, relaxed, focus)
 	if seated:
-		animation = &"sit-easy" if relaxed else (&"sit-idle" if _profile_id == &"boss" else &"sit-use")
+		animation = SEATED_CLIPS.get(_profile_id, &"sit-easy" if relaxed else &"sit-use") as StringName
 	var started := bool(_actor.call(
 		"start_activity", animation, duration, placement["facing"], placement["anchor"], placement["return"]
 	))

@@ -3,6 +3,8 @@ extends SceneTree
 
 const BRAIN := preload("res://scenes/npc/npc_brain.gd")
 const POINT := preload("res://scenes/npc/npc_activity_point.gd")
+const COLLISION_SCRIPT := preload("res://scenes/shared/collision_map_layer.gd")
+const COLLISION_TILESET := preload("res://resources/tilemaps/sacked-collision.tres")
 
 class TestProfile extends Resource:
 	var id: StringName = &"male-employee-1"
@@ -82,6 +84,7 @@ func _run() -> void:
 	_check_reacting_to_a_tampered_item()
 	_check_repairing_a_broken_item()
 	_check_social_target()
+	_check_routes_end_on_cell_centres()
 	_check_interrupted_activity()
 	_check_routes_and_retry_limit()
 	if _failures == 0:
@@ -260,6 +263,34 @@ func _check_social_target() -> void:
 	world.free()
 
 
+# sub_416D50 rounds the interaction point to its cell (0x416E2B) and sub_416960 the social
+# point (0x416A60); both routes end on that cell's centre. The level-1 sofa's point is 0.79
+# tiles from a blocked cell, inside the footprint, while its own cell is free.
+func _check_routes_end_on_cell_centres() -> void:
+	var fixture := _fixture()
+	var world: Node2D = fixture["world"]
+	var brain: Node = fixture["brain"]
+	var actor: Actor = fixture["actor"]
+	var layer := COLLISION_SCRIPT.new() as TileMapLayer
+	layer.tile_set = COLLISION_TILESET
+	# Put the grid's cell (0, 0) on the fixture's ground origin.
+	layer.position = -IsoDirection.ground_to_screen(Vector2(1, 0))
+	layer.set_cell(Vector2i(7, 3), 0, Vector2i.ZERO)
+	world.add_child(layer)
+	var sofa := _point(world, "Sofa", Vector2(7.208, 3.125), Vector2(-1, 0), 7, 182, 3, false)
+	_expect(layer.to_grid_position(sofa.global_position).is_equal_approx(Vector2(6.208, 3.125)), "the fixture grid is the fixture's ground plane")
+	brain._build_candidates()
+	brain._attempt_goal(7)
+	_expect(brain._state == BRAIN.State.NAVIGATING and brain._target == sofa, "the sofa is picked for goal 7")
+	_expect(actor.destination.is_equal_approx(IsoDirection.ground_to_screen(Vector2(6, 3))), "the route ends on the centre of the sofa's cell, got %s" % layer.to_grid_position(actor.destination))
+
+	var partner := _agent(world, "Partner", 1, Vector2(4, 3))
+	var ahead := Vector2(4, 3) + IsoDirection.screen_to_ground(partner.last_direction).normalized() * 1.2
+	var cell := Vector2(floorf(ahead.x + 0.5), floorf(ahead.y + 0.5))
+	_expect(brain._social_destination(partner).is_equal_approx(IsoDirection.ground_to_screen(cell)), "the social route ends on the centre of the cell 1.2 tiles in front")
+	world.free()
+
+
 func _agent(world: Node2D, label: String, gender: int, ground: Vector2) -> AgentStub:
 	var agent := AgentStub.new()
 	agent.name = label
@@ -283,11 +314,27 @@ func _check_arrival_actions() -> void:
 	_expect(cubicle["facing"] == (cubicle["interaction"] - cubicle["item"]).normalized(), "a cubicle occupant faces back out of the stall")
 
 	var sofa := _arrive(_point_fixture(7, 182, 3, false))
-	_expect(sofa["animation"] == &"sit-easy", "a sofa uses the relaxed sitting clip")
+	_expect(sofa["animation"] == &"sit-easy", "a coworker's sofa uses the relaxed sitting clip")
 	_expect(sofa["duration"] >= 15.0 and sofa["duration"] <= 25.0, "relaxed sitting uses the original fifteen-to-twenty-five-second duration")
 	_expect(sofa["claimed"], "relaxed sitting claims its seat")
 	_expect(sofa["anchor"].is_equal_approx(sofa["item"].lerp(sofa["interaction"], 0.3) + Vector2(0, -2.4)), "relaxed sitting shifts thirty percent toward the interaction point")
 	_expect(sofa["facing"] == (sofa["interaction"] - sofa["item"]).normalized(), "relaxed sitting faces along the interaction offset")
+
+	# Each tick picks its own seated slot: sub_419740 plays the boss's SIT#IDLE on any seat,
+	# sub_41A8D0 the janitor's SIT#EASY on any seat, and the secretary sits like a coworker.
+	var seated_clips := {
+		&"boss": [&"sit-idle", &"sit-idle"],
+		&"janitor": [&"sit-easy", &"sit-easy"],
+		&"secretary": [&"sit-easy", &"sit-use"],
+		&"male-employee-1": [&"sit-easy", &"sit-use"],
+	}
+	for profile_id: StringName in seated_clips:
+		var relaxed := _arrive(_point_fixture(7, 182, 3, false, profile_id))
+		var working := _arrive(_point_fixture(6, 68, 0, false, profile_id))
+		_expect(relaxed["animation"] == seated_clips[profile_id][0], "%s sits on a sofa with %s, got %s" % [profile_id, seated_clips[profile_id][0], relaxed["animation"]])
+		_expect(working["animation"] == seated_clips[profile_id][1], "%s sits on a work chair with %s, got %s" % [profile_id, seated_clips[profile_id][1], working["animation"]])
+		_expect(relaxed["anchor"].is_equal_approx(relaxed["item"].lerp(relaxed["interaction"], 0.3) + Vector2(0, -2.4)), "%s keeps the relaxed seat's thirty percent shift" % profile_id)
+		_expect(relaxed["facing"] == (relaxed["interaction"] - relaxed["item"]).normalized(), "%s faces out of a relaxed seat" % profile_id)
 
 	var machine := _arrive(_point_fixture(5, 140, 0, true))
 	_expect(machine["animation"] == &"special-1", "a drinks machine plays the special action")

@@ -21,10 +21,11 @@ func _run() -> void:
 	await _check_shared_stationary_route()
 	await _check_collision_detour()
 	await _check_unreachable_destination()
+	await _check_step_back_from_a_return_point()
 	await _check_seated_activity_and_cancellation()
 	await _check_missing_seated_view_uses_original_fallback()
 	if _failures == 0:
-		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure and seated activities passed")
+		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point and seated activities passed")
 	quit(1 if _failures else 0)
 
 
@@ -113,6 +114,32 @@ func _check_unreachable_destination() -> void:
 	_expect(events.failed == 1 and events.reached == 0, "unreachable destination never emits false arrival")
 	_expect_vector(npc.global_position, start, "failed navigation does not teleport or enter a blocked passage")
 	world.free()
+
+
+# sub_4161E0 and sub_416090 leave an agent on the exact interaction point, which can be flush
+# against a wall or inside a blocked cell. sub_416D50 plans from the rounded cell and
+# sub_41EE70 never tests it, so the agent steps back onto that cell's centre and walks on.
+func _check_step_back_from_a_return_point() -> void:
+	for start_tile in [Vector2(1.0, -0.2), Vector2(3.2, 1.0)]:
+		var world := _make_world()
+		var layer := _make_corridor(world, true)
+		var npc := _make_npc(_world_position(layer, start_tile), 8.0)
+		world.add_child(npc)
+		var events := _navigation_events(npc)
+		var target := _world_position(layer, Vector2(5, 1))
+		_expect(npc.navigate_to(target), "a route from %s plans from its rounded cell" % start_tile)
+		var cell := Vector2(floorf(start_tile.x + 0.5), floorf(start_tile.y + 0.5))
+		var stepped_back := false
+		for frame in range(300):
+			await physics_frame
+			if _tile_position(layer, npc.global_position).distance_to(cell) < 0.05:
+				stepped_back = true
+			if events.reached > 0 or events.failed > 0:
+				break
+		_expect(stepped_back, "the agent at %s steps back onto the centre of cell %s" % [start_tile, cell])
+		_expect(events.reached == 1 and events.failed == 0, "the agent at %s walks on to its destination" % start_tile)
+		_expect_vector(npc.global_position, target, "the agent at %s arrives" % start_tile)
+		world.free()
 
 
 func _check_seated_activity_and_cancellation() -> void:
