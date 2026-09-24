@@ -2,12 +2,11 @@
 """Run every headless GDScript check, the Python unit tests and each exporter's --check."""
 
 import argparse
+import re
 import subprocess
 import sys
 import time
 from pathlib import Path
-
-from godot_binary import find_godot_binary
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,21 +30,62 @@ REFERENCE_CHECKS = [
     ["tools/import_original_level.py", "--check"],
 ]
 
+# A GDScript runtime or compile error, or a signal or deferred call Godot could not dispatch,
+# leaves a --script run's exit code at 0: a check whose preloaded game script no longer
+# parses still prints its "passed" line and quits cleanly, so this line is the only trace.
+# Searched rather than anchored so that a colour-coded SCRIPT ERROR still counts.
+FAILURE_LINE = re.compile(r"SCRIPT ERROR:|^ERROR: Error calling ")
+# A check whose _init or _run itself errors never reaches quit() and would hold the run.
+CHECK_TIMEOUT = 600
+TAIL_LINES = 40
 
-def run(label: str, command: list, verbose: bool) -> tuple:
+
+def _decode(part) -> str:
+    # TimeoutExpired carries the output read so far as bytes, even under text=True.
+    return part.decode(errors="replace") if isinstance(part, bytes) else (part or "")
+
+
+def _print_indented(lines: list) -> None:
+    for line in lines:
+        print(f"      {line}")
+
+
+def run(label: str, command: list, verbose: bool, script_check: bool = False) -> tuple:
     start = time.monotonic()
-    completed = subprocess.run(
-        command,
-        cwd=ROOT,
-        capture_output=not verbose,
-        text=True,
-    )
+    timeout = CHECK_TIMEOUT if script_check else None
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=ROOT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            timeout=timeout,
+        )
+        returncode, output = completed.returncode, completed.stdout or ""
+    except subprocess.TimeoutExpired as expired:
+        returncode, output = None, _decode(expired.stdout)
     elapsed = time.monotonic() - start
-    ok = completed.returncode == 0
+    lines = output.strip().splitlines()
+    errors = [i for i, line in enumerate(lines) if FAILURE_LINE.search(line)] if script_check else []
+    ok = returncode == 0 and not errors
     print(f"{'PASS' if ok else 'FAIL'}  {label}  ({elapsed:.1f}s)")
-    if not ok and not verbose:
-        output = (completed.stdout or "") + (completed.stderr or "")
-        print("\n".join(f"      {line}" for line in output.strip().splitlines()[-40:]))
+    if not verbose and ok:
+        return ok, elapsed
+
+    first_shown = 0 if verbose else max(0, len(lines) - TAIL_LINES)
+    # An error above the tail is listed with its location first; one inside it is not repeated.
+    for i in errors:
+        if i < first_shown:
+            location = [line for line in lines[i + 1 : i + 2] if line.lstrip().startswith("at:")]
+            _print_indented([lines[i]] + location)
+    if first_shown:
+        _print_indented(["..."])
+    _print_indented(lines[first_shown:])
+    if returncode is None:
+        _print_indented([f"timed out after {timeout}s without quitting"])
+    elif errors:
+        _print_indented([f"exited {returncode}, but logged {len(errors)} error line(s)"])
     return ok, elapsed
 
 
@@ -53,8 +93,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--skip-import", action="store_true", help="Do not reimport Godot assets first")
     parser.add_argument("--filter", default="", help="Only run steps whose label contains this text")
-    parser.add_argument("--verbose", action="store_true", help="Stream each step's output instead of capturing it")
+    parser.add_argument("--verbose", action="store_true", help="Print each step's full output once it finishes")
     args = parser.parse_args()
+
+    # Imported here, not at module scope: tests/test_run_checks.py imports this file as
+    # tools.run_checks, where sibling modules are not on sys.path.
+    from godot_binary import find_godot_binary
 
     godot = find_godot_binary(ROOT)
     steps = []
@@ -62,7 +106,7 @@ def main() -> int:
     # Freshly exported PNGs have no .import sidecar until Godot reimports them, and the
     # GDScript checks load them through res:// paths.
     if not args.skip_import:
-        steps.append(("godot --import", [godot, "--headless", "--path", ".", "--import"]))
+        steps.append(("godot --import", [godot, "--headless", "--path", ".", "--import"], False))
 
     for script in sorted((ROOT / "tests").glob("check_*.gd")):
         command = [godot, "--headless"]
@@ -73,14 +117,14 @@ def main() -> int:
         # to the secretary's 292 and the janitor's 1143 navigation retries.
         if "runtime" in script.name:
             command += ["--fixed-fps", "10"]
-        steps.append((script.name, command + ["--script", f"tests/{script.name}"]))
+        steps.append((script.name, command + ["--script", f"tests/{script.name}"], True))
 
     # Discovery roots at tests/ because it is not a package; cwd still puts tools/ on sys.path.
-    steps.append(("python unittest", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "tests"]))
+    steps.append(("python unittest", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "tests"], False))
 
     if (ROOT / EXTRACTION_REL).is_dir():
         for command in REFERENCE_CHECKS:
-            steps.append((f"{Path(command[0]).name} --check", [sys.executable] + command))
+            steps.append((f"{Path(command[0]).name} --check", [sys.executable] + command, False))
     else:
         print(f"SKIP  reference exporter checks ({EXTRACTION_REL} is absent)")
 
@@ -89,8 +133,8 @@ def main() -> int:
 
     failures = []
     total = 0.0
-    for label, command in steps:
-        ok, elapsed = run(label, command, args.verbose)
+    for label, command, script_check in steps:
+        ok, elapsed = run(label, command, args.verbose, script_check)
         total += elapsed
         if not ok:
             failures.append(label)
