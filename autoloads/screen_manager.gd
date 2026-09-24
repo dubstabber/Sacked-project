@@ -189,7 +189,9 @@ func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0
 
 # The port's game+15136, the handler every one-shot goes through (sub_42A6A0). Nothing but its
 # shutdown stops all its slots (sub_42AA40), so a sound started here outlives the level and
-# plays on under a pause, because this node always processes.
+# plays on under a pause, because this node always processes. Only a caller that keeps the
+# player it gets back can stop it sooner (sub_42A7C0), as LevelAudio does a prank's start
+# sound.
 func play_effect(sound_id: String, quiet := false) -> AudioStreamPlayer:
 	var stream := LevelAudioScript.effect_stream(sound_id)
 	if stream == null:

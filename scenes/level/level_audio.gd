@@ -3,8 +3,9 @@ extends Node
 # What a level sounds like. sub_406AF0 picks one of the three themes at random when the
 # level starts and sub_403780 starts the looping warning ten seconds before the limit.
 # Effects are named by the action table's +0x44 field. The one-shots go to ScreenManager,
-# which stands in for the game's own sound handler, so they outlive the level as the
-# original's do. See docs/sound-reference.md.
+# which stands in for the game's own sound handler, so they play on past the level. The one
+# exception is a prank's start sound: the player holds it until the prank applies, and an
+# abort or any way out of the level cuts it first. See docs/sound-reference.md.
 #
 # The pause key and the quit prompt only set game+12740 bit 0x20, which no sound code reads:
 # sub_402590 runs the channel update sub_42A970 before its pause test (0x4025AB, 0x4025B0)
@@ -23,6 +24,8 @@ static var _music: Dictionary = {}
 
 var _theme: AudioStreamPlayer
 var _warning: AudioStreamPlayer
+# player+1112 while a prank whose record plays its sound at the start (+0x48 == 1) runs.
+var _action_sound: AudioStreamPlayer
 var _session: Node
 var _actions: Node
 var _screens: Node
@@ -48,8 +51,15 @@ func _ready() -> void:
 	if _actions != null:
 		_actions.action_started.connect(_on_action_started)
 		_actions.action_applied.connect(_on_action_applied)
+		_actions.action_aborted.connect(_on_action_aborted)
 
 	play_theme(THEMES[randi() % THEMES.size()])
+
+
+# Case 3 leaving the quit prompt runs the result screens' teardown sub_407140 too (0x407507),
+# so a level left mid-prank cuts its start sound as well.
+func _exit_tree() -> void:
+	_cut_action_sound()
 
 
 func _process(_delta: float) -> void:
@@ -115,14 +125,29 @@ func play_effect(sound_id: String, looping := false, quiet := false) -> AudioStr
 	return player
 
 
+# sub_41B240 plays the record's sound into player+1112 at the commit (0x41B69D) or at the
+# apply (0x41B9A2), and the apply ends by dropping the handle without stopping it
+# (0x41BA9A). So only a start sound is ever held past the frame it began in.
 func _on_action_started(action: Dictionary, _point: Node) -> void:
 	if bool(action.get("sound_at_start", false)):
-		play_effect(String(action.get("sound", "")))
+		_action_sound = play_effect(String(action.get("sound", "")))
 
 
 func _on_action_applied(action: Dictionary, _point: Node) -> void:
+	_action_sound = null
 	if not bool(action.get("sound_at_start", false)):
 		play_effect(String(action.get("sound", "")))
+
+
+func _on_action_aborted(_action: Dictionary, _point: Node) -> void:
+	_cut_action_sound()
+
+
+func _cut_action_sound() -> void:
+	if is_instance_valid(_action_sound):
+		_action_sound.stop()
+		_action_sound.queue_free()
+	_action_sound = null
 
 
 # sub_407370 case 5 stops only the streamed music for the duel (sub_42AC30 -> sub_45F4F0 at
@@ -133,12 +158,14 @@ func hold_music(held: bool) -> void:
 	_theme.stream_paused = held
 
 
-# sub_407370 cases 7 and 8 stop the warning slot and nothing else (0x4075E3, 0x407639); the
-# win cue is ScreenManager's. Stopping the theme is the port's choice: the original leaves it
-# playing under the result screens.
+# sub_407370 cases 7 and 8 stop the warning slot (0x4075E3, 0x407639). Their teardown
+# sub_407140 (0x407017, 0x4070C6) deletes the player, whose destructor 0x41AE90 stops the
+# slots it holds, so a start sound still held goes too; the win cue is ScreenManager's. Stopping the theme is the port's choice: the original leaves it playing
+# under the result screens.
 func _on_finished(_won: bool) -> void:
 	_theme.stop()
 	_warning.stop()
+	_cut_action_sound()
 
 
 func _make_player(bus: StringName, temporary := false) -> AudioStreamPlayer:

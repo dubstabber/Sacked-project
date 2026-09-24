@@ -86,6 +86,7 @@ signal highlight_changed(entry: Dictionary)
 signal progress_changed(elapsed: float, total: float)
 signal action_started(action: Dictionary, point: Node)
 signal action_applied(action: Dictionary, point: Node)
+signal action_aborted(action: Dictionary, point: Node)
 signal inventory_changed(inventory: PackedInt32Array)
 
 # player+912 and the four menu arrays behind it.
@@ -626,17 +627,18 @@ func _object_under_cursor() -> Node2D:
 
 # sub_402470 pushes the player to its mode's abort state rather than letting the action
 # finish, so a prank interrupted by being caught pays nothing and leaves the object alone.
-# The one thing already applied is a start-time result state, which state 5 restores.
+# The one thing already applied is a start-time result state, which state 5 restores. State
+# 5 also stops a start-time sound (0x41BB61), which LevelAudio holds and cuts on
+# action_aborted.
 func abort_action() -> void:
 	if state != State.ACTING:
 		return
 	var point := _acting_point
-	var entry := _acting_entry
+	var action := ActionTable.get_action(int(_acting_entry.get("action_id", 0)))
 	_acting_point = null
 	_acting_entry = {}
 	_step_back()
 	if point != null and is_instance_valid(point):
-		var action := ActionTable.get_action(int(entry.get("action_id", 0)))
 		if int(action.get("result_state", 0)) == STATE_IN_USE:
 			point.set("in_use", false)
 		elif bool(action.get("state_at_start", false)):
@@ -649,6 +651,7 @@ func abort_action() -> void:
 	_elapsed = 0.0
 	_duration = 0.0
 	progress_changed.emit(0.0, 0.0)
+	action_aborted.emit(action, point if is_instance_valid(point) else null)
 
 
 # ASSCOPY has two views rather than eight. The original picks a side when it repositions the

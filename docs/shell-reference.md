@@ -317,11 +317,15 @@ Two corrections to earlier assumptions:
 **Sound.** Case 7 stops the countdown warning's slot, `game+19056` (`sub_42A7C0` at
 `0x4075E3`, then −1). It then plays `S1100` through the game's own sound handler at
 `0x407601`, before `sub_406E70` records the win and builds the screen. Case 8 stops the same
-slot at `0x407639` and plays nothing. Neither case stops anything else, so any other effect
-and the level's theme play on under both screens. The port plays `S1100` from
-`ScreenManager.report_level_finished` on a win, not from the screen, and `LevelAudio` stops
-the warning when the level ends. It also stops the theme there, which is the port's own
-choice; see [sound-reference.md](sound-reference.md).
+slot at `0x407639` and plays nothing. Both then run the level teardown `sub_407140`
+(`0x407017` in `sub_406E70`, `0x4070C6` in `sub_4070A0`), which deletes the player. The
+player's destructor `0x41AE90` stops the sound slots it holds, so a prank's start sound still
+running when the level ends is cut. Nothing else is stopped: `S1100`, the duel's sounds,
+every action sound the player has already let go and the level's theme play on under both
+screens. The port plays `S1100` from `ScreenManager.report_level_finished` on a win, not from
+the screen, and `LevelAudio` stops the warning and a running prank's start sound when the
+level ends. It also stops the theme there, which is the port's own choice; see
+[sound-reference.md](sound-reference.md).
 
 ### Screen 9, restart
 

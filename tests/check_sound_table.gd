@@ -8,6 +8,12 @@ const MANIFEST := "res://resources/original/sounds.json"
 var _failures := 0
 
 
+# The level reports its end here instead, so running its clock out does not change the scene.
+class ReportSink extends Node:
+	func report_level_finished(_won: bool, _score: int = 0, _elapsed_seconds: float = 0.0) -> void:
+		pass
+
+
 func _init() -> void:
 	call_deferred("_run")
 
@@ -19,8 +25,9 @@ func _run() -> void:
 	_check_the_duel_and_the_win_sounds_resolve()
 	_check_one_shots_belong_to_the_sound_handler()
 	await _check_the_warning_loops()
+	await _check_a_start_sound_lasts_only_while_its_prank_can()
 	if _failures == 0:
-		print("Sound table: the buses, the index, every sound a level and its duel ask for, the one-shot handler and the warning loop passed")
+		print("Sound table: the buses, the index, every sound a level and its duel ask for, the one-shot handler, the warning loop and the prank's held start sound passed")
 	quit(1 if _failures else 0)
 
 
@@ -174,3 +181,102 @@ func _check_the_warning_loops() -> void:
 	)
 	root.remove_child(audio)
 	audio.free()
+
+
+# sub_41B240 plays a record's sound into player+1112 at the commit when +0x48 is 1
+# (0x41B69D), or at the apply when it is 0 (0x41B9A2), and drops the handle unstopped at the
+# end of the apply (0x41BA9A). The abort stops it (0x41BB61), and so does the teardown every
+# way out of a level runs, through the player's destructor (0x41AE90). Level 1's keyboards
+# carry both kinds: 13 and 15 play S0050 at the start, 14 plays S0016 when it applies.
+func _check_a_start_sound_lasts_only_while_its_prank_can() -> void:
+	var screens: Node = root.get_node_or_null("ScreenManager")
+	var level: Node = await _open_level_1()
+	var audio: Node = level.get_node_or_null("LevelRuntime/LevelAudio")
+	var prank: Node = level.get_node_or_null("World/Player/PrankController")
+	var keyboard := level.get_node_or_null("World/Objects/Object010MonitorTastaturFrontal/InteractionPoint")
+	if screens == null or audio == null or prank == null or keyboard == null:
+		_expect(false, "level 1 carries its audio, the prank controller and the keyboard")
+		_close_level(level)
+		return
+	_expect(bool(ActionTable.get_action(13).get("sound_at_start", false)), "action 13 sounds at the start")
+	_expect(not bool(ActionTable.get_action(14).get("sound_at_start", true)), "action 14 sounds when it applies")
+
+	_commit(prank, keyboard, 13)
+	var caught: AudioStreamPlayer = audio._action_sound
+	_expect(caught != null and caught.playing and caught.get_parent() == screens, "a start sound plays through the handler")
+	prank.abort_action()
+	_expect(audio._action_sound == null, "the abort lets go of the start sound")
+	_expect(
+		caught == null or not is_instance_valid(caught) or (not caught.playing and caught.is_queued_for_deletion()),
+		"and stops it: a caught prank goes quiet"
+	)
+
+	_commit(prank, keyboard, 13)
+	var applied: AudioStreamPlayer = audio._action_sound
+	prank._advance_action(prank._duration)
+	_expect(audio._action_sound == null, "the apply lets go of the start sound")
+	_expect(applied != null and applied.playing, "without stopping it")
+
+	var before := _playing_one_shots(screens)
+	_commit(prank, keyboard, 14)
+	_expect(audio._action_sound == null, "an apply-time sound is not held while its prank runs")
+	prank._advance_action(prank._duration)
+	var apply_time := _playing_one_shots(screens).filter(func(player): return not before.has(player))
+	_expect(apply_time.size() == 1, "the apply plays its record's sound, got %d" % apply_time.size())
+	_expect(audio._action_sound == null, "and does not hold it")
+
+	var other_keyboard := level.get_node("World/Objects/Object014MonitorTastaturLinks/InteractionPoint")
+	_commit(prank, other_keyboard, 15)
+	var cut: AudioStreamPlayer = audio._action_sound
+	_expect(cut != null and cut.playing, "the next prank's start sound is held again")
+	var session: Node = level.get_node("LevelRuntime")
+	session.mode = &"time"
+	session.advance(session.limit_seconds() + 1.0)
+	_expect(session.is_finished, "the clock runs out under the prank")
+	_expect(cut == null or not is_instance_valid(cut) or not cut.playing, "the level's end cuts the start sound still held")
+	_expect(applied != null and applied.playing, "an applied prank's start sound plays on past the level's end")
+	_expect(apply_time.size() == 1 and apply_time[0].playing, "and so does an apply-time sound")
+	for player in [applied] + apply_time:
+		if is_instance_valid(player):
+			player.free()
+	_close_level(level)
+
+	level = await _open_level_1()
+	audio = level.get_node("LevelRuntime/LevelAudio")
+	prank = level.get_node("World/Player/PrankController")
+	keyboard = level.get_node("World/Objects/Object010MonitorTastaturFrontal/InteractionPoint")
+	_commit(prank, keyboard, 13)
+	var left: AudioStreamPlayer = audio._action_sound
+	_expect(left != null and left.playing, "a start sound plays when the level is left mid-prank")
+	_close_level(level)
+	_expect(left == null or not is_instance_valid(left) or not left.playing, "leaving the level cuts it")
+
+
+func _open_level_1() -> Node:
+	var level := (load("res://scenes/level_1.tscn") as PackedScene).instantiate()
+	var session: Node = level.get_node("LevelRuntime")
+	session.enabled = false
+	root.add_child(level)
+	await process_frame
+	session._screen_manager = ReportSink.new()
+	return level
+
+
+func _close_level(level: Node) -> void:
+	var sink: Node = level.get_node("LevelRuntime")._screen_manager
+	root.remove_child(level)
+	level.free()
+	if sink is ReportSink:
+		sink.free()
+
+
+func _commit(prank: Node, point: Node, action_id: int) -> void:
+	prank.focus_point = point
+	prank.entries = prank.build_entries(point).filter(func(entry): return int(entry["action_id"]) == action_id)
+	_expect(prank.entries.size() == 1, "%s offers action %d" % [point.get_parent().name, action_id])
+	prank.open_menu()
+	prank.confirm()
+
+
+func _playing_one_shots(holder: Node) -> Array:
+	return holder.get_children().filter(func(child): return child is AudioStreamPlayer and child.playing)

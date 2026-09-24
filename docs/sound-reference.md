@@ -41,9 +41,14 @@ handed. That listener was not traced, and nothing on the duel or result path set
 
 The handler is the game object's own, `game+15136`, and it outlives every screen. Only its
 shutdown (`sub_42A180` → `sub_42AA40`) stops all its slots. Otherwise a slot stops when its
-sound ends or when something stops it by name: the warning slot, and the player's own four
-held slots (`player+1108`–`1120`, stopped by the player's destructor `0x41AE90`). So a
-one-shot that is still playing when the level ends plays on into the next screen.
+sound ends, or when whoever kept its handle stops it with `sub_42A7C0`. Two things keep
+handles: the game keeps the warning slot `game+19056`, and the player keeps four,
+`player+1108`–`1120`. The player's destructor `~CObj_Player` (`0x41AE90`) stops all four
+(`0x41AEEA`, `0x41AF03`, `0x41AF1C`, `0x41AF35`), and every way out of a level deletes the
+player (see *Win and loss*). One of the four, `player+1112`, holds a prank's own sound while
+the prank runs (see *Actions*). So a prank's start sound is cut when the prank is
+interrupted, and every other one-shot still playing when the level ends plays on into the
+next screen.
 
 ## What a level plays
 
@@ -62,13 +67,27 @@ one-shot that is still playing when the level ends plays on into the next screen
 - **Win and loss.** `sub_407370` case 7 stops the warning slot (`sub_42A7C0` at `0x4075E3`,
   then `game+19056 = -1`). It then plays `S1100` through the handler at `0x407601`, before
   `sub_406E70` records the win and builds the win screen. Case 8 stops the same slot at
-  `0x407639` and plays nothing. Neither case stops another effect or the music.
-  `sub_42AC30`'s only caller is case 5. `sub_42AA60` changes the track only in cases 2, 3,
-  13 and 14 and in `sub_406AF0`, and it ignores a request for the track already playing
-  (`0x42AA7A`). So the theme plays on under both result screens.
+  `0x407639` and plays nothing. Both then run the level teardown `sub_407140`, from
+  `sub_406E70` at `0x407017` and from `sub_4070A0` at `0x4070C6`. It calls `vtbl[0]` on every
+  object in the vector at `game+1924`, which holds the player (`sub_4049F0` puts it there), and
+  the player's entry is the deleting destructor `0x41AE70` → `~CObj_Player` (`0x41AE90`). That
+  stops the player's four held slots, so a prank's start sound still running when the level
+  ends is cut. Nothing else is stopped: `S1100`, the duel's sounds, every action sound the
+  player has already let go and the music play on. `sub_42AC30`'s only caller is case 5.
+  `sub_42AA60` changes the track only in cases 2, 3, 13 and 14 and in `sub_406AF0`, and it
+  ignores a request for the track already playing (`0x42AA7A`). So the theme plays on under
+  both result screens.
 - **Actions.** Each action record names its sound at `+0x44` and says at `+0x48` whether it
   plays when the action starts or when it applies. All 32 sounds level 1's actions name
-  resolve to a shipped file.
+  resolve to a shipped file. `sub_41B240` plays it into `player+1112`: at the commit when
+  `+0x48 == 1` (`0x41B69D`), at the apply when it is 0 (`0x41B9A2`). The apply ends by
+  dropping the handle without stopping the sound (`player+1112 = -1` at `0x41BA9A`), so once
+  an action has applied, its sound plays on whichever end it started at. Only a start sound
+  is held while the prank runs, and two things cut it. One is the abort, state 5, which stops
+  the slot at `0x41BB61`; a catch pushes a prank in state 2 or 3 there (`sub_402470`,
+  `0x402534`), so a caught prank goes quiet before its duel opens. The other is the teardown
+  every way out of a level runs: the result screens (*Win and loss*) and case 3 leaving the
+  quit prompt (`0x407507`).
 - **Pause and the quit prompt.** Both only set `game+12740` bit `0x20` (the quit prompt at
   `0x4075AF`), and no sound code reads it: `sub_402590` runs the channel update `sub_42A970`
   at `0x4025AB`, before its own pause test at `0x4025B0`, and the music streams on its own
@@ -182,7 +201,11 @@ sound at the end the record asks for. Every one-shot goes through `ScreenManager
 the port's copy of the game's handler. Its players are children of the autoload, which
 always processes, so a sound plays on under a pause and over a scene change, as the lost
 duel's `S1001` does into the lose screen. Each player frees itself when its sound ends.
-`LevelAudio` plays a one-shot itself only when there is no `ScreenManager` autoload. The
+`LevelAudio` plays a one-shot itself only when there is no `ScreenManager` autoload. For a
+start sound it keeps the player `play_effect` hands back, as `player+1112` keeps the handle.
+It lets go of it, still playing, when the prank applies (`PrankController.action_applied`),
+and stops it when the prank is aborted (`action_aborted`, which a catch raises), when the
+level ends and when the level leaves the tree, which is how the quit prompt leaves it. The
 warning loop stays in `LevelAudio`, which stops it when the level ends, as cases 7 and 8 do.
 The imported clips carry no loop points, and Godot never starts a forward loop that ends at
 sample 0, so `LevelAudio` loops the whole clip itself. Until it did, the warning was never
