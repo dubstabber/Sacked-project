@@ -37,9 +37,10 @@ func _run() -> void:
 	await _check_a_round_the_player_gets_wrong()
 	await _check_the_duel_lengthens_each_time()
 	await _check_the_duel_sounds()
+	await _check_the_answer_clock()
 	await _check_the_banners_follow_the_language()
 	if _failures == 0:
-		print("Catch minigame: the button row, the portraits, both round outcomes, the energy rule, the sounds and the banners passed")
+		print("Catch minigame: the button row, the portraits, both round outcomes, the energy rule, the sounds, the answer clock and the banners passed")
 	quit(1 if _failures else 0)
 
 
@@ -231,6 +232,12 @@ func _check_the_duel_sounds() -> void:
 	minigame.answer(int(minigame._serial[0]))
 	_advance_until(minigame, minigame.State.YOUR_TURN)
 	_expect(sounds.calls.is_empty(), "a click before the answer clock runs plays nothing")
+	# sub_413C80 plays S(index + 997), the answered icon's own cast sound, once per click.
+	var first := int(minigame._serial[0])
+	minigame.answer(first)
+	_expect(sounds.calls == [["S%04d" % (1004 + first), false, false]], "an answer plays its icon's own cast sound")
+	minigame.answer((first + 1) % 7)
+	_expect(sounds.calls.size() == 1, "a second click while the answer is on show plays nothing")
 	var rounds := 0
 	while minigame.state != minigame.State.WON and rounds < 6:
 		_play_round(minigame, true)
@@ -255,6 +262,46 @@ func _check_the_duel_sounds() -> void:
 
 	root.remove_child(sounds)
 	sounds.free()
+
+
+# The clock starts each round at 3.999 (0x414932, 0x414B65) and every accepted click puts it
+# back to 4.0 (sub_413C80, 0x413CFF). So each answer gets its own four seconds, which is what
+# lets a duel of up to eleven casts be won; one clock for the whole round could not last.
+func _check_the_answer_clock() -> void:
+	for casts in [3, 5, 11]:
+		var minigame := _mount(1234)
+		await process_frame
+		minigame.open(&"janitor", &"jobless", casts)
+		for leaving in [minigame.State.GET_READY, minigame.State.BUILD, minigame.State.CASTING, minigame.State.YOUR_TURN]:
+			_advance_until(minigame, leaving)
+		_expect(minigame.state == minigame.State.ANSWERING, "%d casts reach the player's turn" % casts)
+		_expect(is_equal_approx(minigame._countdown_seconds, 3.999), "the round's clock starts at 3.999")
+		_expect(minigame._countdown.text == "03", "which reads 03, got %s" % minigame._countdown.text)
+		if casts == 3:
+			# Answer once, then leave it: the round runs out four seconds after that click.
+			minigame.answer(int(minigame._serial[0]))
+			_expect(is_equal_approx(minigame._countdown_seconds, 4.0), "a click puts the clock back to 4.0")
+			var waited := 0.0
+			while minigame.state == minigame.State.ANSWERING and waited < 10.0:
+				minigame._advance_answering(STEP)
+				waited += STEP
+			_expect(minigame.state == minigame.State.ROUND_LOST, "an answer left too long is a miss")
+			_expect(absf(waited - 4.0) < 2.0 * STEP, "four seconds after the last click, took %.2f" % waited)
+		else:
+			# Perfect play: the right icon the first frame the console takes a click.
+			var answered := 0
+			var guard := 0
+			while minigame.state == minigame.State.ANSWERING and guard < casts * 200:
+				if not minigame._answer_showing and answered < casts:
+					minigame.answer(int(minigame._serial[answered]))
+					answered += 1
+				minigame._advance_answering(STEP)
+				guard += 1
+			_expect(
+				minigame.state == minigame.State.ROUND_WON,
+				"a %d-cast round played perfectly is won, state %d after %d answers" % [casts, minigame.state, answered]
+			)
+		_drop(minigame)
 
 
 func _check_the_banners_follow_the_language() -> void:

@@ -17,14 +17,18 @@ const STEP_SECONDS := 1.0
 # A cast is blanked for a quarter of a step before the next one arrives.
 const GAP_FRACTION := 0.25
 const YOUR_TURN_SECONDS := 1.0
-const ANSWER_SECONDS := 4.2999998
+# The answer clock starts each round at 3.999 (0x414932, 0x414B65, the same bytes in both
+# builds), and every accepted click puts it back to 4.0 (sub_413C80, 0x413CFF).
+const ANSWER_SECONDS := 3.999
+const ANSWER_CLICK_SECONDS := 4.0
 const RESULT_SECONDS := 3.0
 const ENERGY_START := 8
 const ENERGY_STEP := 3
 # m_acSequence is a permutation of these; m_acSerial is drawn from its first `difficulty`.
 const SEQUENCE_SIZE := 7
 const SERIAL_SIZE := 64
-# The seven casts are S1004 up; winning plays S1002 and losing S1001.
+# The seven casts are S1004 up, and an answer plays its own icon's cast; winning plays S1002
+# and losing S1001.
 const CAST_SOUND_BASE := 1004
 const WIN_SOUND := "S1002"
 const LOSE_SOUND := "S1001"
@@ -286,7 +290,9 @@ func _check_energy() -> void:
 		_play(LOSE_SOUND)
 
 
-# An answer button was clicked. Outside the answering state the console is inert.
+# CGUIMiniGameButton's click, sub_413C80. It acts only in the answering state while no answer
+# is on show (+312), then restarts the step (+184, 0x413CEF) and the answer clock (+204,
+# 0x413CFF) and plays the answered icon's own cast sound, S(index + 997).
 func answer(choice: int) -> void:
 	if state != State.ANSWERING or _answer_showing:
 		return
@@ -294,6 +300,8 @@ func answer(choice: int) -> void:
 	_answer_position += 1
 	_answer_showing = true
 	_phase = 0.0
+	_countdown_seconds = ANSWER_CLICK_SECONDS
+	_play("S%04d" % (CAST_SOUND_BASE + choice))
 
 
 # The enemy's bar drains from the left and the player's from the right.

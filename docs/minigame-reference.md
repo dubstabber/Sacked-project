@@ -22,12 +22,28 @@ set, allocates 0x144 bytes, stores the object at `game+14716`, and calls the rea
 `sub_413D40`. **Afterwards it increments `game+19052` and clamps it to 9**, so that counter is
 "how many duels have happened", and the constructor receives it **plus two**.
 
+**The count belongs to one attempt at a level.** A byte search for the displacement finds
+seven references. `sub_401000` zeroes it at start-up (read as the game's constructor from its
+run of zero stores, not traced further), `sub_406430` increments and clamps it, and case 5
+reads it. The other two are resets:
+
+- `sub_406AF0`, the level setup, zeroes it at `0x406CBD` on every fresh load, just before it
+  picks the theme. Case 1 runs it from the description screen's `Kontynuuj`, and the
+  restart `sub_407320` runs it too.
+- The teardown `sub_407140` zeroes it at `0x407267` on every way out: the win screen
+  (`sub_406E70`), the lose screen (`sub_4070A0`), the restart, and case 3 when it leaves
+  screen 7, 8 or 10 for the menu.
+
+Only a won duel goes back into the level without either (`0x402832`, screen 1 from screen 5
+with no reload). So the casts grow 2, 3, 4 … across the duels one attempt survives, and every
+new attempt starts again from two. A lost duel ends the attempt.
+
 So the two numbers that shape a duel are:
 
 | Argument | Meaning |
 | --- | --- |
 | 7 for the boss, 4 for anyone else | how many **distinct icons** the round draws from |
-| `game+19052 + 2` | how many **casts** are in the round, growing 2, 3, 4 … capped at 11 |
+| `game+19052 + 2` | how many **casts** are in the round, growing 2, 3, 4 … within one attempt, capped at 11 |
 | 8, 8 | starting energy for the opponent and the player |
 | the `ENEMY_*` name | the opponent's portrait |
 | `game+20686` | the player's own character, 0 Jo Bless and 1 Anne |
@@ -86,7 +102,7 @@ Each answer button keeps its index at `+1168` and the minigame at `+1164`.
 | **1** | fill `m_acSerial[64]`, each entry `m_acSequence[rand() % difficulty]`, then state 3 |
 | **3** | the opponent casts: see below |
 | **4** | show `m_pYourTurn` for **1.0 s**, then state 5 |
-| **5** | the player answers, with `m_pTime` counting **4.3 s** down |
+| **5** | the player answers, with `m_pTime` counting down from **3.999 s**; each accepted click resets it to **4.0 s** |
 | **6** | a miss: player energy − 3, reset, back to state 1 |
 | **7** | the round won: opponent energy − 3, reset, back to state 1 |
 | **8** | won: show `m_pWin` for 3.0 s, play `S1002`, then clear `+308` |
@@ -103,8 +119,8 @@ seven casts are **S1004 to S1010**. When `m_iSpellPos` reaches the cast count, e
 hidden and the turn passes.
 
 **Answering (state 5).** Clicking an answer button sets `m_iJoBlessSpell` and advances
-`m_iJoBlessSpellPos`; the answer is shown in the right bubble for the same 1.0 s. When that
-second elapses the answer is judged:
+`m_iJoBlessSpellPos` (the click handler is below); the answer is shown in the right bubble for
+the same 1.0 s. When that second elapses the answer is judged:
 
 ```c
 if (m_iJoBlessSpellPos >= castCount)         state = 7;   // the round is won
@@ -115,6 +131,29 @@ Note the order: reaching the end sets 7 first, and a wrong final answer then ove
 with 6, so the last answer still counts. Letting `m_pTime` run past zero is a miss as well.
 Answer *k* matches cast *k*: the icons pair index for index, `SPELL_1`–`7` against
 `SPELL_8`–`14`.
+
+**The answer clock** is `+204`. The constructor sets it to 0 (`0x413DE3`). State 1 and the end
+of the casts both set it to **3.999** (`0x414932`, `0x414B65`), which `m_pTime` shows as `03`.
+State 5 takes the frame time off it before anything else. Gefeuert.exe stores the same bytes
+at `0x415192` and `0x4153C5`, and neither build holds a 4.3 anywhere.
+
+**The click handler** is `sub_413C80`, slot +76 of `CGUIMiniGameButton`'s vtable (`0x46571C`,
+entry `0x465768`). `sub_459AE0` calls that slot on a button that is pressed with the mouse
+inside it (`0x459CC3`). The handler acts only when the state is 5, `+312` is set, and the
+button's index (`+1168`) is 7 or more, which makes it an answer button. It then:
+
+- plays `S%04i` of index + 997 through `sub_42A6A0` (`0x413D27`). That is `S1004`–`S1010`, the
+  same sound as the cast it answers;
+- sets `m_iJoBlessSpell` (`+284`) to index % 7;
+- zeroes the step timer `+184` (`0x413CEF`), so the answer is on show for a full second;
+- puts the answer clock back to **4.0** (`0x413CFF`);
+- increments `m_iJoBlessSpellPos` (`+288`).
+
+`+312` is the tick's "no answer on show" flag. It is set at `0x414DB3` while no answer has
+been given and at `0x414D57` once one has been judged, and cleared at `0x414D41` while one is
+on show. So a click does nothing outside state 5 or while an answer is showing, and each
+accepted click gives the next answer four seconds of its own. A round of *n* casts therefore
+needs about *n* seconds of answers and never runs out on a player who keeps up.
 
 **Energy.** Both sides start at 8 and move in steps of 3, and a side loses when its energy
 goes **below** zero, so 8 → 5 → 2 → −1. **Three good rounds win and three bad ones lose**,
@@ -159,11 +198,6 @@ after the 3.0 s banner.
 
 ## Not recovered
 
-- The button's own click handler. Everything it must do is pinned by how the tick reads
-  `m_iJoBlessSpell` and `m_iJoBlessSpellPos`, but the code that writes them has not been read,
-  so whether a click is ignored outside state 5 is an assumption. The port ignores it.
-- What `+312` gates. It is set while no answer is being displayed and cleared while one is,
-  which reads like "the buttons accept input now", but nothing that consumes it has been read.
 - `m_pTime`'s `+104 = 3` and `+120 = 4.0`, presumably a digit count and a scale.
 
 ## Sizing
@@ -192,11 +226,15 @@ game's handler, so `S1001` also plays on into the lose screen. `CatchWatch` hold
 theme for the duel. A countdown warning that has already started keeps looping.
 
 Every constant above is used as recovered: the two-second banner, the one-second step and its
-quarter-second gap, the 4.3-second answer clock, eight energy in steps of three, and the
-sequence length growing by one per duel to a cap of eleven. `ScreenManager.duels_fought` is
-`game+19052`.
+quarter-second gap, the 3.999-second answer clock and its reset to 4.0 on every click, eight
+energy in steps of three, and the sequence length growing by one per duel to a cap of
+eleven. `CatchMinigame.answer()` is `sub_413C80`. It has the same gate, plays the same sound,
+and restarts the step and the clock. `ScreenManager.duels_fought` is `game+19052`.
+`change_to` zeroes it whenever it enters a level, which covers every fresh start and every
+restart. A won duel is an overlay and never passes through it, so the count grows only
+within one attempt.
 
-Three port decisions worth naming:
+Two port decisions worth naming:
 
 - **The backdrop.** The original spins the texture coordinates of a quad pinned to the
   screen, so it never shows an edge. The port spins the sprite and scales it by 1.25, which
@@ -206,6 +244,3 @@ Three port decisions worth naming:
   that has none. The Polish build's `YOURTURN` and `WIN` are swapped relative to what their
   names say, which the port reproduces by showing that build's art where its name belongs.
   See [strings-reference.md](strings-reference.md).
-- **The console is inert outside the answering state**, and a second click is ignored while
-  an answer is still on show. The original's click handler has not been read, so this is the
-  port's reading of what the tick requires rather than something recovered.

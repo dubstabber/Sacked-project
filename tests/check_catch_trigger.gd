@@ -44,6 +44,7 @@ func _run() -> void:
 	await _check_only_mid_prank(world, player)
 	_check_the_duel_gets_the_pointer(world, player)
 	_check_the_duel_holds_only_the_theme()
+	_check_a_won_duel_keeps_the_count()
 	_finish()
 
 
@@ -51,7 +52,7 @@ func _finish() -> void:
 	if is_instance_valid(_level):
 		_level.free()
 	if _failures == 0:
-		print("Catch trigger: notice radius, cone, the two-tile bypass, sight, the mid-prank gate, the duel's pointer and its sound passed")
+		print("Catch trigger: notice radius, cone, the two-tile bypass, sight, the mid-prank gate, the duel's pointer, its sound and its length passed")
 	quit(1 if _failures else 0)
 
 
@@ -234,6 +235,32 @@ func _check_the_duel_holds_only_the_theme() -> void:
 	watch._on_duel_finished(true)
 	_expect(not audio._theme.stream_paused, "a won duel lets the theme go")
 	audio._warning.stop()
+	screens.duels_fought = restore
+
+
+# A won duel goes back into the level still in memory (sub_4027B0, 0x402832), with no reload and
+# no teardown to zero game+19052. So the count survives it, and the next catch in the same
+# attempt is a cast longer. check_screen_flow.gd covers the resets.
+func _check_a_won_duel_keeps_the_count() -> void:
+	var watch := _level.get_node_or_null("LevelRuntime/CatchWatch")
+	var minigame := _level.get_node_or_null("LevelRuntime/CatchMinigame")
+	if watch == null or minigame == null:
+		_expect(false, "level 2 carries the duel")
+		return
+	var screens := root.get_node("ScreenManager")
+	var restore: int = screens.duels_fought
+	screens.duels_fought = 0
+	watch._open_duel()
+	minigame.set_process(false)
+	_expect(minigame.cast_count == 2 and screens.duels_fought == 1, "the first catch of an attempt is a two-cast duel")
+	minigame.visible = false
+	watch._on_duel_finished(true)
+	_expect(screens.duels_fought == 1, "winning it keeps the count")
+	watch._open_duel()
+	minigame.set_process(false)
+	_expect(minigame.cast_count == 3, "so the next catch in the same attempt is three casts")
+	minigame.visible = false
+	watch._on_duel_finished(true)
 	screens.duels_fought = restore
 
 

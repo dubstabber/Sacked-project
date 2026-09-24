@@ -42,6 +42,7 @@ func _run() -> void:
 	await _check_result_screen_shows_the_outcome()
 	await _check_lost_level_returns_to_a_fresh_run()
 	await _check_the_name_box_carries_the_original_caption()
+	await _check_each_attempt_starts_the_duel_over()
 	await _check_only_a_win_plays_the_win_cue()
 
 	_manager.reset_player_setup()
@@ -51,7 +52,7 @@ func _run() -> void:
 	store.reload()
 	DirAccess.remove_absolute(TEST_PATH)
 	if _failures == 0:
-		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip and the win cue passed")
+		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count and the win cue passed")
 	quit(1 if _failures else 0)
 
 
@@ -293,6 +294,41 @@ func _check_points_mode_takes_the_variant_scene() -> void:
 		"the entered level keeps the scene its mode asked for"
 	)
 	_manager.selected_game_mode = restore_mode
+	_manager.selected_level = restore_level
+
+
+# sub_406AF0 zeroes game+19052 on every fresh load (0x406CBD) and sub_407140 on every way out
+# (0x407267), so each attempt at a level starts from a two-cast duel, whichever way it was
+# reached. Only a won duel goes back into the level without either; check_catch_trigger.gd
+# covers that side.
+func _check_each_attempt_starts_the_duel_over() -> void:
+	var restore_level: int = _manager.selected_level
+	var paths := {
+		"a win and the next level": func() -> void:
+			_manager.report_level_finished(true)
+			_manager.change_to_level_tree()
+			_manager.open_level_description(2)
+			_manager.start_level(2),
+		"a loss and Powtórz": func() -> void:
+			_manager.report_level_finished(false)
+			_manager.restart_level(),
+		"quitting to the menu and a new level": func() -> void:
+			_manager.change_to_main_menu()
+			_manager.open_level_description(1)
+			_manager.start_level(1),
+		"a restart": func() -> void:
+			_manager.restart_level(),
+	}
+	for path: String in paths:
+		_manager.duels_fought = 4
+		(paths[path] as Callable).call()
+		_expect(_manager.current == ScreenManagerScript.Screen.LEVEL, "%s ends in a level" % path)
+		_expect(_manager.duels_fought == 0, "%s starts the duel count over, got %d" % [path, _manager.duels_fought])
+		_expect(_manager.begin_duel() == 2, "so the first duel after %s is two casts" % path)
+		_expect(_manager.begin_duel() == 3, "and the next one in that attempt is three")
+	await process_frame
+	_manager.duels_fought = 0
+	_manager.last_level_won = false
 	_manager.selected_level = restore_level
 
 

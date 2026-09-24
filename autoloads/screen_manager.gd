@@ -52,8 +52,8 @@ var current: Screen = Screen.BOOT_LOADING
 var selected_level := 1
 var selected_game_mode: StringName = &"time"
 var last_level_won := false
-# game+19052: how many duels have happened. The duel about to start is two casts longer than
-# this, and the counter itself stops at nine. See docs/minigame-reference.md.
+# game+19052: how many duels this attempt at the level has had. The duel about to start is two
+# casts longer than this, and the counter itself stops at nine. See docs/minigame-reference.md.
 var duels_fought := 0
 var selected_character: StringName = DEFAULT_CHARACTER
 var player_name: String = get_default_player_name(DEFAULT_CHARACTER)
@@ -80,6 +80,12 @@ func _ready() -> void:
 
 func change_to(screen: Screen) -> void:
 	current = screen
+	if screen == Screen.LEVEL:
+		# sub_406AF0 zeroes game+19052 on every fresh load (0x406CBD), as the teardown
+		# sub_407140 does on every way out (0x407267). Only a won duel goes back into the
+		# level without either, so the duel grows within one attempt and starts from two
+		# casts on the next.
+		duels_fought = 0
 	_sync_menu_music()
 	get_tree().change_scene_to_file(scene_path(screen))
 
