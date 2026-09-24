@@ -41,6 +41,7 @@ func _run() -> void:
 			"walk_frames": 0, "idle_activity_frames": 0, "seated_frames": 0,
 			"claims": 0, "releases": 0, "seat": null, "return_cell": null,
 			"walk_distance": 0.0, "last_position": child.position,
+			"idle_frames": 0, "idle_turns": 0, "was_idle": false, "last_view": -1,
 		}
 		var stats: Dictionary = _stats[profile_id]
 		child.destination_reached.connect(func(): stats.destinations += 1)
@@ -72,6 +73,7 @@ func _run() -> void:
 				toilet_users[String(actor.profile.id)] = true
 		if _failures > 0:
 			break
+	_check_the_office_looks_around()
 	for actor in actors:
 		_check_actor_result(actor)
 		actor.get_node("Brain").enabled = false
@@ -199,7 +201,37 @@ func _check_actor_frame(actor: CharacterBody2D, layer: TileMapLayer, activity_po
 			stats.walk_distance += actor.global_position.distance_to(stats.last_position)
 		if brain._state == BRAIN_SCRIPT.State.ACTING and actor.current_activity == &"idle":
 			stats.idle_activity_frames += 1
+	_count_looking_around(actor, brain, stats)
 	stats.last_position = actor.global_position
+
+
+# Between two frames in the idle branch nothing but sub_4187A0 moves the view, and it moves it
+# one step at a time.
+func _count_looking_around(actor: CharacterBody2D, brain: Node, stats: Dictionary) -> void:
+	var idle: bool = brain._in_idle_branch()
+	var view: int = actor.view_index()
+	if idle and stats.was_idle:
+		stats.idle_frames += 1
+		if view != stats.last_view:
+			stats.idle_turns += 1
+			_expect(posmod(view - int(stats.last_view), 8) in [1, 7], "%s turns one step at a time, from %d to %d" % [actor.profile.id, stats.last_view, view])
+	stats.was_idle = idle
+	stats.last_view = view
+
+
+# sub_4187A0 at the port's nominal 60 Hz: 95/4096 of the frames an agent spends standing about.
+func _check_the_office_looks_around() -> void:
+	var frames := 0
+	var turns := 0
+	for profile_id in _stats:
+		var stats: Dictionary = _stats[profile_id]
+		_expect(stats.idle_turns > 0, "%s looks around while it stands about" % profile_id)
+		frames += int(stats.idle_frames)
+		turns += int(stats.idle_turns)
+	var rate := 95.0 / 4096.0
+	var expected := frames * rate
+	_expect(absf(turns - expected) < 5.0 * sqrt(expected), "idle agents turn on 95/4096 of their frames: %d turns in %d frames, expected %.0f" % [turns, frames, expected])
+	print("Looking around: %d turns in %d idle frames (%.2f a second)" % [turns, frames, turns * Engine.physics_ticks_per_second / maxf(frames, 1.0)])
 
 
 func _check_actor_result(actor: CharacterBody2D) -> void:

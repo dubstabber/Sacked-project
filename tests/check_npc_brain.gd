@@ -37,7 +37,11 @@ class Actor extends Node2D:
 	var cancel_count := 0
 	var activity_available := true
 	var navigation_available := true
+	var turns: Array[int] = []
 	var _return_position := Vector2.INF
+
+	func turn_view(step: int) -> void:
+		turns.append(step)
 
 	func navigate_to(target_global: Vector2) -> bool:
 		if not navigation_available:
@@ -100,8 +104,10 @@ func _run() -> void:
 	_check_routes_end_on_cell_centres()
 	_check_interrupted_activity()
 	_check_routes_and_retry_limit()
+	_check_looking_around()
+	_check_who_looks_around()
 	if _failures == 0:
-		print("NPC brain: source needs, target filters, arrival actions, retry limits and claim cleanup passed")
+		print("NPC brain: source needs, target filters, arrival actions, retry limits, claim cleanup and looking around passed")
 	quit(1 if _failures else 0)
 
 
@@ -885,3 +891,125 @@ func _check_leaving_a_cubicle() -> void:
 	actor.finish_activity()
 	_expect(sofa.get("occupant") == null and brain._state == BRAIN.State.IDLE, "somebody standing at a seat does not keep its occupant sitting")
 	world.free()
+
+
+# sub_4187A0, which only the idle branch of each tick calls: (rand() & 0xFFF) > 4000 turns the
+# view one step, back when (u8)rand() <= 0x80. At the port's nominal 60 Hz that is 95/4096 of
+# the frames, about 1.4 turns a second of standing about. See docs/npc-reference.md.
+func _check_looking_around() -> void:
+	var fixture := _fixture()
+	var brain: Node = fixture["brain"]
+	var actor: Actor = fixture["actor"]
+	var frames := 0
+	for tick in range(6):
+		frames += brain._elapsed_frames(1.0 / 60.0)
+	_expect(frames == 6, "six physics ticks at 60 Hz are six original frames, got %d" % frames)
+	_expect(brain._elapsed_frames(0.01) == 0 and brain._elapsed_frames(0.01) == 1, "a short step carries its remainder into the next")
+
+	brain._frame_random.seed = 4091
+	var count := 200000
+	for frame in range(count):
+		brain._run_frame()
+	var turns := actor.turns.size()
+	var rate := 95.0 / 4096.0
+	_expect(absf(turns - count * rate) < 4.0 * sqrt(count * rate * (1.0 - rate)), "an idle agent turns on 95/4096 of its frames: %d in %d, expected %.0f" % [turns, count, count * rate])
+	var back := actor.turns.count(-1)
+	_expect(absf(back - turns * 129.0 / 256.0) < 4.0 * sqrt(turns * 0.25), "129 turns in 256 go back a step: %d of %d" % [back, turns])
+	_expect(back + actor.turns.count(1) == turns, "every turn is a single step")
+	fixture["world"].free()
+
+	# sub_419CE0 and sub_41E360 spend the first idle frame after any other slot putting slot 0
+	# back, and roll nothing on it (0x419E12, 0x41E451). sub_419740 and sub_41A8D0 do not look.
+	var back_seed := _seed_where(func(rng: RandomNumberGenerator) -> bool: return (rng.randi() & 0xFFF) > 4000 and (rng.randi() & 0xFF) <= 0x80)
+	var on_seed := _seed_where(func(rng: RandomNumberGenerator) -> bool: return (rng.randi() & 0xFFF) > 4000 and (rng.randi() & 0xFF) > 0x80)
+	for profile_id: StringName in [&"male-employee-1", &"secretary", &"boss", &"janitor"]:
+		var reads_slot := profile_id in [&"male-employee-1", &"secretary"]
+		for spec in [[back_seed, -1], [on_seed, 1]]:
+			var agent := _fixture(profile_id)
+			var agent_brain: Node = agent["brain"]
+			var agent_actor: Actor = agent["actor"]
+			agent_brain._showing_idle = false
+			agent_brain._frame_random.seed = spec[0]
+			agent_brain._run_frame()
+			if reads_slot:
+				_expect(agent_actor.turns.is_empty(), "%s does not look around on the frame it goes back to slot 0" % profile_id)
+				agent_brain._frame_random.seed = spec[0]
+				agent_brain._run_frame()
+			_expect(agent_actor.turns == [spec[1]], "%s turns %+d on the first roll that asks for it, got %s" % [profile_id, spec[1], agent_actor.turns])
+			agent["world"].free()
+
+
+func _seed_where(predicate: Callable) -> int:
+	for candidate in range(1, 100000):
+		var rng := RandomNumberGenerator.new()
+		rng.seed = candidate
+		if predicate.call(rng):
+			return candidate
+	_expect(false, "no seed satisfies the roll")
+	return 0
+
+
+# Which branch of its tick an agent is in decides whether it looks around, not the clip it
+# shows: sub_419CE0 has branches for +1812 and goal 6 even where they fall back to idle, the
+# boss's and the janitor's ticks only one for the reaction flag +1820, the secretary's none.
+func _check_who_looks_around() -> void:
+	var looks := {
+		"standing": [true, true, true, true],
+		"walking": [false, false, false, false],
+		"plant": [true, true, true, true],
+		"drinks": [false, true, true, true],
+		"ashtray": [false, true, true, true],
+		"reacting": [false, false, true, false],
+		"sofa": [false, false, false, false],
+		"cubicle": [false, false, false, false],
+		"copying": [false, false, false, false],
+		"after the copier's first user": [true, true, true, true],
+	}
+	var profiles: Array[StringName] = [&"male-employee-1", &"boss", &"secretary", &"janitor"]
+	for kind: String in looks:
+		for index in range(profiles.size()):
+			var fixture := _settle(profiles[index], kind)
+			var brain: Node = fixture["brain"]
+			var actor: Actor = fixture["actor"]
+			brain._frame_random.seed = 11
+			for frame in range(1000):
+				brain._run_frame()
+			var expected: bool = looks[kind][index]
+			_expect((not actor.turns.is_empty()) == expected, "%s %s: %s" % [profiles[index], kind, "looks around" if expected else "keeps still, got %d turns" % actor.turns.size()])
+			fixture["world"].free()
+
+
+func _settle(profile_id: StringName, kind: String) -> Dictionary:
+	var specs := {
+		"plant": [9, 30, 0, false, 2],
+		"drinks": [5, 140, 0, true, 1],
+		"ashtray": [1, 234, 3, false, 6],
+		"reacting": [9, 30, 0, true, 2],
+		"sofa": [7, 182, 3, false, 7],
+		"cubicle": [8, 173, 7, true, 4],
+		"copying": [2, 129, 0, true, 3],
+		"after the copier's first user": [2, 129, 0, true, 3],
+	}
+	if not specs.has(kind):
+		var fixture := _fixture(profile_id)
+		if kind == "walking":
+			fixture["brain"]._state = BRAIN.State.NAVIGATING
+		return fixture
+	var spec: Array = specs[kind]
+	var fixture := _point_fixture(spec[0], spec[1], spec[2], spec[3], profile_id)
+	var brain: Node = fixture["brain"]
+	var point: Node2D = fixture["point"]
+	if kind == "reacting":
+		point.set("tampered", true)
+	if kind == "after the copier's first user":
+		point.set("copier_claimed", true)
+	brain._target = point
+	if point.active:
+		brain._active = point
+	else:
+		brain._passive = point
+	brain._state = BRAIN.State.NAVIGATING
+	brain._goal = spec[4]
+	(fixture["actor"] as Actor).destination_reached.emit()
+	_expect(brain._state == BRAIN.State.ACTING, "%s %s is under way" % [profile_id, kind])
+	return fixture

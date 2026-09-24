@@ -25,8 +25,9 @@ func _run() -> void:
 	await _check_other_entities_block_routes()
 	await _check_seated_activity_and_cancellation()
 	await _check_missing_seated_view_uses_original_fallback()
+	await _check_turning_the_view()
 	if _failures == 0:
-		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles and seated activities passed")
+		print("NPC routes: independent shared routes, waypoint order, waits, facing, completion, detours, failure, stepping back off a return point, other entities as obstacles, seated activities and turning the view passed")
 	quit(1 if _failures else 0)
 
 
@@ -275,6 +276,29 @@ func _check_missing_seated_view_uses_original_fallback() -> void:
 	await _wait_until(func(): return events.finished == 1, 20, "fallback action eventually finishes")
 	var elapsed := float(events.frame - start_frame) / Engine.physics_ticks_per_second
 	_expect(absf(elapsed - 0.2) <= 2.0 / Engine.physics_ticks_per_second, "fallback view does not shorten the activity duration")
+	world.free()
+
+
+# sub_4187A0 moves agent+124 one step round the eight views (sub_41A3F0 masks it with 7), and
+# sub_41A510 then shows the slot the agent was in, in the new view.
+func _check_turning_the_view() -> void:
+	var world := _make_world()
+	var npc := _make_npc(Vector2(80, 80), 1.5)
+	npc.profile = EMPLOYEE_PROFILE
+	world.add_child(npc)
+	await physics_frame
+	var directions := IsoDirection.get_screen_directions()
+	npc.last_direction = directions[0]
+	npc.turn_view(-1)
+	_expect(npc.view_index() == 7 and npc.last_direction == directions[7], "a step back from _000 wraps round to _315")
+	_expect(String(npc.animation_controller.current_animation) == "male-employee-1/male-employee-1-idle1-atmen-up", "the idle slot is shown in the new view, got %s" % npc.animation_controller.current_animation)
+	npc.turn_view(1)
+	npc.turn_view(1)
+	_expect(npc.view_index() == 1 and npc.last_direction == directions[1], "two steps on reach _045")
+	_expect(npc.start_activity(&"pissed", 5.0, directions[1]), "an activity with a clip of its own starts")
+	npc.turn_view(1)
+	_expect(String(npc.animation_player.current_animation) == "male-employee-1-actions/male-employee-1-pissed-down-right", "a turn mid-activity keeps its slot in the new view, got %s" % npc.animation_player.current_animation)
+	_expect(npc.current_activity == &"pissed", "and keeps the activity itself")
 	world.free()
 
 

@@ -43,6 +43,19 @@ const SEATED_CLIPS := {
 # sub_41A8D0 stay in their idle slot for the same timer, so the SPECIAL#1 the secretary's and
 # janitor's tables name is never shown.
 const COWORKER_PROFILES := [&"male-employee-1", &"male-employee-2", &"female-employee-1", &"female-employee-2"]
+const SECRETARY_PROFILE: StringName = &"secretary"
+# Every agent's tick runs once per rendered frame, and the original has no frame limiter: its
+# fullscreen present is Flip(NULL, DDFLIP_WAIT) (0x42DD11 in sub_42DCD0), so it ran at the
+# monitor's refresh. The per-frame rolls below use a nominal 60 Hz, the rate chosen for the
+# port. See docs/npc-reference.md.
+const ORIGINAL_FRAME_SECONDS := 1.0 / 60.0
+# sub_4187A0 turns the view when (rand() & 0xFFF) > 4000, one step back when (u8)rand() <= 0x80
+# and one step on otherwise: on 95/4096 of the frames, and 129/256 of the turns go back.
+const LOOK_AROUND_ROLL := 4000
+const LOOK_BACK_ROLL := 0x80
+# sub_419CE0 and sub_41E360 read the slot they are showing before they roll anything in their
+# idle branch (0x419DFE, 0x41E43D); the boss's and the janitor's ticks do not.
+const SLOT_READING_PROFILES := [&"male-employee-1", &"male-employee-2", &"female-employee-1", &"female-employee-2", &"secretary"]
 # sub_4187F0 splits a full meter across the goals the map can actually offer, and
 # sub_417B00 hands an agent one share the first time each of its goals is spoiled -- so an
 # agent is at its angriest once that many different goals have been.
@@ -194,6 +207,16 @@ var _has_claim := false
 var _inside_cubicle := false
 # Set once the cubicle timer has run out on a locked door and sub_416090 turned the goal to 8.
 var _shut_in := false
+# agent+1812, which sub_417B00 raises at a special-action item for the length of its timer.
+var _special_action := false
+# agent+1808, raised for the copier's first user while sub_416340 holds the copier in state 9.
+var _copying := false
+# The per-frame rolls draw from a stream of their own, so the time an agent spends idle does
+# not shift the choices a seeded brain makes.
+var _frame_random := RandomNumberGenerator.new()
+var _frame_debt := 0.0
+# Whether slot 0 is already showing, as the idle branch of sub_419CE0 and sub_41E360 reads +126.
+var _showing_idle := false
 var _initialized := false
 
 
@@ -217,8 +240,10 @@ func _initialize() -> void:
 		return
 	if random_seed == 0:
 		_random.randomize()
+		_frame_random.randomize()
 	else:
 		_random.seed = random_seed
+		_frame_random.seed = hash(random_seed)
 	for goal in range(8):
 		_needs.append(_random.randf_range(20.0, 100.0))
 		_rates.append(float(_configuration["rates"][goal]))
@@ -255,6 +280,13 @@ func _physics_process(delta: float) -> void:
 		if _state != State.IDLE:
 			_stop()
 		return
+	_think(delta)
+	for frame in range(_elapsed_frames(delta)):
+		_run_frame()
+
+
+# sub_416770's needs and goals, which run on the elapsed time rather than once per frame.
+func _think(delta: float) -> void:
 	if _state != State.IDLE:
 		if _state == State.NAVIGATING and _goal == SOCIAL_GOAL and is_instance_valid(_target):
 			_social_refresh -= delta
@@ -283,6 +315,57 @@ func _physics_process(delta: float) -> void:
 			continue
 		_needs[goal] = clampf(_needs[goal] - delta * _rates[goal] * 0.5, 0.0, 100.0)
 	_select_goal()
+
+
+# Whole original frames in this much simulated time, carrying the remainder, so the rolls run
+# once per 1/60 s whatever the physics rate or the --fixed-fps step.
+func _elapsed_frames(delta: float) -> int:
+	_frame_debt += delta
+	var frames := 0
+	while _frame_debt >= ORIGINAL_FRAME_SECONDS:
+		_frame_debt -= ORIGINAL_FRAME_SECONDS
+		frames += 1
+	return frames
+
+
+# The end of one frame of the archetype's own tick, once sub_416770 and sub_417730 have run.
+func _run_frame() -> void:
+	if not _in_idle_branch():
+		_showing_idle = false
+		return
+	if _profile_id in SLOT_READING_PROFILES and not _showing_idle:
+		# The first idle frame after any other slot only puts slot 0 back (0x419E12, 0x41E451).
+		_showing_idle = true
+		return
+	_showing_idle = true
+	_look_around()
+
+
+# The branch of each tick that calls sub_4187A0: the boss's at 0x41983B, the coworkers' at
+# 0x419EBF, the janitor's at 0x41A99C and the secretary's at 0x41E4FE. Walking and sitting
+# come first in all four. After that only the coworkers' sub_419CE0 branches on the
+# special-action flag +1812 and on goal 6, whatever clip those resolve to; the boss's
+# sub_419740 and the janitor's sub_41A8D0 branch only on the reaction flag +1820, and the
+# secretary's sub_41E360 on neither, so she looks around while she is angry. A cubicle's
+# occupant and the copier's first user are faced back the way they were on every frame
+# (sub_416090, sub_416340), so a look-around there would barely show; the port leaves them
+# still. See docs/npc-reference.md.
+func _in_idle_branch() -> bool:
+	if _state == State.NAVIGATING:
+		return false
+	if _state == State.IDLE:
+		return true
+	if _has_claim or _copying:
+		return false
+	if _profile_id in COWORKER_PROFILES:
+		return not _special_action and _goal != REACTION_GOAL and _goal != SMOKING_GOAL
+	return _profile_id == SECRETARY_PROFILE or _goal != REACTION_GOAL
+
+
+func _look_around() -> void:
+	if (_frame_random.randi() & 0xFFF) <= LOOK_AROUND_ROLL:
+		return
+	_actor.call("turn_view", -1 if (_frame_random.randi() & 0xFF) <= LOOK_BACK_ROLL else 1)
 
 
 func _select_goal() -> void:
@@ -507,6 +590,8 @@ func _on_destination_reached() -> void:
 	var duration := _random.randf_range(10.0, 16.0)
 	var animation := &"idle"
 	var special := &"special-1" if _profile_id in COWORKER_PROFILES else &"idle"
+	var special_action := false
+	var copying := false
 	var claim: Node2D = null
 	var seated := false
 	var relaxed := false
@@ -535,16 +620,19 @@ func _on_destination_reached() -> void:
 			# one included, stands idle at it for the same 20 s.
 			if not bool(_active.get("copier_claimed")):
 				_active.set("copier_claimed", true)
+				copying = true
 				_using_object = _set_object_state(_active, COPIER_IN_USE_STATE)
 		elif active_type in SPECIAL_ACTIVE_TYPES:
 			duration = 15.0
 			animation = special
+			special_action = true
 	if not active_handled and is_instance_valid(_passive):
 		var passive_type := int(_passive.get("item_type"))
 		focus = _passive
 		if passive_type in SPECIAL_PASSIVE_TYPES:
 			duration = 15.0
 			animation = special
+			special_action = true
 		elif passive_type in WORK_CHAIR_TYPES:
 			if _available(_passive):
 				duration = _random.randf_range(40.0, 50.0)
@@ -573,6 +661,8 @@ func _on_destination_reached() -> void:
 	var started := bool(_actor.call(
 		"start_activity", animation, duration, placement["facing"], placement["anchor"], placement["return"]
 	))
+	_special_action = started and special_action
+	_copying = started and copying
 	if started:
 		_state = State.ACTING
 	else:
@@ -668,6 +758,9 @@ func _on_navigation_failed() -> void:
 func _on_activity_finished() -> void:
 	if not enabled or _state != State.ACTING:
 		return
+	# sub_416410 drops +1812 with the timer that ran out, and sub_416340 drops +1808.
+	_special_action = false
+	_copying = false
 	_clear_object_state()
 	# sub_416090 once the cubicle timer is spent: a locked door keeps the agent in with goal 8
 	# (0x416143), and an open one lets it out only when sub_418EA0 finds nobody else within
@@ -726,6 +819,8 @@ func _stop() -> void:
 	_clear_object_state()
 	_repair_job = null
 	_shut_in = false
+	_special_action = false
+	_copying = false
 	_state = State.IDLE
 	_goal = -1
 	_pending_goal = -1

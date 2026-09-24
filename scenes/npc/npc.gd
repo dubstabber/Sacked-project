@@ -284,16 +284,7 @@ func start_activity(animation: StringName, duration: float, facing: Vector2, anc
 	if facing != Vector2.ZERO:
 		last_direction = IsoDirection.snap_to_8_directions(facing.normalized())
 		facing_screen = facing.normalized()
-	if animation == &"idle" or animation == &"":
-		animation_controller.play_idle(last_direction)
-	else:
-		var clip := _action_clip(animation)
-		if clip.is_empty():
-			# sub_41A510 drops to the idle slot when an action has no clip at all.
-			_warn_missing_action(animation)
-			animation_controller.play_idle(last_direction)
-		else:
-			animation_controller.play_animation(clip)
+	_show_clip(animation)
 	if anchor != Vector2.INF:
 		global_position = anchor
 	_activity_return = return_position
@@ -301,6 +292,40 @@ func start_activity(animation: StringName, duration: float, facing: Vector2, anc
 	_command = Command.ACTIVITY
 	current_activity = animation
 	return true
+
+
+func _show_clip(animation: StringName) -> void:
+	if animation == &"idle" or animation == &"":
+		animation_controller.play_idle(last_direction)
+		return
+	var clip := _action_clip(animation)
+	if clip.is_empty():
+		# sub_41A510 drops to the idle slot when an action has no clip at all.
+		_warn_missing_action(animation)
+		animation_controller.play_idle(last_direction)
+	else:
+		animation_controller.play_animation(clip)
+
+
+# sub_4187A0's turn: one step round the eight views (sub_41A3F0 masks the index with 7),
+# after which sub_41A510 resolves the slot the agent was showing again, in the new view. The
+# brain decides when; see docs/npc-reference.md.
+func turn_view(step: int) -> void:
+	var directions := IsoDirection.get_screen_directions()
+	last_direction = directions[posmod(view_index() + step, directions.size())]
+	facing_screen = last_direction
+	if _command != Command.TRAVEL:
+		_show_clip(current_activity)
+
+
+# agent+124: the eight-way view, numbered as the sprite suffixes are, _000 through _315.
+func view_index() -> int:
+	var directions := IsoDirection.get_screen_directions()
+	var best := 0
+	for index in range(1, directions.size()):
+		if last_direction.dot(directions[index]) > last_direction.dot(directions[best]):
+			best = index
+	return best
 
 
 func _action_clip(action: StringName) -> String:

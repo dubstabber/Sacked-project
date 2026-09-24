@@ -238,6 +238,31 @@ Before routes ended on cells, the footprint test cost much more on this map than
 
 The port additionally releases claims and restores standing positions when a brain is disabled, removed, or its activity target/seat disappears. An action with no clip at all plays the idle fallback and warns once, matching `sub_41A510` rather than failing the goal. These are authoring/runtime safety behavior, not claims about original object-deletion handling. The isolated `tests/check_npc_brain.gd` exercises target filters, goal disabling, the arrival dispatch for each item class, work startup, durations, occupation, need resets, retry bounds, authored-route override, and interrupted/missing-action cleanup with a stub actor. `tests/check_npc_level_runtime.gd` runs the three original agents on the imported map for two simulated minutes, asserts someone uses the toilet, and with seed 42 checks that the boss sits on the sofa with `SIT#IDLE`. `tests/check_npc_routes.gd` covers the step back from a point flush against a wall and from inside a blocked cell.
 
+## Standing about, frame by frame
+
+The four ticks run once per rendered frame: `sub_402590` hands every entity the game clock through `Update_Dispatcher` (`0x402749`) and each tick's `vtbl+32`. Most of what they do runs on elapsed time, but a few things are a random roll **per frame**, so how often they happen depends on the frame rate. The original has no frame limiter. `WinMain` sleeps only while the application is inactive (`Sleep(100)` at `0x411B0C`), and the fullscreen present is `Flip(NULL, DDFLIP_WAIT)` (`0x42DD11` in `sub_42DCD0`), which waits for the vertical blank, so the game ran at the monitor's refresh rate. The binary cannot say what that was.
+
+**The port takes 60 Hz.** That is a choice made for the port, not a recovered value. `ORIGINAL_FRAME_SECONDS` in `npc_brain.gd` sets it. Each per-frame roll runs once per 1/60 s of simulated time, and a remainder is carried from one physics step to the next. At the project's 60 Hz physics tick that is once per tick, and it stays deterministic under `--fixed-fps`, which still steps physics six times per 0.1 s frame. The rolls draw from a second random stream, seeded from the brain's `random_seed`, so time spent standing about does not change the choices a seeded brain makes.
+
+### Looking around
+
+`sub_4187A0` rolls `(rand() & 0xFFF) > 4000`, which is 95 frames in 4096. On a hit it turns the eight-way view `+124` one step back when `(u8)rand() <= 0x80` (129 turns in 256) and one step on otherwise, through `sub_41A3F0`, which masks the index with 7. Then `sub_41A510` shows the slot the agent was in, in the new view. At 60 Hz that is about 1.4 turns a second of standing about. It is called from one branch of each tick, and which branch that is depends on the archetype, not on the clip the agent shows:
+
+| Archetype | Tick, call | Does not look around while |
+| --- | --- | --- |
+| Coworkers | `sub_419CE0`, `0x419EBF` | walking, seated, the special-action flag `+1812` is up, reacting (`+1820`), or on goal 6 |
+| Secretary | `sub_41E360`, `0x41E4FE` | walking or seated |
+| Boss | `sub_419740`, `0x41983B` | walking, seated or reacting |
+| Janitor | `sub_41A8D0`, `0x41A99C` | walking, seated or reacting |
+
+So a coworker holding `+1812` or on goal 6 keeps still even where `sub_41A510` falls back to the idle clip. Male employee 2 and female employee 2 at a drinks machine, and the variant-1 coworkers at an ashtray, are examples. The boss, the secretary and the janitor stand in their idle slot for those 15 seconds and look around. The secretary looks around while she is angry, too, since her tick has no branch for the reaction flag. The coworkers' and the secretary's idle branches also read the slot they are showing (`0x419DFE`, `0x41E43D`). On the first idle frame after any other slot they only put slot 0 back (`0x419E12`, `0x41E451`) and roll nothing. The boss's and the janitor's ticks call `sub_41A510(0)` and roll on every idle frame.
+
+One approximation. A cubicle's occupant is turned back to face out of the cubicle on every frame of its timer (`sub_416090`), and the copier's first user toward the copier (`sub_416340`). Both happen before the tick's branch, so a look-around there lasts at most a frame for the boss and the janitor. The coworkers' and the secretary's idle branches do not re-resolve the clip every frame, so a turn there might stay on screen until their next roll. That is inferred and has not been checked. The port does not turn either kind of agent at all. It also leaves still a locked-in inmate, or an occupant waiting for the door to clear. `sub_416090` stops re-facing those once the timer is spent, so the original's inmates may turn, but they are blind and inside the cubicle.
+
+A turn moves `+124`, and `sub_416960` aims the social goal 1.2 tiles in front of the partner's `+124`. An idle partner that looks around therefore moves the point a colleague is walking to. The same turn should also make a blocked front cell a passing problem rather than a lasting one, which matters for the social starvation described in "When a goal can never succeed". That is inferred from the rules. Before this, the port's partners never turned.
+
+`npc_brain.gd` rolls in `_run_frame`, gated by `_in_idle_branch`, and the actor turns in `npc.gd`'s `turn_view`. `tests/check_npc_brain.gd` measures the rate over 200,000 frames with a fixed seed, checks which branch of which archetype looks around, and checks the frame that only puts slot 0 back. `tests/check_npc_level_runtime.gd` counts the turns on level 1: 127 in 5,764 idle frames over two simulated minutes, 1.32 a second.
+
 ## Thought bubbles
 
 `agent+1080` is the agent's **current goal**, not a separate bubble field: `sub_416570`
