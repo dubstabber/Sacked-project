@@ -25,6 +25,10 @@ const STATE_MANIFEST_DIR := "res://resources/objects/"
 # See docs/map-rendering.md.
 const WORLD_GROUP := &"depth_world_objects"
 const ACTOR_GROUP := &"depth_composited_characters"
+# How the object is drawn never takes it out of the pick: the original registers an item's
+# click box every frame it draws the item (sub_411E20 at 0x411F88), and no state touches
+# either flag that gates it. See docs/player-action-reference.md.
+const PICK_GROUP := &"map_objects"
 
 @export var color_texture: Texture2D:
 	set(value):
@@ -56,6 +60,7 @@ var _drawn_as_actor := false
 
 
 func _enter_tree() -> void:
+	add_to_group(PICK_GROUP)
 	add_to_group(ACTOR_GROUP if _drawn_as_actor else WORLD_GROUP)
 	set_notify_transform(true)
 

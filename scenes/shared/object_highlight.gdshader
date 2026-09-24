@@ -8,15 +8,23 @@ render_mode unshaded, blend_add;
 //
 // The depth test is the same one characters use, so the pulse only reaches the pixels where
 // the object is actually visible; the object stays in the static world composite underneath.
+// An object drawn as an actor that overlaps a character is drawn on the character
+// compositor's CPU surface instead, so the pass tests that surface's scores as well: the
+// original's copy is Z-buffered right after the item (sub_411E20), so a character standing
+// in front of it is never lit.
 
 uniform sampler2D depth_map : filter_nearest, repeat_disable;
 uniform sampler2D world_depth : filter_nearest, repeat_disable;
 uniform vec2 world_depth_origin = vec2(0.0, 0.0);
 uniform vec2 world_depth_size = vec2(0.0, 0.0);
+uniform sampler2D cluster_depth : filter_nearest, repeat_disable;
+uniform vec2 cluster_depth_origin = vec2(0.0, 0.0);
+uniform vec2 cluster_depth_size = vec2(0.0, 0.0);
 uniform float base_y = 0.0;
 uniform vec2 pixel_snap = vec2(0.0, 0.0);
 uniform bool depth_map_enabled = false;
 uniform bool world_depth_enabled = false;
+uniform bool cluster_depth_enabled = false;
 
 varying vec2 world_position;
 
@@ -35,12 +43,21 @@ void fragment() {
 		if (encoded.a <= 0.0) {
 			discard;
 		}
+		float score = base_y - (floor(encoded.r * 255.0 + 0.5) + floor(encoded.g * 255.0 + 0.5) * 256.0);
 		if (world_depth_enabled) {
-			float depth = floor(encoded.r * 255.0 + 0.5) + floor(encoded.g * 255.0 + 0.5) * 256.0;
 			vec2 texel = floor(world_position) - world_depth_origin;
 			if (texel.x >= 0.0 && texel.y >= 0.0 && texel.x < world_depth_size.x && texel.y < world_depth_size.y) {
 				// The object put these very scores in the buffer, so a tie is its own pixel.
-				if (base_y - depth < texture(world_depth, (texel + 0.5) / world_depth_size).r) {
+				if (score < texture(world_depth, (texel + 0.5) / world_depth_size).r) {
+					discard;
+				}
+			}
+		}
+		if (cluster_depth_enabled) {
+			vec2 cell = floor(world_position) - cluster_depth_origin;
+			if (cell.x >= 0.0 && cell.y >= 0.0 && cell.x < cluster_depth_size.x && cell.y < cluster_depth_size.y) {
+				// Likewise here: the surface was composed from this object's own scores.
+				if (score < texture(cluster_depth, (cell + 0.5) / cluster_depth_size).r) {
 					discard;
 				}
 			}

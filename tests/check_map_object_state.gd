@@ -8,7 +8,7 @@ const ServerScene := "res://scenes/objects/aktiv-server-000.tscn"
 # The mirror ships no DESTROY_1 at all, so breaking it settles straight on DESTROYED_1.
 const MirrorScene := "res://scenes/objects/aktiv-spiegel-000.tscn"
 # The copier is level 2's looping case: DESTROYED_1 runs 25 frames at 16 fps and never
-# settles, and an NPC using the copier puts it there in ordinary play.
+# settles, and the first NPC to use the copier puts it there in ordinary play.
 const CopierScene := "res://scenes/objects/aktiv-kopierer-000.tscn"
 
 var _failures := 0
@@ -121,6 +121,7 @@ func _check_looping_state_runs_and_leaves_the_bake() -> void:
 	await process_frame
 	_expect(copier.is_in_group(MapObjectScript.WORLD_GROUP), "an idle object bakes into the world composite")
 	_expect(not copier.is_in_group(MapObjectScript.ACTOR_GROUP), "an idle object is not a depth actor")
+	_expect(copier.is_in_group(MapObjectScript.PICK_GROUP), "an idle object can be picked")
 
 	copier.set_state(9)
 	_expect(copier.state == 9, "the copier reaches DESTROYED_1")
@@ -129,6 +130,9 @@ func _check_looping_state_runs_and_leaves_the_bake() -> void:
 	_expect(bool(copier.get("_clip_loops")), "DESTROYED_1 carries the container's loop flag")
 	_expect(copier.is_in_group(MapObjectScript.ACTOR_GROUP), "a looping object is drawn as a depth actor")
 	_expect(not copier.is_in_group(MapObjectScript.WORLD_GROUP), "a looping object leaves the static bake")
+	# sub_411E20 registers the click box whatever the state, so leaving the bake never
+	# leaves the pick. See docs/player-action-reference.md.
+	_expect(copier.is_in_group(MapObjectScript.PICK_GROUP), "a looping object can still be picked")
 
 	var idle_texture: Texture2D = copier.get("_idle_texture")
 	# 25 frames at 16 fps is 1.5625 s, so 40 steps of a sixteenth run past the end and wrap.
@@ -147,4 +151,5 @@ func _check_looping_state_runs_and_leaves_the_bake() -> void:
 	_expect(not copier.is_processing(), "IDLE ends the loop")
 	_expect(copier.is_in_group(MapObjectScript.WORLD_GROUP), "the object returns to the static bake")
 	_expect(not copier.is_in_group(MapObjectScript.ACTOR_GROUP), "the object stops being a depth actor")
+	_expect(copier.is_in_group(MapObjectScript.PICK_GROUP), "the object back in the bake can be picked")
 	_release(copier)

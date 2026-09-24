@@ -3,6 +3,10 @@ class_name CharacterDepthCompositor
 extends Sprite2D
 
 
+# Emitted once a frame's clusters are composed and their sprites hidden, so anything that
+# depth-tests against a surface can pick up the frame it will actually be drawn with.
+signal composed
+
 const GROUP_NAME := "depth_composited_characters"
 const DEPTH_SUFFIX := "-depth.png"
 const EMPTY_SCORE := -1.0e30
@@ -17,6 +21,13 @@ var _hidden_sprites: Array[Sprite2D] = []
 var _surfaces: Array[Sprite2D] = []
 var _surface_textures: Array[ImageTexture] = []
 var _surface_signatures: Array[String] = []
+# Each surface's composed scores and the window they cover, turned into a texture only when
+# cluster_depth_for asks, so a cluster nobody tests against uploads nothing extra.
+var _surface_scores: Array[PackedFloat32Array] = []
+var _surface_score_bounds: Array[Rect2] = []
+var _surface_score_textures: Array[ImageTexture] = []
+var _surface_scores_stale: Array[bool] = []
+var _sprite_surfaces: Dictionary = {}
 var _materials: Dictionary = {}
 var _material_depth_paths: Dictionary = {}
 var _depth_textures: Dictionary = {}
@@ -47,6 +58,11 @@ func _exit_tree() -> void:
 	_surfaces.clear()
 	_surface_textures.clear()
 	_surface_signatures.clear()
+	_surface_scores.clear()
+	_surface_score_bounds.clear()
+	_surface_score_textures.clear()
+	_surface_scores_stale.clear()
+	_sprite_surfaces.clear()
 
 
 func _process(_delta: float) -> void:
@@ -65,6 +81,7 @@ func update_composition() -> void:
 		var prepared := _prepare_composite_actors(cluster)
 		clusters.append_array(_overlap_clusters(prepared))
 	_render_clusters(clusters)
+	composed.emit()
 
 
 func _overlap_clusters(actors: Array) -> Array:
@@ -96,6 +113,7 @@ func _overlap_clusters(actors: Array) -> Array:
 func _render_clusters(clusters: Array) -> void:
 	var sprites_to_hide: Array[Sprite2D] = []
 	var used := 0
+	_sprite_surfaces.clear()
 	for cluster in clusters:
 		var bounds := _calculate_union_bounds(cluster)
 		if bounds.size.x <= 0 or bounds.size.y <= 0:
@@ -105,13 +123,17 @@ func _render_clusters(clusters: Array) -> void:
 		if not surface.visible or surface.texture == null or _surface_signatures[used] != signature:
 			_set_surface_image(used, _compose_images(cluster, bounds))
 			_surface_signatures[used] = signature
+			_surface_scores[used] = composed_scores
+			_surface_score_bounds[used] = bounds
+			_surface_scores_stale[used] = true
 		surface.global_position = bounds.position
 		surface.visible = true
-		used += 1
 		for actor in cluster:
 			var actor_sprite := actor["sprite"] as Sprite2D
 			if actor_sprite != null:
 				sprites_to_hide.append(actor_sprite)
+				_sprite_surfaces[actor_sprite.get_instance_id()] = used
+		used += 1
 	for index in range(used, _surfaces.size()):
 		_surfaces[index].visible = false
 		_surface_signatures[index] = ""
@@ -130,7 +152,34 @@ func _surface(index: int) -> Sprite2D:
 		_surfaces.append(surface)
 		_surface_textures.append(null)
 		_surface_signatures.append("")
+		_surface_scores.append(PackedFloat32Array())
+		_surface_score_bounds.append(Rect2())
+		_surface_score_textures.append(null)
+		_surface_scores_stale.append(false)
 	return _surfaces[index]
+
+
+# The composed scores of the surface a hidden actor sprite is drawn on, as an R32F texture
+# over the returned bounds, the same encoding as WorldDepthCompositor.depth_texture. Empty
+# when the sprite is not part of a cluster. The focus highlight tests against it.
+func cluster_depth_for(sprite: Sprite2D) -> Dictionary:
+	if sprite == null:
+		return {}
+	var index: int = _sprite_surfaces.get(sprite.get_instance_id(), -1)
+	if index < 0 or index >= _surfaces.size() or not _surfaces[index].visible:
+		return {}
+	var bounds := _surface_score_bounds[index]
+	if _surface_scores_stale[index]:
+		_surface_scores_stale[index] = false
+		var image := Image.create_from_data(
+			int(bounds.size.x), int(bounds.size.y), false, Image.FORMAT_RF, _surface_scores[index].to_byte_array()
+		)
+		var texture := _surface_score_textures[index]
+		if texture == null or texture.get_width() != image.get_width() or texture.get_height() != image.get_height():
+			_surface_score_textures[index] = ImageTexture.create_from_image(image)
+		else:
+			texture.update(image)
+	return {"texture": _surface_score_textures[index], "bounds": bounds}
 
 
 func _update_environment() -> void:

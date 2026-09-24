@@ -62,7 +62,7 @@ func _object_nearest_to_cursor() -> MapObject:
 	var cursor: Vector2 = viewport.get_canvas_transform().affine_inverse() * viewport.get_mouse_position()
 	var best: MapObject = null
 	var best_distance := INF
-	for node in get_tree().get_nodes_in_group("depth_world_objects"):
+	for node in get_tree().get_nodes_in_group(MapObject.PICK_GROUP):
 		var object := node as MapObject
 		if object == null:
 			continue

@@ -83,7 +83,20 @@ sprite lookup produces a null name.
 
 Two `+0x40` values are markers rather than states: **17** means the object keeps its state
 (the pickups), and **18** sets `item+232` for the duration of the action and clears it
-afterwards. `sub_4100B0` resets an object: each of its eight slots is enabled when its
+afterwards.
+
+`item+232` is the item's hide flag. `sub_40FCE0`, the on-screen test `sub_41A2D0` stores into
+`item+84`, returns 0 while it is 1, and `sub_411E20` neither draws an item without `+84` nor
+registers its click box, so a hidden item cannot be hovered either. The flag has exactly five
+writers. `sub_41B240` sets it to 1 at commit for marker 18 (`0x41B673`) and clears it when
+the action applies (`0x41B854`) or aborts (`0x41BB7D`). The two resets, `sub_40FEF0`
+(`0x40FF14`) and `sub_410060` (`0x41007C`), clear it. No item state touches it:
+`sub_40FDA0` writes only the state (`+124`), the clip (`+116`/`+120`) and the animation's own
+fields. So no state, looping or not, hides an item or takes it out of the pick; see
+[player-action-reference.md](player-action-reference.md). The port does not hide a
+marker-18 object yet.
+
+`sub_4100B0` resets an object: each of its eight slots is enabled when its
 action id is non-zero, every id named in an enabled slot's **unlock** list is then disabled,
 `item+224` and `item+228` are cleared, and the object is put in state 0. It is what a
 finished repair calls, so it also releases a colleague locked in a cubicle; see
@@ -128,8 +141,8 @@ the byte-identity guarantee are described in [map-rendering.md](map-rendering.md
 Of the 80 state clips level 1 can reach, eight are real multi-frame transitions; all eight
 are one-shot `DESTROY_n`. Level 2 is the first map that reaches a **looping** one: the
 copier, the aquarium, the projector screen and the stove all hold a `DESTROYED_n` that never
-ends, and the copier enters state 9 whenever an NPC photocopies something, with no prank
-involved. A clip that never ends cannot repaint a dirty rectangle forever, so a looping
+ends, and the copier enters state 9 the first time an NPC photocopies something, with no
+prank involved (only that first user raises it; see [npc-reference.md](npc-reference.md)). A clip that never ends cannot repaint a dirty rectangle forever, so a looping
 object leaves the static bake and is drawn as a depth-tested actor until its state changes.
 The measurements and the mechanism are in [map-rendering.md](map-rendering.md).
 

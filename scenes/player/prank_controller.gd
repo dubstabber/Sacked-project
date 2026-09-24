@@ -102,6 +102,7 @@ var _hovered: Node2D
 var _highlight: Sprite2D
 var _highlight_material: ShaderMaterial
 var _world_mask: Node2D
+var _characters: CharacterDepthCompositor
 var _environment_revision := -1
 # player+1068: how much of the blackout action's forty seconds is left.
 var blackout_remaining := 0.0
@@ -452,13 +453,17 @@ func _draw_highlight(object: Node2D, tint: Color) -> void:
 		_highlight_material = ShaderMaterial.new()
 		_highlight_material.shader = HIGHLIGHT_SHADER
 		_highlight.material = _highlight_material
-		# Added after the compositor so it lands on top of the composite, and kept at its
-		# z_index so a character standing in front still covers it.
-		mask.get_parent().add_child(_highlight)
+		# The original draws the copy right after the item, before anything drawn later is
+		# laid over it. One z above the object's own layer and first on that layer does the
+		# same: over a baked object (z 0) the characters' z 1 still covers it, and over an
+		# actor (z 1) it clears the compositor's surfaces, which draw after every ordinary
+		# child, yet stays under the thought bubbles at z 2. See docs/map-rendering.md.
+		mask.get_parent().add_child(_highlight, false, Node.INTERNAL_MODE_FRONT)
 
 	var origin: Vector2 = sprite.to_global(sprite.offset)
 	var pulse := PULSE_CENTRE + PULSE_SWING * sin(float(Time.get_ticks_msec()) * 0.001 * PULSE_RATE)
 	_highlight.visible = true
+	_highlight.z_index = sprite.z_index + 1
 	_highlight.texture = object.get("color_texture")
 	_highlight.global_position = origin
 	_highlight.modulate = Color(tint.r, tint.g, tint.b, pulse)
@@ -475,6 +480,26 @@ func _draw_highlight(object: Node2D, tint: Color) -> void:
 		_highlight_material.set_shader_parameter("world_depth_enabled", buffer != null)
 		_highlight_material.set_shader_parameter("world_depth_origin", bounds.position)
 		_highlight_material.set_shader_parameter("world_depth_size", bounds.size)
+	_apply_cluster_depth()
+
+
+# Above an actor the pass is drawn over every character too, so where the object overlaps
+# one it has to test the scores the compositor composed the two with. The compositor runs
+# after this node each frame and calls back once it has composed, so the test always matches
+# the surface that is drawn.
+func _apply_cluster_depth() -> void:
+	if not is_instance_valid(_highlight) or not _highlight.visible or not is_instance_valid(_hovered):
+		return
+	var sprite := _hovered.get_node_or_null("Sprite2D") as Sprite2D
+	var compositor := _character_compositor()
+	var cluster: Dictionary = compositor.cluster_depth_for(sprite) if compositor != null else {}
+	_highlight_material.set_shader_parameter("cluster_depth_enabled", not cluster.is_empty())
+	if cluster.is_empty():
+		return
+	var bounds: Rect2 = cluster["bounds"]
+	_highlight_material.set_shader_parameter("cluster_depth", cluster["texture"])
+	_highlight_material.set_shader_parameter("cluster_depth_origin", bounds.position)
+	_highlight_material.set_shader_parameter("cluster_depth_size", bounds.size)
 
 
 func _world_depth_mask() -> Node2D:
@@ -483,6 +508,16 @@ func _world_depth_mask() -> Node2D:
 	if _player != null and _player.get_parent() != null:
 		_world_mask = _player.get_parent().get_node_or_null("WorldDepthCompositor") as Node2D
 	return _world_mask
+
+
+func _character_compositor() -> CharacterDepthCompositor:
+	if is_instance_valid(_characters):
+		return _characters
+	if _player != null and _player.get_parent() != null:
+		_characters = _player.get_parent().get_node_or_null("CharacterDepthCompositor") as CharacterDepthCompositor
+		if _characters != null:
+			_characters.composed.connect(_apply_cluster_depth)
+	return _characters
 
 
 # State 0 turns the player to face the item before the clip starts; selector 12 overrides
@@ -558,7 +593,11 @@ func _collision_layer() -> Node:
 
 
 # sub_42BF20 walks the registered sprite boxes front to back and takes the first hit, so a
-# plain bounding-box test in depth order reproduces it.
+# plain bounding-box test in depth order reproduces it. Every item registers its box, from
+# its current frame, each frame it is drawn (sub_411E20 at 0x411F88), whatever its state, so
+# an object drawn as an actor is picked like a baked one. The sprite's own visibility is not
+# tested: a cluster hides an actor's Sprite2D and draws it on a surface of its own, but keeps
+# its frame current.
 func _object_under_cursor() -> Node2D:
 	var viewport := get_viewport()
 	if viewport == null:
@@ -566,7 +605,7 @@ func _object_under_cursor() -> Node2D:
 	var cursor: Vector2 = viewport.get_canvas_transform().affine_inverse() * viewport.get_mouse_position()
 	var best: Node2D = null
 	var best_depth := -INF
-	for node in get_tree().get_nodes_in_group("depth_world_objects"):
+	for node in get_tree().get_nodes_in_group(MapObject.PICK_GROUP):
 		var object := node as Node2D
 		if object == null or not object.is_visible_in_tree():
 			continue

@@ -84,6 +84,42 @@ placements having an unreachable interaction point does not matter here.
 A second, independent pick (`sub_42BF20`) highlights the character under the cursor into
 `game+14696`, tinted `(255, 255, 255, 200)`, and `sub_41D810` records it.
 
+### Which items the pick can see
+
+Step 1 only sees the click boxes registered while that frame's items were drawn.
+`sub_411E20`, the item loop `Main_RenderUpdate` calls at `0x4029A4`, first runs each item's
+`vtbl+16`. For a `CActiveItem` that is `sub_41A2D0`, which stores `sub_40FCE0` in `item+84`.
+That test fails only when the hide flag `item+232` is set or the sprite is off the camera.
+Inside that branch, the loop:
+
+- draws the item when `+84` is 1;
+- draws the pulsing copy over it when `+92` is 1 (see "How the highlight is drawn");
+- registers the click box through `sub_42BE60` at `0x411F88` when `item+88` is 1, built from
+  the current animation frame's size and pivot (`vtbl+4`).
+
+The factory `sub_410550` sets `item+88` to 1 for every `CActiveItem` at `0x4108F3`, and
+nothing changes it after that. `0x4106C9` clears it for the non-active `CItemAnim_CO`, and
+the constructors zero it. `sub_4132E0` → `sub_4132C0` → `sub_42BF20` then walks those boxes
+front to back. The first hit must answer `vtbl+44`, which is `sub_4112F0` and always returns
+1 for an active item.
+
+**So state never gates the pick.** A damaged or looping item is hovered, tinted and focused
+like an idle one:
+
+- The copier after ASSCOPY (126) still offers 28 and 29, because `sub_41D820` has no state
+  rule. 82 stays locked behind 28's unlock list.
+- The radio after 38 and the stove after 21 have nothing left to offer, but they still pulse
+  red.
+
+Only marker 18's `item+232` hides an item, and with it the item's box, for as long as the
+action runs (see [prank-reference.md](prank-reference.md)).
+
+The port picks from `MapObject.PICK_GROUP`. Every placed object joins it, whether it is baked
+into the static composite or drawn as a depth actor while a clip loops. The pick tests the
+box of the object's current frame. It does not test the `Sprite2D`'s own visibility, because
+a character cluster hides an actor's sprite but keeps its frame current. How the highlight
+follows an object off the bake is in [map-rendering.md](map-rendering.md).
+
 ## Building the menu
 
 `sub_41DA50(player)` walks slots 0–7, and for each one `sub_41D820` accepts (the filter in
@@ -282,11 +318,13 @@ So the item itself is never modulated and never goes transparent — the highlig
 additive second pass whose alpha swings between **40 and 200** at 2.5 rad/s, which is what
 makes it pulse. `item+72` is the item's own phase and `item+4..6` the tint colour.
 
-The port reproduces that directly: the object stays in the static world composite, opaque
-and untouched, and a second sprite is drawn over it with
-`scenes/shared/object_highlight.gdshader` — `blend_add`, the same depth test characters use
-so the pulse only reaches pixels where the object is actually visible, and
-`modulate = (tint.rgb, 120/255 + 80/255 * sin(2.5 t))`.
+The port reproduces that directly: the object itself is left opaque and untouched, and a
+second sprite is drawn over it with `scenes/shared/object_highlight.gdshader` — `blend_add`,
+the same depth test characters use so the pulse only reaches pixels where the object is
+actually visible, and `modulate = (tint.rgb, 120/255 + 80/255 * sin(2.5 t))`. The copy sits
+one z above the object's sprite; over an object drawn as a depth actor (a looping state) it
+also tests the character compositor's cluster scores, so it never lands on a character
+standing in front. See [map-rendering.md](map-rendering.md).
 
 ## The player's animation slots
 
