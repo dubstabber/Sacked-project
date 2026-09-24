@@ -40,6 +40,11 @@ const SEATED_CLIPS := {
 	&"boss": &"sit-idle",
 	&"janitor": &"sit-easy",
 }
+# Only the coworkers' tick, sub_419CE0, has a branch for the special-action flag +1812 (slot 5
+# SPECIAL#1, 0x419DC3) or for goal 6 (slot 6 SPECIAL#2, 0x419DF1). sub_419740, sub_41E360 and
+# sub_41A8D0 stay in their idle slot for the same timer, so the SPECIAL#1 the secretary's and
+# janitor's tables name is never shown.
+const COWORKER_PROFILES := [&"male-employee-1", &"male-employee-2", &"female-employee-1", &"female-employee-2"]
 # sub_4187F0 splits a full meter across the goals the map can actually offer, and
 # sub_417B00 hands an agent one share the first time each of its goals is spoiled -- so an
 # agent is at its angriest once that many different goals have been.
@@ -482,6 +487,7 @@ func _on_destination_reached() -> void:
 	# lets the passive slot apply its own rule.
 	var duration := _random.randf_range(10.0, 16.0)
 	var animation := &"idle"
+	var special := &"special-1" if _profile_id in COWORKER_PROFILES else &"idle"
 	var claim: Node2D = null
 	var seated := false
 	var relaxed := false
@@ -509,13 +515,13 @@ func _on_destination_reached() -> void:
 				_using_object = _set_object_state(_active, COPIER_IN_USE_STATE)
 		elif active_type in SPECIAL_ACTIVE_TYPES:
 			duration = 15.0
-			animation = &"special-1"
+			animation = special
 	if not active_handled and is_instance_valid(_passive):
 		var passive_type := int(_passive.get("item_type"))
 		focus = _passive
 		if passive_type in SPECIAL_PASSIVE_TYPES:
 			duration = 15.0
-			animation = &"special-1"
+			animation = special
 		elif passive_type in WORK_CHAIR_TYPES:
 			if _available(_passive):
 				duration = _random.randf_range(40.0, 50.0)
@@ -535,7 +541,7 @@ func _on_destination_reached() -> void:
 		# sub_416090 keeps agent+1824 raised while the agent is shut in a cubicle, so a
 		# colleague in there notices nothing. See docs/catch-reference.md.
 		_inside_cubicle = int(claim.get("item_type")) in CUBICLE_TYPES
-	if _goal == SMOKING_GOAL:
+	if _goal == SMOKING_GOAL and _profile_id in COWORKER_PROFILES:
 		# sub_419CE0 plays slot 6 for goal 6; sub_41A510 drops to idle without it.
 		animation = &"special-2"
 	var placement := _placement(claim, seated, relaxed, focus)

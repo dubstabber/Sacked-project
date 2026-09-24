@@ -349,6 +349,19 @@ func _check_arrival_actions() -> void:
 	_expect(ashtray["animation"] == &"special-2", "smoking asks for slot 6 and falls back to idle without it")
 	_expect(ashtray["duration"] >= 10.0 and ashtray["duration"] <= 16.0, "smoking keeps the default action timer")
 
+	# sub_417B00 raises the special-action flag for every archetype, but only the coworkers'
+	# tick reads it (sub_419CE0, 0x419DC3), or goal 6. The others stand idle for the same time.
+	for profile_id: StringName in [&"boss", &"secretary", &"janitor", &"male-employee-2"]:
+		var coworker := profile_id == &"male-employee-2"
+		var expected := &"special-1" if coworker else &"idle"
+		var active_special := _arrive(_point_fixture(5, 140, 0, true, profile_id))
+		var passive_special := _arrive(_point_fixture(4, 5, 0, false, profile_id))
+		_expect(active_special["animation"] == expected, "%s at a drinks machine plays %s, got %s" % [profile_id, expected, active_special["animation"]])
+		_expect(passive_special["animation"] == expected, "%s at a passive special item plays %s, got %s" % [profile_id, expected, passive_special["animation"]])
+		_expect(is_equal_approx(active_special["duration"], 15.0) and is_equal_approx(passive_special["duration"], 15.0), "%s keeps the special action's fifteen seconds" % profile_id)
+		var smoking := _arrive(_point_fixture(1, 234, 3, false, profile_id), 6)
+		_expect(smoking["animation"] == (&"special-2" if coworker else &"idle"), "%s smokes with %s" % [profile_id, &"special-2" if coworker else &"idle"])
+
 	var plant := _arrive(_point_fixture(9, 30, 0, false))
 	_expect(plant["animation"] == &"idle", "an ordinary target keeps the standing idle")
 	_expect(plant["duration"] >= 10.0 and plant["duration"] <= 16.0, "an ordinary target keeps the default action timer")
