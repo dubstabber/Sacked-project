@@ -69,6 +69,30 @@ Two characters whose opaque rectangles overlap cannot resolve each other this wa
 
 To verify runtime masks against the extracted source planes, run `python3 tools/export_world_depth_maps.py --check`. Without `--check`, that tool exports the object masks and wall atlas mask the imported levels need. It only reads the reference extraction. The original glass sprites have no extracted Z plane; glass is not part of this depth-mask pipeline.
 
+### The floor is one opaque mosaic
+
+The original draws the floor before anything else: `Main_RenderUpdate` (`0x4028C0`) calls `sub_4120A0` for layer 0 at `0x40298C`. For that layer `sub_4120A0` sets `ctx+0x30 = 1` (`0x412126`), projects each cell relative to the camera, truncates the result to whole pixels (`_ftol` at `0x4122AF`–`0x4122BB`) and hands it to `sub_42D780`, which subtracts the pivot. Because `ctx+0x30` is set, `sub_42CCF0` routes the tile to `sub_42D210` and the dedicated floor blitter `sub_458DC0`. That blitter copies each of the tile's 48 rows through the palette as one opaque span. The spans come from the table at `0x471C34`, `(46, 2), (44, 6) … (0, 94), (0, 94) … (46, 2)`, 2304 pixels in all, and the blit uses no colour key, alpha, Z or scaling. Every tile in `images/floor/sacked-floors.png` has exactly that alpha, and at the 48/24 pitch the spans of neighbouring cells meet with no gap and no overlap. So the original's floor is one opaque mosaic in one backbuffer.
+
+A `TileMapLayer` draws each cell as its own 94 × 48 quad instead. Whenever the texel grid misses the pixel centres, the two quads on either side of a staircase edge are sampled separately. That happens at any non-integer `canvas_items` stretch, such as 1.67× at 1920 × 1004, and at any fractional camera offset. With the inherited linear filter the two quads get partial alphas `a` and `1 − a`, so up to a quarter of the navy clear colour shows along every diamond edge. That comes to about 22 700 px a frame at 1920 × 1004. Nearest filtering alone leaves full clear-colour dots wherever a row of pixel centres lands on a texel boundary, for example at 1440 × 900, at an exact 2× and at 800 × 600 with a half-pixel camera. Snapping transforms or vertices, dropping texture padding and rounding the camera don't remove them either.
+
+So `scenes/shared/floor_tile_layer.gd`, which `tools/build_level_scene.gd` attaches to every level's `FloorTileMapLayer`, does four things on `_ready`:
+
+- It bakes the used cells into one RGBA image, masked by the atlas alpha so each diamond is copied whole and alone.
+- It shows that image as an internal `Sprite2D` at the cells' whole-pixel origin.
+- It draws the sprite with nearest filtering, like the walls, objects and characters.
+- It turns off the layer's own drawing.
+
+The cell data stays: `get_used_cells`, `map_to_local` and `get_cell_source_id` answer as before. In the editor the script does not run, so the layer still paints and draws its cells there. The floor is assumed static. Nothing sets a cell at runtime, and a cell set after `_ready` would not show.
+
+At an integer scale the bake is pixel-identical to a nearest-filtered per-cell draw. At a non-integer scale the floor is now as crisp as the walls and characters, and it shimmers as much as they do while scrolling, where before it was blurred.
+
+Seams were measured with the regenerated scenes, counting a seam as a pixel inside the map whose colour changes between a black and a white clear colour:
+
+- **With the bake:** 0 seam pixels on levels 1 and 3. That held at 1920 × 1004, 1600 × 1006, 1440 × 900, 800 × 600 and an exact 2×, over a 5 × 5 grid of fractional camera offsets and during keyboard walks.
+- **Per-cell draw:** 201 010 px over nine frames at 1920 × 1004.
+
+The bake costs 12–37 ms per level load headless, or 16–41 ms with the texture upload, and 4–11 MB of texture. `tests/check_floor_bake.gd` pins the data: one internal sprite, every cell's rows equal to its atlas tile, and 2304 opaque pixels per cell. Seams themselves only show in a real render, so their measurement stays manual.
+
 ### Records left out of the scene
 
 The original keeps every `ITEM` wherever it stands. The loader has no bounds test, and an item is culled only against the camera rectangle; see [widescreen.md](widescreen.md) for the addresses. Level 3's `LEVEL_02.col` `ITEM22` is a spare `MONITOR&TASTATUR#FRONTAL` standing five tiles off the map at (−5, 16). The original's 800 × 600 view never shows more than a ~10 px sliver of it, but the port's wider canvas shows the whole thing floating in the void.

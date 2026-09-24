@@ -9,6 +9,7 @@ const LevelDir := "res://resources/levels"
 const NpcScriptPath := "res://scenes/npc/npc.gd"
 const ActivityPointScriptPath := "res://scenes/npc/npc_activity_point.gd"
 const MapObjectScriptPath := "res://scenes/shared/map_object.gd"
+const FloorScriptPath := "res://scenes/shared/floor_tile_layer.gd"
 
 var _failed := false
 var _level: Node
@@ -91,6 +92,10 @@ func _check_level(label: String) -> void:
 		_check_tile_layout(layer, label)
 		if _failed:
 			return
+	# check_floor_bake.gd pins what the bake draws; every level only has to use it.
+	if floor_layer.get_script() == null or floor_layer.get_script().resource_path != FloorScriptPath or floor_layer.enabled:
+		_fail("level %s FloorTileMapLayer should draw through the floor bake" % label)
+		return
 	_check_tile_axes(floor_layer, label)
 	_check_tile_cells(manifest, world, label)
 	if _failed:

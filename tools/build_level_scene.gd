@@ -7,6 +7,7 @@ const PLAYER_SCENE := "res://scenes/player/player.tscn"
 const DEPTH_COMPOSITOR_SCRIPT := "res://scenes/shared/character_depth_compositor.gd"
 const WORLD_DEPTH_COMPOSITOR_SCRIPT := "res://scenes/shared/world_depth_compositor.gd"
 const MAP_TILE_LAYER_SCRIPT := "res://scenes/shared/map_tile_layer.gd"
+const FLOOR_TILE_LAYER_SCRIPT := "res://scenes/shared/floor_tile_layer.gd"
 const MAP_OBJECT_SCENE := "res://scenes/shared/map_object.tscn"
 const FPS_COUNTER_SCRIPT := "res://scenes/debug/fps_counter.gd"
 const COLLISION_MAP_SCRIPT := "res://scenes/shared/collision_map_layer.gd"
@@ -155,6 +156,8 @@ func _build_tile_layer(layer_data: Dictionary) -> TileMapLayer:
 	layer.name = String(layer_data.get("name", "TileMapLayer"))
 	if layer.name == "WallTileMapLayer":
 		layer.script = load(MAP_TILE_LAYER_SCRIPT)
+	elif layer.name == "FloorTileMapLayer":
+		layer.script = load(FLOOR_TILE_LAYER_SCRIPT)
 	layer.tile_set = load(String(layer_data.get("tileset", ""))) as TileSet
 	layer.z_index = int(layer_data.get("z_index", 0))
 	for cell_data in layer_data.get("cells", []):

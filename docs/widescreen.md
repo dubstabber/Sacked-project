@@ -31,7 +31,9 @@ screenshot of it on a 1920 × 1080 display is a 1440 × 1080 pillarbox, i.e. the
 non-integer resample. `scale_mode="integer"` is not used because it would snap 1080p back to
 1× and defeat the 600-tall decision. If scroll shimmer ever becomes objectionable, the knob
 to try is `rendering/2d/snap/snap_2d_transforms_to_pixel`; the shaders' own `pixel_snap`
-works in world space and does not help here.
+works in world space and does not help here. Neither snap setting removes the gaps between
+floor tiles, and `snap_2d_vertices_to_pixel` also breaks tile alignment; the floor is baked
+into one image for that instead (see [map-rendering.md](map-rendering.md)).
 
 **Off-map colour.** A wider canvas shows more of the void past a map's edges, so
 `rendering/environment/defaults/default_clear_color` is set to `(16, 16, 74)`. That is not a

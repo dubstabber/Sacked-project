@@ -2,7 +2,7 @@
 
 Open `scenes/level_1.tscn` and use **Scene → Save Scene As** to create your own scene. The saved scene is the map: moving objects or painting tiles does not require an import step. Run the current scene with **F6**.
 
-1. Select `World/FloorTileMapLayer` and paint with its TileSet palette. Select `World/WallTileMapLayer` to paint walls. The grid is 96 × 48 pixels; floor images remain their original 94 × 48 pixels.
+1. Select `World/FloorTileMapLayer` and paint with its TileSet palette. Select `World/WallTileMapLayer` to paint walls. The grid is 96 × 48 pixels; floor images remain their original 94 × 48 pixels. Painting works as usual; in play the floor layer draws a baked copy of its cells instead of the cells themselves (see [map-rendering.md](map-rendering.md)), so a floor cell changed at runtime would not show.
 2. Drag a scene from `scenes/objects/` onto `World/Objects`, or duplicate an existing object. Move the object root to place its original ground anchor. The prefab carries its image, depth mask, and original pivot.
 3. Select `World/CollisionTileMapLayer`. Paint the red diamond tile over cells that should block movement, and erase it to open passages. The red overlay appears in the editor and is hidden during play; enable `Show In Game` for a movement check. Hiding the overlay does not disable collision; the layer's `Enabled` property does.
 4. Move `World/Player` to a free starting cell. Save and run the scene to check placement and movement.
