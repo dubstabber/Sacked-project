@@ -1,0 +1,221 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "HERD",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-000.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-001.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-002.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-003.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-004.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-005.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-006.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-007.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroyed-1-008.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-007.png"
+        },
+        {
+          "pivot": [
+            31,
+            67
+          ],
+          "size": [
+            66,
+            80
+          ],
+          "texture": "res://images/objects/states/aktiv-herd-000/aktiv-herd-000-destroy-1-008.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

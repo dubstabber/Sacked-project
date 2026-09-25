@@ -1,0 +1,26 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "CHEFVITRINE",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            30,
+            99
+          ],
+          "size": [
+            94,
+            130
+          ],
+          "texture": "res://images/objects/states/aktiv-chefvitrine-090/aktiv-chefvitrine-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

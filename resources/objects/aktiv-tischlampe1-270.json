@@ -1,0 +1,26 @@
+{
+  "angle": "270",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "TISCHLAMPE1",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            7,
+            81
+          ],
+          "size": [
+            20,
+            35
+          ],
+          "texture": "res://images/objects/states/aktiv-tischlampe1-270/aktiv-tischlampe1-270-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

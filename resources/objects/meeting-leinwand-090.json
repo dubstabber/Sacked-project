@@ -1,0 +1,202 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "LEINWAND",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-000.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-001.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-002.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-003.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-004.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-005.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-006.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-007.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-008.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-009.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-010.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-011.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-012.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-013.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-014.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-015.png"
+        },
+        {
+          "pivot": [
+            35,
+            102
+          ],
+          "size": [
+            69,
+            111
+          ],
+          "texture": "res://images/objects/states/meeting-leinwand-090/meeting-leinwand-090-destroyed-1-016.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

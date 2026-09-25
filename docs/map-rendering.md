@@ -29,8 +29,9 @@ In the running game, with those uploads included, a transition does not change t
 
 Level 2 is the first map large enough to test that scaling. It is 17 × 32 tiles against level 1's 16 × 16, so its composite spans 2256 × 1128 px — **2.54 MP against 1.04 MP** — and it carries 167 objects rather than 71. Both images are still far inside the 4096 px limit; the widest map in the campaign reaches 2880 px. Measured over 600 frames with the brains running, level 2 holds **98.7 fps with an 11.1 ms worst frame**, against level 1's 107.6 fps and 14.2 ms, so the larger composite costs startup time rather than frame time.
 
-Levels 3 to 8 confirm that on six more maps. Each was loaded in a 1067 x 600 window and
-left running for eight seconds with its whole cast awake:
+Levels 3 to 14 confirm that on twelve more maps. Each was loaded in a 1067 x 600 window and
+left running for eight seconds with its whole cast awake (levels 9 to 14 measured on
+2026-09-25):
 
 | Level | Tiles | Objects | Agents | Load to first frame | Mean frame |
 | --- | --- | --- | --- | --- | --- |
@@ -42,10 +43,17 @@ left running for eight seconds with its whole cast awake:
 | 6 | 32 x 12 | 130 | 11 | 2.02 s | 8.39 ms |
 | 7 | 29 x 22 | 148 | 7 | 2.27 s | 8.33 ms |
 | 8 | 25 x 25 | 258 | 8 | 2.70 s | 9.53 ms |
+| 9 | 30 x 30 | 233 | 10 | 3.05 s | 8.34 ms |
+| 10 | 21 x 21 | 125 | 8 | 2.26 s | 8.35 ms |
+| 11 | 16 x 29 | 190 | 7 | 2.35 s | 8.31 ms |
+| 12 | 23 x 18 | 127 | 6 | 2.23 s | 8.31 ms |
+| 13 | 28 x 26 | 204 | 10 | 2.87 s | 8.34 ms |
+| 14 | 22 x 24 | 164 | 8 | 2.48 s | 8.39 ms |
 
 The load figure is the bake, and it tracks the composite's area rather than the object
 count: level 8 carries 258 objects against level 3's 122 and costs 0.85 s more because its
-map is larger, not because of them. **Frame time is flat across all of them** at about
+map is larger, not because of them, and level 9, the largest so far at 30 x 30, is the
+slowest to load at 3.05 s. **Frame time is flat across all of them** at about
 8.3 ms, which is the 120 fps the display is capped to, and level 8 is the only map that
 measurably exceeds it.
 
@@ -116,6 +124,6 @@ The original keeps every `ITEM` wherever it stands. The loader has no bounds tes
 
 `PARKED_RECORDS` in `tools/import_original_level.py` therefore lists that record, keyed by file and record name to its kind and position. The importer raises if the record ever stops matching. The record stays out of the manifest's `objects` and is listed under `parked_items` instead; only a manifest that parks something carries that key. `build_npcs` still runs over every item, as `sub_4185B0`'s startup search does, and the importer raises if a parked item would be an NPC's desk or chair.
 
-Only three records in the campaign fail the original's own map lookup (`sub_4187F0` → `sub_412AE0` on the truncated `x + 0.5`, `y + 0.5`): this monitor, its copy in `LEVEL_02s.col`, and `LEVEL_10s.col` `ITEM132`. `ITEM132` is a pack of cigarettes the original shows whole at 4:3, so it stays. The other 224 records past an edge are wall-hung and overhang by at most a third of a tile. `tests/test_level_import.py` pins that census.
+Only three records in the campaign fail the original's own map lookup (`sub_4187F0` → `sub_412AE0` on the truncated `x + 0.5`, `y + 0.5`): this monitor, its copy in `LEVEL_02s.col`, and `LEVEL_10s.col` `ITEM132`. `ITEM132` is a pack of cigarettes the original shows whole at 4:3, so it stays, in `scenes/level_11s.tscn` at tile (−3.7, 1.5). Its interaction cell is off the collision grid, so the builder leaves its room at 0. That changes nothing: its NPC category, the kind's high byte, is 0, and no goal lists category 0, so no colleague ever walks to it. The player can still take it. The other 224 records past an edge are wall-hung and overhang by at most a third of a tile. `tests/test_level_import.py` pins that census.
 
 See [map-authoring.md](map-authoring.md) for creating maps with the Godot editor.

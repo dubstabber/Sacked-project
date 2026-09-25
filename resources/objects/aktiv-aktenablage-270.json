@@ -1,0 +1,26 @@
+{
+  "angle": "270",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "AKTENABLAGE",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            16,
+            73
+          ],
+          "size": [
+            39,
+            35
+          ],
+          "texture": "res://images/objects/states/aktiv-aktenablage-270/aktiv-aktenablage-270-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

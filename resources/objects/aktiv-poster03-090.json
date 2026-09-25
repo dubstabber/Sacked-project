@@ -1,0 +1,26 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "POSTER03",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            48,
+            79
+          ],
+          "size": [
+            49,
+            103
+          ],
+          "texture": "res://images/objects/states/aktiv-poster03-090/aktiv-poster03-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}
