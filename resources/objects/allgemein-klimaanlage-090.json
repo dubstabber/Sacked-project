@@ -1,0 +1,191 @@
+{
+  "angle": "090",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "KLIMAANLAGE",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            82,
+            37
+          ],
+          "size": [
+            80,
+            50
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-000.png"
+        },
+        {
+          "pivot": [
+            81,
+            37
+          ],
+          "size": [
+            79,
+            52
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-001.png"
+        },
+        {
+          "pivot": [
+            79,
+            37
+          ],
+          "size": [
+            77,
+            51
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-002.png"
+        },
+        {
+          "pivot": [
+            79,
+            37
+          ],
+          "size": [
+            77,
+            52
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-003.png"
+        },
+        {
+          "pivot": [
+            83,
+            37
+          ],
+          "size": [
+            81,
+            52
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-004.png"
+        },
+        {
+          "pivot": [
+            83,
+            37
+          ],
+          "size": [
+            81,
+            50
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-005.png"
+        },
+        {
+          "pivot": [
+            80,
+            37
+          ],
+          "size": [
+            78,
+            52
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-006.png"
+        },
+        {
+          "pivot": [
+            82,
+            37
+          ],
+          "size": [
+            80,
+            54
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-007.png"
+        },
+        {
+          "pivot": [
+            83,
+            37
+          ],
+          "size": [
+            81,
+            54
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-008.png"
+        },
+        {
+          "pivot": [
+            82,
+            37
+          ],
+          "size": [
+            80,
+            54
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-009.png"
+        },
+        {
+          "pivot": [
+            81,
+            37
+          ],
+          "size": [
+            79,
+            53
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-010.png"
+        },
+        {
+          "pivot": [
+            80,
+            37
+          ],
+          "size": [
+            78,
+            51
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-011.png"
+        },
+        {
+          "pivot": [
+            83,
+            37
+          ],
+          "size": [
+            81,
+            53
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-012.png"
+        },
+        {
+          "pivot": [
+            83,
+            37
+          ],
+          "size": [
+            81,
+            55
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-013.png"
+        },
+        {
+          "pivot": [
+            80,
+            37
+          ],
+          "size": [
+            78,
+            55
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-014.png"
+        },
+        {
+          "pivot": [
+            79,
+            37
+          ],
+          "size": [
+            77,
+            54
+          ],
+          "texture": "res://images/objects/states/allgemein-klimaanlage-090/allgemein-klimaanlage-090-destroyed-1-015.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "WASSERSPENDER",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            20,
+            64
+          ],
+          "size": [
+            143,
+            79
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            22,
+            105
+          ],
+          "size": [
+            57,
+            121
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            21,
+            106
+          ],
+          "size": [
+            57,
+            121
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            21,
+            108
+          ],
+          "size": [
+            57,
+            122
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            21,
+            112
+          ],
+          "size": [
+            57,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            21,
+            116
+          ],
+          "size": [
+            62,
+            122
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            22,
+            117
+          ],
+          "size": [
+            77,
+            123
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            22,
+            108
+          ],
+          "size": [
+            93,
+            117
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            20,
+            64
+          ],
+          "size": [
+            143,
+            79
+          ],
+          "texture": "res://images/objects/states/aktiv-wasserspender-000/aktiv-wasserspender-000-destroy-1-007.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
+}

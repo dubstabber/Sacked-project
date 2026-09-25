@@ -1,0 +1,26 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "sprite": "CHEFMINIBAR",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            37,
+            73
+          ],
+          "size": [
+            75,
+            91
+          ],
+          "texture": "res://images/objects/states/aktiv-chefminibar-000/aktiv-chefminibar-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

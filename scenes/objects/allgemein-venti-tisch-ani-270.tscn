@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/shared/map_object.gd" id="1"]
+[ext_resource type="Texture2D" path="res://images/objects/allgemein-venti-tisch-ani-270-depth.png" id="2"]
+[ext_resource type="Texture2D" path="res://images/objects/allgemein-venti-tisch-ani-270.png" id="3"]
+
+[node name="AllgemeinVentiTischAni270" type="Node2D"]
+script = ExtResource("1")
+color_texture = ExtResource("3")
+depth_texture = ExtResource("2")
+pivot = Vector2(10, 78)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3")
+centered = false
+offset = Vector2(-10, -78)

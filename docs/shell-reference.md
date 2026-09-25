@@ -538,8 +538,9 @@ section per level. It does not write the binary file or touch the registry.
 Two divergences worth naming:
 
 - **A level with no imported scene opens its description but cannot be started.** The
-  original ships all 21, so it never has to refuse one; this port has imported some, and
-  `Kontynuuj` is disabled for the rest rather than hiding them from the tree.
+  original ships all 21, so it never has to refuse one. Since 2026-09-25 the port imports all
+  21 as well, so this is only a guard for a checkout without the generated levels, and
+  `tests/check_level_description.gd` pins that every level starts from its description.
 - **The screens are laid out in an 800x600 safe frame** that a wider window pillarboxes in
   black, as the original does. See [widescreen.md](widescreen.md).
 

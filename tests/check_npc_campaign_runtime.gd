@@ -134,6 +134,13 @@ func _check_level(label: String, seconds: int) -> void:
 	player.get_node("FootstepPlayer").stop_footsteps()
 	player.get_node("FootstepPlayer").stream = null
 	var collision_layer := world.get_node("CollisionTileMapLayer") as TileMapLayer
+	# The loader puts an agent wherever its SPAWN record says, blocked cell or not, and
+	# sub_41EE70 never tests the start cell, so a spawn cell is allowed the way a stand-back
+	# point is until the agent steps off it. Level 16 spawns a coworker on blocked (9, 1).
+	for actor in actors:
+		var spawn_cell := _rounded_cell(collision_layer, actor.global_position)
+		if collision_layer.get_cell_source_id(spawn_cell) >= 0:
+			stats[actor.name].return_cell = spawn_cell
 	var activity_points: Array[Node] = []
 	for point in get_nodes_in_group("npc_activity_points"):
 		if level.is_ancestor_of(point):

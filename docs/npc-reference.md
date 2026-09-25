@@ -57,6 +57,13 @@ Three consequences, all reproduced by `build_npcs`:
   (`sub_405010`/`sub_4051D0`, each with a 0/1 argument) call `sub_4185B0`. This is why the
   two of them fail the initial work request described below rather than taking a coworker's
   desk.
+- **A cast larger than the desks leaves someone without one.** Level 20 spawns thirteen agents,
+  and by the time the creation order reaches its second female-employee-2 record,
+  `Npc265FemaleEmployee2`, every workstation is taken. She gets neither desk nor chair, so
+  her work goal finds no target, like the janitor's. Its need pins at 0 and starves goals 4–7
+  (see "When a goal can never succeed"), so only goals 0–2 move her. She is a
+  female employee rather than the secretary because types are created in ascending order,
+  and the secretary is type 2.
 
 `sub_406AF0` also resets the coworker-name pool (`sub_4156B0`) before the first agent exists,
 and ends by picking the level theme with `rand() % 3`.
@@ -236,12 +243,20 @@ A candidate is out of reach in the original when its interaction point's cell is
 | 11, 11s | 2 | the boss | his only decoration, `CHEFGLOBUS`, at blocked `(2, 7)` |
 | 12, 12s | 6 | everyone | the only ashtray, `STANDASCHER02`, at blocked `(6, 12)` |
 | 13 | 2 | everyone but the boss | all four candidates, `FLIPPER01`, `YBOX`, `PFLANZEGROSS01` and `TEDDY`, are blocked |
+| 15 | 1 | the boss | his only drink, `KAFFEEMASCHI`, at blocked `(11, 2)` |
+| 15 | 6 | everyone | both `STANDASCHER02`, at `(2, 20)` and `(2, 23)`, are blocked |
+| 17 | 6 | everyone | the boss's only ashtray, `STANDASCHER01`, at blocked `(15, 9)`; nobody else has one in their rooms |
+| 18 | 1 | the boss | his only drink, `KAFFEEMASCHI`, at blocked `(4, 12)` |
+| 18 | 6 | everyone | the only ashtray, `STANDASCHER02`, at blocked `(12, 1)` |
+| 19, 19s | 1 | the boss | all three drinks in his rooms, `COFFEEMAT`, `CHEFMINIBAR` and `KAFFEEMASCHI`, are blocked |
+| 19, 19s | 6 | everyone | the only ashtray, `STANDASCHER02`, at blocked `(27, 14)` |
+| 21 | 6 | everyone | no ashtray in anyone's rooms |
 
 The janitor's work goal belongs on the same list on every map he is on, as above. The effect is largest on level 3: once need 1 reaches 0 it outranks work too, and over 600 simulated seconds (seed 4091, player parked) none of the coworkers sat down to work after about 232 s (the last spell ended at about 290 s). Three of them camp on the kitchen's goal-0 cells, eat in place and retry the kettle on 26–40 % of their ticks. The other two find those cells taken, and from 258 and 292 s on stand still and retry goal 0 on about half their ticks (see "The kitchen can lock up" under "Other entities in the way"). Levels 6 and 8 lock up the same way. On levels 2 and 4–8 goal 6 starves goal 7, so nobody relaxes except early in a level or after a reaction. All of this is inferred from the recovered rules; the original game was not run to compare, and the port adds nothing to soften it.
 
-Levels 9–14 were searched the same way on 2026-09-25. **Level 11 is the extreme case.** Nobody there can ever get a drink, so goal 1 pins at 0 for everyone and beats every goal after it, work included. Its boss is pinned from the first tick, because his drink and his decoration are both out of reach and his other needs start above them. He never moves until a reaction resets his needs. Over 600 simulated seconds (seed 4091, player parked), five of the seven stood still at the end, retrying goal 1. The four coworkers among them last arrived anywhere at 110, 178, 306 and 321 s, inside the level's 480 s limit.
+Levels 9–21 were searched the same way on 2026-09-25; levels 16 and 20 have no goal out of anyone's reach. **Level 11 is the extreme case.** Nobody there can ever get a drink, so goal 1 pins at 0 for everyone and beats every goal after it, work included. Its boss is pinned from the first tick, because his drink and his decoration are both out of reach and his other needs start above them. He never moves until a reaction resets his needs. The bosses of levels 15, 18 and 19 have no reachable drink either. They still completed activities in the campaign check's first two minutes, so goal 1 did not pin them from the start, but it pins them the same way once their drink need is the lowest. Over 600 simulated seconds (seed 4091, player parked), five of the seven stood still at the end, retrying goal 1. The four coworkers among them last arrived anywhere at 110, 178, 306 and 321 s, inside the level's 480 s limit.
 
-A colleague's own desk can be out of reach too. `sub_417120` picks the assigned pair for 7 of 8 work goals, and the route ends on the chair's interaction cell. Where that cell is blocked, those picks fail and the colleague works only at the 1-in-8 alternates: on level 9 the female coworker at `DREHSTUHL01` `(15, 8)`, and on level 10 the male coworker at `DREHSTUHL02` `(4, 2)` and the female coworker at `DREHSTUHL01` `(1, 5)`. The level-9 chair stands at tile `(15.5, 8.0)` with its interaction point exactly at `(14.5, 8.0)`, so `(int)(v + 0.5)` lands on 15 with no float error to tip it. `tests/check_npc_campaign_runtime.gd` asserts both halves: a colleague whose desk cell is free gets there and works, and one whose desk cell is blocked never sits at it. It lists the second kind, and any agent that stands still retrying such a goal from the start.
+A colleague's own desk can be out of reach too. `sub_417120` picks the assigned pair for 7 of 8 work goals, and the route ends on the chair's interaction cell. Where that cell is blocked, those picks fail and the colleague works only at the 1-in-8 alternates: on level 9 the female coworker at `DREHSTUHL01` `(15, 8)`, and on level 10 the male coworker at `DREHSTUHL02` `(4, 2)` and the female coworker at `DREHSTUHL01` `(1, 5)`, and on level 19 a male coworker at `DREHSTUHL01` `(11, 11)`. The level-9 chair stands at tile `(15.5, 8.0)` with its interaction point exactly at `(14.5, 8.0)`, so `(int)(v + 0.5)` lands on 15 with no float error to tip it. `tests/check_npc_campaign_runtime.gd` asserts both halves: a colleague whose desk cell is free gets there and works, and one whose desk cell is blocked never sits at it. It lists the second kind, and any agent that stands still retrying such a goal from the start.
 
 `LEVEL_00`'s only standing ashtray sits at tile `(12.79, 5.21)` and its interaction offset of `+0.6` in X keeps the approach inside cell `(13, 5)`, which the original collision grid marks blocked. Goal 6 therefore cannot complete on this map in the original either, and the port reproduces that: over 900 simulated seconds on five seeds the boss spends 2–8 % of his ticks retrying it.
 

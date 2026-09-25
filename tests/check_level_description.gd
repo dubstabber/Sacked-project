@@ -36,7 +36,7 @@ func _run() -> void:
 	await _check_the_objective_is_spliced_between_description_and_hint()
 	await _check_a_recorded_run_replaces_the_two_sentinels()
 	await _check_the_points_game_states_its_own_condition()
-	await _check_a_level_with_no_scene_cannot_be_started()
+	await _check_every_level_can_be_started()
 
 	screens.selected_level = _restore_level
 	screens.selected_game_mode = &"time"
@@ -45,7 +45,7 @@ func _run() -> void:
 	DirAccess.remove_absolute(TEST_PATH)
 	i18n.set_language(_restore_language)
 	if _failures == 0:
-		print("Level description: the title, the four info pairs, the spliced objective and the unstartable level passed")
+		print("Level description: the title, the four info pairs, the spliced objective and every level starting passed")
 	quit(1 if _failures else 0)
 
 
@@ -153,32 +153,21 @@ func _check_the_points_game_states_its_own_condition() -> void:
 	_expect(timed_body.contains("4000"), "the time game names the plain file's 4000 points")
 
 
-func _check_a_level_with_no_scene_cannot_be_started() -> void:
+func _check_every_level_can_be_started() -> void:
 	var screens := root.get_node("ScreenManager")
-	var missing := 0
+	var missing := []
 	for level in range(1, 22):
 		if not screens.is_level_available(level):
-			missing = level
-			break
-	_expect(missing != 0, "some level has no imported scene yet, or this check has nothing to prove")
-	if missing == 0:
-		return
+			missing.append(level)
+	_expect(missing.is_empty(), "every level of the campaign is imported, missing %s" % [missing])
+	# The screen still refuses a level with no scene, a guard for a checkout without the
+	# generated levels; with all 21 imported, every description offers Kontynuuj.
+	for level in range(1, 22):
+		var screen := await _open(level)
+		_expect(
+			not (screen.get_node("SafeFrame/Continue") as TextureButton).disabled,
+			"level %d can be started from its description" % level
+		)
+		screen.queue_free()
+		await process_frame
 
-	var screen := await _open(missing)
-	var start := screen.get_node("SafeFrame/Continue") as TextureButton
-	# A port divergence: the original ships every level, so it never has to refuse one.
-	_expect(start.disabled, "level %d has no scene, so it cannot be started" % missing)
-	_expect(
-		_text(screen, "SafeFrame/Title") != "",
-		"level %d still shows its description" % missing
-	)
-	screen.queue_free()
-	await process_frame
-
-	var playable := await _open(1)
-	_expect(
-		not (playable.get_node("SafeFrame/Continue") as TextureButton).disabled,
-		"level 1 is imported, so it can be started"
-	)
-	playable.queue_free()
-	await process_frame

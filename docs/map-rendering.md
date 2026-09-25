@@ -29,9 +29,9 @@ In the running game, with those uploads included, a transition does not change t
 
 Level 2 is the first map large enough to test that scaling. It is 17 × 32 tiles against level 1's 16 × 16, so its composite spans 2256 × 1128 px — **2.54 MP against 1.04 MP** — and it carries 167 objects rather than 71. Both images are still far inside the 4096 px limit; the widest map in the campaign reaches 2880 px. Measured over 600 frames with the brains running, level 2 holds **98.7 fps with an 11.1 ms worst frame**, against level 1's 107.6 fps and 14.2 ms, so the larger composite costs startup time rather than frame time.
 
-Levels 3 to 14 confirm that on twelve more maps. Each was loaded in a 1067 x 600 window and
-left running for eight seconds with its whole cast awake (levels 9 to 14 measured on
-2026-09-25):
+Levels 3 to 21 confirm that on the rest of the campaign. Each was loaded in a 1067 x 600
+window and left running for eight seconds with its whole cast awake (levels 9 to 21 measured
+on 2026-09-25):
 
 | Level | Tiles | Objects | Agents | Load to first frame | Mean frame |
 | --- | --- | --- | --- | --- | --- |
@@ -49,11 +49,19 @@ left running for eight seconds with its whole cast awake (levels 9 to 14 measure
 | 12 | 23 x 18 | 127 | 6 | 2.23 s | 8.31 ms |
 | 13 | 28 x 26 | 204 | 10 | 2.87 s | 8.34 ms |
 | 14 | 22 x 24 | 164 | 8 | 2.48 s | 8.39 ms |
+| 15 | 26 x 26 | 181 | 8 | 2.76 s | 8.31 ms |
+| 16 | 16 x 32 | 264 | 9 | 2.73 s | 8.85 ms |
+| 17 | 26 x 16 | 141 | 7 | 2.42 s | 8.31 ms |
+| 18 | 26 x 19 | 252 | 9 | 2.71 s | 8.31 ms |
+| 19 | 30 x 30 | 407 | 11 | 3.57 s | 8.32 ms |
+| 20 | 18 x 42 | 248 | 13 | 3.21 s | 8.78 ms |
+| 21 | 22 x 24 | 170 | 9 | 2.32 s | 8.31 ms |
 
 The load figure is the bake, and it tracks the composite's area rather than the object
 count: level 8 carries 258 objects against level 3's 122 and costs 0.85 s more because its
-map is larger, not because of them, and level 9, the largest so far at 30 x 30, is the
-slowest to load at 3.05 s. **Frame time is flat across all of them** at about
+map is larger, not because of them. The object count does show at the top end, though:
+level 19 shares level 9's 30 x 30 map but carries 407 objects to its 233, and loads in
+3.57 s to its 3.05 s, the slowest in the campaign. **Frame time is flat across all of them** at about
 8.3 ms, which is the 120 fps the display is capped to, and level 8 is the only map that
 measurably exceeds it.
 
