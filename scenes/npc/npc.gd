@@ -20,6 +20,9 @@ const FIDGET_ACTION := &"idle-2"
 # sub_4179B0's sway and easing (0x4179D7, 0x417A4C).
 const SWAY_DEGREES := 10.0
 const HEADING_EASING := 0.125
+# sub_417460 draws the name centred over the agent's anchor, 135 px up, the height the
+# thought bubble is drawn from. See docs/names-reference.md.
+const NAME_OFFSET_Y := -135.0
 
 enum Command { NONE, TRAVEL, ACTIVITY }
 
@@ -33,6 +36,18 @@ enum Command { NONE, TRAVEL, ACTIVITY }
 
 # agent+1064, which sub_402350 writes from the office-wide mean every frame.
 var aggression_band := 0
+# agent+1752, the name sub_4156E0 dealt this agent when the level was set up, and agent+1788,
+# raised while this is the colleague the player last clicked. sub_417460 draws the name only
+# while both hold, in (250, 180, 40) over a (40, 10, 0) copy two pixels down and right, above
+# every wall. See docs/names-reference.md.
+var display_name := "":
+	set(value):
+		display_name = value
+		_refresh_name_label()
+var selected := false:
+	set(value):
+		selected = value
+		_refresh_name_label()
 var last_direction: Vector2 = Vector2.RIGHT
 # agent+1848, the heading sub_418310 tests the player against, in the original's degrees:
 # 180 - atan2(dx, dz), so 0 is view _000 and 45 is _045. It follows the view, never the other
@@ -100,6 +115,16 @@ func _ready() -> void:
 			activity_finished.connect(_on_route_activity_finished)
 			navigation_failed.connect(_on_route_blocked)
 			call_deferred("_start_route_waypoint")
+
+
+func _refresh_name_label() -> void:
+	var label := get_node_or_null("NameLabel") as Label
+	if label == null:
+		return
+	label.text = display_name
+	label.visible = selected and display_name != ""
+	label.reset_size()
+	label.position = Vector2(-label.size.x * 0.5, NAME_OFFSET_Y)
 
 
 func _physics_process(delta: float) -> void:

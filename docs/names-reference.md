@@ -197,11 +197,38 @@ drawn from. The reference screenshot of `Klara Fall` in yellow is this draw.
 
 Bit `0x400` is the act input, a left click or space (see
 [player-action-reference.md](player-action-reference.md)). `game+14696` is the agent under
-the cursor, picked each frame by `Main_RenderUpdate` (`sub_42BF20` at `0x4031f7`) and tinted
-`(255, 255, 255, 200)` while hovered. So **clicking a coworker selects them, and the name
-stays until another coworker is clicked**, for the rest of the level. Clicking empty floor or
-an object changes nothing, and at most one agent carries the flag. The hover tint is
-independent: it follows the cursor every frame and says nothing about selection.
+the cursor, picked each frame by `Main_RenderUpdate` (`sub_42BF20` at `0x4031f7`). So
+**clicking a coworker selects them, and the name stays until another coworker is clicked**,
+for the rest of the level. Clicking empty floor or an object changes nothing, and at most one
+agent carries the flag. The selection runs in the level tick, so nothing is selected while the
+game is paused.
+
+### Which agent is under the cursor
+
+Verified on 2026-09-25 on a disposable copy of `sacked.exe.i64`.
+
+- **The pick runs every frame, whatever the player is doing.** `0x4031f7` sits before the gate
+  at `0x4032b8` that holds the item pick back during a right-button walk, while the ring is up
+  and while an action runs. So a coworker can be hovered, and clicked, at any of those times.
+- **Agents and items share one list of boxes.** The character loop registers each agent's
+  frame box with `sub_42BE60` at `0x402b09`, into the list at `+0x48` of the render context,
+  and `sub_411E20` registers each item's the same way at `0x411f88`. An item's id carries bit
+  `0x8000`. `sub_42BF20` walks the list front to back and returns the first box that holds
+  the cursor. The character pick keeps the answer only when that bit is clear (`0x403202`),
+  and the item pick only when it is set (`sub_4132E0`, `0x4132f7`). So **one box answers
+  both**: a coworker standing in front of a desk takes the hover from it, and the desk takes
+  it from a coworker behind it. The tag only makes sense for one shared list. That the two
+  lists' render contexts are the same object is inferred from it, not traced. Which of two
+  boxes at the same depth comes first is not recovered.
+- **The player is never picked.** `CAgent`'s constructor sets the box flag `+88` to 1
+  (`0x415f20`). `CObj_Player`'s (`sub_41ADB0`) leaves it at 0 (`0x41ae15`), so the player's
+  box is never registered. The selection loop's test that skips the player is therefore never
+  needed.
+- **The hovered agent pulses, it is not tinted.** The pick raises `+92` on the agent
+  (`0x403258`) and clears it on the one before (`0x403211`), and stores `(255, 255, 255, 200)`
+  in `+4..7`. The character loop then draws a flagged agent a second time, additively, with
+  the same alpha swing items get (`0x402a24`–`0x402a83`). The pulse is white, where an item's
+  depends on its reach, and it follows the cursor every frame whatever the selection.
 
 The same flag feeds one more system, not recovered further here. `sub_402260` runs each frame
 from `Main_RenderUpdate` and calls `sub_4179B0` for every agent, which eases the agent's
@@ -244,5 +271,31 @@ box focused, and a pool of one hides the other two boxes, frames included. The b
 
 `tests/check_coworker_names.gd` pins the table, the store's pools, the recovered rects, the
 arrows' wrap, saving on each button, `Domyślne`, the empty name, the refused `ß` and `Menu2`.
+
+### Naming, the label and the click
+
+`scenes/level/coworker_namer.gd` sits in `scenes/level/level_runtime.tscn`. Once the level's
+agents are ready it deals the names in creation order. That is ascending spawn type, the pool
+each agent's profile belongs to, then the order the level builder emitted them, which is
+`SPAWN` file order within a type. It reads each pool from `SettingsStore`, so an edit shows
+up in the next level loaded. A fresh scene is the original's per-load reset, so a restart
+deals the same names again.
+
+Every agent carries a `NameLabel` from `scenes/npc/npc.tscn`, so no level had to be rebuilt.
+The label is centred over the anchor, 135 pixels up, in `(250, 180, 40)` with a
+`(40, 10, 0)` shadow two pixels down and right, at size 24. It sits at z 3, above the bubble,
+and carries no depth material, so no wall hides it. It shows only while the agent is
+selected and its name is not empty.
+
+`scenes/player/prank_controller.gd` walks the objects and the agents as one list and keeps
+the front box, which it hands to the colleague pick every frame and to the item pick when the
+item gate is open. On the act input it calls `select_agent`, which clears every agent's flag
+and raises the hovered one's, and the ring still reads the same input. A hovered colleague
+gets a second `object_highlight.gdshader` pass drawn from its current frame. That pass tests
+the colleague's own depth plane and, inside a character cluster, the cluster's scores, as an
+item's pass does. Where two boxes sit at the same depth the object wins, which is a port
+choice. `tests/check_coworker_select.gd` pins the label, the click, the player's missing box,
+the shared pick and the white pulse. `tests/check_coworker_names.gd` pins the names levels 1,
+2 and 7 deal, an edited pool, and the placeholder.
 
 **Deferred**: the field-of-view overlay that `sub_402260` drives.

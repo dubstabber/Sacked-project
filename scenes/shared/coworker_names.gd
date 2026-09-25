@@ -56,6 +56,15 @@ static func profile_id(type: int) -> StringName:
 	return StringName(entry.get("profile_id", ""))
 
 
+# The pool an agent draws from is its spawn type, and each type has one profile.
+static func type_for_profile(profile: StringName) -> int:
+	_load()
+	for entry in _types:
+		if StringName((entry as Dictionary).get("profile_id", "")) == profile:
+			return int((entry as Dictionary).get("type", 0))
+	return 0
+
+
 static func pool_size(type: int) -> int:
 	return (_type_entry(type).get("records", []) as Array).size()
 

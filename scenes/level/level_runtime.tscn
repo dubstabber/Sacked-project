@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/hud/level_prompts.tscn" id="5"]
 [ext_resource type="Script" path="res://scenes/level/catch_watch.gd" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/level/catch_minigame.tscn" id="9"]
+[ext_resource type="Script" path="res://scenes/level/coworker_namer.gd" id="10"]
 
 [node name="LevelRuntime" type="Node"]
 script = ExtResource("1")
@@ -32,3 +33,6 @@ script = ExtResource("2")
 script = ExtResource("8")
 
 [node name="CatchMinigame" parent="." instance=ExtResource("9")]
+
+[node name="CoworkerNamer" type="Node" parent="."]
+script = ExtResource("10")

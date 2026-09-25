@@ -9,6 +9,9 @@ const SCREEN := preload("res://scenes/screens/coworker_names.tscn")
 const STORE_SCRIPT := preload("res://autoloads/settings_store.gd")
 const ScreenManagerScript := preload("res://autoloads/screen_manager.gd")
 const TEST_PATH := "user://check_coworker_names.cfg"
+const NPC_SCENE := preload("res://scenes/npc/npc.tscn")
+const NAMER := preload("res://scenes/level/coworker_namer.gd")
+const MALE_EMPLOYEE_1 := preload("res://scenes/npc/profiles/male-employee-1.tres")
 
 # The table at 0x470538, as (x, y, width, height) inside the 800x600 frame.
 const RECOVERED_RECTS := {
@@ -66,11 +69,34 @@ func _run() -> void:
 
 	screen.queue_free()
 	await process_frame
+	# The screen half left the secretary renamed; the levels below read the shipped pools.
+	_store.reset_names_for_type(2)
+	_expect(_store.names_for_type(2) == CoworkerNames.defaults_for(2), "the secretary's pool is back to its default")
+
+	await _check_a_level_deals_its_names("res://scenes/level_2.tscn", {
+		"Npc175Boss": "Roy Behr",
+		"Npc176Secretary": "Martha Pfahl",
+		"Npc180Janitor": "Don Mestos",
+		"Npc181MaleEmployee1": "Tim Buktu",
+		"Npc178MaleEmployee2": "Bob Tale",
+		"Npc179FemaleEmployee1": "Cindy Doof",
+	})
+	# Level 7 is the first to spawn two of one kind: they take the pool in SPAWN order.
+	await _check_a_level_deals_its_names("res://scenes/level_7.tscn", {
+		"Npc160FemaleEmployee1": "Cindy Doof",
+		"Npc164FemaleEmployee1": "Caro Muster",
+		"Npc161FemaleEmployee2": "Clare Grube",
+	})
+	_store.set_names_for_type(1, PackedStringArray(["Bo Ss"]))
+	await _check_a_level_deals_its_names("res://scenes/level_1.tscn", {"Npc080Boss": "Bo Ss"})
+	_store.reset_names_for_type(1)
+	_check_an_empty_pool_hands_out_the_placeholder()
+
 	_store.path = restore_path
 	_store.reload()
 	DirAccess.remove_absolute(TEST_PATH)
 	if _failures == 0:
-		print("Coworker names: fifteen names in seven pools, screen 13's layout, arrows, saving, Defaults and Menu2 passed")
+		print("Coworker names: fifteen names in seven pools, screen 13's layout, arrows, saving, Defaults, Menu2, and each level dealing the pools in creation order passed")
 	quit(1 if _failures else 0)
 
 
@@ -243,3 +269,43 @@ func _check_main_menu_saves_and_leaves(screen: Node, manager: Node) -> void:
 	_press(screen, "MainMenu")
 	_expect(_store.names_for_type(2) == PackedStringArray(["Ed"]), "Główne menu saves the shown pool first")
 	_expect(manager.current == ScreenManagerScript.Screen.MAIN_MENU, "Główne menu goes back to screen 3")
+
+
+# sub_406AF0 frees every name and deals them again on each load, so any level, fresh or
+# restarted, names its colleagues from the start of each pool.
+func _check_a_level_deals_its_names(path: String, expected: Dictionary) -> void:
+	var level := (load(path) as PackedScene).instantiate()
+	level.get_node("LevelRuntime").enabled = false
+	root.add_child(level)
+	await process_frame
+	await process_frame
+	var seen := {}
+	for node in get_nodes_in_group("npc_agents"):
+		var dealt := String(node.get("display_name"))
+		_expect(dealt != "", "%s %s was dealt a name" % [path, node.name])
+		_expect(not seen.has(dealt), "%s deals %s only once" % [path, dealt])
+		seen[dealt] = true
+	for node_name: String in expected:
+		var agent := level.get_node_or_null("World/%s" % node_name)
+		var dealt = agent.get("display_name") if agent != null else null
+		_expect(dealt == expected[node_name], "%s names %s %s, got %s" % [path, node_name, expected[node_name], dealt])
+	root.remove_child(level)
+	level.free()
+
+
+# Three names in a coworker pool, so a fourth colleague of that kind gets sub_4156E0's
+# placeholder.
+func _check_an_empty_pool_hands_out_the_placeholder() -> void:
+	var agents := []
+	for i in 4:
+		var agent := NPC_SCENE.instantiate()
+		agent.set("profile", MALE_EMPLOYEE_1)
+		agents.append(agent)
+	var dealt: PackedStringArray = NAMER.name_agents(agents, _store)
+	_expect(
+		dealt == PackedStringArray(["Tim Buktu", "Ernst Haft", "Bart Wux", "DEFAULT NAME"]),
+		"a fourth male coworker of the first kind is DEFAULT NAME, got %s" % dealt
+	)
+	for agent in agents:
+		agent.free()
+

@@ -31,3 +31,14 @@ sprite_path = NodePath("../Sprite2D")
 animation_player_path = NodePath("../AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="NameLabel" type="Label" parent="."]
+visible = false
+z_index = 3
+mouse_filter = 2
+auto_translate_mode = 2
+theme_override_colors/font_color = Color(0.98039216, 0.7058824, 0.15686275, 1)
+theme_override_colors/font_shadow_color = Color(0.15686275, 0.039215688, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 24

@@ -13,6 +13,9 @@ const MAX_ACTION_RANGE := 2.0
 const TINT_READY := Color(1.0, 1.0, 1.0)
 const TINT_OUT_OF_REACH := Color(1.0, 1.0, 50.0 / 255.0)
 const TINT_NO_ACTION := Color(1.0, 50.0 / 255.0, 50.0 / 255.0)
+# game+14696's +4..6 while the cursor is over a colleague (0x40325B).
+const TINT_AGENT := Color(1.0, 1.0, 1.0)
+const AGENT_GROUP := &"npc_agents"
 # sub_42D200(120 - sin(phase * 2.5) * -80) -- the pulse the highlight is drawn with.
 const PULSE_CENTRE := 120.0 / 255.0
 # sub_41DC80: four action ids reach past the object they were performed on. Everything else
@@ -91,6 +94,8 @@ signal inventory_changed(inventory: PackedInt32Array)
 
 # player+912 and the four menu arrays behind it.
 var focus_point: Node = null
+# game+14696: the colleague under the cursor, picked every frame whatever the player is doing.
+var hovered_agent: Node2D = null
 var entries: Array = []
 var highlighted := -1
 var menu_open := false
@@ -102,9 +107,9 @@ var _player: Node2D
 var _hovered: Node2D
 var _highlight: Sprite2D
 var _highlight_material: ShaderMaterial
+var _agent_highlight: Sprite2D
 var _world_mask: Node2D
 var _characters: CharacterDepthCompositor
-var _environment_revision := -1
 # player+1068: how much of the blackout action's forty seconds is left.
 var blackout_remaining := 0.0
 # Where the player stood before an action moved them, restored when it applies or aborts.
@@ -129,10 +134,12 @@ func _process(delta: float) -> void:
 	_advance_blackout(delta)
 	if state == State.ACTING:
 		_advance_action(delta)
+		_update_agent_hover()
 		return
 	if state == State.MENU:
 		if _menu_cancel_held():
 			close_menu()
+		_update_agent_hover()
 		return
 	_update_hover()
 
@@ -145,6 +152,10 @@ func _menu_cancel_held() -> bool:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# The level tick reads the act input for the selection whatever the player is doing, and
+	# independently of the ring, which reads it below.
+	if event.is_action_pressed("interact") and is_instance_valid(hovered_agent):
+		select_agent(hovered_agent)
 	if state == State.ACTING:
 		return
 	if menu_open:
@@ -403,14 +414,25 @@ func build_entries(point: Node) -> Array:
 	return built
 
 
+# sub_403780 (0x4039D7-0x403A3F): the act input while a character is hovered clears agent+1788
+# on every entity but the player and raises it on that one, for the rest of the level. The
+# player registers no box (CObj_Player leaves +88 at 0, 0x41AE15), so only a colleague can be
+# the one. See docs/names-reference.md.
+func select_agent(agent: Node2D) -> void:
+	for node in get_tree().get_nodes_in_group(AGENT_GROUP):
+		node.set("selected", node == agent)
+
+
 func _update_hover() -> void:
 	# Main_RenderUpdate only picks in cursor mode 0 (0x403298), so nothing new is focused
 	# while the right button walks the player. The original leaves the last focus standing
 	# (0x40345F re-applies it); the port drops it, so the pulse does not freeze mid-swing and
 	# a click mid-walk has nothing to open.
+	var front := _front_under_cursor()
+	_set_hovered_agent(front if _is_agent(front) else null)
 	var object: Node2D = null
-	if _player == null or _player.get("is_mouse_movement_active") != true:
-		object = _object_under_cursor()
+	if (_player == null or _player.get("is_mouse_movement_active") != true) and not _is_agent(front):
+		object = front
 	var point: Node = null
 	var tint := TINT_NO_ACTION
 	if object != null:
@@ -443,64 +465,113 @@ func _draw_highlight(object: Node2D, tint: Color) -> void:
 			_highlight.visible = false
 		return
 	var sprite := object.get_node_or_null("Sprite2D") as Sprite2D
-	var mask := _world_depth_mask()
-	if sprite == null or mask == null or object.get("color_texture") == null:
+	if sprite == null or _world_depth_mask() == null or object.get("color_texture") == null:
 		return
 	if not is_instance_valid(_highlight):
-		_highlight = Sprite2D.new()
-		_highlight.name = "FocusHighlight"
-		_highlight.centered = false
-		_highlight.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		_highlight_material = ShaderMaterial.new()
-		_highlight_material.shader = HIGHLIGHT_SHADER
-		_highlight.material = _highlight_material
-		# The original draws the copy right after the item, before anything drawn later is
-		# laid over it. One z above the object's own layer and first on that layer does the
-		# same: over a baked object (z 0) the characters' z 1 still covers it, and over an
-		# actor (z 1) it clears the compositor's surfaces, which draw after every ordinary
-		# child, yet stays under the thought bubbles at z 2. See docs/map-rendering.md.
-		mask.get_parent().add_child(_highlight, false, Node.INTERNAL_MODE_FRONT)
-
-	var origin: Vector2 = sprite.to_global(sprite.offset)
-	var pulse := PULSE_CENTRE + PULSE_SWING * sin(float(Time.get_ticks_msec()) * 0.001 * PULSE_RATE)
-	_highlight.visible = true
-	_highlight.z_index = sprite.z_index + 1
-	_highlight.texture = object.get("color_texture")
-	_highlight.global_position = origin
-	_highlight.modulate = Color(tint.r, tint.g, tint.b, pulse)
-	_highlight_material.set_shader_parameter("pixel_snap", origin.round() - origin)
-	_highlight_material.set_shader_parameter("base_y", ceilf(float(int(object.global_position.y)) * 0.5))
+		_highlight = _new_pulse("FocusHighlight")
+		_highlight_material = _highlight.material as ShaderMaterial
 	var depth: Texture2D = object.get("depth_texture")
-	_highlight_material.set_shader_parameter("depth_map", depth)
-	_highlight_material.set_shader_parameter("depth_map_enabled", depth != null)
-	if _environment_revision != int(mask.get("revision")):
-		_environment_revision = int(mask.get("revision"))
+	_draw_pulse(_highlight, sprite, object.get("color_texture"), depth, _depth_base(object.global_position), tint)
+	_apply_cluster_depth()
+
+
+# Main_RenderUpdate raises agent+92 on the hovered colleague (0x403258), so the character loop
+# draws it a second time exactly as the item loop does a hovered item (0x402A24), in white.
+func _update_agent_hover() -> void:
+	var front := _front_under_cursor()
+	_set_hovered_agent(front if _is_agent(front) else null)
+
+
+func _set_hovered_agent(agent: Node2D) -> void:
+	hovered_agent = agent
+	if agent == null:
+		if is_instance_valid(_agent_highlight):
+			_agent_highlight.visible = false
+		return
+	var sprite := agent.get_node_or_null("Sprite2D") as Sprite2D
+	if sprite == null or sprite.texture == null or _world_depth_mask() == null:
+		return
+	if not is_instance_valid(_agent_highlight):
+		_agent_highlight = _new_pulse("AgentHighlight")
+	var compositor := _character_compositor()
+	var depth := compositor.depth_texture_for(sprite) if compositor != null else null
+	# A character's depth base is its sprite's own anchor, lifted with it, as the compositor
+	# draws it.
+	_draw_pulse(_agent_highlight, sprite, sprite.texture, depth, _depth_base(sprite.global_position), TINT_AGENT)
+	_apply_cluster_depth()
+
+
+func _new_pulse(pulse_name: String) -> Sprite2D:
+	var pulse := Sprite2D.new()
+	pulse.name = pulse_name
+	pulse.centered = false
+	pulse.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var material := ShaderMaterial.new()
+	material.shader = HIGHLIGHT_SHADER
+	pulse.material = material
+	# The original draws the copy right after the item, before anything drawn later is
+	# laid over it. One z above the object's own layer and first on that layer does the
+	# same: over a baked object (z 0) the characters' z 1 still covers it, and over an
+	# actor (z 1) it clears the compositor's surfaces, which draw after every ordinary
+	# child, yet stays under the thought bubbles at z 2. See docs/map-rendering.md.
+	var mask := _world_depth_mask()
+	mask.get_parent().add_child(pulse, false, Node.INTERNAL_MODE_FRONT)
+	return pulse
+
+
+func _draw_pulse(pulse: Sprite2D, sprite: Sprite2D, texture: Texture2D, depth: Texture2D, base_y: float, tint: Color) -> void:
+	var origin: Vector2 = sprite.to_global(sprite.offset)
+	var alpha := PULSE_CENTRE + PULSE_SWING * sin(float(Time.get_ticks_msec()) * 0.001 * PULSE_RATE)
+	var material := pulse.material as ShaderMaterial
+	pulse.visible = true
+	pulse.z_index = sprite.z_index + 1
+	pulse.texture = texture
+	pulse.global_position = origin
+	pulse.modulate = Color(tint.r, tint.g, tint.b, alpha)
+	material.set_shader_parameter("pixel_snap", origin.round() - origin)
+	material.set_shader_parameter("base_y", base_y)
+	material.set_shader_parameter("depth_map", depth)
+	material.set_shader_parameter("depth_map_enabled", depth != null)
+	var mask := _world_depth_mask()
+	var revision := int(mask.get("revision"))
+	if int(material.get_meta(&"environment_revision", -1)) != revision:
+		material.set_meta(&"environment_revision", revision)
 		var buffer: Texture2D = mask.get("depth_texture")
 		var bounds: Rect2 = mask.get("depth_bounds")
-		_highlight_material.set_shader_parameter("world_depth", buffer)
-		_highlight_material.set_shader_parameter("world_depth_enabled", buffer != null)
-		_highlight_material.set_shader_parameter("world_depth_origin", bounds.position)
-		_highlight_material.set_shader_parameter("world_depth_size", bounds.size)
-	_apply_cluster_depth()
+		material.set_shader_parameter("world_depth", buffer)
+		material.set_shader_parameter("world_depth_enabled", buffer != null)
+		material.set_shader_parameter("world_depth_origin", bounds.position)
+		material.set_shader_parameter("world_depth_size", bounds.size)
+
+
+func _depth_base(anchor: Vector2) -> float:
+	return ceilf(float(int(anchor.y)) * 0.5)
 
 
 # Above an actor the pass is drawn over every character too, so where the object overlaps
 # one it has to test the scores the compositor composed the two with. The compositor runs
 # after this node each frame and calls back once it has composed, so the test always matches
-# the surface that is drawn.
+# the surface that is drawn. A colleague drawn on a surface is tested the same way.
 func _apply_cluster_depth() -> void:
-	if not is_instance_valid(_highlight) or not _highlight.visible or not is_instance_valid(_hovered):
+	if is_instance_valid(_hovered):
+		_apply_pulse_cluster(_highlight, _hovered.get_node_or_null("Sprite2D") as Sprite2D)
+	if is_instance_valid(hovered_agent):
+		_apply_pulse_cluster(_agent_highlight, hovered_agent.get_node_or_null("Sprite2D") as Sprite2D)
+
+
+func _apply_pulse_cluster(pulse: Sprite2D, sprite: Sprite2D) -> void:
+	if not is_instance_valid(pulse) or not pulse.visible:
 		return
-	var sprite := _hovered.get_node_or_null("Sprite2D") as Sprite2D
+	var material := pulse.material as ShaderMaterial
 	var compositor := _character_compositor()
 	var cluster: Dictionary = compositor.cluster_depth_for(sprite) if compositor != null else {}
-	_highlight_material.set_shader_parameter("cluster_depth_enabled", not cluster.is_empty())
+	material.set_shader_parameter("cluster_depth_enabled", not cluster.is_empty())
 	if cluster.is_empty():
 		return
 	var bounds: Rect2 = cluster["bounds"]
-	_highlight_material.set_shader_parameter("cluster_depth", cluster["texture"])
-	_highlight_material.set_shader_parameter("cluster_depth_origin", bounds.position)
-	_highlight_material.set_shader_parameter("cluster_depth_size", bounds.size)
+	material.set_shader_parameter("cluster_depth", cluster["texture"])
+	material.set_shader_parameter("cluster_depth_origin", bounds.position)
+	material.set_shader_parameter("cluster_depth_size", bounds.size)
 
 
 func _world_depth_mask() -> Node2D:
@@ -599,11 +670,21 @@ func _collision_layer() -> Node:
 # an object drawn as an actor is picked like a baked one. The sprite's own visibility is not
 # tested: a cluster hides an actor's Sprite2D and draws it on a surface of its own, but keeps
 # its frame current.
-func _object_under_cursor() -> Node2D:
+#
+# Colleagues register into the same list (0x402B09), their ids untagged where an item's carry
+# 0x8000, and the character pick (0x403202) and the item pick (sub_4132E0) each take the
+# first hit only if it is theirs. So one box answers both: a colleague standing in front of
+# a desk takes the hover from it, and the desk from a colleague behind it. Which of two
+# boxes at the same depth comes first is not recovered; the object wins here.
+func _front_under_cursor() -> Node2D:
 	var viewport := get_viewport()
 	if viewport == null:
 		return null
 	var cursor: Vector2 = viewport.get_canvas_transform().affine_inverse() * viewport.get_mouse_position()
+	return _front_at(cursor)
+
+
+func _front_at(cursor: Vector2) -> Node2D:
 	var best: Node2D = null
 	var best_depth := -INF
 	for node in get_tree().get_nodes_in_group(MapObject.PICK_GROUP):
@@ -614,15 +695,40 @@ func _object_under_cursor() -> Node2D:
 		if point == null or (point.get("action_ids") as PackedInt32Array).is_empty():
 			continue
 		var sprite := object.get_node_or_null("Sprite2D") as Sprite2D
-		if sprite == null or sprite.texture == null:
+		if not _box_has_point(sprite, cursor):
 			continue
-		if not Rect2(sprite.to_global(sprite.offset), sprite.texture.get_size()).has_point(cursor):
-			continue
-		var depth := ceilf(float(int(object.global_position.y)) * 0.5)
+		var depth := _depth_base(object.global_position)
 		if depth > best_depth:
 			best_depth = depth
 			best = object
+	# CAgent's constructor sets the box flag +88 (0x415F20); the player's never does.
+	for node in get_tree().get_nodes_in_group(AGENT_GROUP):
+		var agent := node as Node2D
+		if agent == null or not agent.is_visible_in_tree():
+			continue
+		var sprite := agent.get_node_or_null("Sprite2D") as Sprite2D
+		if not _box_has_point(sprite, cursor):
+			continue
+		var depth := _depth_base(sprite.global_position)
+		if depth > best_depth:
+			best_depth = depth
+			best = agent
 	return best
+
+
+func _box_has_point(sprite: Sprite2D, point: Vector2) -> bool:
+	if sprite == null or sprite.texture == null:
+		return false
+	return Rect2(sprite.to_global(sprite.offset), sprite.texture.get_size()).has_point(point)
+
+
+func _is_agent(node: Node2D) -> bool:
+	return node != null and node.is_in_group(AGENT_GROUP)
+
+
+func _object_under_cursor() -> Node2D:
+	var front := _front_under_cursor()
+	return null if _is_agent(front) else front
 
 
 # sub_402470 pushes the player to its mode's abort state rather than letting the action

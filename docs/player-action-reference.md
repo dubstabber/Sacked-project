@@ -81,8 +81,12 @@ enough by hand. The interaction position is only ever used as the point to measu
 the port does not need it to be a standable cell — which is why 20 of level 1's 38 prankable
 placements having an unreachable interaction point does not matter here.
 
-A second, independent pick (`sub_42BF20`) highlights the character under the cursor into
-`game+14696`, tinted `(255, 255, 255, 200)`, and `sub_41D810` records it.
+A second pick (`sub_42BF20` at `0x4031f7`) finds the character under the cursor for
+`game+14696`, and `sub_41D810` records it. It runs before the gate, every frame, and it walks
+the same list of boxes as step 1. So only the front box answers: a colleague standing in
+front of an item takes the hover from it. The hovered colleague pulses white the way a
+focused item does. See "Which agent is under the cursor" in
+[names-reference.md](names-reference.md).
 
 ### Which items the pick can see
 

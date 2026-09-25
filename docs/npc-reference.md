@@ -324,10 +324,10 @@ one place only, `sub_4164E0` at `0x416535`, and that write is never reached (see
 a sabotaged object" below), so the `REPAIR` bubble is never seen. The port's brain raises
 goals 0–8; the bubble carries all ten.
 
-`sub_417460` also draws two things the port does not yet. One is the agent's name over its
-head while `agent+1788` marks it as the coworker last clicked; the name, its pool and the
-selection rule are in [names-reference.md](names-reference.md). The other is three jittered
-green copies of the sprite while `agent+1792` is set.
+`sub_417460` also draws the agent's name over its head while `agent+1788` marks it as the
+coworker last clicked. The port draws it too; the name, its pool and the selection rule are in
+[names-reference.md](names-reference.md). The one thing it draws that the port does not yet is
+three jittered green copies of the sprite while `agent+1792` is set.
 
 ## How angry the office gets
 

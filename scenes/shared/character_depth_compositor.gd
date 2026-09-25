@@ -344,6 +344,14 @@ func _apply_actor_material(actor: Dictionary) -> void:
 	material.set_shader_parameter("base_y", float(actor["base_y"]))
 
 
+# The depth plane of the frame a character is showing, for a pass drawn over it.
+func depth_texture_for(sprite: Sprite2D) -> Texture2D:
+	if sprite == null or sprite.texture == null:
+		return null
+	var path := _depth_path_for_texture(sprite.texture.resource_path)
+	return _depth_texture(path) if path != "" else null
+
+
 func _depth_texture(path: String) -> Texture2D:
 	if not _depth_textures.has(path):
 		var texture: Texture2D = null

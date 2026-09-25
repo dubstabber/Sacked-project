@@ -152,6 +152,17 @@ func _action_event(action: StringName) -> InputEventAction:
 	return event
 
 
+# A point in the object's box where the controller's pick answers with the object.
+func _front_point(object: Node2D) -> Vector2:
+	var sprite := object.get_node("Sprite2D") as Sprite2D
+	var box := Rect2(sprite.to_global(sprite.offset), sprite.texture.get_size())
+	for y in range(int(box.position.y) + 2, int(box.end.y) - 1, 2):
+		for x in range(int(box.position.x) + 2, int(box.end.x) - 1, 2):
+			if _controller._front_at(Vector2(x, y)) == object:
+				return Vector2(x, y)
+	return Vector2.INF
+
+
 func _open_on(point: Node) -> void:
 	_player.global_position = (point as Node2D).global_position
 	_controller.focus_point = point
@@ -218,11 +229,13 @@ func _check_the_ring_holds_the_pointer_and_the_keys() -> void:
 	# Put the pointer over the keyboard so the drag gate below is not vacuous.
 	_player.global_position = (point as Node2D).global_position
 	await process_frame
-	var sprite := object.get_node("Sprite2D") as Sprite2D
-	var centre := Rect2(sprite.to_global(sprite.offset), sprite.texture.get_size()).get_center()
+	# The coworker at this desk stands in front of part of the keyboard, and colleagues and
+	# items share one pick, so aim at a part of it that nobody covers.
+	var target := _front_point(object)
+	_expect(target.is_finite(), "part of the keyboard is in front of everything else")
 	var viewport := _player.get_viewport()
 	var motion := InputEventMouseMotion.new()
-	motion.position = viewport.get_canvas_transform() * centre
+	motion.position = viewport.get_canvas_transform() * target
 	motion.global_position = viewport.get_screen_transform() * motion.position
 	Input.parse_input_event(motion)
 	await process_frame
