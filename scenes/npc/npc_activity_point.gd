@@ -33,6 +33,17 @@ var copier_claimed := false
 # that carries an action id, disables everything those slots unlock, then clears item+224
 # and item+228 and puts the object back to state 0.
 var action_enabled: Array[bool] = []
+# item+232, the hide flag a marker-18 action raises for as long as it runs (sub_41B240). A
+# hidden item is neither drawn nor given a click box (sub_41A2D0 through sub_40FCE0), so the
+# port hides the object, which takes it out of the static composite and the pick as well.
+# Only the action sets and clears it; sub_4100B0's reset leaves it alone.
+# See docs/prank-reference.md.
+var in_use := false:
+	set(value):
+		in_use = value
+		var object := get_parent() as CanvasItem
+		if object != null:
+			object.visible = not value
 
 
 func _enter_tree() -> void:

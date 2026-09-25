@@ -32,8 +32,9 @@ func _run() -> void:
 	_check_the_reposition_lands_on_the_copier()
 	_check_the_turn_toward_the_item()
 	_check_the_start_state_actions_level_2_places()
+	_check_marker_18_hides_its_object()
 	if _failures == 0:
-		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift, the turn toward the item and the start-state actions passed")
+		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift, the turn toward the item, the start-state actions and marker 18's hide passed")
 	quit(1 if _failures else 0)
 
 
@@ -380,3 +381,31 @@ func _check_the_start_state_actions_level_2_places() -> void:
 			int(action.get("result_state", -1)) > 0,
 			"action %d names the state it applies at the start" % action_id
 		)
+
+
+# Marker 18 (records 67, 68 and 154) raises item+232 for as long as the action runs, which
+# hides the item and its click box; applying the action or aborting it brings it back.
+func _check_marker_18_hides_its_object() -> void:
+	var fixture := _player_fixture()
+	var world: Node2D = fixture["world"]
+	var controller: Node = fixture["controller"]
+	var point := _item(world, Vector2(1, 1), Vector2(1, 2), 0, [67])
+	var object := point.get_parent() as Node2D
+	_expect(int(ActionTable.get_action(67).get("result_state", 0)) == CONTROLLER.STATE_IN_USE, "record 67 carries marker 18")
+
+	_open_and_commit(controller, point, 67)
+	_expect(controller.state == CONTROLLER.State.ACTING, "action 67 runs")
+	_expect(point.in_use and not object.visible, "the object is hidden while its marker-18 action runs")
+	controller._advance_action(float(controller._duration))
+	_expect(not point.in_use and object.visible, "it comes back when the action applies")
+	_expect(int(object.state) == 0, "marker 18 is not a state, so the object keeps its own")
+
+	point.reset_actions()
+	_open_and_commit(controller, point, 67)
+	_expect(not object.visible, "a second run hides it again")
+	point.reset_actions()
+	_expect(point.in_use and not object.visible, "an item reset leaves the hide flag alone, as sub_4100B0 does")
+	controller.abort_action()
+	_expect(not point.in_use and object.visible, "an aborted action brings it back")
+	_drop(fixture)
+

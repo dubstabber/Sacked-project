@@ -93,8 +93,19 @@ the action applies (`0x41B854`) or aborts (`0x41BB7D`). The two resets, `sub_40F
 (`0x40FF14`) and `sub_410060` (`0x41007C`), clear it. No item state touches it:
 `sub_40FDA0` writes only the state (`+124`), the clip (`+116`/`+120`) and the animation's own
 fields. So no state, looping or not, hides an item or takes it out of the pick; see
-[player-action-reference.md](player-action-reference.md). The port does not hide a
-marker-18 object yet.
+[player-action-reference.md](player-action-reference.md).
+
+The port keeps the flag as `in_use` on the object's activity point, where the three writers in
+`scenes/player/prank_controller.gd` always put it. Setting it hides the object, which also
+repaints it out of the static composite and out of the pick, since the pick skips hidden
+objects. `reset_actions()`, the port's `sub_4100B0`, does not touch it. So on level 1 the
+phone leaves the desk while the player changes its PIN (67, 68) with the phone in hand, and
+the bottle while the player drinks it (154). Records 67, 68 and 154 are the only marker-18
+records, and every level but 2, 5, 10, 11 and 12 places at least one. Whether a hidden item still stays on an
+agent's candidate list is not recovered. `sub_4187F0` builds those lists once at start-up,
+so the port leaves them alone. `tests/check_prank_consequences.gd` covers the hide, the
+return on apply and abort, and the reset leaving it alone. Until 2026-09-25 the port wrote the
+flag to a property the point never declared, so nothing was hidden.
 
 `sub_4100B0` resets an object: each of its eight slots is enabled when its
 action id is non-zero, every id named in an enabled slot's **unlock** list is then disabled,
