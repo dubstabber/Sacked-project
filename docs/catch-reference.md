@@ -365,12 +365,13 @@ settles the layout, though none of the rules. Reading it:
   are the two sides' bubbles rather than two states of one.
 - A **console strip** runs along the bottom, holding the `ICON` set in **two groups**: four
   on the left with a fifth blank slot, eight on the right. The cursor is over the right
-  group. Whether the split is opponent-offered versus player-available, or simply the
-  fourteen icons laid out in two rows, is for the RE sitting.
+  group. The left group is the opponent's sequence and the right group the player's answer
+  buttons, split by the difficulty; see "The two rows of buttons" in
+  [minigame-reference.md](minigame-reference.md).
 
-That is enough to place the elements and to know what the turn looks like. What the icons
-mean, which one answers which spell, what the timer does when it reaches zero and how the
-bars move are still entirely unrecovered.
+That is enough to place the elements and to know what the turn looks like. The rules, which
+icon answers which spell, what the timer does at zero and how the bars move, were recovered
+later and are in [minigame-reference.md](minigame-reference.md).
 
 ### How screen 5 is built
 

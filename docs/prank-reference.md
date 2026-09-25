@@ -228,10 +228,10 @@ imported level manifest and `CO_OBJECTS.DAT`. LEVEL_00 places **66 action rows**
 
 So the target is reachable from prerequisite-free actions alone, with room to spare, and an
 inventory is an enrichment rather than a gate for this level. Two of those free rows are the
-cubicle-occupancy ones (110 at 250, 112 at 400). The port implements the rule now, but on
-level 1 they still cannot be reached: its NPCs cannot get to the LEVEL_00 toilet at all
-(`npc-reference.md`), so nobody is ever in the cubicle to shut in. Excluding them still
-leaves 5800 points.
+cubicle-occupancy ones (110 at 250, 112 at 400), and they pay only while someone is inside.
+The level-1 agents do reach the `LEVEL_00` toilet, since routes end on the interaction
+point's cell (see "Where a route ends" in [npc-reference.md](npc-reference.md)); the boss
+uses it every few minutes. Excluding the two rows still leaves 5800 points.
 
 These point values agree with the published walkthrough for the German release — lock a
 colleague in the toilet 250, lock the boss 400, urinate in the coffee pot 1000 — which is

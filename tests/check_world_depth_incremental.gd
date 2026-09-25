@@ -6,10 +6,12 @@ extends SceneTree
 
 const LEVEL := preload("res://scenes/level_1.tscn")
 # Level 1's transitions measure about 16 ms per swap, with the Colamat's large frames
-# peaking near 26. The bar that matters is the clip's own frame interval -- the fastest
-# state clip runs at 16 fps, or 62 ms a frame -- so this catches a slide back toward the
-# 600 ms full recomposite without failing on the spread between runs.
-const BUDGET_MS := 40.0
+# peaking at 22-26 ms run alone. The bar that matters is the clip's own frame interval --
+# the fastest state clip runs at 16 fps, or 62 ms a frame -- so the single slowest swap is
+# held to that, and the median swap to 40 ms. One scheduler stall on a loaded machine has
+# pushed the slowest swap to 42 ms; a slide back toward the 600 ms full recomposite fails
+# both bounds at once.
+const MEDIAN_BUDGET_MS := 40.0
 
 # Every multi-frame clip level 1 can reach, with the object carrying it.
 const TRANSITIONS := [
@@ -49,37 +51,55 @@ func _run() -> void:
 
 	var worst := 0.0
 	var worst_label := ""
+	var swaps: Array[float] = []
+	var frame_interval_ms := INF
 	for entry in TRANSITIONS:
-		var result := _check_transition(level, mask, entry[0], entry[1], entry[2])
-		if result > worst:
-			worst = result
-			worst_label = "%s %s" % [entry[0], entry[2]]
+		var times := _check_transition(level, mask, entry[0], entry[1], entry[2])
+		frame_interval_ms = minf(frame_interval_ms, _frame_interval_ms(entry[1], entry[2]))
+		swaps.append_array(times)
+		for time in times:
+			if time > worst:
+				worst = time
+				worst_label = "%s %s" % [entry[0], entry[2]]
 	_check_removal(level, mask)
 
-	print("Worst state swap: %.1f ms (%s); a full recomposite is about 600 ms" % [worst, worst_label])
-	_expect(worst <= BUDGET_MS, "the slowest state swap stays inside %.0f ms, measured %.1f" % [BUDGET_MS, worst])
+	swaps.sort()
+	var median := swaps[swaps.size() / 2] if not swaps.is_empty() else 0.0
+	print(
+		"State swaps: median %.1f ms, worst %.1f ms (%s); a full recomposite is about 600 ms"
+			% [median, worst, worst_label]
+	)
+	_expect(
+		median <= MEDIAN_BUDGET_MS,
+		"the median state swap stays inside %.0f ms, measured %.1f" % [MEDIAN_BUDGET_MS, median]
+	)
+	_expect(
+		worst <= frame_interval_ms,
+		"the slowest state swap stays inside the fastest clip's %.1f ms frame, measured %.1f"
+			% [frame_interval_ms, worst]
+	)
 	level.free()
 	if _failures == 0:
 		print("World depth incremental: every level-1 transition repaints in place and matches a full recomposite")
 	quit(1 if _failures else 0)
 
 
-# Steps one clip frame by frame, timing each repaint. Returns the worst frame in ms.
-func _check_transition(level: Node, mask: Node, object_name: String, key: String, clip_name: String) -> float:
+# Steps one clip frame by frame, timing each repaint. Returns every frame's repaint in ms.
+func _check_transition(level: Node, mask: Node, object_name: String, key: String, clip_name: String) -> Array[float]:
+	var times: Array[float] = []
 	var object: MapObject = level.get_node_or_null("World/Objects/%s" % object_name)
 	if object == null:
 		_expect(false, "level 1 places %s" % object_name)
-		return 0.0
+		return times
 	var clip := _clip(key, clip_name)
 	if clip.is_empty():
 		_expect(false, "%s ships a %s clip" % [key, clip_name])
-		return 0.0
+		return times
 
 	var frame_count: int = (clip["frames"] as Array).size()
 	var step := 1.0 / maxf(float(clip["fps"]), 1.0)
 	var full_before: int = mask.full_rebuilds
 	var partial_before: int = mask.partial_rebuilds
-	var worst := 0.0
 
 	object.set_state(int(clip["state"]))
 	# Driven here rather than by the engine so every frame is measured exactly once. The
@@ -89,7 +109,7 @@ func _check_transition(level: Node, mask: Node, object_name: String, key: String
 	for index in range(frame_count):
 		var started := Time.get_ticks_usec()
 		mask.rebuild()
-		worst = maxf(worst, float(Time.get_ticks_usec() - started) / 1000.0)
+		times.append(float(Time.get_ticks_usec() - started) / 1000.0)
 		if index < frame_count - 1:
 			object._process(step)
 
@@ -109,7 +129,7 @@ func _check_transition(level: Node, mask: Node, object_name: String, key: String
 
 	object.set_state(0)
 	mask.rebuild()
-	return worst
+	return times
 
 
 func _check_removal(level: Node, mask: Node) -> void:
@@ -138,6 +158,12 @@ func _expect_matches_reference(mask: Node, label: String) -> void:
 		mask.depth_scores == reference.scores,
 		"%s leaves the depth scores identical to a full recomposite" % label
 	)
+
+
+# Kept out of _run: a clip dictionary held there would outlive quit() in the coroutine.
+func _frame_interval_ms(key: String, clip_name: String) -> float:
+	var clip := _clip(key, clip_name)
+	return INF if clip.is_empty() else 1000.0 / maxf(float(clip["fps"]), 1.0)
 
 
 func _clip(key: String, clip_name: String) -> Dictionary:
