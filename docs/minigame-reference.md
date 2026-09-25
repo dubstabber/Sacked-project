@@ -214,8 +214,8 @@ the console labels got.
 sprite tables and the button layout split into `catch_minigame_art.gd` so each can be checked
 on its own. It is an **overlay inside the level**, not a separate scene: a win resumes the
 level that is still in memory, which changing scene would have thrown away. `CatchWatch`
-holds the banner for its two seconds, opens the duel, pauses the tree, and on the way out
-either unpauses or ends the level through `LevelSession.lose()`. That raises the same
+pauses the tree as the banner goes up, holds it for its two seconds, opens the duel, and on
+the way out either unpauses or ends the level through `LevelSession.lose()`. That raises the same
 `finished` the clock raises, so the run's own score and time reach the result screen. The
 port also stops the theme there, which the original does not do (see
 [sound-reference.md](sound-reference.md)).

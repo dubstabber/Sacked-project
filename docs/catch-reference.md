@@ -418,6 +418,17 @@ Three details the port had to add rather than reuse:
 `Console.warn_of_catch()` raises the exported `AGGRO_UP` banner with one of the four
 exclamations for 2.0 seconds, the length of the caught pause the original spends there.
 
+**The caught pause freezes the office.** Screen 4 hands the level a zero time step, so
+`CatchWatch` pauses the tree the moment it catches and counts the banner's two seconds on
+real time from `PROCESS_MODE_ALWAYS`. The clock, the aggression meter, every colleague and
+every looping clip hold still under the banner. One-shots and the theme play on, since their
+players always process, and the theme is held only when the duel opens, as case 5 does. The
+duel then takes the banner down, which the console's own countdown, paused with everything
+else, would not. **One recorded loss**: the original's level tick still reads input at a zero
+step, so the ring can be opened under the banner there. A paused `PrankController` gets no
+input, so the port's cannot. `tests/check_catch_trigger.gd` proves the freeze, and fails three
+ways without it.
+
 **The hand-off is wired.** `hands_off_to_minigame` defaults on, and survives only so a check
 can drive the trigger without the duel opening over it. A win unpauses the level that is
 still in memory; a loss calls `LevelSession.lose()`, which raises the same `finished` the

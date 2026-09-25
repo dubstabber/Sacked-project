@@ -41,6 +41,8 @@ var _random := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
+	# The banner has to count down while the world it freezes stands still.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_random.randomize()
 	call_deferred("_bind")
 
@@ -111,8 +113,11 @@ func _catch(agent: Node2D) -> void:
 	if not hands_off_to_minigame:
 		return
 	# The banner is up for two seconds and the duel opens underneath it, which is the order
-	# sub_407990 and sub_407370 run in.
+	# sub_407990 and sub_407370 run in. Screen 4 hands the level a zero time step for those two
+	# seconds (docs/shell-reference.md), so the office, the clock and the player all hold
+	# still under the banner; pausing the tree is the port's zero step.
 	_banner_remaining = BANNER_SECONDS
+	get_tree().paused = true
 
 
 func reset() -> void:
@@ -133,6 +138,10 @@ func _open_duel() -> void:
 	if not _minigame.is_connected("finished", _on_duel_finished):
 		_minigame.connect("finished", _on_duel_finished)
 	_minigame.call("open", _catcher_id(), character, casts)
+	# The tick takes AGGRO_UP down as the duel opens. The console's own countdown stood still
+	# under the pause, so it would otherwise show the banner again once the duel is over.
+	if _console != null and _console.has_method("hide_catch_warning"):
+		_console.hide_catch_warning()
 	_show_pointer_for_duel()
 	_hold_level_music(true)
 	get_tree().paused = true

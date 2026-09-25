@@ -131,6 +131,11 @@ func warn_of_catch(exclamation_key: StringName) -> void:
 	_aggro_up.visible = true
 
 
+func hide_catch_warning() -> void:
+	_aggro_up_remaining = 0.0
+	_aggro_up.visible = false
+
+
 func _process(delta: float) -> void:
 	if _thermo_remaining > 0.0:
 		_thermo_remaining -= delta

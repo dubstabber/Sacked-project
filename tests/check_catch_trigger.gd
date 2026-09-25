@@ -47,6 +47,7 @@ func _run() -> void:
 	_check_the_duel_gets_the_pointer(world, player)
 	_check_the_duel_holds_only_the_theme()
 	_check_a_won_duel_keeps_the_count()
+	await _check_the_caught_pause_freezes_the_world(world)
 	_finish()
 
 
@@ -54,7 +55,7 @@ func _finish() -> void:
 	if is_instance_valid(_level):
 		_level.free()
 	if _failures == 0:
-		print("Catch trigger: notice radius, cone, the two-tile bypass, sight, the mid-prank gate, the duel's pointer, its sound and its length passed")
+		print("Catch trigger: notice radius, cone, the two-tile bypass, sight, the mid-prank gate, the duel's pointer, its sound, its length and the frozen caught pause passed")
 	quit(1 if _failures else 0)
 
 
@@ -177,8 +178,8 @@ func _check_only_mid_prank(world: Node, player: Node2D) -> void:
 
 
 # sub_402470 only catches in the acting states (2-3, 11-12, 21-22), so the ring is never open
-# at the catch itself,
-# but the caught pause still reads input and the ring can be opened under the banner.
+# at the catch itself. The original's caught pause still reads input, so the ring can be
+# opened under the banner there; the port pauses the tree for it and cannot, a recorded loss.
 # sub_407370 case 5 then shows and re-centres the cursor (0x40757C, 0x407582) whatever the
 # ring is doing, and a duel played with the mouse must not inherit the ring's capture.
 func _check_the_duel_gets_the_pointer(world: Node, player: Node2D) -> void:
@@ -321,3 +322,47 @@ func _expect(condition: bool, message: String) -> void:
 	if not condition:
 		_failures += 1
 		push_error(message)
+
+
+# Screen 4: WinMain hands the level a zero time step for the two seconds the banner is up, so
+# the clock and every colleague hold still, and the banner comes down as the duel opens.
+func _check_the_caught_pause_freezes_the_world(world: Node) -> void:
+	var watch := _level.get_node_or_null("LevelRuntime/CatchWatch")
+	var minigame := _level.get_node_or_null("LevelRuntime/CatchMinigame")
+	var console := _level.get_node_or_null("LevelRuntime/Console")
+	var session := get_first_node_in_group("level_session")
+	var agent := _first_agent(world)
+	if watch == null or minigame == null or console == null or session == null or agent == null:
+		_expect(false, "level 2 carries the watch, the duel, the console, the session and an agent")
+		return
+	var clock_before: float = session.elapsed
+	for i in 6:
+		await physics_frame
+	_expect(session.elapsed > clock_before, "the level clock runs before the catch")
+
+	watch._catch(agent)
+	_expect(paused, "a catch stops the office at once")
+	_expect(console._aggro_up.visible, "under the AGGRO_UP banner")
+	var clock: float = session.elapsed
+	var heading: float = agent.notice_heading
+	for i in 6:
+		await physics_frame
+	await process_frame
+	_expect(is_equal_approx(session.elapsed, clock), "the clock stands still under the banner")
+	_expect(is_equal_approx(agent.notice_heading, heading), "and so does every colleague, down to the sway of its gaze")
+	_expect(watch._banner_remaining < watch.BANNER_SECONDS, "the banner counts its two seconds on real time")
+
+	watch._banner_remaining = 0.001
+	await process_frame
+	_expect(minigame.visible, "the duel opens when the two seconds are up")
+	_expect(not console._aggro_up.visible, "and the banner comes down as it does")
+	_expect(paused, "the duel keeps the office still")
+
+	minigame.set_process(false)
+	minigame.visible = false
+	watch._on_duel_finished(true)
+	_expect(not paused, "a won duel lets the office go")
+	await process_frame
+	await process_frame
+	_expect(not console._aggro_up.visible, "the banner does not come back after the duel")
+
