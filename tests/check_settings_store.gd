@@ -1,7 +1,7 @@
 extends SceneTree
 
 # The sound-setup screen's rule, recovered as "move each volume by 5 and clamp to 0..100,
-# defaults 75 and 65", plus the two rows the port adds to that screen. Everything runs
+# effects 75 and music 65 by default", plus the two rows the port adds to that screen. Everything runs
 # against a temporary file rather than the player's own.
 # See docs/game-rules-reference.md and docs/sound-reference.md.
 
@@ -64,8 +64,8 @@ func _bus_linear(bus: StringName) -> float:
 
 func _check_a_fresh_profile_starts_at_the_original_defaults() -> void:
 	var store := _fresh_store()
-	_expect(store.music_volume() == 75, "music starts at the original's 75")
-	_expect(store.effects_volume() == 65, "effects start at the original's 65")
+	_expect(store.music_volume() == 65, "music starts at the original's 65")
+	_expect(store.effects_volume() == 75, "effects start at the original's 75")
 	_expect(store.language() == "", "a fresh profile has chosen no language")
 	_expect(not store.is_fullscreen(), "a fresh profile starts windowed")
 	store.free()
@@ -74,10 +74,10 @@ func _check_a_fresh_profile_starts_at_the_original_defaults() -> void:
 func _check_each_step_moves_five_and_stops_at_the_ends() -> void:
 	var store := _fresh_store()
 	store.step_music(1)
-	_expect(store.music_volume() == 80, "one step up moves music by the original's 5")
+	_expect(store.music_volume() == 70, "one step up moves music by the original's 5")
 	store.step_music(-1)
 	store.step_music(-1)
-	_expect(store.music_volume() == 70, "one step down moves music by 5")
+	_expect(store.music_volume() == 60, "one step down moves music by 5")
 	for i in range(10):
 		store.step_music(1)
 	_expect(store.music_volume() == 100, "music clamps at 100, got %d" % store.music_volume())
@@ -90,8 +90,8 @@ func _check_each_step_moves_five_and_stops_at_the_ends() -> void:
 func _check_a_volume_reaches_its_bus() -> void:
 	var store := _fresh_store()
 	store.apply_audio()
-	_expect(absf(_bus_linear(&"Music") - 0.75) < 0.001, "the default music volume reaches its bus")
-	_expect(absf(_bus_linear(&"SFX") - 0.65) < 0.001, "the default effects volume reaches its bus")
+	_expect(absf(_bus_linear(&"Music") - 0.65) < 0.001, "the default music volume reaches its bus")
+	_expect(absf(_bus_linear(&"SFX") - 0.75) < 0.001, "the default effects volume reaches its bus")
 	store.set_music_volume(40)
 	_expect(absf(_bus_linear(&"Music") - 0.40) < 0.001, "a changed volume reaches its bus at once")
 	store.free()
@@ -117,8 +117,8 @@ func _check_defaults_restore_only_the_volumes() -> void:
 	store.set_language(&"de")
 	store.set_fullscreen(true)
 	store.reset_audio_defaults()
-	_expect(store.music_volume() == 75, "Defaults puts music back to 75")
-	_expect(store.effects_volume() == 65, "Defaults puts effects back to 65")
+	_expect(store.music_volume() == 65, "Defaults puts music back to 65")
+	_expect(store.effects_volume() == 75, "Defaults puts effects back to 75")
 	# The original has no language or display option, so it has no default for either, and
 	# taking the language away from under the player would be the port's own invention.
 	_expect(store.language() == "de", "Defaults leaves the chosen language alone")

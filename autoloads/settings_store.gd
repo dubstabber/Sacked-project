@@ -5,10 +5,11 @@ extends Node
 # the window is full screen.
 #
 # The original keeps the volumes in the registry beside the rest of the profile --
-# sub_4261A0 restores game+20690 and game+20692, and its sound-setup screen moves each by 5
-# and clamps to 0..100 with defaults of 75 and 65. The port keeps those values and that
-# rule, and puts them in user://settings.cfg beside the language I18n already reads there.
-# See docs/game-rules-reference.md and docs/shell-reference.md.
+# sub_4261A0 restores game+20690, the effects volume (SOUNDVOLUME, default 75), and
+# game+20692, the music (MUSICVOLUME, default 65), and its sound-setup screen moves each by
+# 5 and clamps to 0..100. The port keeps those values and that rule, and puts them in
+# user://settings.cfg beside the language I18n already reads there.
+# See docs/sound-reference.md.
 #
 # Language and display are port extensions. The original ships one language per build and
 # has no display option, so neither has an original default to restore; only the volumes
@@ -26,9 +27,9 @@ const EFFECTS_KEY := "effects"
 const DISPLAY_SECTION := "display"
 const FULLSCREEN_KEY := "fullscreen"
 
-# game+20690 and game+20692, and the step the arrows on screen 11 move them by.
-const DEFAULT_MUSIC := 75
-const DEFAULT_EFFECTS := 65
+# game+20692 and game+20690, and the step the arrows on screen 11 move them by.
+const DEFAULT_MUSIC := 65
+const DEFAULT_EFFECTS := 75
 const VOLUME_STEP := 5
 const VOLUME_MIN := 0
 const VOLUME_MAX := 100

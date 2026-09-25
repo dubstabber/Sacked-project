@@ -176,14 +176,10 @@ footsteps sit on the Music and SFX buses along with everything else.
 
 `autoloads/settings_store.gd` keeps the two volumes and the step-5, clamp-0–100 rule in
 `user://settings.cfg` rather than the registry, and applies them to the two buses as
-`linear_to_db(value / 100)`. `default_bus_layout.tres` carries the defaults in decibels,
-which is what plays for the instant before the store is ready. From then on the store is
-the source of truth.
-
-**It currently has the defaults backwards**: music 75 and effects 65, in the store's
-constants, in the bus layout (Music −2.5 dB, SFX −3.7 dB) and in
-`tests/check_settings_store.gd`. The original's are effects 75 and music 65 (above). Task T6
-swaps them.
+`linear_to_db(value / 100)`. The defaults are the original's, effects 75 and music 65.
+`default_bus_layout.tres` carries them in decibels (SFX −2.5 dB, Music −3.7 dB), which is
+what plays for the instant before the store is ready. From then on the store is the source
+of truth. The port had the two defaults the other way round until the screen was built.
 
 **One port decision.** `linear_to_db(0)` is negative infinity, so a volume of 0 mutes its
 bus instead of being handed to it. The original's own mixer is not recovered; silence at
