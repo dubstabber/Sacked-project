@@ -77,6 +77,16 @@ MENU = [
     ("CO_GUI_MENU_BASE_BG_04", "images/gui/screens/highscores.png"),
     ("CO_GUI_MENU_HISCORE_BUTTON_ACTIVE", "images/gui/menu/hiscore-button-active.png"),
     ("CO_GUI_MENU_HISCORE_BUTTON_PASSIVE", "images/gui/menu/hiscore-button-passive.png"),
+    # The sound-setup screen, 11: a symbol over each volume, the display-only box its number
+    # sits in, and the arrow either side. Its background is the main menu's own picture.
+    # See docs/sound-reference.md.
+    ("CO_GUI_MENU_SOUND_SOUND_SYMBOL", "images/gui/menu/sound-effects-symbol.png"),
+    ("CO_GUI_MENU_SOUND_MUSIK_SYMBOL", "images/gui/menu/sound-music-symbol.png"),
+    ("CO_GUI_MENU_BASE_TEXTINPUT_VOLUME", "images/gui/menu/text-input-volume.png"),
+    ("CO_GUI_MENU_BASE_LARROW_ACTIVE", "images/gui/menu/arrow-left-active.png"),
+    ("CO_GUI_MENU_BASE_LARROW_PASSIVE", "images/gui/menu/arrow-left-passive.png"),
+    ("CO_GUI_MENU_BASE_RARROW_ACTIVE", "images/gui/menu/arrow-right-active.png"),
+    ("CO_GUI_MENU_BASE_RARROW_PASSIVE", "images/gui/menu/arrow-right-passive.png"),
 ]
 
 FONTS = [

@@ -132,6 +132,7 @@ func _check_each_screen_asks_for_its_own_music() -> void:
 		ScreenManagerScript.Screen.CHARACTER_SELECT,
 		ScreenManagerScript.Screen.LEVEL_TREE,
 		ScreenManagerScript.Screen.LEVEL_DESCRIPTION,
+		ScreenManagerScript.Screen.SOUND_SETUP,
 	]:
 		_expect(_manager._menu_music_for(screen) == menu1, "screen %d keeps Menu1 playing" % screen)
 	_expect(

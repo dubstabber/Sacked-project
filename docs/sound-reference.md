@@ -190,6 +190,24 @@ Neither is the original's: it ships one language per build and has no display op
 the sound-setup screen's `Domyślne` puts only the two volumes back, and deliberately leaves
 those two rows alone.
 
+### The screen
+
+`scenes/screens/sound_setup.tscn` is screen 11 at the rects above, over the main menu's own
+picture. Main-menu button 4 opens it and `Menu1` keeps playing. Each arrow calls the store,
+and the store's `settings_changed` refills the boxes. So a change reaches the bus the moment
+it is pressed, and F1 on this screen updates the display box too. The two boxes show the
+bare number, in white over a `(32, 32, 32)` copy two pixels down and right. Like every port
+screen, the text uses Godot's default font rather than Arial, and the title is drawn at the
+size the other screens use rather than Arial 42.
+
+**Two rows the original does not have.** Under the effects sits a language row, and under
+the music a display row. Each is a caption over a box between two arrows, using the same
+arrow and box art. The language arrows cycle Polish, English and German, each named in its
+own words. Either display arrow toggles full screen. The free band between the volume row
+and the bottom buttons holds exactly one such row, so the two sit side by side.
+`tests/check_sound_setup.gd` pins the recovered rects, the steps, the clamps, `Domyślne`,
+both extra rows and the way back.
+
 ### What a level plays
 
 `scenes/level/level_audio.gd` picks the theme, starts the warning loop and plays each action's

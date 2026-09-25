@@ -151,6 +151,16 @@ PORT_STRINGS = {
     "minigame.banner.your_turn": ("Twoja odpowiedź!", "painted into both builds' banner art"),
     "minigame.banner.win": ("Tania wymówka!", "painted into both builds' banner art"),
     "minigame.banner.lose": ("Złapany!", "painted into both builds' banner art"),
+    # Two rows the port adds to the sound-setup screen. The original ships one language per
+    # build and has no display option, so neither has wording in either build.
+    "sound.language": ("Język", "the port's language row on screen 11; each build ships one language"),
+    "sound.display": ("Ekran", "the port's display row on screen 11; the original has no display option"),
+    "sound.windowed": ("W oknie", "the display row's windowed value"),
+    "sound.fullscreen": ("Pełny ekran", "the display row's full-screen value"),
+    # Each language is named in its own words, so a player can find theirs whatever is showing.
+    "language.pl": ("Polski", "the language row names each language in its own words"),
+    "language.en": ("English", "the language row names each language in its own words"),
+    "language.de": ("Deutsch", "the language row names each language in its own words"),
 }
 
 # Godot's % formatting is positional, so a translation has to repeat these in order. The
@@ -402,8 +412,8 @@ def check_translations(root: Path, table: dict) -> list:
                     f"{key} {language} has format tokens {format_tokens(entry[language])}, expected {expected}"
                 )
 
-    # Proper nouns the original does not translate either.
-    for key in ("character.jobless", "character.anne"):
+    # Proper nouns the original does not translate either, and the languages' own names.
+    for key in ("character.jobless", "character.anne", "language.pl", "language.en", "language.de"):
         expected_name = source[key][SOURCE_LANGUAGE]
         for language in LANGUAGES:
             actual = source[key].get(language, translations.get(key, {}).get(language))

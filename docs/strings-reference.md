@@ -136,13 +136,22 @@ text table. See [names-reference.md](names-reference.md).
 
 ## Keys the original has no wording for
 
-Six, each declared in `PORT_STRINGS` with its reason — the two console labels below, and the
-duel's four `minigame.banner.*` keys, which *The two painted words* covers:
+Thirteen, each declared in `PORT_STRINGS` with its reason — the two console labels and the
+seven sound-setup keys below, and the duel's four `minigame.banner.*` keys, which *The two
+painted words* covers:
 
 | Key | Polish | Why |
 | --- | --- | --- |
 | `hud.console.time_label` | `czas` | painted into the console art |
 | `hud.console.score_label` | `wynik` | painted into the console art |
+| `sound.language` | `Język` | the port's language row on screen 11; each build ships one language |
+| `sound.display` | `Ekran` | the port's display row on screen 11; the original has no display option |
+| `sound.windowed` | `W oknie` | the display row's windowed value |
+| `sound.fullscreen` | `Pełny ekran` | the display row's full-screen value |
+| `language.pl`, `.en`, `.de` | `Polski`, `English`, `Deutsch` | each language named in its own words |
+
+The three language names are endonyms, identical in every language, and the exporter holds
+them to that the way it holds the two player names.
 
 The port previously invented `Wybierz poziom` and `Wstecz` for the tree, `Imię gracza` for
 the character-select name box, and `Poziom %d` for the interim level list. All four are gone.
@@ -188,7 +197,7 @@ Polish edition's box art rather than a UI string, so it stays as a logo in every
 
 `resources/original/strings.json` is generated and holds Polish and German.
 `resources/i18n/translations.json` is authored and holds **only what neither build has
-wording for**: English throughout, plus German for the six port strings. The exporter fails
+wording for**: English throughout, plus German for the thirteen port strings. The exporter fails
 if the authored file names a language a build already provides, which is what stops the two
 drifting apart.
 

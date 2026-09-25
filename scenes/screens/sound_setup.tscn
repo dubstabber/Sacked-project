@@ -1,0 +1,358 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/screens/sound_setup.gd" id="1"]
+[ext_resource type="Texture2D" path="res://images/gui/screens/menu_background.png" id="2"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/base-button-passive.png" id="3"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/base-button-active.png" id="4"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/sound-effects-symbol.png" id="5"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/sound-music-symbol.png" id="6"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/text-input-volume.png" id="7"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/arrow-left-passive.png" id="8"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/arrow-left-active.png" id="9"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/arrow-right-passive.png" id="10"]
+[ext_resource type="Texture2D" path="res://images/gui/menu/arrow-right-active.png" id="11"]
+
+[node name="SoundSetup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Margin" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="SafeFrame" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 800.0
+offset_bottom = 600.0
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Title" type="Label" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 16.0
+offset_right = 736.0
+offset_bottom = 80.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 28
+text = "sound.title"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EffectsSymbol" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 128.0
+offset_right = 368.0
+offset_bottom = 336.0
+mouse_filter = 2
+texture = ExtResource("5")
+
+[node name="MusicSymbol" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 432.0
+offset_top = 128.0
+offset_right = 768.0
+offset_bottom = 336.0
+mouse_filter = 2
+texture = ExtResource("6")
+
+[node name="EffectsDown" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 368.0
+offset_right = 96.0
+offset_bottom = 416.0
+texture_normal = ExtResource("8")
+texture_pressed = ExtResource("9")
+texture_hover = ExtResource("9")
+ignore_texture_size = true
+stretch_mode = 2
+
+[node name="EffectsBox" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 368.0
+offset_right = 288.0
+offset_bottom = 416.0
+mouse_filter = 2
+texture = ExtResource("7")
+
+[node name="Value" type="Label" parent="SafeFrame/EffectsBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.12549, 0.12549, 0.12549, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EffectsUp" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 305.0
+offset_top = 368.0
+offset_right = 369.0
+offset_bottom = 416.0
+texture_normal = ExtResource("10")
+texture_pressed = ExtResource("11")
+texture_hover = ExtResource("11")
+ignore_texture_size = true
+stretch_mode = 2
+
+[node name="MusicDown" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 432.0
+offset_top = 368.0
+offset_right = 496.0
+offset_bottom = 416.0
+texture_normal = ExtResource("8")
+texture_pressed = ExtResource("9")
+texture_hover = ExtResource("9")
+ignore_texture_size = true
+stretch_mode = 2
+
+[node name="MusicBox" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 512.0
+offset_top = 368.0
+offset_right = 688.0
+offset_bottom = 416.0
+mouse_filter = 2
+texture = ExtResource("7")
+
+[node name="Value" type="Label" parent="SafeFrame/MusicBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.12549, 0.12549, 0.12549, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MusicUp" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 705.0
+offset_top = 368.0
+offset_right = 769.0
+offset_bottom = 416.0
+texture_normal = ExtResource("10")
+texture_pressed = ExtResource("11")
+texture_hover = ExtResource("11")
+ignore_texture_size = true
+stretch_mode = 2
+
+[node name="LanguageCaption" type="Label" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 424.0
+offset_right = 288.0
+offset_bottom = 456.0
+mouse_filter = 2
+theme_override_colors/font_shadow_color = Color(0.12549, 0.12549, 0.12549, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "sound.language"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LanguageDown" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 456.0
+offset_right = 96.0
+offset_bottom = 504.0
+texture_normal = ExtResource("8")
+texture_pressed = ExtResource("9")
+texture_hover = ExtResource("9")
+ignore_texture_size = true
+stretch_mode = 2
+
+[node name="LanguageBox" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 456.0
+offset_right = 288.0
+offset_bottom = 504.0
+mouse_filter = 2
+texture = ExtResource("7")
+
+[node name="Value" type="Label" parent="SafeFrame/LanguageBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.12549, 0.12549, 0.12549, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LanguageUp" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 305.0
+offset_top = 456.0
+offset_right = 369.0
+offset_bottom = 504.0
+texture_normal = ExtResource("10")
+texture_pressed = ExtResource("11")
+texture_hover = ExtResource("11")
+ignore_texture_size = true
+stretch_mode = 2
+
+[node name="DisplayCaption" type="Label" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 512.0
+offset_top = 424.0
+offset_right = 688.0
+offset_bottom = 456.0
+mouse_filter = 2
+theme_override_colors/font_shadow_color = Color(0.12549, 0.12549, 0.12549, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "sound.display"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DisplayDown" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 432.0
+offset_top = 456.0
+offset_right = 496.0
+offset_bottom = 504.0
+texture_normal = ExtResource("8")
+texture_pressed = ExtResource("9")
+texture_hover = ExtResource("9")
+ignore_texture_size = true
+stretch_mode = 2
+
+[node name="DisplayBox" type="TextureRect" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 512.0
+offset_top = 456.0
+offset_right = 688.0
+offset_bottom = 504.0
+mouse_filter = 2
+texture = ExtResource("7")
+
+[node name="Value" type="Label" parent="SafeFrame/DisplayBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0.12549, 0.12549, 0.12549, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DisplayUp" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 705.0
+offset_top = 456.0
+offset_right = 769.0
+offset_bottom = 504.0
+texture_normal = ExtResource("10")
+texture_pressed = ExtResource("11")
+texture_hover = ExtResource("11")
+ignore_texture_size = true
+stretch_mode = 2
+
+[node name="MainMenu" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 536.0
+offset_right = 176.0
+offset_bottom = 584.0
+texture_normal = ExtResource("3")
+texture_pressed = ExtResource("4")
+texture_hover = ExtResource("4")
+
+[node name="Label" type="Label" parent="SafeFrame/MainMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "common.main_menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Defaults" type="TextureButton" parent="SafeFrame"]
+layout_mode = 0
+offset_left = 624.0
+offset_top = 536.0
+offset_right = 784.0
+offset_bottom = 584.0
+texture_normal = ExtResource("3")
+texture_pressed = ExtResource("4")
+texture_hover = ExtResource("4")
+
+[node name="Label" type="Label" parent="SafeFrame/Defaults"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "common.defaults"
+horizontal_alignment = 1
+vertical_alignment = 1

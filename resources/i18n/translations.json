@@ -772,5 +772,33 @@
   "minigame.banner.lose": {
     "en": "Caught!",
     "de": "ERWISCHT !"
+  },
+  "sound.language": {
+    "en": "Language",
+    "de": "Sprache"
+  },
+  "sound.display": {
+    "en": "Display",
+    "de": "Anzeige"
+  },
+  "sound.windowed": {
+    "en": "Windowed",
+    "de": "Fenster"
+  },
+  "sound.fullscreen": {
+    "en": "Full screen",
+    "de": "Vollbild"
+  },
+  "language.pl": {
+    "en": "Polski",
+    "de": "Polski"
+  },
+  "language.en": {
+    "en": "English",
+    "de": "English"
+  },
+  "language.de": {
+    "en": "Deutsch",
+    "de": "Deutsch"
   }
 }

@@ -1856,6 +1856,41 @@
       "pl": "Złapany!",
       "origin": "port",
       "reason": "painted into both builds' banner art"
+    },
+    "sound.language": {
+      "pl": "Język",
+      "origin": "port",
+      "reason": "the port's language row on screen 11; each build ships one language"
+    },
+    "sound.display": {
+      "pl": "Ekran",
+      "origin": "port",
+      "reason": "the port's display row on screen 11; the original has no display option"
+    },
+    "sound.windowed": {
+      "pl": "W oknie",
+      "origin": "port",
+      "reason": "the display row's windowed value"
+    },
+    "sound.fullscreen": {
+      "pl": "Pełny ekran",
+      "origin": "port",
+      "reason": "the display row's full-screen value"
+    },
+    "language.pl": {
+      "pl": "Polski",
+      "origin": "port",
+      "reason": "the language row names each language in its own words"
+    },
+    "language.en": {
+      "pl": "English",
+      "origin": "port",
+      "reason": "the language row names each language in its own words"
+    },
+    "language.de": {
+      "pl": "Deutsch",
+      "origin": "port",
+      "reason": "the language row names each language in its own words"
     }
   }
 }
