@@ -28,6 +28,8 @@ const DISPLAY_SECTION := "display"
 const FULLSCREEN_KEY := "fullscreen"
 # One key per name pool, type_1 to type_7, written only once screen 13 has saved that type.
 const NAMES_SECTION := "names"
+const LAUNCH_SECTION := "launch"
+const LAUNCH_COUNT_KEY := "count"
 
 # game+20692 and game+20690, and the step the arrows on screen 11 move them by.
 const DEFAULT_MUSIC := 65
@@ -236,3 +238,19 @@ func _names_key(type: int) -> String:
 # Every copy in or out of a record is strncpy(..., 16); the original keeps spaces as typed.
 func _clean_name(name: String) -> String:
 	return name.substr(0, CoworkerNames.max_length())
+
+
+# --- launches --------------------------------------------------------------------------
+
+# game+20704: sub_405430 reads the count from the registry (sub_426230), adds one and writes
+# it back (sub_426310) before the boot screen is built, and a missing value reads as 0. So the
+# first launch is 1, and sub_422630 shows LOADING_EVIL on the 666th alone.
+func launch_count() -> int:
+	return int(_config.get_value(LAUNCH_SECTION, LAUNCH_COUNT_KEY, 0))
+
+
+func count_launch() -> int:
+	var count := launch_count() + 1
+	_config.set_value(LAUNCH_SECTION, LAUNCH_COUNT_KEY, count)
+	save()
+	return count

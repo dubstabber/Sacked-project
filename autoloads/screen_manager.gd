@@ -79,7 +79,6 @@ func _ready() -> void:
 	_menu_music_player.bus = &"Music"
 	_menu_music_player.finished.connect(_on_menu_music_finished)
 	add_child(_menu_music_player)
-	_sync_menu_music()
 
 
 func change_to(screen: Screen) -> void:
@@ -145,6 +144,13 @@ func start_level(level: int) -> void:
 		return
 	selected_level = level
 	change_to(Screen.LEVEL)
+
+
+# sub_407370's case 2 starts Menu1 as the boot screen comes up. The screen calls this itself,
+# so a check that runs with the autoloads but never boots the game stays silent.
+func enter_boot_screen() -> void:
+	current = Screen.BOOT_LOADING
+	_sync_menu_music()
 
 
 func change_to_main_menu() -> void:
@@ -274,11 +280,12 @@ func _menu_music_for(screen: Screen) -> AudioStream:
 
 
 func _is_menu_screen(screen: Screen) -> bool:
-	# sub_407370 starts Menu1 for the menu and keeps it running across the screens that
-	# follow: the tree, the description screen and the sound setup ask for no music of their
-	# own.
+	# sub_407370 starts Menu1 on the boot and menu screens and keeps it running across the
+	# screens that follow: the tree, the description screen and the sound setup ask for no
+	# music of their own.
 	return (
-		screen == Screen.MAIN_MENU
+		screen == Screen.BOOT_LOADING
+		or screen == Screen.MAIN_MENU
 		or screen == Screen.CHARACTER_SELECT
 		or screen == Screen.LEVEL_TREE
 		or screen == Screen.LEVEL_DESCRIPTION

@@ -468,6 +468,29 @@ trigger.
 This settles an old disagreement between the docs: screen 2 is not an intro. The game has no
 intro, video or splash screen. `boot_loading` is the right name for the port's scene.
 
+**The arithmetic, verified on 2026-09-25.** The tick stores the progress as a float:
+`fild counter; fmul 0.01f; fstp` (`0x403e71`–`0x403e7c`, the constant at `0x465308`). That
+float falls just short of the hundredth on 82 of the 100 steps. The draw clamps it to
+0–1 (`0x42276e`–`0x4227aa`), clips `_ftol(h − h × progress)` rows off the pot
+(`0x4227b0`–`0x4227c0`), and picks the stream frame as
+`_ftol(progress × 100.0f) % frame count` (`0x422858`–`0x42287a`). So the stream usually
+shows the frame before `step % 5`: step 1 shows frame 0, step 7 frame 2, step 99 frame 3.
+The switch reads the counter before it adds one (`0x403e26`), so the screen draws steps 1 to
+100 and moves on during the 101st tick.
+
+### In the port
+
+`scenes/screens/boot_loading.tscn` is the game's first scene. It runs the hundred steps, one
+per 1/60 s, the nominal rate the port gives every per-frame rule of the original. It reads no
+input, so nothing skips it, and it takes 1.7 s with nothing to load. The pot is a region of
+the full `loading_item1.png`, and the progress goes through a float32 array so the stream
+lands on the original's frames. When it is the tree's current scene, as it is at launch, it
+counts the launch in `SettingsStore` (`[launch] count`) and asks `ScreenManager` to start
+`Menu1`. A check that only mounts the screen does neither, so a check run never moves the
+player's count. `tests/check_boot_loading.gd` pins the frames and clips at chosen steps
+against values computed from the executable's constants, the clock, the missing input
+handlers, the counter and `LOADING_EVIL` on launch 666.
+
 ## Screen 4 is the caught pause, not a loading screen
 
 Case 4 of `sub_407370` only sets `game+19044` and returns. Nothing is built, because nothing

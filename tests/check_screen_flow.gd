@@ -128,6 +128,7 @@ func _check_each_screen_asks_for_its_own_music() -> void:
 	var menu1 := load("res://audio/music/menu1.ogg")
 	var menu2 := load("res://audio/music/menu2.ogg")
 	for screen: int in [
+		ScreenManagerScript.Screen.BOOT_LOADING,
 		ScreenManagerScript.Screen.MAIN_MENU,
 		ScreenManagerScript.Screen.CHARACTER_SELECT,
 		ScreenManagerScript.Screen.LEVEL_TREE,

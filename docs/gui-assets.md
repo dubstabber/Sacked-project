@@ -100,4 +100,7 @@ revealed from the bottom up by clipping its top `h − h × progress` rows away.
 frame is `progress% mod 5`, drawn at (400, 300) less its sprite-header pivot `(3, −43)`.
 Every stream frame's header carries that pivot at `+0x204`/`+0x206`. `LOADING_ITEM1`'s
 header gives `(27, 25)`, but it is placed as a GUI image at its top left, (375, 487), so
-its pivot is not used. The port still draws the whole pot at once.
+its pivot is not used. `tools/export_gui_assets.py` owns the still, the pot and
+`LOADING_EVIL` in `images/gui/screens/`, and the five stream frames in
+`images/gui/screens/stream/`. The frames are 187 to 189 pixels long. The boot screen draws
+all of them the way the original does; see [shell-reference.md](shell-reference.md).

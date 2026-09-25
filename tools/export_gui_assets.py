@@ -54,6 +54,11 @@ SCREENS = [
     # Re-exported to repair it: the hand-copied file took the pad byte for alpha, so every
     # one of its 640000 pixels was transparent and the main menu drew no background at all.
     ("CO_GUI_SCREENS_MENU_BACKGROUND", "images/gui/screens/menu_background.png"),
+    # The boot screen, 2: its still, the full pot sub_422750 reveals from the bottom up, and
+    # the still sub_422630 swaps in on the 666th launch. See docs/shell-reference.md.
+    ("CO_GUI_SCREENS_LOADING", "images/gui/screens/loading.png"),
+    ("CO_GUI_SCREENS_LOADING_ITEM1", "images/gui/screens/loading_item1.png"),
+    ("CO_GUI_SCREENS_LOADING_EVIL", "images/gui/screens/loading_evil.png"),
 ]
 
 # The shell between levels. The tree's backdrop has its lattice of linking bars painted in,
@@ -116,6 +121,8 @@ COLOUR_KEYS = {}
 ACTICON_PREFIX = "CO_GUI_ACTICON_"
 BUBBLE_PREFIX = "CO_EFFECT_Bubbles_"
 MINIGAME_PREFIX = "CO_GUI_MINIGAME_"
+# The five frames of the stream the boot screen draws into the pot.
+STREAM_PREFIX = "CO_GUI_SCREENS_PINKELSTRAHL_"
 
 # Sprites with words painted into them, which therefore differ per release. The port ships
 # both builds' copies and picks by language; English falls back to a drawn label over the
@@ -183,6 +190,9 @@ def specs(root: Path) -> list:
 
     for sprite in SpriteSource(root, GUI).names(MINIGAME_PREFIX):
         result.append((GUI, sprite, f"images/gui/minigame/{slug(sprite[len(MINIGAME_PREFIX):])}.png", None))
+
+    for sprite in SpriteSource(root, GUI).names(STREAM_PREFIX):
+        result.append((GUI, sprite, f"images/gui/screens/stream/{slug(sprite[len(STREAM_PREFIX):])}.png", None))
 
     for sprite, destination in GERMAN_SPRITES:
         result.append((GUI, sprite, destination, GERMAN_TEXTURE_ROOT))

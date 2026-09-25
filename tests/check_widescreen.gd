@@ -138,10 +138,9 @@ func _check_the_prompt_panels(size: Vector2i) -> void:
 func _check_a_safe_frame(path: String, size: Vector2i) -> void:
 	var scene := load(path) as PackedScene
 	var screen := scene.instantiate()
-	# Boot's timer would otherwise advance the screen out from under the check.
-	var timer := screen.get_node_or_null("AdvanceTimer") as Timer
-	if timer != null:
-		timer.autostart = false
+	# Boot would otherwise move on to the main menu under the check.
+	if "advances" in screen:
+		screen.set("advances", false)
 	var viewport := await _mount(screen, size)
 	var view := Vector2(size)
 
