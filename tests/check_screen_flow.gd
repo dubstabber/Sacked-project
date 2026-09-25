@@ -3,11 +3,13 @@ extends SceneTree
 
 const ScreenManagerScript := preload("res://autoloads/screen_manager.gd")
 const TEST_PATH := "user://check_screen_flow_progress.cfg"
+const SETTINGS_PATH := "user://check_screen_flow_settings.cfg"
 const WIN_CUE := "res://audio/sfx/s1100.wav"
 
 var _failures := 0
 var _manager: Node
 var _restore_path := ""
+var _restore_settings_path := ""
 
 
 func _init() -> void:
@@ -30,6 +32,12 @@ func _run() -> void:
 	store.path = TEST_PATH
 	DirAccess.remove_absolute(TEST_PATH)
 	store.reload()
+	# The profile checks save a player, so the settings go to a file of the check's own too.
+	var settings := root.get_node("SettingsStore")
+	_restore_settings_path = settings.path
+	settings.path = SETTINGS_PATH
+	DirAccess.remove_absolute(SETTINGS_PATH)
+	settings.reload()
 
 	_check_screens_resolve()
 	_check_level_selection()
@@ -42,6 +50,8 @@ func _run() -> void:
 	await _check_result_screen_shows_the_outcome()
 	await _check_lost_level_returns_to_a_fresh_run()
 	await _check_the_name_box_carries_the_original_caption()
+	_check_the_profile_survives_a_restart()
+	await _check_character_select_follows_its_five_buttons()
 	await _check_each_attempt_starts_the_duel_over()
 	await _check_only_a_win_plays_the_win_cue()
 
@@ -51,8 +61,11 @@ func _run() -> void:
 	store.path = _restore_path
 	store.reload()
 	DirAccess.remove_absolute(TEST_PATH)
+	settings.path = _restore_settings_path
+	settings.reload()
+	DirAccess.remove_absolute(SETTINGS_PATH)
 	if _failures == 0:
-		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count and the win cue passed")
+		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count, the win cue, the stored profile and character select's five buttons passed")
 	quit(1 if _failures else 0)
 
 
@@ -375,3 +388,59 @@ func _check_only_a_win_plays_the_win_cue() -> void:
 		cue.free()
 	_manager.last_level_won = false
 	_manager.selected_level = restore_level
+
+
+# sub_405430 reads GENDER and NAME back at start-up; the port does it as the boot screen comes
+# up. A character the port has no profile for falls back as a fresh profile does.
+func _check_the_profile_survives_a_restart() -> void:
+	var settings := root.get_node("SettingsStore")
+	_manager.select_character(&"anne")
+	_manager.set_player_name("Zed")
+	_manager.save_player_setup()
+	_manager.reset_player_setup()
+	_expect(_manager.selected_character == ScreenManagerScript.DEFAULT_CHARACTER, "a new session starts from the defaults")
+	_manager._restore_player_setup()
+	_expect(_manager.selected_character == &"anne", "the stored character comes back")
+	_expect(_manager.player_name == "Zed", "the stored name comes back")
+	settings.set_player_profile(&"nobody", "")
+	_manager._restore_player_setup()
+	_expect(_manager.selected_character == &"anne", "an unknown stored character is ignored")
+	_expect(_manager.player_name == _manager.get_default_player_name(), "an empty stored name falls back to the default")
+	_manager.reset_player_setup()
+
+
+# sub_403F20 case 12: the two portraits set the character and save the profile, Główne menu
+# leaves without copying the box, Domyślne only empties the box, and Kontynuuj copies it,
+# saves and opens the tree. The screen opens with the stored name in the box (sub_407D60).
+func _check_character_select_follows_its_five_buttons() -> void:
+	var settings := root.get_node("SettingsStore")
+	_manager.select_character(&"anne")
+	_manager.set_player_name("Zed")
+	var screen := (load("res://scenes/screens/character_select.tscn") as PackedScene).instantiate()
+	root.add_child(screen)
+	await process_frame
+	var box := screen.get_node("SafeFrame/NameEdit") as LineEdit
+	_expect(box.text == "Zed", "the box opens on the stored name, got %s" % box.text)
+
+	box.text = "Typed"
+	(screen.get_node("SafeFrame/DefaultsButton") as TextureButton).pressed.emit()
+	_expect(box.text == "", "Domyślne empties the box")
+	_expect(_manager.selected_character == &"anne", "and leaves the character alone")
+
+	(screen.get_node("SafeFrame/JoblessButton") as TextureButton).pressed.emit()
+	_expect(_manager.selected_character == &"jobless", "a portrait picks its character")
+	_expect(settings.player_character() == &"jobless" and settings.player_name() == "Zed", "and saves it with the stored name, not the box")
+
+	box.text = "Dropped"
+	(screen.get_node("SafeFrame/MainMenuButton") as TextureButton).pressed.emit()
+	_expect(_manager.player_name == "Zed", "Główne menu leaves without taking what was typed")
+
+	box.text = "Neo"
+	(screen.get_node("SafeFrame/ContinueButton") as TextureButton).pressed.emit()
+	_expect(_manager.player_name == "Neo", "Kontynuuj takes the typed name")
+	_expect(settings.player_name() == "Neo", "and saves it")
+	_expect(_manager.current == ScreenManagerScript.Screen.LEVEL_TREE, "and opens the tree")
+	root.remove_child(screen)
+	screen.free()
+	_manager.reset_player_setup()
+

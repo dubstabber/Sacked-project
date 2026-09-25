@@ -35,6 +35,25 @@ The masks are written on **every win**, and also whenever the character-select s
 commits a name or a character — `sub_403F20`'s case 12 re-saves the whole profile on
 buttons 1, 2 and 5. So the profile is flushed eagerly, never at exit.
 
+Screen 12's five buttons, verified on 2026-09-25. Its builder `sub_407D60` opens on the
+stored character (`0x407dd6`) with the stored name already in the box (`0x407dc3`).
+
+| id | button | effect |
+|---:|---|---|
+| 1 | Jo Bless | `GENDER = 0`, and the profile is saved with the **stored** name, not the box |
+| 2 | Anne Employed | `GENDER = 1`, saved the same way |
+| 3 | `Główne menu` | screen 3; the box is not copied, so typing is dropped |
+| 4 | `Domyślne` | the box is emptied (`sub_424EA0` with the empty string at `0x473CF4`); nothing else changes and nothing is saved |
+| 5 | `Kontynuuj` | the box is copied into `NAME` (16 characters), the profile is saved, screen 15 |
+
+**In the port** `SettingsStore` keeps `[player] character` and `name` in
+`user://settings.cfg`, not in `progress.cfg`, whose `clear()` must not rename the player.
+`ScreenManager` reads them back as the boot screen comes up, so a check that never boots keeps
+the default player. The character-select screen follows the table. One port choice stays: a
+blank name falls back to the character's default, which the box shows as a placeholder, and
+switching character carries that default across. The port used to copy the box on
+`Główne menu` and to reset the character on `Domyślne`, which the original does neither of.
+
 **`HIGHSCORE.DAT`** holds the per-level records, and only those. `sub_408A20` reads it and
 `sub_408AC0` writes it, both moving **1092 bytes** into `game+19196`.
 

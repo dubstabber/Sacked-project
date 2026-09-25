@@ -146,9 +146,11 @@ func start_level(level: int) -> void:
 	change_to(Screen.LEVEL)
 
 
-# sub_407370's case 2 starts Menu1 as the boot screen comes up. The screen calls this itself,
-# so a check that runs with the autoloads but never boots the game stays silent.
+# sub_405430 reads the stored profile just before it opens screen 2, and case 2 starts Menu1
+# as the boot screen comes up. The screen calls this itself, so a check that runs with the
+# autoloads but never boots the game stays silent and keeps the default player.
 func enter_boot_screen() -> void:
+	_restore_player_setup()
 	current = Screen.BOOT_LOADING
 	_sync_menu_music()
 
@@ -242,6 +244,27 @@ func set_player_name(new_name: String) -> void:
 	player_name = new_name.strip_edges().substr(0, PLAYER_NAME_MAX_LENGTH)
 	if player_name == "":
 		player_name = get_default_player_name(selected_character)
+
+
+# sub_405430 reads GENDER and NAME from the registry at start-up (0x4056db). A stored name that
+# is empty, or a character this port has no profile for, falls back as a fresh profile does.
+func _restore_player_setup() -> void:
+	var store := get_node_or_null("/root/SettingsStore")
+	if store == null:
+		return
+	var character := StringName(store.player_character())
+	if _PROFILES.has(character):
+		selected_character = character
+	var stored_name := String(store.player_name())
+	player_name = stored_name if stored_name != "" else get_default_player_name(selected_character)
+
+
+# sub_403F20 case 12 writes the whole profile (sub_426260) on the two character buttons and
+# on Continue, and nowhere else.
+func save_player_setup() -> void:
+	var store := get_node_or_null("/root/SettingsStore")
+	if store != null:
+		store.set_player_profile(selected_character, player_name)
 
 
 func reset_player_setup() -> void:

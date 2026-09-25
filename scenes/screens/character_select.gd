@@ -31,14 +31,23 @@ func _ready() -> void:
 	_continue_button.pressed.connect(_on_continue_pressed)
 	_name_edit.text_submitted.connect(_on_name_submitted)
 	_name_edit.max_length = _PLAYER_NAME_MAX_LENGTH
-	_name_edit.text = ""
-	_select_character(StringName(_screen_manager().get("selected_character")))
+	# sub_407D60 opens on the stored character with the stored name in the box (0x407dc3,
+	# 0x407dd6). The port's fallback name stays a placeholder rather than typed text.
+	var stored_name := String(_screen_manager().get("player_name"))
+	_name_edit.text = "" if stored_name == String(_screen_manager().call("get_default_player_name")) else stored_name
+	_update_character_buttons()
+	_update_name_placeholder()
 
 
+# Buttons 1 and 2 set the character and save the profile with the name already stored, not
+# the box. An empty stored name follows the character's own default, which is the port's.
 func _select_character(character_id: StringName) -> void:
-	_screen_manager().call("select_character", character_id)
-	if _name_edit.text.strip_edges() == "":
-		_screen_manager().call("set_player_name", "")
+	var manager := _screen_manager()
+	var had_default: bool = String(manager.get("player_name")) == String(manager.call("get_default_player_name"))
+	manager.call("select_character", character_id)
+	if had_default:
+		manager.call("set_player_name", "")
+	manager.call("save_player_setup")
 	_update_character_buttons()
 	_update_name_placeholder()
 
@@ -59,20 +68,22 @@ func _apply_character_textures(button: TextureButton, character_id: StringName) 
 	button.texture_pressed = load(texture_set[&"active"]) as Texture2D
 
 
+# Button 4 only empties the box (sub_424EA0 with the empty string at 0x473CF4). It keeps the
+# character and saves nothing.
 func _on_defaults_pressed() -> void:
-	_screen_manager().call("reset_player_setup")
 	_name_edit.text = ""
-	_update_character_buttons()
 	_update_name_placeholder()
 
 
+# Button 3 leaves without copying the box, so anything typed is dropped.
 func _on_main_menu_pressed() -> void:
-	_screen_manager().call("set_player_name", _name_edit.text)
 	_screen_manager().call("change_to_main_menu")
 
 
+# Button 5 copies the box into the profile, saves it and opens the tree.
 func _on_continue_pressed() -> void:
 	_screen_manager().call("set_player_name", _name_edit.text)
+	_screen_manager().call("save_player_setup")
 	_screen_manager().call("change_to_level_tree")
 
 

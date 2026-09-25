@@ -2,7 +2,7 @@ class_name GameSettings
 extends Node
 
 # Everything the player sets outside a level: the two volumes, the language, whether the
-# window is full screen, and the coworkers' names.
+# window is full screen, the coworkers' names, and who the player is.
 #
 # The original keeps the volumes in the registry beside the rest of the profile --
 # sub_4261A0 restores game+20690, the effects volume (SOUNDVOLUME, default 75), and
@@ -30,6 +30,10 @@ const FULLSCREEN_KEY := "fullscreen"
 const NAMES_SECTION := "names"
 const LAUNCH_SECTION := "launch"
 const LAUNCH_COUNT_KEY := "count"
+# The registry's GENDER and NAME, kept as the profile id and the typed name.
+const PLAYER_SECTION := "player"
+const CHARACTER_KEY := "character"
+const PLAYER_NAME_KEY := "name"
 
 # game+20692 and game+20690, and the step the arrows on screen 11 move them by.
 const DEFAULT_MUSIC := 65
@@ -254,3 +258,26 @@ func count_launch() -> int:
 	_config.set_value(LAUNCH_SECTION, LAUNCH_COUNT_KEY, count)
 	save()
 	return count
+
+
+# --- the player ------------------------------------------------------------------------
+
+# GENDER (game+20686) and NAME (game+20668, 16 bytes), which sub_426260 writes beside the
+# unlock masks whenever the character-select screen commits. The port keeps them here rather
+# than in progress.cfg, whose clear() must not rename the player. See docs/shell-reference.md.
+func player_character() -> StringName:
+	return StringName(_config.get_value(PLAYER_SECTION, CHARACTER_KEY, ""))
+
+
+func player_name() -> String:
+	return String(_config.get_value(PLAYER_SECTION, PLAYER_NAME_KEY, ""))
+
+
+func set_player_profile(character: StringName, typed_name: String) -> void:
+	var cut := typed_name.substr(0, 16)
+	if player_character() == character and player_name() == cut and _config.has_section_key(PLAYER_SECTION, CHARACTER_KEY):
+		return
+	_config.set_value(PLAYER_SECTION, CHARACTER_KEY, String(character))
+	_config.set_value(PLAYER_SECTION, PLAYER_NAME_KEY, cut)
+	save()
+	settings_changed.emit()

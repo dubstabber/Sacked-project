@@ -29,6 +29,7 @@ func _run() -> void:
 	_check_a_language_is_written_and_applied(i18n)
 	_check_an_unknown_language_is_refused(i18n)
 	_check_full_screen_is_remembered()
+	_check_the_player_is_remembered()
 
 	if i18n != null:
 		i18n.set_language(restore_language)
@@ -37,7 +38,7 @@ func _run() -> void:
 		live.apply_audio()
 	DirAccess.remove_absolute(TEST_PATH)
 	if _failures == 0:
-		print("Settings: the recovered 5-step 0..100 volumes, their buses, and the port's language and display rows passed")
+		print("Settings: the recovered 5-step 0..100 volumes, their buses, the port's language and display rows, and the stored player passed")
 	quit(1 if _failures else 0)
 
 
@@ -179,3 +180,20 @@ func _check_full_screen_is_remembered() -> void:
 	store.toggle_fullscreen()
 	_expect(not store.is_fullscreen(), "the display row toggles back")
 	store.free()
+
+
+# GENDER and NAME, which sub_426260 writes beside the unlock masks.
+func _check_the_player_is_remembered() -> void:
+	var store := _fresh_store()
+	_expect(store.player_character() == &"" and store.player_name() == "", "a fresh profile has no player yet")
+	store.set_player_profile(&"anne", "Zed")
+	store.free()
+	var reopened: Node = STORE_SCRIPT.new()
+	reopened.path = TEST_PATH
+	reopened.reload()
+	_expect(reopened.player_character() == &"anne", "the character survives a restart")
+	_expect(reopened.player_name() == "Zed", "and so does the name")
+	reopened.set_player_profile(&"jobless", "A name far longer than sixteen")
+	_expect(reopened.player_name() == "A name far longe", "the name keeps the original's 16 characters")
+	reopened.free()
+
