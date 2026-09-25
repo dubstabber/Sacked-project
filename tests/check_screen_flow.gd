@@ -135,10 +135,11 @@ func _check_each_screen_asks_for_its_own_music() -> void:
 		ScreenManagerScript.Screen.SOUND_SETUP,
 	]:
 		_expect(_manager._menu_music_for(screen) == menu1, "screen %d keeps Menu1 playing" % screen)
-	_expect(
-		_manager._menu_music_for(ScreenManagerScript.Screen.HIGHSCORES) == menu2,
-		"the highscore board is the one shell screen that changes the track"
-	)
+	for screen: int in [ScreenManagerScript.Screen.HIGHSCORES, ScreenManagerScript.Screen.COWORKER_NAMES]:
+		_expect(
+			_manager._menu_music_for(screen) == menu2,
+			"screen %d is one of the two shell screens that change the track to Menu2" % screen
+		)
 	for screen: int in [ScreenManagerScript.Screen.LEVEL, ScreenManagerScript.Screen.LEVEL_RESULT]:
 		_expect(_manager._menu_music_for(screen) == null, "screen %d plays no menu music" % screen)
 

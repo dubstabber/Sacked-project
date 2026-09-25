@@ -87,6 +87,19 @@ MENU = [
     ("CO_GUI_MENU_BASE_LARROW_PASSIVE", "images/gui/menu/arrow-left-passive.png"),
     ("CO_GUI_MENU_BASE_RARROW_ACTIVE", "images/gui/menu/arrow-right-active.png"),
     ("CO_GUI_MENU_BASE_RARROW_PASSIVE", "images/gui/menu/arrow-right-passive.png"),
+    # The coworker-names screen, 13: its backdrop and one portrait per name pool, named by
+    # the profile tools/export_names.py pairs with each type. Its name box is the one the
+    # character-select screen was already showing as a hand copy, which this row now owns.
+    # See docs/names-reference.md.
+    ("CO_GUI_MENU_BASE_BG_03", "images/gui/screens/coworker-names.png"),
+    ("CO_GUI_MENU_BASE_TEXTINPUT_NAME", "images/gui/screens/character_select_name_input.png"),
+    ("CO_GUI_MENU_COWORKER_PORTAIT_CHEF", "images/gui/menu/portrait-boss.png"),
+    ("CO_GUI_MENU_COWORKER_PORTAIT_CS", "images/gui/menu/portrait-secretary.png"),
+    ("CO_GUI_MENU_COWORKER_PORTAIT_HM", "images/gui/menu/portrait-janitor.png"),
+    ("CO_GUI_MENU_COWORKER_PORTAIT_KM1", "images/gui/menu/portrait-male-employee-1.png"),
+    ("CO_GUI_MENU_COWORKER_PORTAIT_KM2", "images/gui/menu/portrait-male-employee-2.png"),
+    ("CO_GUI_MENU_COWORKER_PORTAIT_KW1", "images/gui/menu/portrait-female-employee-1.png"),
+    ("CO_GUI_MENU_COWORKER_PORTAIT_KW2", "images/gui/menu/portrait-female-employee-2.png"),
 ]
 
 FONTS = [

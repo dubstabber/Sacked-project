@@ -26,6 +26,7 @@ const SCREENS := [
 	"res://scenes/screens/level_result.tscn",
 	"res://scenes/screens/highscores.tscn",
 	"res://scenes/screens/sound_setup.tscn",
+	"res://scenes/screens/coworker_names.tscn",
 ]
 
 var _failures := 0

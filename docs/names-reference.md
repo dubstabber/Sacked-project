@@ -213,17 +213,36 @@ rasterise a 113 × 113 field-of-view mask octant by octant around that heading. 
 is the selected coworker's line-of-sight overlay. It belongs with the camera and effects work,
 not with names.
 
-## Sizing the port's T7
+## In the port
 
-- **Exporter**: `NAMES.DAT` plus both embedded tables, all three pinned by size and hash,
-  asserted equal, and parsed with the count header. The 15-row pool table is small, and the
-  fixed-position rule means the exporter can assert that each record's type matches its
-  position instead of trusting the column.
-- **Screen**: nine elements at the coordinates above, three `LineEdit`s capped at 16, the
-  portrait swap and box visibility per type, and a save on every button. That is the same
-  size as the sound screen.
-- **Runtime**: naming happens at agent creation in creation order, and it resets on every
-  load, so a per-level namer that walks agents in the level's creation order reproduces it.
-  The label is one centred Arial 24 text with a shadow, drawn above the world. The selection
-  is a click on a hovered agent that replaces the previous selection.
-- **Deferred**: the field-of-view overlay `sub_402260` drives.
+`tools/export_names.py --check` reads all three copies of the table, `NAMES.DAT` and the two
+builds' embedded defaults, each pinned by size and hash, and refuses to run unless they
+agree. It also checks each record's type against its fixed position. It writes
+`resources/original/names.json`: the fifteen names, the seven pools with the profile each
+belongs to and the portrait sprite from `0x470518`, the `DEFAULT NAME` placeholder read from
+both builds, and the 16-character cap. `scenes/shared/coworker_names.gd` (`CoworkerNames`)
+reads that file once for everything else.
+
+**Edited names live in `user://settings.cfg`, not in a `NAMES.DAT`.** `SettingsStore` keeps
+one `[names] type_N` key per pool, written only once screen 13 has saved that pool, so a pool
+never edited reads as the shipped defaults. Every name is cut to 16 characters and kept as
+typed otherwise, spaces included. An empty name is kept empty.
+
+`scenes/screens/coworker_names.tscn` is screen 13 at the rects above, reached from main-menu
+button 3 with `Menu2` playing. It follows the button table exactly. The arrows and
+`Główne menu` save the shown boxes first. `Domyślne` puts back the shown pool only and
+discards what was typed, and typing alone saves nothing. It opens on the boss with the first
+box focused, and a pool of one hides the other two boxes, frames included. The boxes refuse
+`ß` as `sub_45C880` does. Three things differ from the original:
+
+- **The box text is size 31, not Arial 32.** Godot's default font needs 45 pixels of line at
+  32, one more than the box's 44, so 31 is the largest that fits.
+- **The shadow is a second label.** A `LineEdit` draws no shadow, so a label behind each box
+  mirrors its text two pixels down and right, in `(32, 32, 32)`.
+- **Some keys behave as Godot's do.** Enter does nothing, as in the original. Tab moves the
+  focus, where the original ignores it, and there is no overwrite mode.
+
+`tests/check_coworker_names.gd` pins the table, the store's pools, the recovered rects, the
+arrows' wrap, saving on each button, `Domyślne`, the empty name, the refused `ß` and `Menu2`.
+
+**Deferred**: the field-of-view overlay that `sub_402260` drives.

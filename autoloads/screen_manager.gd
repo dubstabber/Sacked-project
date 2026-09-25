@@ -10,6 +10,7 @@ enum Screen {
 	LEVEL_RESULT,
 	HIGHSCORES,
 	SOUND_SETUP,
+	COWORKER_NAMES,
 }
 
 # Screen.LEVEL resolves through selected_level instead, so it has no entry here.
@@ -22,6 +23,7 @@ const _SCENE_PATHS := {
 	Screen.LEVEL_RESULT: "res://scenes/screens/level_result.tscn",
 	Screen.HIGHSCORES: "res://scenes/screens/highscores.tscn",
 	Screen.SOUND_SETUP: "res://scenes/screens/sound_setup.tscn",
+	Screen.COWORKER_NAMES: "res://scenes/screens/coworker_names.tscn",
 }
 
 # The original's level tree offers buttons 1 to 21; sub_408D00 turns button n into the
@@ -161,6 +163,10 @@ func change_to_sound_setup() -> void:
 	change_to(Screen.SOUND_SETUP)
 
 
+func change_to_coworker_names() -> void:
+	change_to(Screen.COWORKER_NAMES)
+
+
 # sub_407370's case 9: tear the level down and load the same .col again. It keeps nothing --
 # the sequence is the one case 1 runs on a fresh start -- and it lands on screen 1, not 9.
 func restart_level() -> void:
@@ -260,7 +266,7 @@ func _sync_menu_music() -> void:
 
 
 func _menu_music_for(screen: Screen) -> AudioStream:
-	if screen == Screen.HIGHSCORES:
+	if screen == Screen.HIGHSCORES or screen == Screen.COWORKER_NAMES:
 		return _MENU2
 	if _is_menu_screen(screen):
 		return _MENU1

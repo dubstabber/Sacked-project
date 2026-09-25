@@ -1,8 +1,8 @@
 class_name GameSettings
 extends Node
 
-# Everything the player sets outside a level: the two volumes, the language, and whether
-# the window is full screen.
+# Everything the player sets outside a level: the two volumes, the language, whether the
+# window is full screen, and the coworkers' names.
 #
 # The original keeps the volumes in the registry beside the rest of the profile --
 # sub_4261A0 restores game+20690, the effects volume (SOUNDVOLUME, default 75), and
@@ -26,6 +26,8 @@ const MUSIC_KEY := "music"
 const EFFECTS_KEY := "effects"
 const DISPLAY_SECTION := "display"
 const FULLSCREEN_KEY := "fullscreen"
+# One key per name pool, type_1 to type_7, written only once screen 13 has saved that type.
+const NAMES_SECTION := "names"
 
 # game+20692 and game+20690, and the step the arrows on screen 11 move them by.
 const DEFAULT_MUSIC := 65
@@ -179,3 +181,58 @@ func apply_display() -> void:
 	DisplayServer.window_set_mode(
 		DisplayServer.WINDOW_MODE_FULLSCREEN if is_fullscreen() else DisplayServer.WINDOW_MODE_WINDOWED
 	)
+
+
+# --- coworker names --------------------------------------------------------------------
+
+# Screen 13 edits the fifteen names NAMES.DAT holds; the port keeps an edited pool here
+# instead. A pool never saved from the screen reads as the original's defaults.
+# See docs/names-reference.md.
+func names_for_type(type: int) -> PackedStringArray:
+	var names := CoworkerNames.defaults_for(type)
+	var key := _names_key(type)
+	if not _config.has_section_key(NAMES_SECTION, key):
+		return names
+	# A hand-edited file may hold the wrong count, so the pool keeps its own size.
+	var stored = _config.get_value(NAMES_SECTION, key)
+	if stored is Array or stored is PackedStringArray:
+		for index in mini(names.size(), stored.size()):
+			names[index] = _clean_name(String(stored[index]))
+	return names
+
+
+# sub_4082E0 copies the shown boxes into the table and writes NAMES.DAT. An empty box is
+# saved as an empty name, which is never drawn over a coworker.
+func set_names_for_type(type: int, names: PackedStringArray) -> void:
+	var size := CoworkerNames.pool_size(type)
+	if size == 0:
+		push_warning("No coworker name pool %d" % type)
+		return
+	var cleaned := PackedStringArray()
+	for index in size:
+		cleaned.append(_clean_name(names[index]) if index < names.size() else "")
+	var key := _names_key(type)
+	if _config.has_section_key(NAMES_SECTION, key) and PackedStringArray(_config.get_value(NAMES_SECTION, key)) == cleaned:
+		return
+	_config.set_value(NAMES_SECTION, key, cleaned)
+	save()
+	settings_changed.emit()
+
+
+# Button 3, sub_415CA0: the embedded defaults go back for the shown type only.
+func reset_names_for_type(type: int) -> void:
+	var key := _names_key(type)
+	if not _config.has_section_key(NAMES_SECTION, key):
+		return
+	_config.erase_section_key(NAMES_SECTION, key)
+	save()
+	settings_changed.emit()
+
+
+func _names_key(type: int) -> String:
+	return "type_%d" % type
+
+
+# Every copy in or out of a record is strncpy(..., 16); the original keeps spaces as typed.
+func _clean_name(name: String) -> String:
+	return name.substr(0, CoworkerNames.max_length())

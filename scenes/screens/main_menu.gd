@@ -27,9 +27,9 @@ func _on_button_pressed(index: int) -> void:
 			get_node("/root/ScreenManager").call("start_game_setup", &"points")
 		2:
 			get_node("/root/ScreenManager").call("change_to_highscores")
+		3:
+			get_node("/root/ScreenManager").call("change_to_coworker_names")
 		4:
 			get_node("/root/ScreenManager").call("change_to_sound_setup")
 		5:
 			get_tree().quit()
-		_:
-			print("[main_menu] stub: %s" % tr(_BUTTON_KEYS[index]))
