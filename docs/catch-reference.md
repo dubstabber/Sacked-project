@@ -445,10 +445,22 @@ real time from `PROCESS_MODE_ALWAYS`. The clock, the aggression meter, every col
 every looping clip hold still under the banner. One-shots and the theme play on, since their
 players always process, and the theme is held only when the duel opens, as case 5 does. The
 duel then takes the banner down, which the console's own countdown, paused with everything
-else, would not. **One recorded loss**: the original's level tick still reads input at a zero
-step, so the ring can be opened under the banner there. A paused `PrankController` gets no
-input, so the port's cannot. `tests/check_catch_trigger.gd` proves the freeze, and fails three
-ways without it.
+else, would not. **Three recorded losses**, all because `CatchWatch` pauses the whole tree:
+
+- The original's level tick still reads input at a zero step, so the ring can be opened under
+  the banner there. A paused `PrankController` gets no input, so the port's cannot.
+- The original's screen 4 still takes a lamp press at a zero step, and the port's paused tree
+  does not. See [player-ability-reference.md](player-ability-reference.md).
+- The original's agent ticks still run under the banner, at a zero step. `sub_402860` routes
+  screen 4 to `sub_402590` (`0x40287B`), whose only gate is the pause bit (`0x4025B0`), and
+  the banner does not set it. A standing agent therefore still rolls the look-around
+  `sub_4187A0` (`0x419EBF` for the coworkers, and in the other three ticks), which turns it
+  one view on 95 calls in 4096, and its notice heading follows. The coworkers' and the
+  secretary's `IDLE#2` roll also still fires, and with the clock frozen that clip holds on
+  its frame 0. In the port every colleague keeps its view under the banner. See
+  [field-of-view-reference.md](field-of-view-reference.md).
+
+`tests/check_catch_trigger.gd` proves the freeze, and fails three ways without it.
 
 **The hand-off is wired.** `hands_off_to_minigame` defaults on, and survives only so a check
 can drive the trigger without the duel opening over it. A win unpauses the level that is

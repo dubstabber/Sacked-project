@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scenes/level/catch_watch.gd" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/level/catch_minigame.tscn" id="9"]
 [ext_resource type="Script" path="res://scenes/level/coworker_namer.gd" id="10"]
+[ext_resource type="Script" path="res://scenes/level/field_of_view.gd" id="11_fov"]
 
 [node name="LevelRuntime" type="Node"]
 script = ExtResource("1")
@@ -36,3 +37,6 @@ script = ExtResource("8")
 
 [node name="CoworkerNamer" type="Node" parent="."]
 script = ExtResource("10")
+
+[node name="FieldOfView" type="Node2D" parent="."]
+script = ExtResource("11_fov")

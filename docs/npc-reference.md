@@ -309,7 +309,7 @@ Not reproduced: `sub_4187A0` re-resolves slot 1 in the new view on the frame the
 
 ### The notice heading
 
-`sub_418310` does not test the player against the view `+124` but against `agent+1848`, a float in the original's degrees (`180 - atan2(dx, dz)`, so 0 is view `_000` and 45 is `_045`). `sub_402260` runs from `Main_RenderUpdate` (`0x402993`) and calls `sub_4179B0` for every agent (`+112 == 2`) on every frame. It passes 1 only for the selected agent near the player, which also draws the field of view (see [names-reference.md](names-reference.md)), and 0 for everyone else. `sub_4179B0` then does this (`0x4179D7`–`0x417AB4`):
+`sub_418310` does not test the player against the view `+124` but against `agent+1848`, a float in the original's degrees (`180 - atan2(dx, dz)`, so 0 is view `_000` and 45 is `_045`). `sub_402260` runs from `Main_RenderUpdate` (`0x402993`) and calls `sub_4179B0` for every agent (`+112 == 2`) on every frame. It passes 1 only for the selected agent near the player, which also draws the field of view (see [field-of-view-reference.md](field-of-view-reference.md)), and 0 for everyone else. `sub_4179B0` then does this (`0x4179D7`–`0x417AB4`):
 
 ```c
 target = 45.0 * agent+124 + 10.0 * sin(agent+1844 + agent+72);   // wrapped to [0, 360)

@@ -527,8 +527,11 @@ catches the player (see [catch-reference.md](catch-reference.md)). While it is u
 
 - the level keeps drawing (`sub_403710` routes 1, 4 and 10 to `Main_RenderUpdate`) under the
   `AGGRO_UP` banner;
-- `WinMain` hands the level a **zero** time step (`game+60 = 0`), so agents, clock and
-  animations hold still, and accumulates real time in `game+72` instead;
+- `WinMain` hands the level a **zero** time step (`game+60 = 0`), so the clock and the
+  animations hold still and no agent moves, and accumulates real time in `game+72` instead.
+  The agent ticks still run at that zero step, because `sub_402590`'s only gate is the pause
+  bit (`0x4025B0`). So a standing agent can still turn to a new view through the look-around
+  roll `sub_4187A0`, which has no time test (see [catch-reference.md](catch-reference.md));
 - at `game+72 >= 2.0` the tick hides the banner and `Main_RenderUpdate` switches to
   screen 5, the minigame.
 

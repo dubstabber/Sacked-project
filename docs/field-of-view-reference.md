@@ -579,3 +579,252 @@ loop, so it also tints this.
 The port's `default_clear_color`, (16, 16, 74), is the backdrop's 79 after a trip through 5
 bits (`79 >> 3 = 9`, `9 * 255 / 31 = 74`). The screenshot it was sampled from was probably
 taken in an RGB565 mode; that is inferred.
+
+## Not recovered
+
+- **An exact raster.** A pixel-exact copy of `sub_4298E0` needs a CPU rasteriser. The affine
+  UV mapping above matches 68–70 % of pixels at the two placements emulated here, and about
+  61 % to 80 % over sub-pixel placements (see "The raster" under "In the port").
+- **Sine and cosine precision.** Real x87 `fsin`/`fcos` can differ from the emulator's host
+  `sin`/`cos` by one float32 ulp in rare cases. That could move a clip-triangle vertex by one
+  texel, but only when `X` or `Y` sits exactly on an integer. It was not observed.
+- **The retail display depth.** The display bit depth the retail game ran at is not known. The
+  reference screenshots look like RGB565 captures.
+
+## In the port
+
+The `FieldOfView` node of `scenes/level/level_runtime.tscn` draws the tint, with the script
+`scenes/level/field_of_view.gd`. Every generated level instances that scene, so no level had
+to be regenerated.
+
+### The tables
+
+`tools/export_fov_tables.py` replays `sub_427DC0` as written above. It reads the builder's
+constants from the executable:
+
+- 0.125 at `0x465854`, 1.0 at `0x4652B8`, 0.0625 at `0x4667BC`, 7.0 at `0x4667B8` and 8.0 at
+  `0x465878`;
+- the immediates 10.0 at `0x427F79` (the `mov` at `0x427F75`) and −1000.0 at `0x427CEF` (the
+  `mov` at `0x427CED`).
+
+It writes `resources/original/fov_tables.json`: the 57 × 57 distances, the 114 row offsets,
+and one line per sample, `[r, j, start, [a, b, …]]`, whose spans cover rows k = r − 1 to 55
+in order.
+
+Beside the tables the file carries five of the float32 constants the rest of the field of view
+reads, each pinned at every instruction that reads it, opcode and operand:
+
+- `gate_tiles`, the gate's 12.0 at `flt_4652CC` (`0x4022CF`, `0x4022E0`);
+- `reach_tiles`, the 7.0 at `0x4667B8`: the builder's far edge (`0x427FF8`) and the diamond's
+  corners `x ∓ 7`, `z ∓ 7` in `sub_4298E0` (`0x42991F`, `0x429944`, `0x429962`, `0x42996D`);
+- `sector_scale`, the 0.022222 at `0x4667D4` (`0x4282BE`, `0x4282E1`). A negative `lo` is
+  multiplied by `0x4667D0` instead (`0x4282CD`), which the tool checks is its exact negation;
+- `texels_per_tile`, the 8.0 at `0x465878`: the builder's two `ceil(x * 8)` (`0x428024`,
+  `0x42803F`) and `sub_428BC0`'s radius in texels (`0x428C00`);
+- `sample_step`, the 0.125 at `0x465854`: the builder's four `fmul`s and its row step
+  (`0x427E56`, `0x427E64`, `0x427E7F`, `0x427EE3`, `0x4280BD`), and the sixteen `fadd`s of
+  `sub_428BC0`'s shadow walk, the minor and the major offset of each octant (`0x428D19`
+  to `0x429708`).
+
+The cone's degree constant, 0.017453 at `0x465540` (`0x428329`, `0x4285A1`), is the one the
+smoke and the puddle aim with, so it is exported once, by `tools/export_view_angles.py` into
+`resources/original/view_angles.json`, pinned at all of those readers.
+`scenes/shared/field_of_view_mask.gd`'s `load_tables()` reads all six into `INVERSE_45`,
+`DEGREES`, `GATE_TILES`, `REACH_TILES`, `TEXELS_PER_TILE` and `SAMPLE_STEP`, each rounded to
+its float32, and `scenes/level/field_of_view.gd` takes the gate and the reach from there, so
+none of them is typed into GDScript.
+
+The mask's other constants stay literals: the 0.5 of `flt_4652B4` (the half cone at
+`0x428277`, the near cell at `0x428BDE` and `0x428BF2`), the frame's 56.0, −56.0, 112.0 and
+113.0 (`0x4667C8`, `0x4667CC`, `0x4667C0` and `0x4667C4`, 28 reads in `sub_428270`), its 0.0
+(`0x4652E0`, 7 reads), and the −1000.0 `sub_427C80` answers for parallel lines (`0x427CED`,
+`0x427CF3`), which the exporter reads only to replay the builder. Each is exact in float32,
+and the goldens below pin the mask they build bit for bit.
+
+`--check`, which `tools/run_checks.py` runs, pins `sacked.exe` by size and SHA-256. It
+expects 1596 samples, 30856 entries and the SHA-1 `ce708fa9…` given above, taken over the four
+tables serialised as listed there. `tests/test_fov_tables.py` rebuilds that serialisation
+from the file alone, so the hash is checked even without the executable.
+
+### The goldens
+
+`tools/export_fov_goldens.py` runs the original's own build under unicorn. It calls
+`sub_427DC0` once, then for each case `sub_428270` for the octants and `sub_428BC0` for the
+mask and texels. It is run by hand, not by `run_checks.py`, and it skips when unicorn or the
+executable is missing.
+
+`tests/fixtures/fov_golden_masks.json` holds 76 cases:
+
+- every radius and cone the profiles reach across the aggression band (25);
+- headings around the circle at a cone of 60, with `lo` below 0 and `hi` past 360, plus
+  −10, −45, −200, 365 and 720.5, which the eased heading never holds but the build accepts
+  (19);
+- `lo` or `hi` on a sector boundary, since `sub_428270` sectors those and not the heading
+  (14). Six sit exactly on a multiple of 45 (`lo` 90, 0 and −45, `hi` 135, 360 and 45), which
+  lands one sector low (see "The cone"). Eight sit on the first float32 of a sector and on the
+  float32 just short of it: `lo` at 180.0018 and −45.00045, `hi` at 90.0009 and 360.0036. The
+  tool finds those from the constant at `0x4667D4` and solves each heading so that `lo` or
+  `hi` comes out exactly there;
+- a blocking own cell, sight-blocking cells at every map edge, and agents off the map,
+  including `x + 0.5` in (−1, 0), which truncates to cell 0;
+- level 1's real sight cells at five positions and level 13's at four.
+
+### The build
+
+`scenes/shared/field_of_view_mask.gd` builds the mask and the texels bit for bit.
+`tests/check_field_of_view.gd` compares it with every golden, forwards and then backwards
+through one build object, so every cache is crossed.
+
+Its inputs are rounded to the float32 the original keeps:
+
+- **x and z**: the agent's raw position, from `CollisionMapLayer.to_grid_position`, without
+  the +0.5;
+- **the radius and the cone**: `NPCBrain.notice_radius_tiles()` and `notice_cone_degrees()`,
+  widened by the band, the boss's unwidened;
+- **the heading**: `npc.gd`'s `notice_heading`, which already eases `agent+1848` once per
+  original frame (see [npc-reference.md](npc-reference.md));
+- **the sight cells**: `CollisionMapLayer.sight_grid()`, `sight_blocked_cells` laid out over
+  the map's own width and height (`room_grid_size`, the manifest's). That is INFODATA bit 1,
+  the same cells the port's sight ray reads. Every other cell, on or off the map, is clear.
+
+The port sums the band in doubles before rounding. In four of the 25 radius combinations that
+lands one float32 step away from a float32 sum. No distance in the table lies between the
+two, so the disc is the same.
+
+A direct port took about 10 ms per build, because GDScript is far too slow to walk the bytes
+the way the original does. So the port reaches the same bytes another way:
+
+- The clear, the fills of the absent octants and the radius disc only ever set texels, and
+  they depend only on the set of absent octants and on the radius. So they are one cached
+  image per set of absent octants, dropped when the radius changes.
+- Spans are written with `Image.fill_rect`. That includes a clip-triangle span that runs from
+  column 112 into the next row's column 0, as the original's does.
+- The walk looks each cell up once, not once per sample.
+- The samples of a blocked stretch of cells are stamped together, as one span per row k. That
+  is exact because no span is empty, a and b never shrink as j grows or grow as r grows, and
+  the spans of neighbouring samples overlap, along j and along r. `tests/test_fov_tables.py`
+  checks these properties on the tables, in both directions.
+- An octant's shadows do not depend on the heading, so they are kept while the agent's
+  position stays the same.
+- The texels are computed eight at a time, one per byte of a 64-bit integer.
+
+None of this changes a byte. The node builds only when an input has changed.
+
+Measured in the running game (levels 1 and 13, at 800 × 600 and 1067 × 600), by timing
+`mask.build` and the upload from a script outside the node; `tests/check_field_of_view.gd`
+prints the mean over its golden builds:
+
+- a build takes 0.56–0.76 ms on average, with a 95th percentile of 1.0–1.4 ms;
+- the first builds, which fill the caches, take up to 3.3 ms;
+- the texture upload takes about 9 µs.
+
+### The gate
+
+`FieldOfView.passes_gate` subtracts the player from the agent on each axis and compares with
+`GATE_TILES`, signed and strict. It is written so that a NaN passes, as the unordered `fcomp` does. There is no
+visibility test.
+
+Level 1 shows what the sign does. The boss spawns at (1, 12), and no walkable cell lies 12
+tiles toward −x or −z of him. So walking away from him never hides his tint.
+
+### The draw
+
+The tint is one polygon through the ground points `(x ∓ 7, z ∓ 7)` around the agent's raw
+position (`REACH_TILES`), placed through the map's own axes by
+`CollisionMapLayer.from_grid_position`.
+
+- The UVs are (0, 0), (112/113, 0), (112/113, 112/113) and (0, 112/113). Sampling is
+  nearest, with no repeat.
+- The texture is R8 and holds each texel's blue.
+- `scenes/shared/field_of_view.gdshader` discards a texel of 0 and adds (0, 0, blue) with
+  `blend_add`. `hdr_2d` is off, so the 8-bit canvas saturates as `paddusb` does.
+- Nothing tests or writes depth.
+
+**The layer.** The node draws at `z_index` −10, absolute. That is above the floor bake at −20
+(see [map-rendering.md](map-rendering.md)). It is below:
+
+- the walls (−5) and the glass (−4);
+- the objects and the world composite (0);
+- every character and its shadow, the thought bubbles, the names and the score pop-ups;
+- the HUD's canvas layers.
+
+That is the original's order: the floor, then the tint, then everything else.
+
+**Clipping.** The tint is not clipped, and this is a port choice. The original clips it to
+rows [1, h − 91) and columns 0 to 799, but the port clips none of its world to the
+original's `(1, 1, w − 1, h − 91)`: the floor, walls, items, characters and effects all run
+to the canvas edges (see "The world is not clipped" in [widescreen.md](widescreen.md)). The
+tint lies on that floor, so it stops wherever the floor stops.
+
+- **At 800 × 600** the console is opaque from y 510 down, so below row 508 the tint can show
+  only through the two pixels of row 509 the console does not fully cover (see "Clipping" in
+  "The draw"). There the port tints the floor, where the original shows it untinted: the
+  world's blits reach row 509 and the tint stops at 508. On row 0 the port draws the floor, and
+  so the tint, where the original shows the backdrop.
+- **On a wider canvas** the console covers only its centred 800-wide band. Beside it the floor
+  shows down to the bottom of the canvas, and so does the tint on it. A clip at h − 91 would
+  cut the tint there in a straight line across floor that is still drawn.
+
+**The raster.** The corners are not truncated to whole pixels relative to the camera, as
+`_ftol` does. Together with the affine UVs, this is the approximation described in "The draw"
+above. How many pixels pick the same texel as the original's CPU raster depends on where the
+agent and the camera fall within a pixel. It is between about 61 % and 80 %, usually two
+thirds to three quarters:
+
+- 65.8 % for level 1's boss and 67.8 % for its coworker, at their spawns at 800 × 600;
+- 79.8 % and 78.5 % for the same two at 1067 × 600, where the diamond's corners fall on half
+  pixels;
+- 61.4 % to 78.1 % over twelve random sub-pixel placements.
+
+Every other pixel is one texel off, never more. That is the original's per-row fixed-point
+jitter. These figures replay `sub_4298E0` over the port's own texels and camera.
+
+**Checked in the running game.** On a paused frame the tint was drawn, then hidden, and the
+two frames compared:
+
+- every pixel the tint changed, changed in blue only;
+- each equals its texel through the affine mapping, apart from two groups:
+  - pixels whose centre sits on a texel edge (24 at 800 × 600, 225 at 1067 × 600);
+  - about 2,300 pixels under a character's translucent shadow, which is drawn over the tint
+    and dims it.
+
+On level 13 at 1067 × 600, with the agent 11.6 tiles toward +x of the player, the tint runs on
+below row 509 in the strip right of the console band: about 3,500 pixels there, each its
+texel, apart from about 130 under a chair's faint shadow. It changes no pixel under the band.
+At 800 × 600 the same frame changes nothing below row 508.
+
+### Divergences
+
+- **The frozen office.** On the caught banner, behind the quit prompt and under the pause
+  panel, the original keeps easing the heading and drawing the tint. On the banner a standing
+  agent can even turn (see "The trigger"). The port pauses its tree on all three (see
+  [catch-reference.md](catch-reference.md)), so the node keeps the last mask it drew: the tint
+  stays on the floor, frozen, until the tree runs again. The duel hides the world behind an
+  opaque canvas layer, much as screen 5 draws no world.
+- **The raster**: the affine UV mapping above, which picks the original's texel for about
+  61–80 % of pixels, and is one texel off on the rest.
+- **The clip**: none, where the original clips to rows [1, h − 91) and columns 0 to 799 (see
+  "Clipping" above).
+
+### Tests
+
+`tests/check_field_of_view.gd` also covers:
+
+- the six constants the mask and the node load: the bit patterns of the sector constant and
+  the degree constant, the gate's 12.0, the diamond's 7.0, the 8.0 texels a tile and the
+  shadow walk's 0.125;
+- the gate at exactly 12.0 on each axis;
+- no tint without a selection or past the gate, and a tint 40 tiles off toward −x and −z;
+- the node's mask equal to a direct build from the boss's heading, radius and cone and level
+  1's sight cells;
+- the diamond's corners at (0, −336), (672, 0), (0, 336) and (−672, 0) from the anchor;
+- the shader, which takes no clip, the nearest sampling and `hdr_2d`;
+- the draw order against:
+  - the floor bake, the walls and the glass;
+  - the objects and the world composite;
+  - every child of every character;
+  - the score pop-ups and the console's layer;
+- no rebuild while nothing moves, and one rebuild per change of heading;
+- the last mask kept while the tree is paused;
+- no use of the player's data: neither script refers to it, and the check's own stores stay
+  unwritten.

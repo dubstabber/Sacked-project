@@ -242,8 +242,8 @@ but the selected agent. For that one, when `agent − player` is below 12.0 (`fl
 both logical axes, it passes 1 (`0x4022FA`), and `sub_4179B0` then also has `sub_428BC0`
 rasterise a 113 × 113 field-of-view mask octant by octant around that heading. After that comes
 `sub_417440` → `sub_4298E0`. The comparisons are signed, so there is no lower bound. This
-is the selected coworker's line-of-sight overlay. It belongs with the camera and effects work,
-not with names.
+is the selected coworker's line-of-sight overlay. The rest of it is in that document, not
+here, including how the port draws it.
 
 ## In the port
 
@@ -305,4 +305,7 @@ choice. `tests/check_coworker_select.gd` pins the label, the click, the player's
 the shared pick and the white pulse. `tests/check_coworker_names.gd` pins the names levels 1,
 2 and 7 deal, an edited pool, and the placeholder.
 
-**Deferred**: the field-of-view overlay that `sub_402260` drives.
+**The field of view** of the selected colleague, which `sub_402260` draws from this flag, is
+the `FieldOfView` node of `scenes/level/level_runtime.tscn`. It reads the same `selected`
+flag `select_agent` sets. See "In the port" in
+[field-of-view-reference.md](field-of-view-reference.md).

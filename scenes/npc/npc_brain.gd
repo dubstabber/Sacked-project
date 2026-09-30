@@ -909,6 +909,12 @@ func _facing_tiles(layer: Node) -> Vector2:
 	return layer.to_grid_position(_actor.global_position + screen * 32.0) - origin
 
 
+# The profile's configuration and the actor are only read in _initialize(), so the notice
+# values below are not meaningful before it has run.
+func is_initialized() -> bool:
+	return _initialized
+
+
 func notice_radius_tiles() -> float:
 	return _noticed_value("notice_radius_tiles", NOTICE_RADIUS_STEP)
 

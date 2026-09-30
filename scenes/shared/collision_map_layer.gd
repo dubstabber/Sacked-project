@@ -12,7 +12,7 @@ const GRID_COLLISION := preload("res://scenes/shared/grid_collision.gd")
 			visible = show_in_game
 
 # INFODATA bit 1, kept apart from the painted movement cells: a few cells block sight
-# without blocking movement. Only the interaction ray reads it.
+# without blocking movement. The interaction ray and the field-of-view mask read it.
 @export var sight_blocked_cells: PackedVector2Array = PackedVector2Array():
 	set(value):
 		sight_blocked_cells = value
@@ -60,6 +60,17 @@ func is_blocked(cell: Vector2i) -> bool:
 
 func is_sight_blocked(cell: Vector2i) -> bool:
 	return _sight_lookup.has(cell)
+
+
+# The same cells as a row-major byte grid over the map's width and height, nonzero where a cell
+# blocks sight, which is how the field-of-view walk (sub_428BC0) reads the map.
+func sight_grid() -> PackedByteArray:
+	var grid := PackedByteArray()
+	grid.resize(room_grid_size.x * room_grid_size.y)
+	for cell in sight_blocked_cells:
+		if cell.x >= 0.0 and cell.y >= 0.0 and cell.x < room_grid_size.x and cell.y < room_grid_size.y:
+			grid[int(cell.y) * room_grid_size.x + int(cell.x)] = 1
+	return grid
 
 
 func to_grid_position(global_point: Vector2) -> Vector2:

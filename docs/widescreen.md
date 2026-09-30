@@ -36,11 +36,42 @@ floor tiles, and `snap_2d_vertices_to_pixel` also breaks tile alignment; the flo
 into one image for that instead (see [map-rendering.md](map-rendering.md)).
 
 **Off-map colour.** A wider canvas shows more of the void past a map's edges, so
-`rendering/environment/defaults/default_clear_color` is set to `(16, 16, 74)`. That is not a
-guess: it is the uniform colour of the off-map area in a reference screenshot of the
-original at 1920 × 1080, sampled inside the pillarbox at (300, 20) and (250, 100), and it is
-the fourth most common colour in that image at 59 159 pixels. What DirectDraw call produces
-it is not recovered.
+`rendering/environment/defaults/default_clear_color` is set to `(16, 16, 74)`. The original
+paints that void itself: before the floor, `Main_RenderUpdate` fills 800 × 510 pixels with
+`0x4F1010` (`0x402911`–`0x402923`, the fill at `0x40291B`), which in the back buffer's
+R, G, B, X order is `(16, 16, 79)` (see "Where it sits in the frame" in
+[field-of-view-reference.md](field-of-view-reference.md)). Keeping `(16, 16, 74)` rather than
+the binary's 79 is a port choice. The 74 is the uniform colour of the off-map area in a
+reference screenshot of the original at 1920 × 1080, sampled inside the pillarbox at (300, 20)
+and (250, 100), and the fourth most common colour in that image at 59 159 pixels. That is 79
+after a trip through 5 bits (`79 >> 3 = 9`, `9 * 255 / 31 = 74`): the screenshot looks like a
+16-bit capture, and the display depth the retail game ran at is not recovered. The port shows
+what the original was seen to show.
+
+**The world is not clipped**, a port choice. After the backdrop fill, `Main_RenderUpdate` sets
+the renderer's clip to `(1, 1, w − 1, h − 91)` for the whole world pass (`+0x38`–`+0x44`,
+`0x402947`–`0x402989`; `ebp` = 1 on both branches, `0x4028DB` and `0x4028EB`). The world's
+blits read it as a left, a top, a width and a height, and make it inclusive,
+`(x, y, x + w − 1, y + h − 1)`: `sub_42D780` hands the renderer's clip to `sub_42CCF0`
+(`0x42D7B0`–`0x42D7CE`), which converts it at `0x42CDEB` and `0x42CE02` (and on its other path,
+in `sub_42D210`, at `0x42D2CA` and `0x42D314`), and the pill overlay's `sub_42CB60` does the
+same at `0x42CBA7` and `0x42CBAF`. So the floor, walls, items, characters and effects cover
+columns 1 to w − 1 and rows 1 to h − 91, 1 to 799 and 1 to 509 at 800 × 600, and leave the
+backdrop on row 0 and column 0 alone. A capture of the original agrees:
+`sacked-reference-images/debug1.png` shows the game at 1.8× in a 1440-wide pillarbox from
+x 240, and its top row and left column are the backdrop (16, 16, 74), while its right column
+is world pixels with no backdrop blended in. The field-of-view tint alone stops a row short:
+its raster reads the bottom as exclusive and tints rows 1 to 508, so on row 509 the original
+shows the floor untinted (see "Clipping" in
+[field-of-view-reference.md](field-of-view-reference.md)). The port clips none of its world. At
+800 × 600 that differs from the original only on row 0 and column 0, and for the tint on
+row 509; everything from y 510 down is under the console, which is opaque there (see
+[hud-reference.md](hud-reference.md)). On a wider canvas the console covers only its centred
+band, and beside it the world runs on to the bottom of the canvas, where a clip at h − 91 would
+cut it off in a straight line. The field of view's tint and the pill's overlay
+follow this floor rather than the original's clip
+([field-of-view-reference.md](field-of-view-reference.md), "Clipping";
+[player-ability-reference.md](player-ability-reference.md), "The overlay in the port").
 
 ## Two bands carry the HUD
 
@@ -168,7 +199,9 @@ this list; it is recovered above, and there is none.
 1. **Where the original places `CO_GUI_SCREENS_MENU_BACKGROUND`.** Its `+8`/`+12` and
    `+1140` in the screen-3 builder decide whether the 800 × 800 swirl is centre-cropped or
    top-aligned. The port centre-crops.
-2. **The DirectDraw clear colour** behind the sampled `(16, 16, 74)`.
+
+The DirectDraw clear colour behind the sampled `(16, 16, 74)` used to be the second question.
+It is answered under "Off-map colour" above.
 
 ## Verifying
 

@@ -174,6 +174,23 @@ Seams were measured with the regenerated scenes, counting a seam as a pixel insi
 
 The bake costs 12–37 ms per level load headless, or 16–41 ms with the texture upload, and 4–11 MB of texture. `tests/check_floor_bake.gd` pins the data: one internal sprite, every cell's rows equal to its atlas tile, and 2304 opaque pixels per cell. Seams themselves only show in a real render, so their measurement stays manual.
 
+### The field-of-view tint lies on the floor
+
+The original paints the selected colleague's field of view right after the floor
+(`sub_402260` at `0x402993`), and before the walls, the items and the characters. It uses no
+Z. So in the port the `FieldOfView` node of `scenes/level/level_runtime.tscn` draws at
+absolute `z_index` −10:
+
+- above the floor bake at −20;
+- below the walls at −5 and the glass at −4;
+- below the objects, the world composite and every character at 0 and up.
+
+Walls and items then cover the blue it adds wherever they are opaque, as they do in the
+original. Like the floor under it, the tint is not clipped to the original's world rectangle,
+so beside the console band on a wide canvas it runs to the bottom edge with the floor.
+`tests/check_field_of_view.gd` pins the order. See
+[field-of-view-reference.md](field-of-view-reference.md).
+
 ### The Matrix pill's overlay and green copies
 
 While the pill's slow-down runs, the original's player draw paints a four-corner gradient over
