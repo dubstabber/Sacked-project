@@ -15,6 +15,7 @@ const UNHURRIED_PROFILE := &"boss"
 const MAP_COLLISION := preload("res://scenes/shared/collision_map_layer.gd")
 const NAVIGATION := preload("res://scenes/shared/grid_navigation.gd")
 const NPC_BRAIN := preload("res://scenes/npc/npc_brain.gd")
+const Slowdown := preload("res://scenes/npc/slowdown.gd")
 # Slot 1 of the coworkers' and the secretary's tables, IDLE#2.
 const FIDGET_ACTION := &"idle-2"
 # sub_4179B0's sway and easing (0x4179D7, 0x417A4C).
@@ -49,6 +50,15 @@ var selected := false:
 		selected = value
 		_refresh_name_label()
 var last_direction: Vector2 = Vector2.RIGHT
+# agent+1792, which the Matrix pill's sub_41CD10 raises on every agent for its forty seconds.
+# Each agent tick then puts 0.2 instead of 1.0 into the walk multiplier +76 and the current
+# clip's speed +536 (0x419D08-0x419D2E and its three siblings), and sub_417460 draws three green
+# copies of the frame. Nothing else reads it. See docs/player-ability-reference.md, "What being
+# slowed changes".
+var slowed := false:
+	set(value):
+		slowed = value
+		_apply_slowed()
 # agent+1848, the heading sub_418310 tests the player against, in the original's degrees:
 # 180 - atan2(dx, dz), so 0 is view _000 and 45 is _045. It follows the view, never the other
 # way round. sub_402260 calls sub_4179B0 for every agent each frame, which aims at the view,
@@ -105,6 +115,7 @@ func _ready() -> void:
 	apply_profile(profile)
 	animation_controller.play_idle(last_direction)
 	animation_player.animation_finished.connect(_on_animation_finished)
+	_apply_slowed()
 	if not route_path.is_empty():
 		_route = get_node_or_null(route_path) as Node2D
 		if _route == null or not _route.has_method("get_waypoints") or is_ancestor_of(_route):
@@ -170,10 +181,26 @@ func _physics_process(delta: float) -> void:
 
 	var snapped_direction := IsoDirection.snap_to_8_directions(to_target.normalized())
 	last_direction = snapped_direction
-	velocity = IsoDirection.screen_velocity(to_target, get_move_speed_tiles())
+	velocity = IsoDirection.screen_velocity(to_target, get_move_speed_tiles() * walk_multiplier())
 	animation_controller.play_walk(snapped_direction)
 	velocity = MAP_COLLISION.constrain_body_motion(self, velocity * delta) / delta
 	move_and_slide()
+
+
+# +76, which sub_417730's step alone reads: speed * +76 * dt (0x417934-0x417949), where the
+# speed is the current one sub_42B3D0 returns, the band already in it.
+func walk_multiplier() -> float:
+	var params := Slowdown.params()
+	return float(params.get("slowed_factor", 1.0) if slowed else params.get("normal_factor", 1.0))
+
+
+func _apply_slowed() -> void:
+	if not is_node_ready():
+		return
+	animation_controller.set_speed_scale(walk_multiplier())
+	var copies := get_node_or_null("SlowedCopies") as CanvasItem
+	if copies != null:
+		copies.visible = slowed
 
 
 func get_move_speed_tiles() -> float:
@@ -374,7 +401,7 @@ func _follow_navigation(delta: float) -> void:
 		return
 	last_direction = IsoDirection.snap_to_8_directions(to_target.normalized())
 	animation_controller.play_walk(last_direction)
-	var motion := IsoDirection.screen_velocity(to_target, get_move_speed_tiles()) * delta
+	var motion := IsoDirection.screen_velocity(to_target, get_move_speed_tiles() * walk_multiplier()) * delta
 	if motion.length_squared() > to_target.length_squared():
 		motion = to_target
 	var start := global_position
@@ -475,12 +502,7 @@ static func _heading_screen(heading: float) -> Vector2:
 
 # agent+124: the eight-way view, numbered as the sprite suffixes are, _000 through _315.
 func view_index() -> int:
-	var directions := IsoDirection.get_screen_directions()
-	var best := 0
-	for index in range(1, directions.size()):
-		if last_direction.dot(directions[index]) > last_direction.dot(directions[best]):
-			best = index
-	return best
+	return IsoDirection.view_index(last_direction)
 
 
 func _action_clip(action: StringName) -> String:

@@ -100,7 +100,55 @@ Characters are tested against that buffer on the GPU. `CharacterDepthCompositor`
 
 Two characters whose opaque rectangles overlap cannot resolve each other this way — a 2D canvas has no shared depth buffer — so each connected overlap group still composites on the CPU, onto its own surface and bounded by that group alone. A character that overlaps nobody costs no CPU compositing at all. All rendering stays in Godot's 2D canvas.
 
+A group that holds a looping object composes onto two surfaces over the same window. The characters' pixels stay on the group's own surface, an internal child at the back of `World`. The objects' go on an item surface, an internal child at the back of the objects' parent, `World/Objects`, at the same z: it draws right after the objects and before the characters, where the original's item pass draws them. A pixel is on the surface of whichever actor wins it and is cleared from the other, so the two never share a pixel and together show what one surface did. The split matters only for something drawn between the items and the characters, which is the Matrix pill's overlay below. The static bake composes through the same code with no object flagged, so it is unchanged.
+
 To verify runtime masks against the extracted source planes, run `python3 tools/export_world_depth_maps.py --check`. Without `--check`, that tool exports the object masks and wall atlas mask the imported levels need. It only reads the reference extraction. The original glass sprites have no extracted Z plane; glass is not part of this depth-mask pipeline.
+
+### Effects drawn after the characters
+
+The original draws its effects list after the character loop, in `Main_RenderUpdate`'s pass at
+`0x402B38`. Each effect is tested against the Z buffer that walls, items and characters have
+filled, and writes nothing. The port has two such effects:
+
+- **The cigarette smoke** (`scenes/effects/smoke.gd`). Each particle carries one score,
+  `ceil(int(sy) / 2) − 48`, where `sy` is the particle's projected y with its height lifted
+  48 px a unit.
+- **The urination puddle** (`scenes/effects/puddle.gd`). Each pixel is scored like an
+  object's, `ceil(int(anchor_y) / 2) − pixel_depth`, from the puddle's own Z plane. The anchor
+  is lifted 2.4 px, 24 px a unit for its height of 0.1.
+
+Both shaders test their scores with one helper, `scenes/effects/effect_depth.gd` and
+`scenes/effects/effect_depth.gdshaderinc`, which a slowed agent's green copies share (see "The
+Matrix pill's overlay and green copies" below), in two places:
+
+- the static composite, which holds the walls and the items, through the same `world_depth`
+  uniforms `character_depth.gdshader` uses;
+- in place of the Z the characters write, the own depth plane of each depth-composited actor
+  whose frame overlaps the effect, scored `base_y − pixel_depth` as the compositor scores it.
+  That covers the characters and any object whose clip loops. The shader takes the six
+  nearest.
+
+A tie draws, as later pixels win ties here. So the puddle covers bare floor, blends over the
+player's shadow, and hides behind any wall, item or character in front of it.
+
+The thought bubbles are not in the test: the original's mode 20 writes each bubble's agent Z
+where it draws, so a bubble hides the effects behind its agent there, while the port draws the
+bubbles with no depth, under the effects. The effects are children of `World` at z 3, after
+every other child, in the order they were spawned, as the list draws them. That puts them
+after the characters (z 1), the thought bubbles (z 2) and the names, and before the rising
+scores in `LevelRuntime`. The walk arrow, a world sprite here, sits at z 4 above all of them,
+as the original draws its cursor after the effects and the GUI (`sub_415500`, `0x402D01`).
+See [player-ability-reference.md](player-ability-reference.md).
+
+### The room grid
+
+Besides the movement cells and the sight blockers, each level's `CollisionTileMapLayer` carries
+the manifest's `collision_grid.room_ids` as `room_ids`, with `room_grid_size` beside them.
+They are `INFODATA` bits 16–23, flat and indexed `x + width * z`, and
+`CollisionMapLayer.room_category()` answers them for the lamps' abilities.
+`tools/build_level_scene.gd` emits them. Adding them changed each generated scene by exactly
+those two lines. `tests/check_level_maps.gd` asserts them against every manifest, the `s`
+variants included.
 
 ### The floor is one opaque mosaic
 
@@ -126,12 +174,33 @@ Seams were measured with the regenerated scenes, counting a seam as a pixel insi
 
 The bake costs 12–37 ms per level load headless, or 16–41 ms with the texture upload, and 4–11 MB of texture. `tests/check_floor_bake.gd` pins the data: one internal sprite, every cell's rows equal to its atlas tile, and 2304 opaque pixels per cell. Seams themselves only show in a real render, so their measurement stays manual.
 
+### The Matrix pill's overlay and green copies
+
+While the pill's slow-down runs, the original's player draw paints a four-corner gradient over
+the world before the player (`sub_41D500`), and the player is the character list's first entry.
+So the floor, the field of view, the walls and every item are under it, and every character,
+effect and the GUI over it. The port's `SlowdownOverlay` is the player's first child, internal,
+at absolute z 1: the characters' z, where sprites draw in tree order, looping items under
+`World/Objects` first, then the player, then the agents, then the compositor's cluster
+surfaces. That puts it after every item, a looping one too, and before every character. A
+looping item that shares a cluster with a character stays under it as well, because its pixels
+are composed onto the cluster's item surface at the back of `World/Objects` (see "Two
+characters whose opaque rectangles overlap" above). The shadows at z 0 come under it, where the
+original draws each with its character, after it.
+
+Each slowed agent draws three green copies of its frame after its sprite, bubble and name
+(`sub_417460`). The port's `SlowedCopies` node sits in `npc.tscn` after `NameLabel` at z 3,
+before the effects, and tests its pixels with the effects' helper, `effect_depth.gd`, 2 depth
+units nearer than the agent, against the world composite and the characters' own planes. See
+[player-ability-reference.md](player-ability-reference.md), "The green copies in the port" and
+"The overlay in the port".
+
 ### Records left out of the scene
 
 The original keeps every `ITEM` wherever it stands. The loader has no bounds test, and an item is culled only against the camera rectangle; see [widescreen.md](widescreen.md) for the addresses. Level 3's `LEVEL_02.col` `ITEM22` is a spare `MONITOR&TASTATUR#FRONTAL` standing five tiles off the map at (−5, 16). The original's 800 × 600 view never shows more than a ~10 px sliver of it, but the port's wider canvas shows the whole thing floating in the void.
 
 `PARKED_RECORDS` in `tools/import_original_level.py` therefore lists that record, keyed by file and record name to its kind and position. The importer raises if the record ever stops matching. The record stays out of the manifest's `objects` and is listed under `parked_items` instead; only a manifest that parks something carries that key. `build_npcs` still runs over every item, as `sub_4185B0`'s startup search does, and the importer raises if a parked item would be an NPC's desk or chair.
 
-Only three records in the campaign fail the original's own map lookup (`sub_4187F0` → `sub_412AE0` on the truncated `x + 0.5`, `y + 0.5`): this monitor, its copy in `LEVEL_02s.col`, and `LEVEL_10s.col` `ITEM132`. `ITEM132` is a pack of cigarettes the original shows whole at 4:3, so it stays, in `scenes/level_11s.tscn` at tile (−3.7, 1.5). Its interaction cell is off the collision grid, so the builder leaves its room at 0. That changes nothing: its NPC category, the kind's high byte, is 0, and no goal lists category 0, so no colleague ever walks to it. The player can still take it. The other 224 records past an edge are wall-hung and overhang by at most a third of a tile. `tests/test_level_import.py` pins that census.
+Only three records in the campaign fail the original's own map lookup (`sub_4187F0` → `sub_412AE0` on the truncated `x + 0.5`, `y + 0.5`): this monitor, its copy in `LEVEL_02s.col`, and `LEVEL_10s.col` `ITEM132` (#140 in `level_11s.json`). `ITEM132` is a pack of cigarettes the original shows whole at 4:3, so it stays, in `scenes/level_11s.tscn` at tile (−3.7, 1.5). Its interaction cell is off the collision grid, so the builder leaves its room at 0. That changes nothing: its NPC category, the kind's high byte, is 0, and no goal lists category 0, so no colleague ever walks to it. The player cannot reach it either: column 0 is movement-blocked along those rows, so its interaction point at (−3.698, 2.490) is more than 4 tiles from any walkable position, against the 2.0-tile reach. The points file adds `ITEM190` (#198) next to where `ITEM132` stands in level 11, so the level keeps its cigarettes; see [player-ability-reference.md](player-ability-reference.md). The other 224 records past an edge are wall-hung and overhang by at most a third of a tile. `tests/test_level_import.py` pins that census.
 
 See [map-authoring.md](map-authoring.md) for creating maps with the Godot editor.

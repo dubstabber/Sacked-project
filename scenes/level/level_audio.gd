@@ -144,10 +144,16 @@ func _on_action_aborted(_action: Dictionary, _point: Node) -> void:
 
 
 func _cut_action_sound() -> void:
-	if is_instance_valid(_action_sound):
-		_action_sound.stop()
-		_action_sound.queue_free()
+	stop_effect(_action_sound)
 	_action_sound = null
+
+
+# sub_42A7C0(slot, 0): whoever kept a one-shot's handle stops it, as the player does +1112 and
+# +1116. Untyped, because a handle whose sound has ended was freed with it (play_effect).
+func stop_effect(player) -> void:
+	if is_instance_valid(player):
+		player.stop()
+		player.queue_free()
 
 
 # sub_407370 case 5 stops only the streamed music for the duel (sub_42AC30 -> sub_45F4F0 at

@@ -109,6 +109,9 @@ func _check_level(label: String) -> void:
 	_check_activity_points(world, manifest, floor_layer, label)
 	if _failed:
 		return
+	_check_room_grid(world, manifest, label)
+	if _failed:
+		return
 	_check_player(world, manifest, floor_layer, label)
 	if _failed:
 		return
@@ -290,6 +293,36 @@ func _check_activity_points(world: Node, manifest: Dictionary, floor_layer: Tile
 			expected_actions.append(int(action_id))
 		if point.get("action_ids") != expected_actions:
 			_fail("level %s %s prank action ids mismatch" % [label, object_name])
+			return
+
+
+# The lamps' abilities ask sub_412AE0 mode 4 for the room under the player at run time, so
+# the collision layer carries the manifest's whole room grid, not only the rooms the
+# activity points were stamped with.
+func _check_room_grid(world: Node, manifest: Dictionary, label: String) -> void:
+	var layer := world.get_node_or_null("CollisionTileMapLayer")
+	if layer == null or not layer.has_method("room_category"):
+		_fail("level %s has no collision layer that answers a room category" % label)
+		return
+	var collision_grid: Dictionary = manifest.get("collision_grid", {})
+	var width := int(collision_grid.get("width", 0))
+	var height := int(collision_grid.get("height", 0))
+	if layer.get("room_grid_size") != Vector2i(width, height):
+		_fail("level %s room grid is %s, the manifest's is %dx%d" % [label, layer.get("room_grid_size"), width, height])
+		return
+	var expected := PackedByteArray()
+	for room in collision_grid.get("room_ids", []):
+		expected.append(int(room))
+	if expected.size() != width * height:
+		_fail("level %s manifest carries %d room ids for a %dx%d grid" % [label, expected.size(), width, height])
+		return
+	if layer.get("room_ids") != expected:
+		_fail("level %s room ids differ from the manifest's collision_grid.room_ids" % label)
+		return
+	for index in range(expected.size()):
+		var tile := Vector2(index % width, index / width)
+		if int(layer.call("room_category", tile)) != expected[index]:
+			_fail("level %s room category at %s is not the manifest's %d" % [label, tile, expected[index]])
 			return
 
 

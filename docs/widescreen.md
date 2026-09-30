@@ -70,6 +70,14 @@ width moves:
   `level_prompts.gd` shifts both by half the added width and centres text on the live width,
   keeping the recovered widths and y positions.
 
+One recovered gradient is spread rather than pinned. The Matrix pill's overlay (`sub_41D500`)
+steps its four corner colours across the world pass's 799 × 509 clip in 12-bit fixed point, so
+that they sit at the clip's corners. The port covers the wider clip and puts each column on one
+of the original's 799, in integers, before those steps, and each row of a taller canvas on one
+of its 509. At 800 × 600 every column and row maps onto itself, so the result is the original's
+to the pixel; wider, the corners stay at the corners instead of the right-hand side paling. See
+[player-ability-reference.md](player-ability-reference.md), "The overlay in the port".
+
 ## Art screens: a safe frame in a black margin
 
 Every screen built from 4:3 art centres its existing absolute layout inside a `SafeFrame`, a

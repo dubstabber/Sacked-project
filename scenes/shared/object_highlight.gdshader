@@ -2,9 +2,11 @@ shader_type canvas_item;
 render_mode unshaded, blend_add;
 
 // The second draw the original makes over an item the cursor is over: Main_RenderUpdate
-// draws the item normally, then draws it again tinted from item+4..6 with an alpha that
-// swings between 40 and 200. The item itself never goes transparent -- this pass only adds
-// to it, which is what makes the highlight pulse. See docs/player-action-reference.md.
+// draws the item normally, then draws it again tinted from item+4..6 in mode 54, blended at a
+// fixed weight (item+7 = 180, 200 for a colleague) with a brightness lift that pulses between
+// 40 and 200. The item itself never goes transparent. This pass still blends by an older,
+// additive reading of that draw, a recorded divergence the backlog holds: see "How the
+// highlight is drawn" in docs/player-action-reference.md.
 //
 // The depth test is the same one characters use, so the pulse only reaches the pixels where
 // the object is actually visible. Underneath, the object is either baked into the static

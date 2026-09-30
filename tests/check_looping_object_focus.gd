@@ -11,6 +11,7 @@ const LEVEL := "res://scenes/level_3.tscn"
 const ASSCOPY := 126
 const RADIO_OFF := 38
 const STOVE_ON := 21
+const PRANK_CONTROLLER := preload("res://scenes/player/prank_controller.gd")
 
 var _failures := 0
 var _level: Node
@@ -164,7 +165,7 @@ func _run_action(object: Node2D, action_id: int) -> void:
 	_controller.open_menu()
 	_controller.set_highlighted(index)
 	_controller.confirm()
-	_controller._advance_action(_controller._duration)
+	_run_prank_to_end(_controller)
 	_expect(_controller.state == 0, "action %d on %s ran to the end" % [action_id, object.name])
 
 
@@ -328,3 +329,13 @@ func _check_nothing_left_still_tints_red(object: MapObject, action_id: int, behi
 	if highlight != null:
 		var tint: Color = highlight.modulate
 		_expect(is_equal_approx(tint.r, 1.0) and is_equal_approx(tint.g, 50.0 / 255.0) and is_equal_approx(tint.b, 50.0 / 255.0), "%s pulses red, got %s" % [object.name, tint])
+
+
+# A prank ends on the 60 fps step that carries its float32 clock to the record's duration; a
+# single step of total_seconds() gets there only when the duration is whole seconds.
+func _run_prank_to_end(controller: Node) -> void:
+	var steps := int(ceil(float(controller._timer.total_seconds()) * 60.0)) + 2
+	for _step in range(steps):
+		if controller.state != PRANK_CONTROLLER.State.ACTING:
+			return
+		controller._advance_action(1.0 / 60.0)

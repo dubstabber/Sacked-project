@@ -26,8 +26,8 @@ means is in [prank-reference.md](prank-reference.md); this is the machinery arou
 | `+980` | `u16` number of menu entries (`m_itemSelectNum`) |
 | `+984` | Score |
 | `+988` | Character flag; selects the urination facings (see below) |
-| `+992` / `+1000` | Elapsed and total action time |
-| `+1008` | `u8[…]` inventory, indexed by item id |
+| `+992` / `+1000` | Elapsed and total action time: seconds summed as a float, and the record's tenths times 10.0 (see below) |
+| `+1008` | `u8[31]` inventory, indexed by item id; `sub_41AF60` clears `+1008`–`+1038` |
 | `+1040` | Item state saved before a start-time state change, restored on abort |
 | `+1068` | Countdown; on expiry every type-253 item returns to state 0 (`sub_411070`) |
 | `+1104` / `+1108` / `+1112` | Sound context, idle sound handle, action sound handle |
@@ -317,7 +317,10 @@ hidden, if a right-button walk is what closed the ring) and warps it onto the pl
 at the viewport centre because the camera follows him. X11 ignores a warp while the pointer
 is captured, so the warp follows the release. While the ring holds the pointer, a paused tree
 (P, the quit prompt) makes it `HIDDEN` and unpausing captures it again; a stray right-button
-release only hides the walk arrow. `player.menu_open` holds the keyboard walk;
+release only hides the walk arrow. While an action or an ability holds the player, a
+right-button release still warps the pointer onto the player (`MovementArrow.recentre()`,
+keeping the clock), because `sub_403FB0` re-centres on every right release whatever the mode
+(`0x40447E`–`0x4044A3`). `player.menu_open` holds the keyboard walk;
 `PrankController` polls the held down arrow and right button, commits on `move_up`, and
 refuses to open while either is held; `round_menu.gd` takes the arrows as steps.
 `round_menu.gd` steps on `InputEventMouseMotion.screen_relative.x`, not `relative.x`:
@@ -353,27 +356,42 @@ and `check_catch_trigger.gd` cover it. Known differences:
 ## How the highlight is drawn
 
 The item loop in `Main_RenderUpdate` draws each item once through `vtbl+12`, and then, if
-`item+92 == 1`, draws **the same sprite a second time** on top:
+`item+92 == 1`, draws **the same sprite a second time** on top (`sub_411E20`):
 
 ```text
-alpha mode 54
-sub_42D1D0(item+7)
-sub_42D1E0(item+4, item+5, item+6)     // the RGB from the table above
-sub_42D200(120 - sin(item+72 * 2.5) * -80.0)
-vtbl+12(item)                          // draw again
+blend mode 0x36 (54)                              // 0x411EBA
+sub_42D1D0(item+7)                                // the weight, 0x411EC8
+sub_42D1E0(item+4, item+5, item+6)                // the RGB from the table above
+sub_42D200(0x78 - ftol(sin(item+0x48 * 2.5) * -80.0))   // the brightness, 0x411EFF
+vtbl+12(item)                                     // draw again
 ```
 
-So the item itself is never modulated and never goes transparent — the highlight is an
-additive second pass whose alpha swings between **40 and 200** at 2.5 rad/s, which is what
-makes it pulse. `item+72` is the item's own phase and `item+4..6` the tint colour.
+`flt_4652F0` is the 2.5 and `dbl_4652E8` the −80.0. For an 8-bpp sprite with a Z plane,
+mode 54 is `sub_43B050`:
 
-The port reproduces that directly: the object itself is left opaque and untouched, and a
-second sprite is drawn over it with `scenes/shared/object_highlight.gdshader` — `blend_add`,
-the same depth test characters use so the pulse only reaches pixels where the object is
-actually visible, and `modulate = (tint.rgb, 120/255 + 80/255 * sin(2.5 t))`. The copy sits
-one z above the object's sprite; over an object drawn as a depth actor (a looping state) it
-also tests the character compositor's cluster scores, so it never lands on a character
-standing in front. See [map-rendering.md](map-rendering.md).
+```text
+skip the colour key; skip if the Z test fails            // never writes Z
+c_i   = min(255, (palette_i * tint_i >> 8) + brightness)
+out_i = (c_i * weight >> 8) + (dst_i * (255 - weight) >> 8)
+```
+
+So the item itself is never modulated and never goes transparent. The highlight is a second
+pass blended at a **fixed weight**, `item+7`, which is 180 for every tint in the table above.
+What swings is the **brightness** added to the tinted copy, `120 + 80 sin(2.5 · item+72)`,
+between **40 and 200** at 2.5 rad/s. That is what makes it pulse. `item+72` is the item's own
+phase and `item+4..6` the tint colour. The pass is not additive. The character loop draws the
+hovered agent's pass the same way (`0x402A3D`, `0x402A7A`), and so does the effects list
+(`0x402BAF`); see [player-ability-reference.md](player-ability-reference.md).
+
+The port leaves the object itself opaque and untouched and draws a second sprite over it with
+`scenes/shared/object_highlight.gdshader`. That shader uses the same depth test characters
+use, so the pulse only reaches pixels where the object is actually visible. **Its blend follows
+an older, wrong reading of this pass**: it is `blend_add`, with
+`modulate = (tint.rgb, 120/255 + 80/255 * sin(2.5 t))`, so it swings an additive alpha instead
+of blending a brightened copy at a fixed weight. The copy sits one z above the object's
+sprite; over an object drawn as a depth actor (a looping state) it also tests the character
+compositor's cluster scores, so it never lands on a character standing in front. See
+[map-rendering.md](map-rendering.md).
 
 ## The player's animation slots
 
@@ -514,7 +532,11 @@ in [prank-reference.md](prank-reference.md). Corrections and additions found her
   flag set, one of directions 2/3/4; with it clear, one of 0/6/7 — which is exactly the
   split between Anne's `PISS` views (090/135/180) and Jo's (000/270/315). Each choice is a
   `rand() & 8` test, so the three are not equally likely: the first is taken half the time
-  and the other two a quarter each.
+  and the other two a quarter each (`0x41B556`–`0x41B5C7`). Urinating's state 20 makes the
+  same pick. In the port both call `PrankController.piss_facing()` over `PISS_VIEWS`.
+  Before urinating was ported, selector 12 picked one of three screen vectors evenly, and one
+  of each character's three was a view with no clip: Jo's right and Anne's left. So a third of
+  those pranks showed the idle, and Jo never faced `_270` nor Anne `_090`.
 - **An object is only removed when the action also grants an item.** The `+0x1A` removal
   branch in state 4 is nested inside `if (granted_item)`, so a record that sets removal
   without granting anything never fires it.
@@ -528,6 +550,16 @@ in [prank-reference.md](prank-reference.md). Corrections and additions found her
   | 46 | 9 → 4, otherwise 3 |
   | 99 | 12 → 6, 15 → 4, otherwise 3 |
 
+- **The action's clock is `+992` and `+1000`, both float32.** State 2 zeroes `+992` and
+  stores `+1000` as the record's tenths times the float 10.0 at `flt_4652F4` (`0x41B5E7`,
+  `0x41B5FA`–`0x41B60B`). State 3 adds the frame step, a float, to `+992`, stores it with `fst`,
+  and compares the sum still on the stack times the float 100.0 at `flt_465304` against
+  `+1000` (`0x41B6DE`–`0x41B6F4`); once it is not less, it zeroes both and writes state 4
+  (`0x41B705`–`0x41B711`). The lamps' abilities keep the same two fields the same way, so
+  `scenes/player/player_timer.gd` holds that arithmetic for `PrankController` and
+  `AbilityController` alike (see "The controller" in
+  [player-ability-reference.md](player-ability-reference.md)). At 60 fps a 7.0 s prank ends
+  on the 420th step, where the sum of doubles the port used to keep took a 421st.
 - State 4 also sets `item+228 = 1` on the object, clears the slot's enabled flag before
   applying the unlock and disable lists, and calls `sub_41DE60(score)` last.
 
@@ -548,6 +580,15 @@ mask is first reduced to its low four bits.
 
 `sub_41CF20` is what consumes it: with `0x400` set and a focus item present it puts the
 player into mode 1 state 0; bits `0x800`, `0x1000`, `0x2000` and `0x4000` start modes 2–5.
+
+Only the console lamps raise those bits. A lamp's click slot, `sub_4061A0` at
+`0x4653E4 + 0x4C` in its vtable, stores the lamp's `+1164` in `dword_473CDC`. `sub_403FB0`
+turns that into one bit at `0x404058`–`0x40408F` and zeroes the global: the smoking lamp's 3
+raises `0x800`, the urination lamp's 2 raises `0x1000` and the Matrix lamp's 1 raises
+`0x4000`. **Nothing raises `0x2000`**, so mode 4 never starts. `sub_41CF20` starts a mode only
+while `player+900` is 0, and all four bits fall to the `0xFFFF82FF` mask, so a click that
+finds the player busy is dropped rather than queued. See
+[player-ability-reference.md](player-ability-reference.md).
 
 Raising `0x400`: **scancode 57 (space)**, and a mouse event whose third field carries `0x10`
 — the click. Holding the **right mouse button** (button mask bit 2) instead sets `0x100`,
@@ -626,7 +667,9 @@ target's position into it every tick; see "The camera" in [widescreen.md](widesc
 - Centre icon `game+14736`: hidden when `m_itemAction` is −1 or its icon index is −1,
   otherwise the **highlighted** entry's ACTICON name.
 - Lamps: smoking `game+14776` needs inventory 5 **and** 6, Matrix `game+14768` needs 14,
-  urination `game+14772` needs 26.
+  urination `game+14772` needs 26. The port's `PrankController.inventory` has the original's
+  31 slots, and clicking a lit lamp starts its ability; see
+  [player-ability-reference.md](player-ability-reference.md).
 - Score `%05u` from `player+984`; clock `%02u:%02u` from `game+14708`, `XX:XX` past 5940.
 - The looping warning `S1012` starts once `limit - elapsed <= 10`, its handle in
   `game+19056`.

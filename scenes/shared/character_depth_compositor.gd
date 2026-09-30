@@ -20,6 +20,12 @@ var _warned_paths: Dictionary = {}
 var _hidden_sprites: Array[Sprite2D] = []
 var _surfaces: Array[Sprite2D] = []
 var _surface_textures: Array[ImageTexture] = []
+# A cluster's looping-object pixels, on a surface of their own at the back of the objects'
+# parent, so they are drawn where the objects are and not where the characters are: the
+# original draws every item in its item pass, before the character list. Null for a cluster
+# that holds no object. See docs/map-rendering.md.
+var _item_surfaces: Array = []
+var _item_surface_textures: Array = []
 var _surface_signatures: Array[String] = []
 # Each surface's composed scores and the window they cover, turned into a texture only when
 # cluster_depth_for asks, so a cluster nobody tests against uploads nothing extra.
@@ -34,10 +40,19 @@ var _depth_textures: Dictionary = {}
 var _environment_texture: Texture2D
 var _environment_applied := -1
 var composed_scores := PackedFloat32Array()
+# The looping objects' own pixels of the last composite, or null when it held none.
+var composed_item_image: Image
 var environment_scores := PackedFloat32Array()
 var environment_bounds := Rect2()
 var _environment_revision := -1
 var _environment_instance_id := 0
+
+
+# sub_41A2D0's base score for an entity anchored at `anchor_y`: trunc(49152 - projected_y / 2),
+# where projected_y is already lifted by the entity's height, the anchor its sprite is drawn
+# from. The port keeps it as the Z of that anchor, ceil(int(y) / 2), larger nearer.
+static func base_score(anchor_y: float) -> float:
+	return ceilf(float(int(anchor_y)) * 0.5)
 
 
 func _ready() -> void:
@@ -55,6 +70,11 @@ func _exit_tree() -> void:
 	for index in range(1, _surfaces.size()):
 		if is_instance_valid(_surfaces[index]):
 			_surfaces[index].queue_free()
+	for item_surface in _item_surfaces:
+		if is_instance_valid(item_surface):
+			item_surface.queue_free()
+	_item_surfaces.clear()
+	_item_surface_textures.clear()
 	_surfaces.clear()
 	_surface_textures.clear()
 	_surface_signatures.clear()
@@ -122,12 +142,16 @@ func _render_clusters(clusters: Array) -> void:
 		var signature := _composite_signature(cluster, bounds)
 		if not surface.visible or surface.texture == null or _surface_signatures[used] != signature:
 			_set_surface_image(used, _compose_images(cluster, bounds))
+			_set_item_surface_image(used, composed_item_image, cluster)
 			_surface_signatures[used] = signature
 			_surface_scores[used] = composed_scores
 			_surface_score_bounds[used] = bounds
 			_surface_scores_stale[used] = true
 		surface.global_position = bounds.position
 		surface.visible = true
+		var item_surface := _item_surface(used)
+		if item_surface != null and item_surface.visible:
+			item_surface.global_position = bounds.position
 		for actor in cluster:
 			var actor_sprite := actor["sprite"] as Sprite2D
 			if actor_sprite != null:
@@ -137,6 +161,8 @@ func _render_clusters(clusters: Array) -> void:
 	for index in range(used, _surfaces.size()):
 		_surfaces[index].visible = false
 		_surface_signatures[index] = ""
+		if _item_surface(index) != null:
+			_item_surface(index).visible = false
 	_hide_actor_sprites(sprites_to_hide)
 
 
@@ -151,11 +177,26 @@ func _surface(index: int) -> Sprite2D:
 			get_parent().add_child(surface, false, Node.INTERNAL_MODE_BACK)
 		_surfaces.append(surface)
 		_surface_textures.append(null)
+		_item_surfaces.append(null)
+		_item_surface_textures.append(null)
 		_surface_signatures.append("")
 		_surface_scores.append(PackedFloat32Array())
 		_surface_score_bounds.append(Rect2())
 		_surface_score_textures.append(null)
 		_surface_scores_stale.append(false)
+	return _surfaces[index]
+
+
+# The surface a hidden actor sprite's pixels are drawn on: its cluster's object surface for a
+# looping object, the cluster's own for a character. Null when the sprite is not in a cluster.
+func surface_for(sprite: Sprite2D) -> Sprite2D:
+	if sprite == null:
+		return null
+	var index: int = _sprite_surfaces.get(sprite.get_instance_id(), -1)
+	if index < 0 or index >= _surfaces.size() or not _surfaces[index].visible:
+		return null
+	if sprite.get_parent() is MapObject:
+		return _item_surface(index)
 	return _surfaces[index]
 
 
@@ -219,6 +260,7 @@ func compose_region(actors: Array, region: Rect2) -> Dictionary:
 	return {
 		"bounds": region,
 		"image": output,
+		"item_image": composed_item_image,
 		"scores": composed_scores,
 	}
 
@@ -302,9 +344,8 @@ func _make_actor(node: Node2D, sprite: Sprite2D, actor_index: int) -> Dictionary
 		"depth_path": depth_path,
 		"position": _sprite_draw_position(sprite, size),
 		"size": size,
-		# sub_41A2D0: base Z = trunc(49152 - projected_y / 2), where projected_y is already
-		# lifted by the entity's height -- the same anchor its sprite is drawn from.
-		"base_y": ceilf(float(int(sprite.global_position.y)) * 0.5),
+		"base_y": base_score(sprite.global_position.y),
+		"item": node is MapObject,
 	}
 	if _opaque_rects.has(color_path):
 		actor["opaque_rect"] = _opaque_rects[color_path]
@@ -558,19 +599,32 @@ func _compose_images(actors: Array, bounds: Rect2) -> Image:
 	var height := int(bounds.size.y)
 	var pixels := PackedByteArray()
 	pixels.resize(width * height * 4)
+	# The objects' pixels go to a buffer of their own; a pixel is in whichever buffer the actor
+	# that won it last writes, and cleared from the other.
+	var item_pixels := PackedByteArray()
+	for actor in actors:
+		if actor.get("item", false):
+			item_pixels.resize(width * height * 4)
+			break
 
 	var scores := PackedFloat32Array()
 	scores.resize(width * height)
 	scores.fill(EMPTY_SCORE)
 
 	for actor in actors:
-		_compose_actor(pixels, scores, bounds.position, width, height, actor)
+		if actor.get("item", false):
+			_compose_actor(item_pixels, pixels, scores, bounds.position, width, height, actor)
+		else:
+			_compose_actor(pixels, item_pixels, scores, bounds.position, width, height, actor)
 
 	composed_scores = scores
+	composed_item_image = null
+	if not item_pixels.is_empty():
+		composed_item_image = Image.create_from_data(width, height, false, Image.FORMAT_RGBA8, item_pixels)
 	return Image.create_from_data(width, height, false, Image.FORMAT_RGBA8, pixels)
 
 
-func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_position: Vector2, width: int, height: int, actor: Dictionary) -> void:
+func _compose_actor(pixels: PackedByteArray, others: PackedByteArray, scores: PackedFloat32Array, bounds_position: Vector2, width: int, height: int, actor: Dictionary) -> void:
 	var color_image := actor["color"] as Image
 	var depth_image := actor["depth"] as Image
 	var color_bytes := _rgba8_bytes(color_image)
@@ -588,6 +642,7 @@ func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_
 	)
 	var bounds_x := int(bounds_position.x)
 	var bounds_y := int(bounds_position.y)
+	var clears_others := not others.is_empty()
 	var has_environment := not environment_scores.is_empty()
 	var environment_width := int(environment_bounds.size.x)
 	var environment_height := int(environment_bounds.size.y)
@@ -619,6 +674,11 @@ func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_
 				pixels[untested_index + 1] = color_bytes[source_index + 1]
 				pixels[untested_index + 2] = color_bytes[source_index + 2]
 				pixels[untested_index + 3] = color_bytes[source_index + 3]
+				if clears_others:
+					others[untested_index] = 0
+					others[untested_index + 1] = 0
+					others[untested_index + 2] = 0
+					others[untested_index + 3] = 0
 				continue
 			if depth_bytes[source_index + 3] == 0:
 				continue
@@ -638,6 +698,11 @@ func _compose_actor(pixels: PackedByteArray, scores: PackedFloat32Array, bounds_
 				pixels[output_index + 1] = color_bytes[source_index + 1]
 				pixels[output_index + 2] = color_bytes[source_index + 2]
 				pixels[output_index + 3] = color_bytes[source_index + 3]
+				if clears_others:
+					others[output_index] = 0
+					others[output_index + 1] = 0
+					others[output_index + 2] = 0
+					others[output_index + 3] = 0
 
 
 func _set_surface_image(index: int, image: Image) -> void:
@@ -648,6 +713,53 @@ func _set_surface_image(index: int, image: Image) -> void:
 	else:
 		composite_texture.update(image)
 	_surfaces[index].texture = composite_texture
+
+
+# A cluster's object pixels, on the pooled surface for its index. The surface is an internal
+# child at the back of the objects' parent, at the objects' z, so it draws right after them and
+# before anything drawn at the characters' place, such as the pill's overlay; its pixels and
+# the cluster surface's never meet, so without the overlay the two show the same picture as
+# one surface did.
+func _set_item_surface_image(index: int, image: Image, cluster: Array) -> void:
+	var item_surface := _item_surface(index)
+	var parent: Node = null
+	for actor in cluster:
+		if actor.get("item", false):
+			parent = (actor["node"] as Node).get_parent()
+			break
+	if image == null or parent == null:
+		if item_surface != null:
+			item_surface.visible = false
+		return
+	if item_surface == null:
+		item_surface = Sprite2D.new()
+		item_surface.centered = false
+		item_surface.z_index = z_index
+		item_surface.texture_filter = texture_filter
+		_item_surfaces[index] = item_surface
+	if item_surface.get_parent() != parent:
+		if item_surface.get_parent() != null:
+			item_surface.get_parent().remove_child(item_surface)
+		parent.add_child(item_surface, false, Node.INTERNAL_MODE_BACK)
+	var texture := _item_surface_textures[index] as ImageTexture
+	if texture == null or texture.get_width() != image.get_width() or texture.get_height() != image.get_height():
+		texture = ImageTexture.create_from_image(image)
+		_item_surface_textures[index] = texture
+	else:
+		texture.update(image)
+	item_surface.texture = texture
+	item_surface.visible = true
+
+
+# The pooled object surface for a cluster index, or null; one freed with its parent is dropped.
+func _item_surface(index: int) -> Sprite2D:
+	if index >= _item_surfaces.size() or _item_surfaces[index] == null:
+		return null
+	if not is_instance_valid(_item_surfaces[index]):
+		_item_surfaces[index] = null
+		_item_surface_textures[index] = null
+		return null
+	return _item_surfaces[index] as Sprite2D
 
 
 func _composite_signature(actors: Array, bounds: Rect2) -> String:

@@ -28,6 +28,17 @@ static func snap_to_8_directions(direction: Vector2) -> Vector2:
 	return best
 
 
+# The view a facing is closest to, numbered as the sprite suffixes are, _000 through _315:
+# player+124 and agent+124.
+static func view_index(direction: Vector2) -> int:
+	var directions := get_screen_directions()
+	var best := 0
+	for index in range(1, directions.size()):
+		if direction.dot(directions[index]) > direction.dot(directions[best]):
+			best = index
+	return best
+
+
 static func get_screen_directions() -> Array[Vector2]:
 	# Sprite suffix _NNN encodes world axes projected onto the 96x48 grid.
 	return [

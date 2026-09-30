@@ -4,9 +4,11 @@ extends Node
 # only while the level is being played and unpaused.
 #
 # The player is caught only mid-prank: the original tests states 2 and 3 of whichever action
-# mode is running, which is the stretch the clip is actually playing. The first agent in the
-# world's own order that notices the player and is not shut in a cubicle catches them; there
-# is no chase and nothing accumulates. See docs/catch-reference.md.
+# mode is running, which is the stretch the clip is actually playing, and the same stretch
+# of smoking (11, 12) and urinating (21, 22). The pill is never caught. The first agent in
+# the world's own order that notices the player and is not shut in a cubicle catches them;
+# there is no chase and nothing accumulates. See docs/catch-reference.md and
+# docs/player-ability-reference.md.
 
 const PrankController := preload("res://scenes/player/prank_controller.gd")
 
@@ -35,6 +37,7 @@ var _banner_remaining := 0.0
 var _session: Node
 var _player: Node2D
 var _prank: Node
+var _abilities: Node
 var _console: Node
 var _layer: Node
 var _random := RandomNumberGenerator.new()
@@ -50,6 +53,7 @@ func _ready() -> void:
 func _bind() -> void:
 	_session = get_tree().get_first_node_in_group("level_session")
 	_prank = get_tree().get_first_node_in_group("player_actions")
+	_abilities = get_tree().get_first_node_in_group("player_abilities")
 	_console = get_tree().get_first_node_in_group("level_console")
 	_player = _prank.get_parent() as Node2D if _prank != null else null
 	for layer in get_tree().get_nodes_in_group("collision_maps"):
@@ -81,9 +85,11 @@ func _process(delta: float) -> void:
 
 
 # The port collapses sub_41B240's six states into three, and only ACTING covers the stretch
-# in which the original can be caught.
+# in which the original can be caught. AbilityController keeps the abilities' own states.
 func _is_mid_prank() -> bool:
-	return int(_prank.get("state")) == PrankController.State.ACTING
+	if int(_prank.get("state")) == PrankController.State.ACTING:
+		return true
+	return is_instance_valid(_abilities) and bool(_abilities.is_catchable())
 
 
 func _first_agent_that_notices() -> Node2D:
@@ -104,9 +110,11 @@ func _first_agent_that_notices() -> Node2D:
 func _catch(agent: Node2D) -> void:
 	caught_by = agent
 	# The action is pushed to its abort state rather than completed, so an interrupted
-	# prank pays nothing.
-	if _prank.has_method("abort_action"):
+	# prank pays nothing. An ability goes to 14 or 24, which pay and spend nothing either.
+	if int(_prank.get("state")) == PrankController.State.ACTING:
 		_prank.abort_action()
+	elif is_instance_valid(_abilities) and bool(_abilities.is_catchable()):
+		_abilities.catch()
 	if _console != null and _console.has_method("warn_of_catch"):
 		_console.warn_of_catch(EXCLAMATIONS[_random.randi() & 3])
 	caught.emit(agent)

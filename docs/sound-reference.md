@@ -46,9 +46,10 @@ handles: the game keeps the warning slot `game+19056`, and the player keeps four
 `player+1108`–`1120`. The player's destructor `~CObj_Player` (`0x41AE90`) stops all four
 (`0x41AEEA`, `0x41AF03`, `0x41AF1C`, `0x41AF35`), and every way out of a level deletes the
 player (see *Win and loss*). One of the four, `player+1112`, holds a prank's own sound while
-the prank runs (see *Actions*). So a prank's start sound is cut when the prank is
-interrupted, and every other one-shot still playing when the level ends plays on into the
-next screen.
+the prank runs (see *Actions*). Another, `player+1116`, holds urination's `S0174` (see
+[player-ability-reference.md](player-ability-reference.md)). So a prank's start sound and
+`S0174` are cut when their action is interrupted, and every other one-shot still playing when
+the level ends plays on into the next screen.
 
 ## What a level plays
 
@@ -228,6 +229,20 @@ quit prompt leave them playing. Only its `_process`, which starts the warning, s
 the level. `ScreenManager.report_level_finished` plays `S1100` on a win before it changes
 screen. `CatchWatch` holds the theme for the duel and lets it go on a win; the warning keeps
 looping.
+
+**`S0174`.** Urinating's state 21 plays it through `LevelAudio.play_effect()`, and so through
+`ScreenManager`: once, at the full effects volume, with no position, as
+`sub_42A6A0(…, "S0174", 0, 0)` does (`0x41C4B7`). `AbilityController` keeps the player it gets
+back, as `player+1116` keeps the slot.
+
+- States 23 and 24 stop it through `LevelAudio.stop_effect()`, the port's `sub_42A7C0`.
+- So does the controller leaving the tree, which is how every way out of a level stops it, as
+  `~CObj_Player` does.
+- The sound lasts 6.762 s and ends 0.24 s before state 23, by which time `ScreenManager` has
+  freed its player. `stop_effect()` takes that as already stopped.
+- Like every one-shot, it plays on through the pause key and the quit prompt while the
+  ability's 7 s stand still. A windowed run confirmed that.
+- The caught banner stops it at once, since the catch runs state 24 in its own frame.
 
 **One port decision.** `LevelAudio` stops the theme when the level ends, and the tree then
 starts `Menu1`. The original stops nothing there. Its theme plays on under the result screen

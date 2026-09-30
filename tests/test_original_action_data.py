@@ -95,6 +95,18 @@ class TraceActionTableTest(unittest.TestCase):
         for action_id in used:
             self.assertGreater(self.actions[action_id]["score"], 0)
 
+    def test_effect_duration_is_the_pills_alone(self):
+        # +0x14: record 73's 400 tenths is the Matrix pill's forty-second slow-down, the only
+        # non-zero value in the table and the only one sub_41CD90 reads.
+        self.assertNotIn("unknown_0x14", self.actions[73])
+        carrying = {
+            action["id"]: action["effect_duration_tenths"]
+            for action in self.table["actions"]
+            if action["effect_duration_tenths"]
+        }
+        self.assertEqual(carrying, {73: 400})
+        self.assertEqual(self.actions[73]["duration_tenths"], 20)
+
     def test_exported_json_is_current(self):
         exported = json.loads((ROOT / OUTPUT_REL).read_text())
         self.assertEqual(exported, self.table)

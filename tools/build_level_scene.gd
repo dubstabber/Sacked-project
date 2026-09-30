@@ -148,6 +148,12 @@ func _build_collision_layer(manifest: Dictionary) -> TileMapLayer:
 	for cell in collision_grid.get("sight_blocked_cells", []):
 		sight.append(Vector2(_vector2i(cell)))
 	layer.set("sight_blocked_cells", sight)
+	# The room ids as well, which the lamps' abilities read at the player's cell.
+	var rooms := PackedByteArray()
+	for room in collision_grid.get("room_ids", []):
+		rooms.append(int(room))
+	layer.set("room_ids", rooms)
+	layer.set("room_grid_size", Vector2i(int(collision_grid.get("width", 0)), int(collision_grid.get("height", 0))))
 	return layer
 
 

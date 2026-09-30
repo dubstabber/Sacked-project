@@ -22,6 +22,12 @@ const GRID_COLLISION := preload("res://scenes/shared/grid_collision.gd")
 
 var _sight_lookup: Dictionary = {}
 
+# INFODATA bits 16-23, the room each cell belongs to, row by row (x + width * z) as the
+# importer reads collision_grid.room_ids. sub_412AE0 mode 4 answers it at run time; see
+# docs/collision-reference.md and docs/player-ability-reference.md.
+@export var room_ids: PackedByteArray = PackedByteArray()
+@export var room_grid_size: Vector2i = Vector2i.ZERO
+
 
 func _enter_tree() -> void:
 	add_to_group("collision_maps")
@@ -66,12 +72,47 @@ func to_grid_position(global_point: Vector2) -> Vector2:
 	return tile_axes.affine_inverse() * to_local(global_point)
 
 
+func from_grid_position(tile: Vector2) -> Vector2:
+	var origin := map_to_local(Vector2i.ZERO)
+	var tile_axes := Transform2D(
+		map_to_local(Vector2i(1, 0)) - origin,
+		map_to_local(Vector2i(0, 1)) - origin,
+		origin
+	)
+	return to_global(tile_axes * tile)
+
+
+# sub_412AE0(int(x + 0.5), int(z + 0.5), 4), which the lamps' abilities ask about the
+# player's position (0x41BCA5-0x41BCDF, 0x4652B4). int() truncates toward zero as ftol does,
+# so -0.9 still lands on column 0; a cell off the grid answers 0.
+func room_category(tile: Vector2) -> int:
+	var cell := Vector2i(int(tile.x + 0.5), int(tile.y + 0.5))
+	if cell.x < 0 or cell.y < 0 or cell.x >= room_grid_size.x or cell.y >= room_grid_size.y:
+		return 0
+	var index := cell.y * room_grid_size.x + cell.x
+	return int(room_ids[index]) if index < room_ids.size() else 0
+
+
+func room_category_at(global_point: Vector2) -> int:
+	return room_category(to_grid_position(global_point))
+
+
 # Both ends are shifted to their cell centre and scaled to quarter cells, exactly as
 # Main_RenderUpdate does before calling sub_412E30.
 func has_line_of_sight(from_global: Vector2, to_global: Vector2) -> bool:
 	var from_tile := (to_grid_position(from_global) + Vector2(0.5, 0.5)) * 4.0
 	var to_tile := (to_grid_position(to_global) + Vector2(0.5, 0.5)) * 4.0
 	return GRID_COLLISION.has_line_of_sight(Vector2i(from_tile), Vector2i(to_tile), is_sight_blocked)
+
+
+# The map of the level `node` stands in: the first enabled layer whose parent holds it.
+static func of(node: Node) -> CollisionMapLayer:
+	if node == null or not node.is_inside_tree():
+		return null
+	for layer in node.get_tree().get_nodes_in_group("collision_maps"):
+		if layer is CollisionMapLayer and layer.enabled and layer.get_parent().is_ancestor_of(node):
+			return layer
+	return null
 
 
 static func line_of_sight_between(node: Node, from_global: Vector2, to_global: Vector2) -> bool:

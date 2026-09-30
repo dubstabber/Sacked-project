@@ -40,8 +40,14 @@ the name from the traced record, never from `names[id]`.
 
 ## Record layout
 
-Offsets confirmed from the consumers; `sub_41B240` (`obj_player.cpp`) is the only function
-that ever dereferences an `actinfo` pointer, so this list is complete.
+Offsets confirmed from the consumers. `sub_41B240` (`obj_player.cpp`) is the only function
+that dereferences an `actinfo` pointer, but it is not the table's only reader. The player's
+ability modes read their records as globals: mode 2 reads records 22–24 and 76
+(`sub_41BC50`, `0x41BCF1`–`0x41BD5C`), mode 3 reads 74 and 75 (`sub_41C120`,
+`0x41C17A`–`0x41C1B1` and `0x41C558`–`0x41C55F`), mode 5 reads 73 (`sub_41CD90`), and the
+unreachable mode 4 reads 69–72 (`sub_41C660`, `0x41C6C6`–`0x41C71E`). See
+[player-ability-reference.md](player-ability-reference.md). So the "Read by" column is
+`sub_41B240`'s reads plus the one global read of `+0x14`.
 
 | Offset | Type | Meaning | Read by |
 | --- | --- | --- | --- |
@@ -50,7 +56,7 @@ that ever dereferences an `actinfo` pointer, so this list is complete.
 | `+0x08` | `u32` | Score awarded on completion | `sub_410190` |
 | `+0x0C` | `u32` | Duration in **tenths of a second** | `sub_4101B0` |
 | `+0x10` | `u32` | Written, never read |
-| `+0x14` | `u32` | Written, never read (non-zero on one record) |
+| `+0x14` | `u32` | After-effect in tenths. Non-zero only on record 73 (400), and read only for it: `fild dword_4761C0` at `0x41CEB7`, × 10.0 (`flt_4652F4`) into `player+1004` at `0x41CEC5`. `tools/export_action_table.py` names it `effect_duration_tenths`, and its `--check` pins that read and that record 73 alone carries one; the pill's state 43 reads it from `resources/original/actions.json` | `sub_41CD90` |
 | `+0x18` | `u8` | Player animation selector, 0–14 | `sub_4101D0` |
 | `+0x19` | `u8` | Item id granted to the player | `sub_410240` |
 | `+0x1A` | `u8` | Remove the object from the world afterwards (`sub_413310`) | `actinfo+26` |

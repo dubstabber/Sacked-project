@@ -1,0 +1,17 @@
+{
+  "generated_by": "tools/export_puddle_params.py",
+  "source": "extract-sacked-assets/sacked/sacked.exe",
+  "source_sha256": "6404096cc74e1c954daa2033a7d7d7826429a27deaa679f1ff7103027f614a86",
+  "reach_anne": 0.20000000298023224,
+  "reach_jo": 0.6000000238418579,
+  "height": 0.10000000149011612,
+  "alpha": 0.699999988079071,
+  "grow_rate": 0.07999999821186066,
+  "base_scale": 1.0,
+  "fade_rate": 0.08500000089406967,
+  "fade_from": 0.699999988079071,
+  "remove_after": 17.0,
+  "min_scale": 0.009999999776482582,
+  "fixed_units": 256.0,
+  "height_pixels": 24.0
+}

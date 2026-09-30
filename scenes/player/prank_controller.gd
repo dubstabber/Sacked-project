@@ -7,6 +7,7 @@ extends Node
 # player never walks to an object.
 
 const HIGHLIGHT_SHADER := preload("res://scenes/shared/object_highlight.gdshader")
+const PlayerTimer := preload("res://scenes/player/player_timer.gd")
 
 const MAX_ACTION_RANGE := 2.0
 # item+4..6 while the cursor is over it.
@@ -34,7 +35,6 @@ const HEATING_CATEGORY := 9
 const PROJECTOR_REACH_TILES := 5.0
 # player+1068, counted down by dt * 10, so the blackout lasts forty seconds.
 const BLACKOUT_TIMER := 400.0
-const BLACKOUT_RATE := 10.0
 
 # sub_41D820's fourth rule reads the cubicle's occupant: 43, 44 and 138 need it empty, 110
 # needs an occupant who is not the boss, and 112 needs the boss.
@@ -71,16 +71,22 @@ const SELECTOR_CLIPS := {
 # _step_onto_object picks which of them by the object's own orientation. Clip names resolve
 # by screen angle, so view 090 is down-right and 180 is down-left.
 const ASSCOPY_FACINGS := [Vector2(1, 1), Vector2(-1, 1)]
-# Selector 12 picks its facing at random from the three views its clip ships.
-const PISS_FACINGS := {
-	"jobless": [Vector2(1, 0), Vector2(0, -1), Vector2(1, -1)],
-	"anne": [Vector2(0, 1), Vector2(-1, 1), Vector2(-1, 0)],
+# Selector 12 and urinating's state 20 pick a facing from +988 the same way, in this order
+# (0x41B556-0x41B5C7, 0x41C1B7-0x41C1FC): Anne's views _090, _135 and _180, Jo's _000, _270 and
+# _315, which are exactly the views their PISS clips ship. See piss_facing().
+const PISS_VIEWS := {
+	"jobless": [0, 6, 7],
+	"anne": [2, 3, 4],
 }
 # +0x40 values that are markers rather than states.
 const STATE_KEEP := 17
 const STATE_IN_USE := 18
+const INVENTORY_SLOTS := 31
 
-enum State { FREE, MENU, ACTING }
+# ABILITY is modes 2 to 5, the lamps' abilities, which AbilityController runs. The prank
+# controller still owns player+900's gate: in any state but FREE the ring cannot open and a
+# lamp's request is dropped. See docs/player-ability-reference.md.
+enum State { FREE, MENU, ACTING, ABILITY }
 
 signal focus_changed(point: Node)
 signal menu_opened(entries: Array)
@@ -116,8 +122,10 @@ var blackout_remaining := 0.0
 var _return_position := Vector2.INF
 var _acting_point: Node
 var _acting_entry: Dictionary = {}
-var _elapsed := 0.0
-var _duration := 0.0
+# +992 and +1000 while an action runs, kept as every timed player state keeps them.
+var _timer := PlayerTimer.new()
+# sub_41B0C0, the first mode-0 tick after an ability, writes "..." back to player+1128.
+var _idle_hover_pending := false
 
 
 func _enter_tree() -> void:
@@ -126,8 +134,9 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	_player = get_parent() as Node2D
-	# sub_41AF60 clears 0x1C bytes: the player starts every level holding nothing.
-	inventory.resize(28)
+	# sub_41AF60 clears 31 bytes, +1008 to +1038 (0x41AF88-0x41AFC0), so items 0 to 30 have a
+	# slot and the player starts every level holding nothing. See docs/hud-reference.md.
+	inventory.resize(INVENTORY_SLOTS)
 
 
 func _process(delta: float) -> void:
@@ -136,11 +145,19 @@ func _process(delta: float) -> void:
 		_advance_action(delta)
 		_update_agent_hover()
 		return
+	# The item pick is gated on +900 == 0 (0x4032B8); the colleague under the cursor is
+	# picked whatever the player is doing.
+	if state == State.ABILITY:
+		_update_agent_hover()
+		return
 	if state == State.MENU:
 		if _menu_cancel_held():
 			close_menu()
 		_update_agent_hover()
 		return
+	if _idle_hover_pending:
+		_idle_hover_pending = false
+		highlight_changed.emit({})
 	_update_hover()
 
 
@@ -156,7 +173,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	# independently of the ring, which reads it below.
 	if event.is_action_pressed("interact") and is_instance_valid(hovered_agent):
 		select_agent(hovered_agent)
-	if state == State.ACTING:
+	if state == State.ACTING or state == State.ABILITY:
 		return
 	if menu_open:
 		# sub_4066D0 commits on 12740 & 0x14 (0x406802): space, the click, and the up arrow's
@@ -178,6 +195,7 @@ func open_menu() -> void:
 		return
 	menu_open = true
 	state = State.MENU
+	_idle_hover_pending = false
 	highlighted = 0
 	# State 0 turns to the item before the ring comes up, and the idle then holds that view.
 	if _player != null:
@@ -235,7 +253,8 @@ func set_highlighted(index: int) -> void:
 	highlight_changed.emit(entries[index])
 
 
-# sub_41B240 state 2: the action is committed and timed from its own duration.
+# sub_41B240 state 2: the action is committed and timed from its own duration, +1000 = tenths
+# * 10.0 (0x41B5FA-0x41B60B).
 func confirm() -> void:
 	if not menu_open or highlighted < 0 or highlighted >= entries.size():
 		return
@@ -245,8 +264,7 @@ func confirm() -> void:
 		return
 	_acting_point = focus_point
 	_acting_entry = entry
-	_elapsed = 0.0
-	_duration = float(action.get("duration_tenths", 0)) / 10.0
+	_timer.start(float(action.get("duration_tenths", 0)))
 	close_menu(true)
 	state = State.ACTING
 	_draw_highlight(null, TINT_READY)
@@ -261,20 +279,21 @@ func confirm() -> void:
 	elif bool(action.get("state_at_start", false)):
 		_apply_result_state(object, action, int(entry["action_id"]))
 	action_started.emit(action, _acting_point)
-	progress_changed.emit(0.0, _duration)
+	progress_changed.emit(0.0, _timer.total_seconds())
 
 
+# State 3 (0x41B6DE-0x41B711): +992 summed as a float, and the action ends once +992 * 100
+# reaches +1000, which zeroes both.
 func _advance_action(delta: float) -> void:
-	_elapsed += delta
-	progress_changed.emit(_elapsed, _duration)
-	if _elapsed < _duration:
+	var sum := _timer.add_elapsed(delta)
+	progress_changed.emit(_timer.elapsed, _timer.total_seconds())
+	if not _timer.reached(sum):
 		return
 	_apply_action()
 	clear_selection()
 	state = State.FREE
 	_set_acting(false)
-	_elapsed = 0.0
-	_duration = 0.0
+	_timer.zero()
 	progress_changed.emit(0.0, 0.0)
 
 
@@ -310,14 +329,7 @@ func _apply_action() -> void:
 
 	var granted := int(action.get("grants_item", 0))
 	if granted > 0 and granted < inventory.size():
-		# Ids 6 and 9 are inexhaustible and 22 arrives three at a time.
-		if granted == 6 or granted == 9:
-			inventory[granted] = 99
-		elif granted == 22:
-			inventory[granted] = clampi(inventory[granted] + 3, 0, 99)
-		else:
-			inventory[granted] = clampi(inventory[granted] + 1, 0, 99)
-		inventory_changed.emit(inventory)
+		grant_item(granted)
 		# Removal only ever fires for an action that also hands something over.
 		if bool(action.get("removes_item", false)) and object != null:
 			focus_point = null
@@ -352,6 +364,64 @@ func _apply_result_state(object: Node, action: Dictionary, action_id: int) -> vo
 			object.set_state(6 if current == 12 else (4 if current == 15 else 3))
 		_:
 			object.set_state(result)
+
+
+# sub_41B240 state 4's grant. Ids 6 and 9 are inexhaustible and 22 arrives three at a time.
+func grant_item(item: int) -> void:
+	if item <= 0 or item >= inventory.size():
+		return
+	if item == 6 or item == 9:
+		inventory[item] = 99
+	elif item == 22:
+		inventory[item] = clampi(inventory[item] + 3, 0, 99)
+	else:
+		inventory[item] = clampi(inventory[item] + 1, 0, 99)
+	inventory_changed.emit(inventory)
+
+
+# What an ability's last state takes: one of the item, clamped at 0 (smoking, 0x41C07E) or to
+# 0-99 (urinating and the pill), which is the same thing for a count a grant caps at 99.
+func spend_item(item: int) -> void:
+	if item <= 0 or item >= inventory.size():
+		return
+	inventory[item] = clampi(inventory[item] - 1, 0, 99)
+	inventory_changed.emit(inventory)
+
+
+# AbilityController takes player+900 for a lamp's mode. sub_403780 feeds the console from the
+# same player fields for an ability as for a prank (0x40384C-0x403888, 0x403AB9), so the
+# ability's record name and stopwatch go out through this controller's own signals and the
+# console reads them as it reads a prank's. The centre icon stays hidden: only mode 1 sets
+# +920. See docs/player-ability-reference.md.
+func begin_ability() -> bool:
+	if state != State.FREE:
+		return false
+	state = State.ABILITY
+	_idle_hover_pending = false
+	highlighted = -1
+	entries = []
+	_hovered = null
+	_draw_highlight(null, TINT_READY)
+	if focus_point != null:
+		focus_point = null
+		focus_changed.emit(null)
+	return true
+
+
+# player+1128, which the mode's first state writes.
+func show_ability_record(record_name: String) -> void:
+	highlight_changed.emit({"name": record_name})
+
+
+func report_ability_progress(elapsed: float, total: float) -> void:
+	progress_changed.emit(elapsed, total)
+
+
+func end_ability() -> void:
+	if state != State.ABILITY:
+		return
+	state = State.FREE
+	_idle_hover_pending = true
 
 
 # sub_41D820, in slot order.
@@ -456,9 +526,11 @@ func _update_hover() -> void:
 		focus_changed.emit(point)
 
 
-# The original leaves the item itself alone and draws a second, additive copy over it whose
-# alpha swings between 40 and 200. The object therefore stays in the static composite and
-# never turns transparent; only this pass pulses.
+# The original leaves the item itself alone and draws a second copy over it in mode 54, at a
+# fixed weight (item+7 = 180, 200 for a colleague) with a brightness lift that pulses between 40
+# and 200. So the object stays in the static composite and never turns transparent; only this
+# pass pulses. The pass still blends by an older, additive reading, a recorded divergence the
+# backlog holds: see "How the highlight is drawn" in docs/player-action-reference.md.
 func _draw_highlight(object: Node2D, tint: Color) -> void:
 	if object == null:
 		if is_instance_valid(_highlight):
@@ -601,9 +673,9 @@ func _play_action_animation(action: Dictionary) -> void:
 	var clip := String(SELECTOR_CLIPS.get(selector, ""))
 	var facing := _facing_toward_item(_acting_point)
 	if selector == 12:
-		var views: Array = PISS_FACINGS.get(String(_player.get("profile").get("id")), [])
-		if not views.is_empty():
-			facing = views[randi() % views.size()]
+		var picked := piss_facing(String(_player.get("profile").get("id")), func() -> int: return randi())
+		if picked != Vector2.ZERO:
+			facing = picked
 	elif selector == REPOSITION_SELECTOR:
 		# The player is standing on the object by now, so the vector to it says nothing.
 		# _step_onto_object already chose the side; use it.
@@ -613,6 +685,18 @@ func _play_action_animation(action: Dictionary) -> void:
 		# Every selector the table uses has a clip in every view picked above, so this is only
 		# a guard: the action still runs, the player just stands.
 		_player.get_node("AnimationController").play_idle(facing)
+
+
+# Two rand() & 8 tests: the first view half the time, the second and third a quarter each. The
+# character's PISS_VIEWS entry, as a screen direction, or zero for a character with none.
+static func piss_facing(profile_id: String, roll: Callable) -> Vector2:
+	var views: Array = PISS_VIEWS.get(profile_id, [])
+	if views.is_empty():
+		return Vector2.ZERO
+	var choice := 0
+	if (int(roll.call()) & 8) == 0:
+		choice = 1 if (int(roll.call()) & 8) != 0 else 2
+	return IsoDirection.get_screen_directions()[int(views[choice])]
 
 
 # sub_4154B0 mode 1: the clock cursor while an action runs. The player is held still for
@@ -755,8 +839,7 @@ func abort_action() -> void:
 	clear_selection()
 	state = State.FREE
 	_set_acting(false)
-	_elapsed = 0.0
-	_duration = 0.0
+	_timer.zero()
 	progress_changed.emit(0.0, 0.0)
 	action_aborted.emit(action, point if is_instance_valid(point) else null)
 
@@ -795,11 +878,12 @@ func _apply_global_consequence(action_id: int, point: Node) -> void:
 			point.set("locked_in", true)
 
 
-# player+1068, ticked at dt * 10. When it runs out the blacked-out items come back.
+# player+1068, ticked at dt * 10: sub_41CFC0 reads the player clock's 10.0 (flt_4652F4) at
+# 0x41D475. When it runs out the blacked-out items come back.
 func _advance_blackout(delta: float) -> void:
 	if blackout_remaining <= 0.0:
 		return
-	blackout_remaining -= delta * BLACKOUT_RATE
+	blackout_remaining -= delta * PlayerTimer.factor("tenths_to_hundredths")
 	if blackout_remaining > 0.0:
 		return
 	blackout_remaining = 0.0

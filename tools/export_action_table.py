@@ -19,8 +19,10 @@ from pathlib import Path
 
 try:
     from import_original_level import imported_level_numbers, imported_manifest_paths, level_paths
+    from original_exe import FILD, pin_readers
 except ImportError:  # imported as tools.export_action_table by the tests
     from tools.import_original_level import imported_level_numbers, imported_manifest_paths, level_paths
+    from tools.original_exe import FILD, pin_readers
 
 
 EXE_REL = Path("extract-sacked-assets/sacked/sacked.exe")
@@ -59,6 +61,11 @@ BUBBLE_COUNT = 10
 GLOBAL_CONSEQUENCE_IDS = frozenset({79, 116, 118})
 CUBICLE_GATED_IDS = frozenset({43, 44, 110, 112, 138})
 UNPORTED_ACTION_IDS = frozenset()
+
+# fild dword ptr [record 73 + 0x14] at 0x41CEB7, the only read of any record's +0x14: the
+# Matrix pill's state 43 turns it into the slow-down's total (docs/player-ability-reference.md).
+EFFECT_DURATION_READ = 0x41CEB7
+EFFECT_DURATION_RECORD = 73
 
 # sub_41D820 ignores a required-item slot whose value is >= 31, so those are not prerequisites.
 REQUIRED_ITEM_LIMIT = 0x1F
@@ -274,9 +281,12 @@ def decode(image: Image, index: int, raw: bytes, icons: list, images: list, stat
         "sound": sound,
         "sound_at_start": bool(u8(0x48)),
         # Written by the initializer but read by nothing: sub_4103E0's only caller,
-        # sub_41B240, never touches these offsets.
+        # sub_41B240, never touches this offset.
         "unknown_0x10": u32(0x10),
-        "unknown_0x14": u32(0x14),
+        # The pill's after-effect in tenths: sub_41CD90's state 43 reads record 73's as a
+        # global (EFFECT_DURATION_READ) into player+1004, the slow-down's total. No other
+        # record carries one and nothing else reads the field.
+        "effect_duration_tenths": u32(0x14),
     }
 
 
@@ -364,6 +374,14 @@ def check(root: Path, table: dict) -> int:
         failures.append("action 0 is not the Nullnummer placeholder")
     if actions[1]["name"] != "Zrestrukturyzuj pliki":
         failures.append("action 1 is not Zrestrukturyzuj pliki")
+
+    # +0x14 has one reader, which takes record 73's as a global; every other record holds 0.
+    image = Image(root / EXE_REL)
+    operand = TABLE_VA + EFFECT_DURATION_RECORD * RECORD_STRIDE + 0x14
+    pin_readers(image.data, f"record {EFFECT_DURATION_RECORD}'s +0x14", operand, [(EFFECT_DURATION_READ, FILD)], failures)
+    carrying = {action["id"]: action["effect_duration_tenths"] for action in table["actions"] if action["effect_duration_tenths"]}
+    if carrying != {EFFECT_DURATION_RECORD: 400}:
+        failures.append(f"effect_duration_tenths should be 400 on record {EFFECT_DURATION_RECORD} alone, got {carrying}")
 
     acticons = {
         path.name.lower(): path.name

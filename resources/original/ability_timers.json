@@ -1,0 +1,9 @@
+{
+  "generated_by": "tools/export_ability_timers.py",
+  "source": "extract-sacked-assets/sacked/sacked.exe",
+  "source_sha256": "6404096cc74e1c954daa2033a7d7d7826429a27deaa679f1ff7103027f614a86",
+  "tenths_to_hundredths": 10.0,
+  "hundredths_per_second": 100.0,
+  "smoke_spawn_after": 0.4000000059604645,
+  "smoke_stop_after": 4.5
+}

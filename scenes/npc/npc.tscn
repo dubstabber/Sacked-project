@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/npc/npc.gd" id="1_npc"]
 [ext_resource type="Script" uid="uid://bf5gdjtdfixca" path="res://scenes/player/animation_controller.gd" id="2_anim"]
 [ext_resource type="Texture2D" uid="uid://bi7owgvueix3m" path="res://images/effects/shadow/shadow.png" id="3_shadow"]
+[ext_resource type="Script" path="res://scenes/npc/slowed_copies.gd" id="4_copies"]
 
 [sub_resource type="ConvexPolygonShape2D" id="Footprint_npc"]
 points = PackedVector2Array(0, -16.8, 33.6, 0, 0, 16.8, -33.6, 0)
@@ -42,3 +43,8 @@ theme_override_colors/font_shadow_color = Color(0.15686275, 0.039215688, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 24
+
+[node name="SlowedCopies" type="Node2D" parent="."]
+visible = false
+z_index = 3
+script = ExtResource("4_copies")

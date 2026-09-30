@@ -28,8 +28,21 @@ const PROGRESS_SHADER := preload("res://scenes/shared/round_bar.gdshader")
 const CLOCK_BAR_RADIUS := 36.0
 const CLOCK_BAR_START_ANGLE := 0.5
 
+const AbilityController := preload("res://scenes/player/ability_controller.gd")
+
 # player+1008 slots each lamp watches; the smoking lamp needs both of its two.
 const LAMP_SLOTS := {"LampSmoke": [5, 6], "LampMatrix": [14], "LampPiss": [26]}
+# sub_405930 registers the lamps in this order (0x4060E0), and sub_459AE0 walks them in it, so
+# where the urination and smoking rects overlap the urination lamp takes the press.
+const LAMP_ORDER := ["LampMatrix", "LampPiss", "LampSmoke"]
+# The bit sub_403FB0 turns each lamp's id into (0x404070-0x404086).
+const LAMP_REQUESTS := {
+	"LampMatrix": AbilityController.REQUEST_PILL,
+	"LampPiss": AbilityController.REQUEST_PISS,
+	"LampSmoke": AbilityController.REQUEST_SMOKE,
+}
+# Only these three have a release edge in sub_45D850's byte (0x45D8BC-0x45D90B).
+const RELEASE_BUTTONS := [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE]
 
 # game+14732 is fed `188 - (game+14728 * 1.42 + 46)` as the width to crop off its right
 # edge, so a calm office still leaves 46 of the sprite's 188 pixels showing.
@@ -56,6 +69,11 @@ const AGGRO_SECONDS := 2.0
 
 var _session: Node
 var _actions: Node
+var _abilities: Node
+# The GUI manager's left button (+64 & 1), its click latch (+68) and its own cursor (+52/+56).
+var _left_held := false
+var _latched := false
+var _pointer := Vector2.INF
 var _progress_material: ShaderMaterial
 var _thermo_remaining := 0.0
 var _aggro_up_remaining := 0.0
@@ -92,6 +110,7 @@ func _ready() -> void:
 		_actions.progress_changed.connect(set_action_progress)
 		_actions.inventory_changed.connect(set_inventory)
 		set_inventory(_actions.inventory)
+	_abilities = get_tree().get_first_node_in_group("player_abilities")
 
 
 # The centre field carries the highlighted action's icon and the hover bar its name.
@@ -136,7 +155,73 @@ func hide_catch_warning() -> void:
 	_aggro_up.visible = false
 
 
+# The lamps are buttons. sub_459AE0 clicks a visible lamp on the first button event with the
+# left button down, the cursor strictly inside the lamp's sprite and the latch clear, and a
+# button event goes out on every frame a button is held; any release edge clears the latch.
+# So one press fires once, a drag onto a lit lamp fires, and the right and middle buttons
+# never do. The port takes the press here, before the world sees it, so it never opens the
+# ring or selects anyone behind the lamp. See docs/player-ability-reference.md.
+func _input(event: InputEvent) -> void:
+	var button := event as InputEventMouseButton
+	if button != null:
+		_pointer = button.position
+		if not button.pressed:
+			if RELEASE_BUTTONS.has(button.button_index):
+				_latched = false
+				if button.button_index == MOUSE_BUTTON_LEFT:
+					_left_held = false
+			return
+		if button.button_index != MOUSE_BUTTON_LEFT:
+			return
+		_left_held = true
+		if _press_lamp(button.position):
+			get_viewport().set_input_as_handled()
+		return
+	var motion := event as InputEventMouseMotion
+	if motion != null:
+		_pointer = motion.position
+		if _left_held:
+			_press_lamp(motion.position)
+
+
+func _press_lamp(viewport_position: Vector2) -> bool:
+	var lamp_name := lamp_at(viewport_position)
+	if lamp_name == "" or _latched:
+		return false
+	_latched = true
+	if is_instance_valid(_abilities):
+		_abilities.request(LAMP_REQUESTS[lamp_name])
+	return true
+
+
+# Which lit lamp a viewport position is strictly inside, the rect being the sprite's own size
+# (slot 34, sub_45B720). Nothing while the ring is up or still closing: sub_4066D0 re-centres
+# both cursors on every tick of the close (0x40685A, 0x406873), so a lamp cannot be reached.
+func lamp_at(viewport_position: Vector2) -> String:
+	if _ring_is_up():
+		return ""
+	var band := get_node("Band") as Control
+	var local := band.get_global_transform_with_canvas().affine_inverse() * viewport_position
+	var cursor := Vector2i(floori(local.x), floori(local.y))
+	for lamp_name: String in LAMP_ORDER:
+		var lamp := get_node_or_null("Band/" + lamp_name) as Sprite2D
+		if lamp == null or not lamp.visible or lamp.texture == null:
+			continue
+		var corner := Vector2i(lamp.position)
+		var size := Vector2i(lamp.texture.get_size())
+		if cursor.x > corner.x and cursor.y > corner.y and cursor.x < corner.x + size.x and cursor.y < corner.y + size.y:
+			return lamp_name
+	return ""
+
+
+func _ring_is_up() -> bool:
+	var ring := get_parent().get_node_or_null("RoundMenu") if get_parent() != null else null
+	return ring != null and bool(ring.get("visible"))
+
+
 func _process(delta: float) -> void:
+	if _left_held and not _latched and _pointer.is_finite():
+		_press_lamp(_pointer)
 	if _thermo_remaining > 0.0:
 		_thermo_remaining -= delta
 		if _thermo_remaining <= 0.0:
@@ -189,3 +274,7 @@ func _match_frame_to_language() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSLATION_CHANGED and _frame != null:
 		_match_frame_to_language()
+	# A paused console hears no release, but sub_45D850 still polls the buttons.
+	elif what == NOTIFICATION_UNPAUSED and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_left_held = false
+		_latched = false

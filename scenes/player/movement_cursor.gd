@@ -31,6 +31,10 @@ const MOVEMENT_ARROW_OFFSETS := {
 var _menu_capture := false
 # Headless, Input.mouse_mode always reads back VISIBLE, so the checks read what was asked for.
 var requested_mouse_mode: Input.MouseMode = Input.MOUSE_MODE_VISIBLE
+# Likewise the custom image: true while the clock is the pointer.
+var shows_busy_cursor := false
+# And the warp: where the pointer was last put back.
+var last_recentre := Vector2.INF
 
 
 func _notification(what: int) -> void:
@@ -104,12 +108,21 @@ func stop_drag(player_viewport_pos: Vector2) -> void:
 	# A release that lands while the ring holds the pointer must not hand it back.
 	if _menu_capture:
 		return
-	get_viewport().warp_mouse(player_viewport_pos)
+	recentre(player_viewport_pos)
 	show_main_cursor()
+
+
+# sub_4155F0: the pointer back on the player, whatever image it has.
+func recentre(player_viewport_pos: Vector2) -> void:
+	if _menu_capture:
+		return
+	last_recentre = player_viewport_pos
+	get_viewport().warp_mouse(player_viewport_pos)
 
 
 # sub_4154B0 mode 1: the clock, shown for as long as an action is running.
 func show_busy_cursor() -> void:
+	shows_busy_cursor = true
 	Input.set_custom_mouse_cursor(BUSY_CURSOR_TEXTURE, Input.CURSOR_ARROW, BUSY_CURSOR_HOTSPOT)
 
 
@@ -118,6 +131,7 @@ func hide_main_cursor() -> void:
 
 
 func show_main_cursor() -> void:
+	shows_busy_cursor = false
 	Input.set_custom_mouse_cursor(POINTER_CURSOR_TEXTURE, Input.CURSOR_ARROW)
 	_set_pointer_mode(Input.MOUSE_MODE_VISIBLE)
 

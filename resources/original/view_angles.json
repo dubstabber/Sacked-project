@@ -1,0 +1,8 @@
+{
+  "generated_by": "tools/export_view_angles.py",
+  "source": "extract-sacked-assets/sacked/sacked.exe",
+  "source_sha256": "6404096cc74e1c954daa2033a7d7d7826429a27deaa679f1ff7103027f614a86",
+  "view_degrees": 45.0,
+  "view_offset": 180.0,
+  "degrees_to_radians": 0.01745299994945526
+}

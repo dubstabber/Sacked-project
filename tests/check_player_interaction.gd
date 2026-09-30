@@ -7,6 +7,7 @@ extends SceneTree
 const LEVEL := preload("res://scenes/level_1.tscn")
 const GRID := preload("res://scenes/shared/grid_collision.gd")
 const POINT_SCRIPT := preload("res://scenes/npc/npc_activity_point.gd")
+const PRANK_CONTROLLER := preload("res://scenes/player/prank_controller.gd")
 
 var _failures := 0
 var _level: Node
@@ -275,7 +276,7 @@ func _check_pickup_opens_a_gated_action() -> void:
 	_expect(_controller.entries.size() == 1, "the lighter offers exactly its pickup")
 	_controller.open_menu()
 	_controller.confirm()
-	_controller._advance_action(_controller._duration)
+	_run_prank_to_end(_controller)
 
 	# Ids 6 and 9 are inexhaustible, so the pickup fills the slot rather than adding one.
 	_expect(_controller.inventory[6] == 99, "taking the lighter fills its inventory slot")
@@ -317,15 +318,23 @@ func _check_action_applies() -> void:
 		"the hover bar keeps the running action's name"
 	)
 	_expect(_player.input_locked, "the player is held still while the action runs")
-	_expect(is_equal_approx(_controller._duration, float(action["duration_tenths"]) / 10.0), "the action runs for its own duration")
-
-	_controller._advance_action(_controller._duration * 0.5)
+	# +1000 is the tenths times the float 10.0 (0x41B605), and state 3 sums +992 as a float and
+	# ends once +992 * 100 reaches it (0x41B6DE-0x41B6F4). At 60 steps a second action 13's 70
+	# tenths end on the 420th step, where a sum kept in doubles would take a 421st.
+	_expect(int(entry["action_id"]) == 13 and int(action["duration_tenths"]) == 70, "the keyboard's first action is 13, of 70 tenths")
+	_expect(_controller._timer.total == 700.0, "the action runs for its own 70 tenths, 700 hundredths, got %f" % _controller._timer.total)
+	var step := 1.0 / 60.0
+	for _step in 210:
+		_controller._advance_action(step)
 	_expect(_controller.state == 2, "the action is still running halfway through")
 	_expect(session.score == score_before, "no score is paid out before the action finishes")
 	_expect(not point.tampered, "an object is not tampered with until the action applies")
 
-	_controller._advance_action(_controller._duration)
-	_expect(_controller.state == 0, "the action ends when its duration is up")
+	for _step in 209:
+		_controller._advance_action(step)
+	_expect(_controller.state == 2, "the 419th step at 60 fps does not end it")
+	_controller._advance_action(step)
+	_expect(_controller.state == 0, "the 420th step at 60 fps ends it, as the float sum does")
 	_expect(not _player.input_locked, "the player is free again once the action applies")
 	_expect(session.score == score_before + int(action["score"]), "the score rises by the table's value")
 	# sub_41DE60 adds the score and floats the number off the player in the same breath.
@@ -344,3 +353,13 @@ func _check_action_applies() -> void:
 	# sub_410450: an action also shuts down whatever its own disable list names.
 	for disabled in action.get("disables", []):
 		_expect(not remaining.has(int(disabled)), "action %d also closes %d" % [int(entry["action_id"]), int(disabled)])
+
+
+# A prank ends on the 60 fps step that carries its float32 clock to the record's duration; a
+# single step of total_seconds() gets there only when the duration is whole seconds.
+func _run_prank_to_end(controller: Node) -> void:
+	var steps := int(ceil(float(controller._timer.total_seconds()) * 60.0)) + 2
+	for _step in range(steps):
+		if controller.state != PRANK_CONTROLLER.State.ACTING:
+			return
+		controller._advance_action(1.0 / 60.0)

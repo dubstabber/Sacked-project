@@ -317,14 +317,17 @@ fall back to idle even if they were.
 
 - **`agent+1792`**, the slowed flag, sets the movement multiplier `agent+76` to **0.2**
   instead of 1.0 in all four ticks, and `sub_417460` draws the three jittered green copies
-  while it is set. It is written by `sub_41CD90` (`0x41cd57`), which is the handler for
-  **player mode 5** — so the green jitter and the slowdown are one of the player's own
-  abilities, not a catch mechanic.
+  while it is set. It is written by `sub_41CD10` (`mov [eax+700h], edi` at `0x41CD55`). Mode
+  5's state 43 (`sub_41CD90`, `0x41CECB`) calls that with 1, and `sub_41CFC0` calls it with 0
+  when the 40 s run out. So the green jitter and the slowdown are one of the player's own
+  abilities, the Matrix pill, not a catch mechanic.
 - **The player's other modes.** `sub_41CFC0` dispatches `player+900` to `sub_41B0C0` (0,
   free), `sub_41B240` (1, the item action), `sub_41BC50` (2), `sub_41C120` (3),
-  `sub_41C660` (4) and `sub_41CD90` (5). Modes 2–5 are player abilities in their own right
-  and are left for a later task; only their existence matters here, because the catch test
-  covers modes 1–3 and not 4–5.
+  `sub_41C660` (4) and `sub_41CD90` (5). Modes 2–5 are player abilities in their own right.
+  Three are reachable, and only from a click on the console lamps: 2 smoking, 3 urinating
+  and 5 the Matrix pill. Mode 4 (foam) is unreachable, because nothing raises its input bit
+  `0x2000`. They are in [player-ability-reference.md](player-ability-reference.md); only
+  their existence matters here, because the catch test covers modes 1–3 and not 4–5.
 - **`player+1068`** counts down by `dt * 10` in `sub_41CFC0` and, on reaching zero, walks
   every type-253 item back to state 0 through `sub_411070`/`sub_40FDA0` — confirming
   `player-action-reference.md:32`.
@@ -402,7 +405,8 @@ counter's resets and the rules. `game+14688` is the catcher stored by the hand-o
 ## What the port implements
 
 `scenes/level/catch_watch.gd` is `sub_402470`: a `_process` on the level runtime that, while
-the level is unpaused and unfinished and the player's prank controller is in `ACTING`, walks
+the level is unpaused and unfinished and the player's prank controller is in `ACTING` (or an
+ability is in a catchable state, below), walks
 the `npc_agents` group in order and stops at the first agent that is not blind and whose
 brain `notices()` the player. `NPCBrain.notices()` is `sub_418310` — the eight-tile box, the
 radius, the cone with its two-tile bypass, then `CollisionMapLayer.has_line_of_sight()`,
@@ -420,6 +424,17 @@ Three details the port had to add rather than reuse:
   a cubicle and cleared when it releases the seat.
 - **An abort.** `PrankController.abort_action()` is the mode's abort state: it drops the
   action without scoring it, clears an `in_use` mark and undoes a start-time result state.
+
+**The abilities are caught the same way.** `CatchWatch` also treats the ability states
+`{11, 12}` and `{21, 22}` as mid-prank, through `AbilityController.is_catchable()`. It uses the
+same notice test and sends a catch to state 14 or 24 with `AbilityController.catch()`. The pill,
+mode 5, is never caught, and neither is the first or the last state of a mode. State 14 waits
+for `SMOKE` to finish and state 24 goes idle at once. Neither pays or spends anything, so the
+lamp stays lit, and a smoke or puddle already spawned stays.
+
+Screen 4 still ticks the player at a zero step, where the port pauses the tree. So `catch()`
+gives the abort state that one tick itself, in the frame of the catch. State 24 stops `S0174`
+there, as the original does on the banner's first frame, rather than after the duel.
 
 `Console.warn_of_catch()` raises the exported `AGGRO_UP` banner with one of the four
 exclamations for 2.0 seconds, the length of the caught pause the original spends there.

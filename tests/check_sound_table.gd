@@ -4,6 +4,7 @@ extends SceneTree
 
 const AUDIO := preload("res://scenes/level/level_audio.gd")
 const MANIFEST := "res://resources/original/sounds.json"
+const PRANK_CONTROLLER := preload("res://scenes/player/prank_controller.gd")
 
 var _failures := 0
 
@@ -217,14 +218,14 @@ func _check_a_start_sound_lasts_only_while_its_prank_can() -> void:
 
 	_commit(prank, keyboard, 13)
 	var applied: AudioStreamPlayer = audio._action_sound
-	prank._advance_action(prank._duration)
+	_run_prank_to_end(prank)
 	_expect(audio._action_sound == null, "the apply lets go of the start sound")
 	_expect(applied != null and applied.playing, "without stopping it")
 
 	var before := _playing_one_shots(screens)
 	_commit(prank, keyboard, 14)
 	_expect(audio._action_sound == null, "an apply-time sound is not held while its prank runs")
-	prank._advance_action(prank._duration)
+	_run_prank_to_end(prank)
 	var apply_time := _playing_one_shots(screens).filter(func(player): return not before.has(player))
 	_expect(apply_time.size() == 1, "the apply plays its record's sound, got %d" % apply_time.size())
 	_expect(audio._action_sound == null, "and does not hold it")
@@ -284,3 +285,13 @@ func _commit(prank: Node, point: Node, action_id: int) -> void:
 
 func _playing_one_shots(holder: Node) -> Array:
 	return holder.get_children().filter(func(child): return child is AudioStreamPlayer and child.playing)
+
+
+# A prank ends on the 60 fps step that carries its float32 clock to the record's duration; a
+# single step of total_seconds() gets there only when the duration is whole seconds.
+func _run_prank_to_end(controller: Node) -> void:
+	var steps := int(ceil(float(controller._timer.total_seconds()) * 60.0)) + 2
+	for _step in range(steps):
+		if controller.state != PRANK_CONTROLLER.State.ACTING:
+			return
+		controller._advance_action(1.0 / 60.0)

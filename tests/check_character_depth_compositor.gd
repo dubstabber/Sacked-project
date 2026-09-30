@@ -25,6 +25,9 @@ func _run() -> void:
 	if _failed:
 		return
 	_check_transparent_padding_does_not_overlap()
+	if _failed:
+		return
+	_check_object_pixels_go_to_their_own_layer()
 	if not _failed:
 		quit(0)
 
@@ -85,6 +88,38 @@ func _check_transparent_padding_does_not_overlap() -> void:
 	]
 	var overlapping := compositor.overlapping_actors_for_test(actors)
 	_assert_equal_int(overlapping.size(), 0, "transparent padding overlap count")
+	compositor.free()
+
+
+# A looping object's pixels are composed onto a layer of their own, which the level draws where
+# the objects are; the characters' stay on the cluster's. A pixel is on the layer of whoever wins
+# it, whichever of the two was composed first, and never on both.
+func _check_object_pixels_go_to_their_own_layer() -> void:
+	var compositor = CharacterDepthCompositorScript.new()
+	for object_first in [true, false]:
+		# The object covers x 0-1 and the character x 1-2; at x 1 the nearer one wins.
+		for object_nearer in [true, false]:
+			var object := _make_actor_at(Color.RED, 10, 100.0 if object_nearer else 80.0, Vector2.ZERO, Vector2i(2, 1))
+			object["item"] = true
+			var character := _make_actor_at(Color.BLUE, 10, 90.0, Vector2(1.0, 0.0), Vector2i(2, 1))
+			var actors := [object, character] if object_first else [character, object]
+			var result: Dictionary = compositor.compose_images_for_test(actors)
+			var label := "object %s, composed %s" % ["nearer" if object_nearer else "further", "first" if object_first else "second"]
+			var characters := result["image"] as Image
+			var objects := result["item_image"] as Image
+			if objects == null:
+				_fail("%s: no object layer" % label)
+				break
+			_assert_color_close(objects.get_pixel(0, 0), Color.RED, "%s: the object's own pixel" % label)
+			_assert_color_close(characters.get_pixel(0, 0), Color(0, 0, 0, 0), "%s: not on the characters' layer" % label)
+			var shared := Color.RED if object_nearer else Color.BLUE
+			_assert_color_close((objects if object_nearer else characters).get_pixel(1, 0), shared, "%s: the shared pixel on the winner's layer" % label)
+			_assert_color_close((characters if object_nearer else objects).get_pixel(1, 0), Color(0, 0, 0, 0), "%s: and off the other" % label)
+			_assert_color_close(characters.get_pixel(2, 0), Color.BLUE, "%s: the character's own pixel" % label)
+			_assert_color_close(objects.get_pixel(2, 0), Color(0, 0, 0, 0), "%s: not on the object layer" % label)
+	var plain: Dictionary = compositor.compose_images_for_test([_make_actor(Color.RED, 10, 100.0), _make_actor(Color.BLUE, 10, 90.0)])
+	if plain["item_image"] != null:
+		_fail("characters alone need no object layer")
 	compositor.free()
 
 

@@ -2,6 +2,7 @@ extends SceneTree
 
 
 const ConsoleScene := preload("res://scenes/hud/console.tscn")
+const PrankControllerScript := preload("res://scenes/player/prank_controller.gd")
 
 # sub_405930 builds every element at these absolute screen positions; the frame is bottom
 # docked, which puts its 200 pixels at y 400..600 of its band. The port keeps those numbers
@@ -140,7 +141,7 @@ func _check_inert_elements(console: Node) -> void:
 # each. See docs/hud-reference.md.
 func _check_lamps(console: Node) -> void:
 	var inventory := PackedInt32Array()
-	inventory.resize(28)
+	inventory.resize(PrankControllerScript.INVENTORY_SLOTS)
 	inventory[5] = 1
 	console.set_inventory(inventory)
 	_expect(not (console.get_node("Band/LampSmoke") as CanvasItem).visible, "the smoking lamp needs both of its items")

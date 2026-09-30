@@ -94,6 +94,13 @@ The lamps read the player's inventory at `player+1008`: smoking needs **both** s
 slot 6, the Matrix lamp needs slot 14, and urination needs slot 26. Slot 26 is the item
 `Napełnij pęcherz` grants, which cross-checks against the action table.
 
+The lamps are also buttons, the only way into the player's modes 2, 3 and 5.
+[player-ability-reference.md](player-ability-reference.md) covers them. In the port,
+`console.gd` takes a left press strictly inside a lit lamp's sprite rect, in the band's own
+coordinates, and hands the lamp's bit to `AbilityController`. It consumes that press, so the
+world never sees it. The rects stay at their 800 × 600 offsets inside `Band`, so they follow
+the band on a wider canvas.
+
 ## The floating score numbers
 
 A score that happens somewhere in the world also floats off the spot that earned it.
@@ -188,9 +195,17 @@ Both of those follow **`player+920`**, the selected menu slot, which outlives th
 [player-action-reference.md](player-action-reference.md). So the centre icon and the hover
 bar keep showing the action the player committed to for as long as it runs.
 
-`sub_41AF60` clears 28 bytes at `player+1008` when a level starts, so the player always
-begins empty-handed and every lamp is dark. That is why level 1's rows needing items 9, 10,
-22, 24 or 29 can never be reached: nothing on that level grants them.
+`sub_41AF60` clears 31 bytes, `player+1008` to `+1038`, when a level starts: seven dwords
+with `rep stosd` from `+0x3F0`, then a word and a byte (`0x41AF88`–`0x41AFC0`). So the
+player always begins empty-handed and every lamp is dark. That is why level 1's rows needing
+items 9, 10, 22, 24 or 29 can never be reached: nothing on that level grants them.
+`PrankController.inventory` has the same 31 slots. It used to have 28, which dropped every
+grant of items 28–30 (actions 54, 137, 9 and 39) and let actions 115, 135 and 136 through
+without items 28 and 29.
+
+An ability feeds the stopwatch and the hover bar from the same fields as a prank:
+`AbilityController` writes them through `PrankController`, so the console's data path does not
+change. See [player-ability-reference.md](player-ability-reference.md).
 
 `game+14724` is the widget at **(662, 536)** — the stopwatch, `CO_GUI_CONSOLE_CLOCK_FULL`,
 radius `+96 = 36.0` — so the running action sweeps around the stopwatch, not along the

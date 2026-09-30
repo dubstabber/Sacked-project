@@ -1136,3 +1136,745 @@ smoking's 24 and urination's 75. Every level also has other rooms, for 23 and 74
 - **Inferred rather than observed:** an ability started under the caught banner, the orphaned
   smoke, the release taking the lamp's press, the unreachable item behind a lamp, and that
   `ITEM132` was the reach sweep's unnamed failure.
+
+## In the port
+
+The lamps, the controller behind them and modes 2, 3 and 5 are in place, with the smoke, the
+puddle, the slowed office, its green copies and the overlay. A request for foam is still
+dropped, as nothing can raise it.
+
+### The controller
+
+`scenes/player/ability_controller.gd` sits beside `PrankController` in
+`scenes/player/player.tscn`. It is the part of `sub_41CFC0` that is not a prank. Each tick
+it:
+
+1. takes a lamp's request, as `sub_41CF20` does (`0x41D003`);
+2. runs one state of the running mode (`0x41D013`);
+3. holds the player's effects to the shared clock: the smoke's stop (`0x41D072`–`0x41D13D`),
+   then the puddle's growth and removal (`0x41D143`–`0x41D252`);
+4. runs the pill's slow-down timer (`0x41D401`–`0x41D458`) and shows the overlay by `+1044`;
+5. picks the clip's frame last (`0x41D4D6`);
+6. ticks every effect it spawned, which is what `sub_402590` does to `game+1960` after the
+   character list (`0x4026BE`).
+
+Nothing between the character list and the effects list reads an effect, so ticking them
+straight after the player changes nothing.
+
+Its fields are the player's:
+
+| Field | Original |
+| --- | --- |
+| `mode`, `state` | `+900`, `+904` for modes 2–5 |
+| `timer`, read as `elapsed` and `total` | `+992` in seconds, `+1000` in hundredths |
+| `slow_timer`, read as `slow_elapsed` and `slow_total`; `slowdown_shown` | `+996`, `+1004`; `+1044` |
+| `overlay` | what `sub_41D500` paints while `+1044` is up |
+| `effect_clock` | `+1048` |
+| `smoke` | `+1052` |
+| `puddle` | `+1080` |
+| `piss_sound` | `+1116`, with `null` for its −1 |
+| `effects` | what the player pushed onto `game+1960` |
+
+`now` is the level's clock: the sum of the controller's own frame steps, which stands still
+whenever the tree is paused, as the original's clock stands still off screen 1. The
+durations and scores come from `resources/original/actions.json`; only the room-to-record
+choice is the code's own.
+
+**The timers are float32 sums, as `+992` and `+996` are.** The step is a float (`0x41CFDA`).
+Each add loads it, adds the field and stores the result with `fst`, and the state then compares
+the sum still on the x87 stack, not the float it stored (`0x41BDAA`–`0x41BDBA`,
+`0x41BFCF`–`0x41BFE5`, `0x41C24A`–`0x41C268`, `0x41C4DD`–`0x41C4F3`, `0x41D415`–`0x41D435`).
+A prank, mode 1, keeps the same two fields the same way: `sub_41B240`'s state 2 zeroes `+992`
+and stores `+1000 = tenths * 10.0` with `fstp` (`0x41B5E7`, `0x41B5FA`–`0x41B60B`), and state 3
+adds, stores with `fst`, multiplies by 100.0 and compares (`0x41B6DE`–`0x41B6F4`), zeroing both
+on its way to state 4 (`0x41B705`–`0x41B711`). The CRT's start-up call
+`_controlfp(0x10000, 0x30000)` (`0x461CEE`), `_PC_53`, holds the x87 to 53 bits, so that sum and
+its product with 100 round as the port's doubles do. `scenes/player/player_timer.gd` is that
+pair in the port, and both `PrankController` and `AbilityController` keep theirs in it:
+`add_elapsed()` adds the step as a float32, stores the sum as a float32 and hands back the
+unrounded sum, which `reached()` tests; the slow-down timer is another `PlayerTimer`, tested
+strictly by `passed()`, and state 11 compares the sum against the float32 0.4 at `flt_46587C`.
+It matters at real frame rates: at 60 fps urinating's 7.0 s ends on the 420th step and
+smoking's 12.0 s on the 721st, with the smoke spawned on the 24th, where the double sums the
+port used to keep gave 421, 720 and 25. The pranks' durations, 10 to 120 tenths, end on a
+different step from a double sum's at 60 fps for 1, 5, 6, 7, 8 and 12 seconds (61, 300, 360,
+420, 480 and 721 steps, against 60, 301, 361, 421, 481 and 720). Comparing the stored float
+instead would spawn the smoke a tick late at 13 of the whole rates from 20 to 300 fps.
+
+**The clock's constants are shared, one float each.** The 10.0 at `flt_4652F4` that turns a
+record's tenths into hundredths and the 100.0 at `flt_465304` that turns elapsed seconds into
+hundredths are read by all four timed modes: a prank's states 2 and 3 in `sub_41B240`
+(`0x41B605`, `0x41B6EE`), smoking's state 10 once per room branch (`0x41BCF7`, `0x41BD10`,
+`0x41BD30`, `0x41BD50`) and its state 12 (`0x41BFDF`), urinating's state 20 once per branch
+(`0x41C180`, `0x41C19F`) and its state 22 (`0x41C4ED`), and the pill's states 40 and 43
+(`0x41CDAF`, `0x41CEBF`) and 42 (`0x41CDFE`). The player tick reads the same 100.0 for the
+slow-down's test (`0x41D42F`) and the same 10.0 three more ways: as the puddle's ten-second
+gate (`0x41D15B`, `0x41D168`, `0x41D199`), as the same gate for the foam effect, which nothing
+reaches (`0x41D270`, `0x41D27D`), and as the rate of prank 79's blackout,
+`player+1068 -= dt * 10` (`0x41D475`). `sub_403780` reads the same 100.0 to feed the stopwatch
+`+992 * 100 / +1000` (`0x40386B`). `tools/export_ability_timers.py` reads both, with smoking's
+0.4 (`flt_46587C`, `0x41BDBA`) and the smoke's 4.5 (`flt_465A34`, `0x41D08B`), and pins every
+one of those readers. `PlayerTimer.factor()` hands all four out of
+`resources/original/ability_timers.json`, and the puddle's gate (`puddle.gd`'s `grow_after()`)
+and the blackout (`prank_controller.gd`'s `_advance_blackout()`) take the 10.0 from there too,
+so each float is read out once, by one exporter.
+
+**The gate and the console stay with `PrankController`.** `+900` is one field in the
+original, so `PrankController` has a fourth state, `ABILITY`, taken by `begin_ability()` and
+given back by `end_ability()`. While it is held the ring cannot open and the item pick is
+off (`0x4032B8`); the colleague under the cursor is still picked. A lamp only starts from
+`FREE`. The console still reads `PrankController` alone, through `highlight_changed`,
+`progress_changed` and `inventory_changed`:
+
+- an ability writes its record's name with `show_ability_record()`;
+- it feeds the stopwatch with `report_ability_progress(elapsed, total / 100)`;
+- it spends with `spend_item()`, which clamps to 0–99.
+
+So `console.gd` reads an ability exactly as it reads a prank. `grant_item()` is the grant
+that `sub_41B240` state 4 has always made. The first free tick after an ability writes `...`
+back, as `sub_41B0C0` does, unless the ring opened in the meantime.
+
+### The lamps in the port
+
+`scenes/hud/console.gd` takes the left press in `_input`:
+
+- A press counts strictly inside a lit lamp's own sprite rect, in whole band pixels.
+- The lamps are walked in registration order, Matrix, urination and smoking, so urination
+  wins the overlap.
+- The manager's latch is kept. Any left, right or middle release clears it. Button events
+  are re-tested every frame the left button is held, so a drag onto a lit lamp fires, and so
+  does a lamp that lights under a held press.
+- A press that fires is marked handled. The ring, which the port opens on the press, and the
+  colleague selection never see it. Motion is not consumed.
+
+The console calls `AbilityController.request()` with the lamp's bit. The controller looks at
+it on its next tick only, and drops it unless the player is free then. The pause and unpause
+notifications drop it too, which covers the pause key, the quit prompt, the caught banner
+and the duel. The original loses it to the pause, and `sub_407370` clears the id itself in
+cases 1 and 9 (`0x40741F`, `0x407447`), on the way back from the quit prompt and the duel.
+Godot handles input before the
+frame's processing, so an ability starts in the frame its press arrives, one frame earlier
+than the original.
+
+No lamp is pressed while the ring is visible, open or closing. The original makes the lamps
+unreachable through the close by re-centring the cursor on every tick of it (`0x40685A`); the
+port warps the pointer once, so it refuses the press instead.
+
+Four recorded losses:
+
+- **Under the caught banner.** The original still runs input and the world on screen 4 at a
+  zero step, so a lamp pressed there starts an ability as soon as the player is free, and
+  mode 3 even spawns its puddle. The port pauses the whole tree, so no lamp can be pressed
+  under the banner. The duel takes no lamp press in either, as it runs its own GUI manager.
+  [catch-reference.md](catch-reference.md) records the same loss for the ring.
+- **Two frames of leniency.** The port's lamp goes dark on the `inventory_changed` that spends
+  the last item, before a later press can land, so there is never an extra ability with the
+  item at 0.
+- **A release taking the press.** The press the HUD consumed is the one that would open the
+  ring or select a colleague, so neither the act bit nor an agent behind the lamp gets it.
+- **A drag from a focused item.** The port opens the ring on the left press (see
+  [player-action-reference.md](player-action-reference.md)), so a press that starts on a
+  focused item and is dragged onto a lit lamp opens the ring, and the ring refuses the lamp.
+  The original raises the act bit only on the release (`0x40445F`–`0x404478`); the lamp's
+  bit, raised during the drag, reaches `sub_41CF20` first and starts the ability, and the
+  release's `0x400` then finds `+900` taken. `tests/check_console_lamps.gd` pins the port's
+  side.
+
+### Smoking
+
+States 10 to 14 run as the table above has them, one per tick.
+
+- **Stopping and starting the player.** State 10 calls `Player.hold_for_ability()`. That
+  stops a right-button walk where it stands without re-centring the pointer, and stops the
+  footstep loop. The clock is the pointer from that tick until the player is free again, and
+  the plain pointer shows in state 14. Escape, the down arrow and the right button do nothing
+  while the ability runs. `release_from_ability()` resumes the walk if the right button is
+  still held at the end.
+- **A right release re-centres.** While `input_locked` holds the player, for a prank as for an
+  ability, a right release calls `MovementArrow.recentre()`: the pointer goes back onto the
+  player as `sub_4155F0` puts it, the clock stays, and no walk starts.
+- **The last states.** State 12 zeroes the timers as it hands over to 13, so the stopwatch is
+  empty on that tick. State 13 asks the room at the player again and pays that room's score;
+  the hover bar keeps the name state 10 chose until the first free tick.
+- **The clip.** `SMOKE` is played by `AnimationController.play_once()`. The imported clip loops,
+  as its `ANIM` says, so the `AnimationPlayer` is stopped and the frame is set from the clip's
+  keys at `now − start`. The finished flag is raised in the same pass that picks the frame,
+  last in the tick, so state 12 sees it one tick later and the last frame stays up for that
+  tick. The idle that follows is the clock-driven one.
+- **The record** comes from the room at the player; see "The room grid" below.
+
+### The smoke in the port
+
+`scenes/effects/smoke.gd` is a `MultiMeshInstance2D`, one instance per particle, drawn with
+`scenes/effects/smoke.gdshader`.
+
+- **Parameters.** The 112-byte block from `0x471378`, the 200 and the spawn's, the tick's and
+  the projection's own constants are read out of `sacked.exe` by
+  `tools/export_smoke_params.py` into `resources/original/smoke.json`, each at the address its
+  code reads it from. Its `--check` pins the file to the executable, every value to the tables
+  above and every instruction that reads a constant, opcode and operand, with
+  `tools/original_exe.py`'s `pin_readers()`. Every exporter that pins a constant's readers
+  shares that helper: the smoke's, the puddle's, the view angles', the ability timers', the
+  field of view's and the action table's. The view's angle, `(view * 45.0 + 180.0) * 0.017453`,
+  is not in that file: the puddle and the field-of-view cone read the same three floats, so
+  `tools/export_view_angles.py` exports them once into `resources/original/view_angles.json`,
+  pinned at every reader, and `scenes/shared/view_angle.gd`'s `of_view()` computes the angle
+  for both effects.
+- **Particles.** The emitter, the ramps, the 200 cap, the swap-remove order,
+  the drift and rise and the `25 * ceil(acc / 2)` bursts are as recovered. Each particle's
+  fields are float32, as `sub_426730` stores them, in one `PackedFloat32Array`. The smoke
+  keeps its own last time and ticks with `now`, the way `DeltaTime_Calculate` seeds, so its
+  first step is 0.
+- **The random source.** RANMAR's seed is not recovered, so a Godot `RandomNumberGenerator`
+  stands in, in the same eight-draw order. A check can hand in its own source.
+- **The frame** is `floor(8 * age) mod 16` from `resources/effects/strings.json`, the fps
+  there, which `frame_of()` computes for the draw. All sixteen frames sit in one
+  `Texture2DArray`, and the shader samples it at the blitter's step of `0x10000 / s`, texel
+  for texel. The quad's top left is `floor(screen + 32 − 32 size) − 32` in world pixels; the 32
+  is the frames' pivot, the negated `[-32, -32]` offset `tools/export_gui_assets.py` writes for
+  each frame into the same file, and the loader refuses frames that disagree. The original truncates camera-relative coordinates, which are positive on
+  screen, so the result is the same.
+- **The blend.** Mode 46 is done in premultiplied form: the shader writes
+  `(a * ((src * tint) >> 8)) >> 8` with an alpha of `(a + 1) / 256`, so the back buffer keeps
+  `(255 − a) / 256` of itself. Nothing fades. A pixel whose colour is pure black is discarded,
+  which is Strings' colour key.
+- **Depth.** The score is `ceil(int(sy) / 2) − 48` in world space, the convention in
+  [map-rendering.md](map-rendering.md). The shader tests it against the world composite. The
+  characters' Z is tested through their own depth planes: those of the depth-composited actors
+  whose frames overlap the smoke, which are the characters and any object whose clip loops.
+  It tests the six nearest; a seventh would not hide it, which is a port limit. The smoke
+  writes nothing. The test is `scenes/effects/effect_depth.gd` and
+  `scenes/effects/effect_depth.gdshaderinc`, which the puddle uses too.
+- **The bubbles are not in the test.** `sub_417460` hands an agent's thought bubble the same Z
+  as its sprite, `agent+0x10` (`0x41752F`–`0x417544`, against `0x417490`–`0x4174A3` for the
+  sprite), and mode 20 writes that Z wherever it draws (see
+  [npc-reference.md](npc-reference.md)). So in the original a bubble hides the particles
+  behind its agent. The port draws a bubble at z 2 with no depth, under the smoke. Whether the
+  names write Z is not recovered.
+- **What that shows.** A character's depth plane runs about 150 at the head to 170 at the
+  feet. A particle over a character standing where it was spawned is therefore nearer, and it
+  covers that character, the smoker's own head included. That is what the formulas give.
+- **The depth test was checked in a window.** A probe on level 13 forced every particle's
+  score far back. The character test then hid 1632 pixels inside the player's frame, and the
+  world test hid the rack and the desk.
+- **Draw order.** The smoke is the last child of `World` at z 3. That puts it after the
+  characters (z 1), the bubbles (z 2) and the names; the rising scores in `LevelRuntime` come
+  after it. The walk arrow, which is a world sprite in the port, sits at z 4, over both:
+  `Main_RenderUpdate` draws it (`sub_415500`, `0x402D01`) after the effects pass and the GUI,
+  so a smoke that outlives its ability never covers it.
+- **The draw.** Each tick projects every particle once, into the `MultiMesh` buffer and the
+  bounds the depth test reads, and the actor uniforms are set again only when the set of
+  overlapping actors changes. The multimesh has a fixed box far past the level: the canvas
+  keeps the rect it took from the smoke's first draw, which is empty, and a buffer set later
+  does not refresh it, so without the box a window showed no smoke at all.
+- **Clipping.** The smoke has no clip of its own. The original clips it to the world area,
+  `(1, 1)`–`(799, 509)`. The port clips its world to nothing but the viewport and draws the
+  console over it, and at 4:3 the console is opaque from y 510 down. So the only difference is
+  the one-pixel border, which the port's world does not keep either.
+- **Removal.** The controller's gate stops the emission once `now − effect_clock > 4.5` and
+  frees the smoke on the first tick that finds it empty. A level's teardown frees it with
+  `World`.
+- **The quirks are kept.** State 11 overwrites `smoke` without a look, so an orphaned smoke goes
+  on emitting until the level ends. Every state that writes the effect clock resets the one
+  clock the smoke is gated on.
+
+A run on level 13, in the server room with items 5 and 6 and the lamp clicked through a real
+mouse press, showed this at 800 × 600 and at 1067 × 600:
+
+| Time after the press | What the screenshot shows |
+| --- | --- |
+| 0.2 s | the `SMOKE` clip's first frame and the stopwatch's first sliver |
+| 1 s | the cigarette at the mouth, and no particles yet |
+| 3 s | the first burst, small at the chin |
+| 6 s | a cloud over the head, and the stopwatch at half |
+| 12.5 s | `00350` and a rising `350`, `...` in the hover bar, and the lamp dark |
+
+The hover bar showed record 76's name throughout.
+
+A second run, after the smoke moved to one instance buffer, showed the same shots, except
+that it held two packs, so the lamp stayed lit at 12.5 s. It also showed the stopwatch empty
+on the tick state 13 comes, a right release at 7 s putting the pointer back on the player
+with the clock still up, and the walk arrow of a later walk drawn over a caught smoke. The
+depth probe gave the same counts as before. At 200 particles the tick costs about 0.6 ms a
+frame and the depth uniforms 0.02 ms, against 2.2 ms and 0.6 ms before.
+
+### Urinating
+
+States 20 to 24 run as the table above has them, one per tick.
+
+- **The record** comes from the room at the player: 75 in the boss's office and 74 anywhere
+  else. State 23 asks the room again for the score it pays, as smoking's state 13 does, and the
+  hover bar keeps state 20's name.
+- **The facing** is `PrankController.piss_facing()`: the two `rand() & 8` tests over
+  `PISS_VIEWS`, Anne's 2, 3, 4 and Jo's 0, 6, 7 in the original's order. The prank's selector 12
+  calls it too (see [player-action-reference.md](player-action-reference.md)).
+  `AbilityController.facing_roll` stands in for `rand()`, so a check can fix it. The player
+  keeps the view after state 23 or 24.
+- **The clip.** `PISS#1` is played through `Player.play_action_animation()` and is clock-driven:
+  `Player.apply_profile()` hands `AnimationController.configure()` the
+  `<id>-actions/<id>-piss-1-` prefix beside the idle's and the walk's. Its frame is therefore
+  `floor((t mod 0.375) * 16)` on the clock the port's idle and walk already follow,
+  `Time.get_ticks_usec()`, rather than on the level's clock.
+- **The player** is stopped as for smoking: `hold_for_ability()` stops the walk and the
+  footstep loop in state 20, the clock shows through state 23, and the pointer on 24.
+- **The sound.** State 21 asks `LevelAudio.play_effect("S0174")`, which hands it to
+  `ScreenManager`, the port's `game+15136`. It plays once, at the full effects volume, on the
+  SFX bus, with no position. The player it returns is `piss_sound`, `+1116`.
+  - States 23 and 24 stop it with `LevelAudio.stop_effect()` and let go of it.
+  - So does the controller's `_exit_tree()`, as `~CObj_Player` does (`0x41AF1C`), and every way
+    out of a level frees the player.
+  - The sound ends 0.24 s before state 23, and `ScreenManager` frees a player whose sound has
+    ended. `stop_effect()` takes a freed player as already stopped, so the handle is dropped
+    quietly. The first windowed run found state 23 tripping over that freed player.
+  - The original's slot, freed at the same moment, can go to another sound, which state 23
+    then stops. The port's handle is its own player, so that quirk cannot happen.
+- **The pause.** `ScreenManager`'s players always process, so `S0174` plays on through the
+  pause key and the quit prompt while the ability's clock, and with it the 7 s, stands still,
+  as in the original. A windowed run held a 0.6 s pause 1.5 s into the sound: its playback went
+  from 1.49 s to 2.05 s, and `now` did not move.
+
+### The puddle in the port
+
+`scenes/effects/puddle.gd` is a `Sprite2D` drawn with `scenes/effects/puddle.gdshader`.
+
+- **Parameters.** `tools/export_puddle_params.py` reads these out of `sacked.exe` into
+  `resources/original/puddle.json`, each at the address its instruction names:
+  - the two reaches as doubles, and the 0.1 and 0.7 immediates;
+  - the growth and fade constants, and the 0.01 clamp on both scales (the second clamp
+    stores the same bits as an immediate, which `--check` compares with the float);
+  - the 256 of the draw and the 24 px of the projection.
+
+  Its `--check` pins both the file and each instruction that reads a value, opcode and
+  operand. The view's three floats come from `view_angles.json`, as the smoke's do. The
+  ten-second gate is `flt_4652F4`, the player clock's 10.0, so it comes from
+  `ability_timers.json` (see "The clock's constants are shared").
+- **Placement.** `place()` puts the puddle `d` tiles along the view, 0.2 for Anne and 0.6 for
+  Jo, 0.1 units up, and stores x and z as the floats `sub_42B330` receives. The offsets in
+  the table above hold to within 0.05 px.
+- **The clip** is `scenes/effects/puddle_animations.res`, read key by key with each frame's
+  pivot and the `-depth.png` beside it. The frames are loaded into a static cache that every
+  later puddle shares, so only the game's first puddle loads them. `tick()` shows the last frame that has started by
+  `now − start`, so frame 10 holds from 1.25 s. Each puddle keeps its own start. The original
+  shares one clip object, which makes no difference while there is only ever one puddle.
+- **Projection**, in world pixels, with `floor` for the original's camera-relative truncation
+  as for the smoke:
+
+  ```text
+  anchor   = ground(x, z) - (0, 24 * 0.1)
+  base     = ceil(int(anchor.y) / 2)                    // the score of a Z of 0
+  top_left = floor(floor(anchor) + pivot - pivot * s) - pivot
+  quad     = ((w - 1) * S >> 8) + 1  by  ((h - 1) * S >> 8) + 1,  S = max(1, trunc(s * 256))
+  ```
+
+  Here `s` is the float scale. The sprite is placed on that quad and scaled to fill it.
+- **The blend** is mode 22 in premultiplied form. The shader writes `(src * a) >> 8` with an
+  alpha of `(a + 1) / 256`, so the back buffer keeps `(255 − a) / 256` of itself, where `a` is
+  `trunc(alpha * 256)`. It reads the frame and its Z plane at the blitter's step of
+  `0x10000 / S`, texel for texel. The destination half is not truncated, so a pixel can come
+  out one above the blitter's.
+- **Depth.** Each pixel's score is the base less its own Z-plane value. The shader tests it
+  with the smoke's helper, `scenes/effects/effect_depth.gd` and `effect_depth.gdshaderinc`:
+  - against the world composite, which holds the walls and the items;
+  - against the own depth planes of up to six overlapping depth-composited actors, which stand
+    in for the characters' Z.
+
+  A tie draws, and nothing is written. On the frame state 21 builds the puddle in, `tick()`
+  hands the shader the test along with the rest of the draw: a node added during a frame gets
+  no `_process` in that frame, so that frame would otherwise have drawn with no test at all,
+  over Anne's boots or the boss's desk. On every later frame `tick()` leaves the test alone and
+  the puddle's own `_process` sets it up, once, after the controller's tick and the characters
+  that move later in the frame: the puddle is appended to `World` after the player, which holds
+  the controller. A windowed run with Anne's clip held draws the spawn frame around the puddle
+  pixel for pixel as the frame after it.
+
+  A puddle that lies behind the boss's desk shows a thin yellow edge along the desk's base on
+  every frame. That edge is the original's. The desk's own Z plane (`SPRITEZB` of
+  `ChefSchreibtisch02#270`, copied verbatim into `chef-schreibtisch02-270-depth.png`) gives 203
+  of its 463 outline pixels a Z of 255, where its body runs 147–186. `0x42ECC0` keeps the
+  smaller Z, so those pixels sit 70–110 units farther back than the body in the original's Z
+  buffer, as they do in the port's composite. A puddle whose Z falls between the two passes
+  mode 22's test on the outline and fails it on the body. Other desks' planes do the same:
+  166 of 400 outline pixels for `Schreibtisch01#000`, 137 of 307 for `CouchTisch02`.
+- **Draw order.** The puddle is a child of `World` at z 3, after the characters, their bubbles
+  and names. The rising scores and the walk arrow come after it. Effects draw in the order
+  they were spawned, as the list does. The player's shadow is drawn with the player, so the
+  puddle blends over it.
+- **The bubbles are not in the test**, as for the smoke. A bubble writes its agent's Z
+  (`agent+0x10`) wherever mode 20 draws it, so in the original a bubble of a colleague who
+  stands in front of the puddle hides the puddle there: the puddle's pixels fail mode 22's
+  test. The port draws the bubble at z 2 with no depth, so the puddle blends over it. A run
+  on level 13 showed it at 800 × 600: Anne urinating in the corridor at (9, 7), and the
+  janitor, standing nearer with his feet at y 480, had his bubble under the puddle's lower-left
+  lobe at y 304–326, blue 55 there where the bubble alone reads 185.
+- **Growth and removal.** The controller's gate does what the player tick does. Past 10 s on
+  `effect_clock` it calls `grow(age)`, which stores the scale, clamped to 0.01, and the alpha
+  as floats. Past 17 s it takes the puddle off `effects` and frees it. A new state 21 frees the
+  old puddle first, so there is only ever one, and a level's teardown frees it with `World`.
+- **The shared clock is kept.** Smoking's state 10 and its spawn still write `effect_clock`, so
+  lighting up restarts a puddle's age. Its scale and alpha stay where they were, snap back near
+  1.0 and 0.7 once the new age passes 10, and it lives 17 s from the smoke's spawn.
+- **Nothing reads the puddle** in the port either.
+
+A run on level 13 with item 26 granted and the urination lamp clicked through a real mouse
+press, in the corridor at (9, 7) and in the boss's office at (5, 4), as Jo at 800 × 600 and as
+Anne at 1067 × 600, showed this:
+
+| Age | What the screenshot shows |
+| --- | --- |
+| 0.5 s | `PISS#1` in the picked view (Jo up-right, Anne down-right) with its stream, frame 3 of the puddle, the record's name and the stopwatch's first sweep |
+| 3 s | the grown 68 × 48 puddle, translucent over the carpet. Jo's legs stand in front of his; Anne's boots cover hers except their lowest pixels. In the office the desk's base cuts off its top |
+| 7.5 s | `500` or `800` rising, `...`, the lamp dark, the player idling in the same view, the puddle unchanged |
+| 11 s | 73 × 52 at alpha 155 |
+| 15 s | 95 × 67, faded to alpha 68 |
+| 17.5 s | the floor bare again |
+
+The last three were reached by moving `effect_clock` back, since the age is
+`now − effect_clock`.
+
+A probe with every clip frozen spread a puddle to 1.5 behind Jo at the boss's desk:
+
+- the character test hid 1137 pixels of it inside Jo's frame;
+- the world test hid 1769 pixels behind the desk's base and a partition wall;
+- every one of the 5762 opaque texels matched mode 22, computed from the frame and a
+  screenshot without the puddle, to within 1, and 948 exactly.
+
+### The pill
+
+States 40 to 43 run as the table above has them, one per tick, in `AbilityController._pill()`.
+
+- **The record.** Record 73 gives the name, which is `...`, the 20 tenths as a total of 200 and
+  the score of 10, all from `resources/original/actions.json`. State 43's slow-down total is
+  record 73's `effect_duration_tenths`, 400, times 10.0 and stored as a float32, never a
+  literal. The 10.0 of states 40 and 43 and the 100.0 of state 42 and of the slow-down's test
+  are not the pill's own: `flt_4652F4` and `flt_465304` are shared by modes 1 (a prank,
+  `sub_41B240`), 2, 3 and 5, the player tick and the stopwatch feed, and come from
+  `ability_timers.json` (see "The controller").
+- **The player** is held as for the other two, with the clock up through 42 and nobody moving,
+  but `hold_for_ability(false)` leaves the clip and the footstep alone. A player walking when
+  the lamp is pressed goes on playing `WALK` where they stand, clock-driven as ever, and the
+  footstep loop goes on sounding: `Player.footsteps_held` keeps the locked physics tick from
+  stopping it. State 43 idles the player and frees them; the first free physics tick with no
+  direction held stops the footstep, as `0x41B189` does, and a right button still held walks
+  on.
+- **The spend and the stopwatch.** 43 spends item 14 through `PrankController.spend_item()`, so
+  the Matrix lamp goes dark on the same `inventory_changed`. The stopwatch reads 0 on the ticks
+  of 40 and 41, sweeps 2.0 s in 42 and reads 0 from the tick that zeroes the timers.
+- **Never caught.** No pill state is in `CATCH_STATES`.
+- **The agents.** `AbilityController.set_agents_slowed()` is `sub_41CD10`: it sets `slowed` on
+  every member of `npc_agents` under the player's `World`, which is the boss, the secretary,
+  the janitor and every coworker. The player is not in that group and has no such flag.
+- **The timer.** `_advance_slowdown()` runs after the mode's state on every tick
+  (`0x41D401`–`0x41D458`). It sums `+996` as a float32, shows the overlay by `+1044`, and past
+  `+996 * 100 > +1004` zeroes both and calls `set_agents_slowed(false)`. The overlay is still up on that tick and gone on the next.
+  It counts from 43's own tick, on the level clock, so it stands still with the paused tree and
+  resumes where it stood. A second pill runs 40 to 43 again and restarts the forty seconds;
+  a level start builds a new player and new agents, so nothing carries over.
+- **State 44** is left out, as nothing writes it.
+
+A run on level 13 with item 14 granted, the player walking on the right button and the Matrix
+lamp pressed with a real left click, at 800 × 600 and at 1067 × 600, showed this:
+
+| Time | What the screenshot shows |
+| --- | --- |
+| 1 s after the press | the player in a `WALK` frame where the press caught him, `...` in the hover bar, the stopwatch half swept, the Matrix lamp still lit, no overlay; the log has the footstep loop on and the player 0 px from where he was |
+| 3 s | the overlay, green top left and red top right over the floor, walls and items; the player and every character over it untinted; the agents green; `10` rising; the lamp dark |
+| 20 s | the same, the agents crawling |
+| 39.9 s after state 43 | still green and still overlaid, the janitor and the boss walking in at a crawl |
+| 41 s after state 43 | the office in its own colours, the agents at their own pace |
+
+State 43 came 2.03 s after the press, and all ten of level 13's agents were slowed from it.
+
+### The slowed office in the port
+
+`scenes/npc/npc.gd` carries `slowed`, `agent+1792`. Its setter hands the clip speed to the
+agent's `AnimationController` and shows or hides the copies. The two numbers are the
+immediates the four ticks load, the float32 0.2 and 1.0, which `tools/export_slowdown_params.py`
+reads out of `sacked.exe` into `resources/original/slowdown.json`; `scenes/npc/slowdown.gd`
+loads that file once for the agents, the copies and the overlay.
+
+- **The walk step.** `walk_multiplier()` is `+76`. Both walk steps, the navigation one and the
+  older patrol one, multiply `get_move_speed_tiles()` by it. That speed is the current one, the
+  base plus 0.15 times the band for everyone but the boss, so a slowed agent walks at a fifth of
+  its banded pace. `get_move_speed_tiles()` itself is untouched, and so is everything that reads
+  it.
+- **The clips.** `AnimationController.speed_scale` is the clip speed `+536`, 1 for the player
+  and for any agent not slowed. A clock-driven clip, the idle and the walk, shows the frame of
+  `floor(((clock * speed) mod length) * fps)`, so every slowed walker keeps step with every other
+  and the change of speed jumps the frame. A clip the `AnimationPlayer` runs is given the speed
+  as the player's `speed_scale`, and on a change of speed it is put where
+  `CObjectAnim_SelectFrameFromTime` would have it: `(elapsed * speed) mod length` for a looping
+  clip, `elapsed * speed` for a one-shot. `elapsed` is the clip's own unscaled time, which stands
+  still with the tree as the `AnimationPlayer` does. So `IDLE#2` lasts five times longer and the
+  coworker's tick waits for it, and a release that puts it past its end finishes it at once,
+  with the `animation_finished` a clip that runs out raises: the `AnimationPlayer` stops on a
+  seek to the end without it. A one-shot that has already finished keeps its last frame.
+- **What is left alone.** The needs and goal timers, the arrival, the notice test, the field of
+  view, the catch and the band read neither the flag nor the speed.
+- **One frame the port does not keep.** The original's clips are shared registry objects that
+  take the speed from whichever agent's tick last ran, and a clip switched to in the middle of a
+  tick keeps the old speed for that frame. The port gives each agent its own speed for every
+  clip it plays, so both one-frame differences are gone.
+
+### The green copies in the port
+
+`scenes/npc/slowed_copies.gd` is a `Node2D` in `scenes/npc/npc.tscn` after `NameLabel`, at z 3.
+It is shown while the agent is slowed and runs only then, paused or not. Every frame it:
+
+- takes the agent's current frame and the spot `CharacterDepthCompositor` draws it at, the
+  rounded top left of the sprite;
+- draws three offsets from `random`, a stand-in for `rand()` that answers 0 to 32767, in the
+  original's order: `y = r % 4 − 2` first and then `x = r % 6 − 3`, for each copy in turn. A
+  check can hand in its own;
+- draws the frame three times at those offsets through `scenes/npc/slowed_copies.gdshader`.
+
+The numbers, three copies, the tint, the brightness, the weight and its complement, the cap,
+the 2 depth units and the two jitters, come from `slowdown.json`, read from `sub_417460` and
+`0x43B050`.
+
+- **The blend.** The shader is mode 54 in premultiplied form:
+  `c = min(255, (src * tint >> 8) + 60)` with tint (40, 255, 40), written as `(c * 120) >> 8`
+  with an alpha of `121 / 256`, so the back buffer keeps `135 / 256` of itself. The destination
+  half is not truncated, so a pixel can come out one above the blitter's. It is a plain blend,
+  like the blitter; `scenes/shared/object_highlight.gdshader` was not the model.
+- **Depth.** Each pixel's score is the agent's base `ceil(int(y) / 2)` plus 2, less the frame's
+  own Z-plane value, and it is tested with the effects' helper, `scenes/effects/effect_depth.gd`,
+  against the world composite and the depth planes of the six nearest overlapping actors. The
+  agent's own frame is among them, so a copy shows over its agent wherever the agent's plane is
+  within 2 of the copy's, which is nearly everywhere. Nothing is written. `EffectDepth` gained a
+  `world` to name `World` from under an agent.
+- **Under a paused tree.** `Main_RenderUpdate` goes on drawing under the pause panel, behind
+  the quit prompt and on the caught banner, where only the world tick stops, and `sub_417460`
+  rolls `rand()` for every copy it draws. So the node runs with `PROCESS_MODE_ALWAYS`: the port
+  pauses its tree on all three, and the copies go on jittering over the agent's frozen frame.
+  It reads the frame and the depth inputs and changes nothing else. The field of view's tint,
+  by contrast, stands still there (see "The frozen office" in
+  [field-of-view-reference.md](field-of-view-reference.md)).
+- **Inside a cluster.** `CharacterDepthCompositor` hides the sprites of overlapping characters
+  and draws their composite instead. The copies read the hidden sprite's frame, which stays
+  current, and test each character's own plane, so a cluster changes nothing.
+- **The draw order.** z 3 puts the copies after the agent's sprite (z 1), its shadow (z 0),
+  its bubble (z 2) and, by tree order, its name, and before the effects, the rising scores, the
+  walk arrow and the HUD.
+- **Two differences from the list's order.** The original draws each agent's copies before the
+  next agent's sprite. Here every character is drawn before any copies, and each copy tests the
+  other characters' planes wherever they are in the list. So a character drawn later and
+  further back, which in the original paints over a copy where the copy's own agent does not
+  cover it, is under the copy here, over a margin of up to 3 pixels. And the bubbles are not in
+  the test, as for the smoke.
+
+A frozen pair of frames with one agent's copies off and on changed 1532 pixels at 800 × 600 and
+2365 at 1067 × 600, none of them more than 4 pixels outside the agent's frame, and most of them
+greener than before. The seated coworker's chair back hid them where it stands in front. Since
+the copies roll on under a paused tree, a later pair held every agent's rolls fixed: 1549 and
+2725 pixels, again none outside. The pause key, pressed as a real key 1 s into the slow-down,
+stopped the forty seconds where they stood and left one agent's copies with 30 different sets
+of offsets over 30 paused frames, at both sizes.
+
+### The overlay in the port
+
+`scenes/player/slowdown_overlay.gd` and its shader are `sub_41D500`'s gradient.
+`AbilityController` builds it the first time `+1044` is up, as the player's first child, an
+internal one, and shows it for exactly the ticks `slowdown_shown` is set.
+
+- **Where it draws.** It sits at z 1, the z `CharacterDepthCompositor` gives every sprite it
+  draws, and those draw in tree order: the looping items under `World/Objects`, then the
+  player, then the agents, then the clusters. As the player's first child the overlay comes
+  after every item and before every character, as it is painted at the player's place in the
+  character list. Everything at a lower z is under it: the floor (−20), the field-of-view tint
+  (−10), the walls (−5), the glass (−4), the world composite and the shadows (0). The effects
+  (3), the rising scores, the walk arrow and the HUD are over it.
+- **A looping item in a cluster stays under it.** A looping item whose frame overlaps a
+  character's is composed with it on the CPU, and its own sprite is hidden. The composite used
+  to be one surface drawn after every character, so while the player stood at an item they had
+  just broken, or an agent walked past a looping copier, the item's pixels came out over the
+  overlay in their own colours. The compositor now composes each cluster's item pixels onto a
+  surface of their own, an internal child at the back of `World/Objects` at z 1: after the
+  items and before the overlay, where the original draws them in its item pass. The cluster's
+  own surface keeps the characters' pixels. A pixel is on whichever surface the actor that wins
+  it belongs to, never on both, so without the overlay the pair shows the same picture as the
+  one surface did.
+- **The shadows are under it** in the port. The original draws each shadow with its character,
+  after the overlay; the port draws every shadow at z 0 beneath the world composite, so the
+  walls cover them. The difference is the shadows' own ellipses, which here darken the tinted
+  floor's scene half rather than the tinted floor.
+- **The item highlight** of a looping item is drawn at z 2 and so over the overlay; a still
+  item's is at z 1 before the player, and under it, as the original draws both in the item pass.
+- **The gradient** is `sub_4584D0`'s arithmetic, per pixel in the shader: each row steps
+  `4096 / height` and each column `4096 / width`, both truncated, each accumulated product
+  shifted down 12 as an arithmetic shift, and the result halved and added to the halved scene.
+  In premultiplied form that is `floor(g / 2)` with an alpha of one half; the scene's half is
+  not truncated, so a pixel can come out one above the original's. The corners are bytes 0, 1
+  and 2 of the four dwords, read as R, G and B: green (0, 160, 0) top left, red (160, 0, 0) top
+  right, blue (0, 0, 160) bottom left, cyan (0, 160, 160) bottom right. That byte order is the
+  one [field-of-view-reference.md](field-of-view-reference.md) recovered; no screenshot of the
+  original's overlay confirms it.
+- **Where the gradient lies.** The shader works from the pixel on screen, `SCREEN_UV` times the
+  canvas, so the camera does not move it; the node draws one quad far past any level. The clip
+  is `Main_RenderUpdate`'s `(1, 1, w − 1, h − 91)`, taken with the port's canvas: columns 1 to
+  w − 1 and rows 1 to h − 91, so 799 × 509 at 800 × 600 and 1066 × 509 at 1067 × 600.
+- **A wider canvas is spread over the original's clip**, a port choice. The steps come from the
+  original's own 799 × 509, as `4096 / 799` and `4096 / 509` truncated, and each column of a
+  wider clip is first put on one of the original's 799 in integers, `column × 798 / (w − 2)`,
+  as each row of a taller one is on its 509 by `row × 508 / (h − 92)`. At 800 × 600 that maps
+  every column and row onto itself, so the arithmetic is the original's to the pixel; on any
+  other canvas the corner colours still sit at the corners of the world area, which is what the
+  steps are for. Running the steps at the port's width instead would truncate
+  `4096 / 1066` to 3 and leave the right-hand edge at 3195 / 4096 of the way to its corners at
+  1067 wide, and at about half the way on a 32:9 canvas: a pale right-hand side the original
+  never showed. See [widescreen.md](widescreen.md).
+- **Past the clip.** The port's world has no one-pixel border and, beside the console band on a
+  wider canvas, runs on below h − 91 (see "The world is not clipped" in
+  [widescreen.md](widescreen.md)). There the gradient's nearest column or row goes on, so the
+  floor the console leaves uncovered is tinted like the floor above it, as the field of view's
+  tint does. At 800 × 600 the console covers everything below the clip.
+
+The runs above checked the overlay pixel by pixel on a frozen frame, off and on. At 800 × 600,
+267 255 pixels came out `(dst >> 1) + (g >> 1)` exactly and 97 820 within 1; 108 860, the
+characters and the HUD drawn over it, were untouched; and the other 6065 were translucent things
+drawn over it, the bubbles, the copies' edges and the FPS label. The top-left pixel went from
+(78, 79, 71) to (39, 120, 36) and the top-right from (178, 174, 173) to (166, 89, 87), so
+`SCREEN_UV` runs down the screen as the gradient does. A copier put into its looping
+`DESTROYED_1`, and so drawn at z 1, came out tinted in all 1365 of its sampled pixels.
+
+After the two fixes above, the same check on every third pixel each way, with the copies' rolls
+held fixed for the pair, gave 29 972 exact, 10 731 within 1, 12 030 untouched and 667 other at
+800 × 600, and 42 277, 14 914, 12 760 and 1249 at 1067 × 600, the strips beside the console below
+row 509 among the matches. The last column at 1067 wide is now the same `(155, 4, 0)` of the
+gradient as the last column at 800. The radio put into its looping state and the player's frame
+over it were one cluster, the radio's pixels on the item surface under `World/Objects`: its
+opaque pixels outside the player's frame came out averaged, 234 exact and 89 within 1 at
+800 × 600, 193 and 53 at 1067 × 600, and none untouched, as with the player standing clear of
+it. Before the fix a cluster left an aquarium's pixels in their own colours, 2483 of 2566 of
+them at 800 × 600.
+
+### The catch
+
+`CatchWatch` also catches states 11 and 12, and 21 and 22, through
+`AbilityController.is_catchable()`, with the notice test it uses for pranks. It then writes the
+abort state through `AbilityController.catch()`. The pill is never caught.
+
+- **The abort runs at once.** Screen 4 ticks the world at a zero step under the banner
+  (`0x40287B`, `0x411AD1`), and the port pauses the tree there instead. So `catch()` runs the
+  controller once at a zero step itself, the original's first banner frame:
+  - state 24 idles, frees the player and stops `S0174` in the frame of the catch;
+  - state 14 frees the player at once if `SMOKE` has already run out, and otherwise waits for
+    it on the frozen clock.
+- **The order.** The watch runs after the player in the frame. So smoking can be caught from
+  its first tick, and urinating's state 21 only on the tick that set it, before the puddle
+  exists.
+- **Nothing is paid or spent.** The lamp stays lit, and a smoke or puddle already spawned
+  stays and ages on the clock the banner freezes.
+- **The hover bar's `...`** comes back on `PrankController`'s first free tick, after the duel.
+  The original writes it on the banner's second frame, since the paused tree stops
+  `PrankController` as well.
+
+### The room grid
+
+`tools/build_level_scene.gd` emits each manifest's `collision_grid.room_ids`, flat and
+indexed `x + width * z`, into the level's `CollisionTileMapLayer` as `room_ids`, with
+`room_grid_size` beside them. `CollisionMapLayer.room_category(tile)` answers
+`sub_412AE0(int(x + 0.5), int(z + 0.5), 4)`. `int()` truncates toward zero as `ftol` does, so
+x = −0.9 still reads column 0, and a cell off the grid answers 0.
+
+### The inventory
+
+`PrankController.inventory` has 31 slots, as `sub_41AF60` clears. It used to have 28, which
+dropped every grant of items 28–30 (actions 54, 137, 9 and 39) and let actions 115, 135 and
+136 through without items 28 and 29.
+
+### Checks
+
+- `tests/check_player_abilities.gd`, on level 13:
+  - the four records by room, and state 13 at 12.0 s with the stopwatch already empty;
+  - state 13 paying the room it finds then;
+  - the pay, the spend and the lamp;
+  - the spawn strictly after 0.4 s, the stop past 4.5 s and the removal;
+  - the clip and its extra tick;
+  - the console's feed;
+  - a left click on the lit smoking lamp going through the real console to this controller,
+    which starts smoking on its next tick;
+  - the dropped requests and their order;
+  - the held player, the keyboard walk that goes nowhere, and the right release that
+    re-centres;
+  - the walk arrow drawn over the smoke;
+  - the catch, and a smoke caught after its clip freeing the player at once;
+  - items 28 and 29;
+  - urinating's two records, state 23 at 7.0 s, the stopwatch, the spend and the lamp, and
+    state 23 paying the room it finds then;
+  - the facing for both characters, the pick's order, and both `PISS` clips in every view
+    it picks;
+  - the puddle ahead along the view for both characters;
+  - `S0174` once and held, stopped by 23 and 24 even after it has ended, and playing on
+    through a pause;
+  - one puddle at a time, its spread at 12 and 16.9 s, and its removal after 17 s but not
+    at 17;
+  - the catch in 21 and 22, and never in 20 or 23;
+  - smoking restarting the puddle's window;
+  - the float32 timers at 60 fps: the stored step, 7.0 s on the 420th step, and the smoke's
+    spawn and 12.0 s on the 24th and the 721st;
+  - the depth test the puddle's shader is handed on the tick that builds it and a frame later,
+    and the smoke's once it has particles: the world composite, and the player among the actors
+    with his frame, depth plane and base;
+  - the teardown stopping `S0174` and freeing the puddle;
+  - the pill: 40 to 42 with `...`, a total of 200, the stopwatch at 0 for two ticks, 42 ending
+    on the 32nd sixteenth of a second, `WALK` and the footstep going on while the player stands,
+    no state caught; 43 paying 10, idling, freeing, spending item 14 and slowing every agent
+    and never the player, with `+1004` at 4000 and `+996` counting from its own tick;
+  - the slow-down still up at exactly 40.0 s and released on the tick past it, the overlay one
+    tick longer, the pause stopping it, and a second pill restarting the full 40 s; each of
+    these and the two overlay checks takes its own pill, so none depends on the order;
+  - the overlay as the player's first child at z 1, after the items and before every
+    character, its clip at 800 × 600, 1067 × 600 and 800 × 640, and its steps from the
+    original's 799 × 509;
+  - a looping item a character overlaps: its pixels on a surface at the back of
+    `World/Objects` at z 1, before the overlay, the character's on the cluster's surface after
+    it, and no pixel on both;
+  - smoking's state 10 and urinating's state 20 stopping a sounding footstep, and the locked
+    tick not starting it again.
+- `tests/check_slowed_agents.gd`, on level 2, which has all four archetypes:
+  - the pill slowing all six agents and not the player;
+  - one physics step of a coworker, the secretary and the janitor at band 2, and of the boss,
+    slowed and not: a fifth of the current speed, the boss's without the band;
+  - the clock-driven walk's frame at `clock * 0.2`, and the jump;
+  - `IDLE#2` lasting five lengths, and finishing at once when a release puts it past its end;
+  - a looping action clip jumping to `elapsed * 0.2` and back;
+  - the copies: the order of the rolls, the jitter's ranges, the spot, the base plus 2, the
+    blend's numbers, the world composite and the agent's own plane in the test, and the z;
+  - the copies rolling fresh offsets on every frame of a paused tree;
+  - the copies of an agent drawn in a cluster;
+  - the release at 40 s, and a new level starting with nothing slowed and no overlay.
+- `tests/check_character_depth_compositor.gd`: a looping item's pixels composed onto their own
+  layer and a character's onto the cluster's, the shared pixel on the winner's layer whichever
+  was composed first.
+- `tools/export_slowdown_params.py --check`: the 0.2 and 1.0 of the four ticks, the copies' and
+  the overlay's numbers, the clip and the instructions around them against `sacked.exe`.
+- `tools/export_ability_timers.py --check`: the shared 10.0, 100.0, 0.4 and 4.5, and every
+  reader of them in the prank's states, the three modes, the player tick (the puddle's and the
+  foam's gates and the blackout's rate among them) and the stopwatch feed.
+- `tests/test_original_exe.py`: `pin_readers()`, which the six exporters that pin a
+  constant's readers share, refusing the right address behind the wrong opcode and the right
+  opcode reading another address.
+- `tools/export_view_angles.py --check`: the view's 45.0, 180.0 and 0.017453, and every reader
+  of them in the smoke's spawn, the puddle's and the field-of-view cone.
+- `tests/check_player_interaction.gd`: a prank's 70 tenths ending on the 420th step at 60 fps.
+  It and the three other checks that run a prank to its end (`check_prank_consequences.gd`,
+  `check_sound_table.gd`, `check_looping_object_focus.gd`) step it at 60 fps until it ends:
+  one step of `total_seconds()` reaches a float32 total only for a whole number of seconds
+  (13 tenths gives a sum of 1.2999999523, whose hundredths fall short of 130).
+- `tools/export_action_table.py --check` and `tests/test_original_action_data.py`: record 73's
+  `effect_duration_tenths` of 400, the only one, and the one instruction that reads it.
+- `tests/check_smoke_effect.gd`: the exported parameters, the Strings frames' shared pivot
+  (32, 32) as `strings.json` gives it, and the particle mechanics and the instance buffer
+  against a fixed random source.
+- `tools/export_smoke_params.py --check`: the parameters against `sacked.exe`.
+- `tests/check_puddle.gd`: the exported parameters, the ten-second gate taken from the player's
+  clock rather than `puddle.json`, the six landing spots, the clip played
+  once per puddle, the depth base and the quad, the spread and fade to 17 s, what the
+  shader is handed, and `tick()` setting up the depth test with no frame run, the actors
+  nearest first; on a later frame, `tick()` leaving the test alone and the puddle's own
+  `_process`, after a stand-in controller's tick, testing the actor only the spread quad
+  reaches. `tests/check_player_abilities.gd` pins that the puddle comes after the player in
+  `World`.
+- `tools/export_puddle_params.py --check`: the puddle's constants against `sacked.exe`.
+- `tests/check_console_lamps.gd`: the lamps' input rules.
+- `tests/check_level_maps.gd`: every level scene's room grid against its manifest.

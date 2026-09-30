@@ -309,7 +309,7 @@ func _check_the_reposition_lands_on_the_copier() -> void:
 		if side == 0:
 			controller.abort_action()
 		else:
-			controller._advance_action(controller._duration)
+			_run_prank_to_end(controller)
 		_expect(controller.state == CONTROLLER.State.FREE, "orientation %d: the action is over" % orientation)
 		_expect(player.global_position.is_equal_approx(start), "orientation %d: the player is put back where he stood" % orientation)
 		_expect(is_zero_approx(player.height), "orientation %d: and back on the floor" % orientation)
@@ -396,7 +396,7 @@ func _check_marker_18_hides_its_object() -> void:
 	_open_and_commit(controller, point, 67)
 	_expect(controller.state == CONTROLLER.State.ACTING, "action 67 runs")
 	_expect(point.in_use and not object.visible, "the object is hidden while its marker-18 action runs")
-	controller._advance_action(float(controller._duration))
+	_run_prank_to_end(controller)
 	_expect(not point.in_use and object.visible, "it comes back when the action applies")
 	_expect(int(object.state) == 0, "marker 18 is not a state, so the object keeps its own")
 
@@ -409,3 +409,12 @@ func _check_marker_18_hides_its_object() -> void:
 	_expect(not point.in_use and object.visible, "an aborted action brings it back")
 	_drop(fixture)
 
+
+# A prank ends on the 60 fps step that carries its float32 clock to the record's duration; a
+# single step of total_seconds() gets there only when the duration is whole seconds.
+func _run_prank_to_end(controller: Node) -> void:
+	var steps := int(ceil(float(controller._timer.total_seconds()) * 60.0)) + 2
+	for _step in range(steps):
+		if controller.state != CONTROLLER.State.ACTING:
+			return
+		controller._advance_action(1.0 / 60.0)

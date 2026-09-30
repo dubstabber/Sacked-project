@@ -12,6 +12,9 @@ var input_locked: bool = false
 # Set while the action ring is up: sub_41B240's state 1 only rewrites the hover text, so the
 # player stands and the arrow keys belong to the ring.
 var menu_open: bool = false
+# Set while the pill holds the player: its states change no sound, so a footstep already
+# sounding goes on until the player is free again.
+var footsteps_held: bool = false
 var last_direction: Vector2 = Vector2.RIGHT
 # Logical units above the floor. sub_41A2D0 takes 24 px a unit off the projected y before it
 # derives both the draw anchor and the depth base, and sub_41D500 draws the shadow from that
@@ -53,6 +56,10 @@ func _exit_tree() -> void:
 func _notification(what: int) -> void:
 	if what != NOTIFICATION_UNPAUSED:
 		return
+	resync_mouse_movement()
+
+
+func resync_mouse_movement() -> void:
 	var held := Input.is_action_pressed("mouse-movement")
 	if is_mouse_movement_active and not held:
 		stop_mouse_movement()
@@ -60,8 +67,36 @@ func _notification(what: int) -> void:
 		start_mouse_movement()
 
 
+# An ability stops the player where they stand, even mid-walk: only the free-mode tick moves
+# them (sub_41B0C0 at 0x41B125), and the next frame's `and al, 0Fh` (0x403FC1) wipes a
+# right-button walk. The arrow cannot show while the mode runs (0x4043B1-0x4043C2), and the
+# pointer is not re-centred. Smoking and urinating stop the footstep; the pill's states touch
+# no sound, and the first free tick stops it (0x41B189). See docs/player-ability-reference.md.
+func hold_for_ability(stop_footsteps := true) -> void:
+	input_locked = true
+	is_mouse_movement_active = false
+	velocity = Vector2.ZERO
+	movement_cursor.hide_arrow()
+	footsteps_held = not stop_footsteps
+	if stop_footsteps:
+		footstep_controller.stop_footsteps()
+
+
+# A right button still held when the ability ends raises the walk again on the next mouse
+# event, and the first mode-0 tick walks.
+func release_from_ability() -> void:
+	input_locked = false
+	footsteps_held = false
+	resync_mouse_movement()
+
+
 func _input(event: InputEvent) -> void:
 	if input_locked:
+		# sub_403FB0 re-centres both cursors on every right release whatever the player is
+		# doing (0x40447E-0x4044A3), so a release under a prank or an ability puts the pointer
+		# back on the player without starting a walk.
+		if event.is_action_released("mouse-movement"):
+			movement_cursor.recentre(get_player_viewport_position())
 		return
 	if event.is_action_pressed("mouse-movement"):
 		start_mouse_movement()
@@ -74,9 +109,10 @@ func _physics_process(delta: float) -> void:
 	var raw_mouse_movement_direction := Vector2.ZERO
 
 	if input_locked:
-		# The prank controller owns the animation for as long as it holds the player.
+		# The prank or ability controller owns the animation while it holds the player.
 		velocity = Vector2.ZERO
-		footstep_controller.stop_footsteps()
+		if not footsteps_held:
+			footstep_controller.stop_footsteps()
 		movement_cursor.hide_arrow()
 		return
 	if is_mouse_movement_active:
@@ -143,9 +179,13 @@ func apply_profile(selected_profile: Resource) -> void:
 	if String(profile_id) != "":
 		library_prefix = "%s/" % String(profile_id)
 
+	# Urinating's PISS#1 keeps the start of 0 Animation_AllocRegister gives it (0x42E430): nothing
+	# stores to it, so its frame is floor((now mod 0.375) * 16), locked to the clock like the idle
+	# and the walk. See docs/player-ability-reference.md, "Mode 3: urinating".
 	animation_controller.configure(
 		library_prefix + String(profile.get("idle_animation_prefix")),
-		library_prefix + String(profile.get("walk_animation_prefix"))
+		library_prefix + String(profile.get("walk_animation_prefix")),
+		PackedStringArray([action_animation_prefix("piss-1")])
 	)
 	footstep_controller.configure(
 		String(profile.get("footstep_stream_path")),
@@ -156,14 +196,23 @@ func apply_profile(selected_profile: Resource) -> void:
 # The prank controller drives these: the library is registered as "<id>-actions" and its
 # clips are named "<id>-<action>-<direction>".
 func play_action_animation(action: String, direction: Vector2) -> bool:
-	if profile == null:
-		return false
-	var prefix := "%s-actions/%s-%s-" % [String(profile.get("id")), String(profile.get("id")), action]
-	var anim_name: String = animation_controller.get_directional_animation_name(prefix, direction)
-	if not animation_player.has_animation(anim_name):
+	var anim_name := action_animation_name(action, direction)
+	if anim_name == "":
 		return false
 	animation_controller.play_animation(anim_name)
 	return true
+
+
+func action_animation_name(action: String, direction: Vector2) -> String:
+	if profile == null:
+		return ""
+	var anim_name: String = animation_controller.get_directional_animation_name(action_animation_prefix(action), direction)
+	return anim_name if animation_player.has_animation(anim_name) else ""
+
+
+func action_animation_prefix(action: String) -> String:
+	var id := String(profile.get("id")) if profile != null else ""
+	return "%s-actions/%s-%s-" % [id, id, action]
 
 
 func snap_to_8_directions(dir: Vector2) -> Vector2:

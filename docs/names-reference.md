@@ -226,11 +226,16 @@ Verified on 2026-09-25 on a disposable copy of `sacked.exe.i64`.
   needed.
 - **The hovered agent pulses, it is not tinted.** The pick raises `+92` on the agent
   (`0x403258`) and clears it on the one before (`0x403211`), and stores `(255, 255, 255, 200)`
-  in `+4..7`. The character loop then draws a flagged agent a second time, additively, with
-  the same alpha swing items get (`0x402a24`–`0x402a83`). The pulse is white, where an item's
-  depends on its reach, and it follows the cursor every frame whatever the selection.
+  in `+4..7`. The character loop then draws a flagged agent a second time in mode 54, the same
+  pass items get (`0x402a24`–`0x402a83`): weight `+7` = 200 through `sub_42D1D0`
+  (`0x402a3d`), and a brightness that swings between 40 and 200 through `sub_42D200`
+  (`0x402a7a`). The copy is a blend at a fixed weight of 200/256 with a pulsing brightness
+  lift, not an additive pass (see [player-action-reference.md](player-action-reference.md)).
+  The pulse is white, where an item's depends on its reach, and it follows the cursor every
+  frame whatever the selection.
 
-The same flag feeds one more system, not recovered further here. `sub_402260` runs each frame
+The same flag feeds one more system, recovered in
+[field-of-view-reference.md](field-of-view-reference.md). `sub_402260` runs each frame
 from `Main_RenderUpdate` and calls `sub_4179B0` for every agent, which eases the agent's
 notice heading `agent+1848` (see [npc-reference.md](npc-reference.md)). It passes 0 for all
 but the selected agent. For that one, when `agent − player` is below 12.0 (`flt_4652CC`) on
@@ -293,7 +298,9 @@ item gate is open. On the act input it calls `select_agent`, which clears every 
 and raises the hovered one's, and the ring still reads the same input. A hovered colleague
 gets a second `object_highlight.gdshader` pass drawn from its current frame. That pass tests
 the colleague's own depth plane and, inside a character cluster, the cluster's scores, as an
-item's pass does. Where two boxes sit at the same depth the object wins, which is a port
+item's pass does. Its additive blend with a swinging alpha follows an older reading of the
+original's pass, which is a fixed-weight blend with a pulsing brightness (see
+[player-action-reference.md](player-action-reference.md)). Where two boxes sit at the same depth the object wins, which is a port
 choice. `tests/check_coworker_select.gd` pins the label, the click, the player's missing box,
 the shared pick and the white pulse. `tests/check_coworker_names.gd` pins the names levels 1,
 2 and 7 deal, an edited pool, and the placeholder.
