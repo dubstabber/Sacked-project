@@ -155,8 +155,11 @@ Its mechanics, for whenever that class is needed:
 - The glyph pitch is **25 pixels**, set as `this+108`, and digit *d* is sourced at
   `y = 25 * d`. This matches the strip's measured glyph tops to within a pixel even though
   those are not perfectly even.
-- Horizontal advance per character is `this+104`, the format string is at `this+124` and
-  the value at `this+96`.
+- `this+104` is the gap between digits: digit i is drawn at
+  x = `+8` + (i + 1) × the cell's width + i × `+104` (`0x45C398`–`0x45C3A5`), so the advance is
+  the cell's width plus the gap (see "The countdown is a digit strip" in
+  [minigame-reference.md](minigame-reference.md)). The format string is at `this+124` and the
+  value at `this+96`.
 - With `this+112` set the digits **roll**: the previous digit for each position is cached
   at `this+184+i`, and the draw blits the old glyph offset by
   `v = this+120 * 25 * this+116` and the new one directly below it, where `this+116` is a

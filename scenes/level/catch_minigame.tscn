@@ -92,12 +92,11 @@ region_enabled = true
 region_rect = Rect2(0, 0, 370, 30)
 
 [node name="Countdown" type="Label" parent="SafeFrame"]
-offset_left = 330.0
+offset_left = 384.0
 offset_top = 52.0
-offset_right = 410.0
+offset_right = 464.0
 offset_bottom = 92.0
 theme_override_font_sizes/font_size = 28
-horizontal_alignment = 1
 text = "00"
 
 [node name="Console" type="Sprite2D" parent="SafeFrame"]

@@ -9,6 +9,9 @@ const Art := preload("res://scenes/level/catch_minigame_art.gd")
 const I18N_SCRIPT := preload("res://autoloads/i18n.gd")
 
 const STEP := 1.0 / 60.0
+# m_pTime, the countdown, is a CGUIFNumber at x 370 (0x4144D1), drawn out of this strip.
+const TIME_X := 370.0
+const DIGIT_STRIP := preload("res://images/gui/hud/numbers.png")
 
 var _failures := 0
 
@@ -38,9 +41,10 @@ func _run() -> void:
 	await _check_the_duel_lengthens_each_time()
 	await _check_the_duel_sounds()
 	await _check_the_answer_clock()
+	await _check_the_countdown_starts_at_the_first_digit()
 	await _check_the_banners_follow_the_language()
 	if _failures == 0:
-		print("Catch minigame: the button row, the portraits, both round outcomes, the energy rule, the sounds, the answer clock and the banners passed")
+		print("Catch minigame: the button row, the portraits, both round outcomes, the energy rule, the sounds, the answer clock, the countdown's place and the banners passed")
 	quit(1 if _failures else 0)
 
 
@@ -97,6 +101,29 @@ func _check_the_portraits() -> void:
 	for character in Art.PLAYER_PORTRAITS:
 		_expect(Art.player_portrait_for(character) != null, "%s has a portrait of their own" % character)
 	_expect(Art.spell(0) != null and Art.answer_spell(0) != null, "casts and answers are both drawn")
+
+
+# The strip's draw puts digit i at x = 370 + (i + 1) * the cell's width + i * the gap
+# (0x45C38E-0x45C3A5), so the first digit starts one 14-px cell right of m_pTime. The port's
+# label stands in for the strip, left-aligned there, in the 800 x 600 frame at any canvas width.
+# See docs/minigame-reference.md, "The countdown is a digit strip".
+func _check_the_countdown_starts_at_the_first_digit() -> void:
+	var first_digit := TIME_X + float(DIGIT_STRIP.get_width())
+	for size in [Vector2i(800, 600), Vector2i(1067, 600)]:
+		var viewport := SubViewport.new()
+		viewport.size = size
+		root.add_child(viewport)
+		var minigame := MinigameScene.instantiate()
+		viewport.add_child(minigame)
+		await process_frame
+		await process_frame
+		var countdown := minigame.get_node("SafeFrame/Countdown") as Label
+		var frame := minigame.get_node("SafeFrame") as Control
+		_expect(countdown.horizontal_alignment == HORIZONTAL_ALIGNMENT_LEFT, "%s: the countdown is left-aligned, as the strip runs from its first digit" % size)
+		var x := countdown.get_global_rect().position.x - frame.get_global_rect().position.x
+		_expect(is_equal_approx(x, first_digit), "%s: the countdown starts at the strip's first digit, x %d of the frame, got %f" % [size, int(first_digit), x])
+		root.remove_child(viewport)
+		viewport.free()
 
 
 func _mount(seed_value: int) -> Node:

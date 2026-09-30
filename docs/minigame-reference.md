@@ -196,9 +196,23 @@ alone. `sub_4027B0` resumes the music after either outcome (`0x402839`, `0x40284
 handler outlives the screen, so `S1001`, which runs 7.5 s, keeps playing into the lose screen
 after the 3.0 s banner.
 
-## Not recovered
+## The countdown is a digit strip
 
-- `m_pTime`'s `+104 = 3` and `+120 = 4.0`, presumably a digit count and a scale.
+`m_pTime` is not text. `sub_413D40` builds it with `sub_45C0E0` (`0x414492`), a `CGUIFNumber`,
+whose draw `sub_45C190` blits each digit out of the `CO_GUI_CONSOLE_NUMBERS` strip (the name
+pushed at `0x45C1C7`), 25 px of strip a digit (`+108 = 25`, `0x45C1CC`):
+
+- **`+104 = 3` is the gap between digits.** Digit i is drawn at
+  x = `+8` + (i + 1) × the cell's width + i × `+104` (`0x45C398`–`0x45C3A5`). With the strip's
+  14-px cell and `m_pTime` at x 370, the two digits land at 384 and 401.
+- **`+120 = 4.0` is the easing step.** With `+112` clear, each digit's offset into the strip
+  moves toward 25 × d by `+120` a frame, up or down (`0x45C2E1`–`0x45C31E`), so a digit that
+  changes slides through the strip instead of snapping.
+
+The port draws the countdown as a text `Label` instead, left-aligned at x 384, where the
+strip's first digit starts; the strip itself is not ported. `tests/check_minigame.gd` pins that
+place, as 370 plus the strip's width, in the frame at 4:3 and 16:9. The strip's draw is decoded
+in "The digit strip" in [hud-reference.md](hud-reference.md).
 
 ## Sizing
 
