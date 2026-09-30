@@ -34,6 +34,23 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 mouse_cursor/custom_image="res://images/gui/cursors/pointer.png"
 
+[gui]
+
+theme/custom="res://resources/ui_theme.tres"
+
+[importer_defaults]
+
+font_data_dynamic={
+"allow_system_fallback": false,
+"antialiasing": 1,
+"hinting": 2,
+"keep_rounding_remainders": true,
+"opentype_features": {
+1801810542: 0
+},
+"subpixel_positioning": 0
+}
+
 [input]
 
 interact={

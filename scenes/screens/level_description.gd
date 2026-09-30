@@ -16,6 +16,12 @@ const SCORE_FORMAT := "%06d"
 const TIME_FORMAT := "%02d:%02d"
 const TITLE_FORMAT := "%s (#%02d)"
 const SIZE_FORMAT := "%d x %d"
+# sub_421AC0 draws the body in the rect (24, 128, 464, 360) at 0x470A40, and sub_421BA0 starts
+# it 4 px in, where DescText sits. So its first line has 460 px of room and every later line
+# the whole 464; DescText is 464 wide to hold them. See docs/shell-reference.md.
+const BODY_WIDTH := 464.0
+const BODY_START := 4.0
+const GdiTextWrap := preload("res://scenes/shared/gdi_text_wrap.gd")
 
 var _level := 1
 
@@ -46,7 +52,11 @@ func _fill() -> void:
 		return
 
 	($SafeFrame/Title as Label).text = TITLE_FORMAT % [tr(&"level.%d.title" % _level), _level]
-	($SafeFrame/DescText as Label).text = _description(entry)
+	var body := $SafeFrame/DescText as Label
+	body.text = GdiTextWrap.break_lines(
+		_description(entry), body.get_theme_font(&"font"), body.get_theme_font_size(&"font_size"),
+		BODY_WIDTH - BODY_START, BODY_WIDTH, true
+	)
 
 	var info := $SafeFrame/Info
 	(info.get_node("BestTimeValue") as Label).text = _best_time_text()
@@ -56,7 +66,9 @@ func _fill() -> void:
 
 
 # Level_XX.txt is a description, a lone `%s` and a hint. The exporter splits it into two
-# keys, so the screen puts the objective back between them in the original's own shape.
+# keys and keeps the file's own line breaks around the `%s` as the language's layout, so the
+# screen puts the objective back between them in the shape each build draws: one blank line
+# before it and two after in Polish, three after in German. See docs/strings-reference.md.
 func _description(entry: Dictionary) -> String:
 	var mode: StringName = &"time"
 	if _screens != null:
@@ -65,7 +77,9 @@ func _description(entry: Dictionary) -> String:
 	var goal := GoalText.sentence(
 		mode, float(condition["time_limit_seconds"]), int(condition["score_target"])
 	)
-	return "\n\n".join([tr(&"level.%d.description" % _level), goal, tr(&"level.%d.hint" % _level)])
+	return tr(&"level.description_layout") % [
+		tr(&"level.%d.description" % _level), goal, tr(&"level.%d.hint" % _level)
+	]
 
 
 func _best_time_text() -> String:

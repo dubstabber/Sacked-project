@@ -82,7 +82,7 @@ offset_left = 85.0
 offset_top = 500.0
 offset_right = 245.0
 offset_bottom = 532.0
-theme_override_font_sizes/font_size = 22
+theme_type_variation = &"ConsoleText"
 text = "00000"
 
 [node name="Clock" type="Label" parent="Band"]
@@ -90,7 +90,7 @@ offset_left = 250.0
 offset_top = 500.0
 offset_right = 410.0
 offset_bottom = 532.0
-theme_override_font_sizes/font_size = 22
+theme_type_variation = &"ConsoleText"
 text = "00:00"
 
 [node name="LeftLabel" type="Label" parent="Band"]
@@ -122,8 +122,8 @@ offset_left = 135.0
 offset_top = 556.0
 offset_right = 700.0
 offset_bottom = 588.0
+theme_type_variation = &"ConsoleText"
 theme_override_colors/font_color = Color(0.98, 0.98, 0.98, 1)
-theme_override_font_sizes/font_size = 22
 text = "..."
 
 [node name="Banners" type="Control" parent="."]
@@ -139,7 +139,7 @@ mouse_filter = 2
 [node name="ThermoUp" type="Sprite2D" parent="Banners"]
 texture_filter = 1
 visible = false
-modulate = Color(1, 1, 1, 0.8627451)
+self_modulate = Color(1, 1, 1, 0.8627451)
 position = Vector2(5, 5)
 centered = false
 texture = ExtResource("8")
@@ -149,13 +149,13 @@ offset_left = 235.0
 offset_top = 45.0
 offset_right = 795.0
 offset_bottom = 90.0
-theme_override_font_sizes/font_size = 30
+theme_type_variation = &"ConsoleCaption"
 text = "hud.thermo_warning"
 
 [node name="AggroUp" type="Sprite2D" parent="Banners"]
 texture_filter = 1
 visible = false
-modulate = Color(1, 1, 1, 0.8627451)
+self_modulate = Color(1, 1, 1, 0.8627451)
 position = Vector2(5, 5)
 centered = false
 texture = ExtResource("9")
@@ -165,4 +165,4 @@ offset_left = 235.0
 offset_top = 45.0
 offset_right = 795.0
 offset_bottom = 90.0
-theme_override_font_sizes/font_size = 30
+theme_type_variation = &"ConsoleCaption"

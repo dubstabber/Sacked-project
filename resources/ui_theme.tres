@@ -1,0 +1,40 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="FontFile" path="res://images/gui/fonts/liberation-sans-regular.ttf" id="1_font"]
+
+[resource]
+default_font = ExtResource("1_font")
+default_font_size = 20
+Label/constants/line_spacing = -2
+Label/constants/shadow_outline_size = 0
+ConsoleCaption/base_type = &"Label"
+ConsoleCaption/colors/font_shadow_color = Color(0.11372549, 0.11372549, 0.11372549, 1)
+ConsoleCaption/constants/shadow_offset_x = 2
+ConsoleCaption/constants/shadow_offset_y = 2
+ConsoleCaption/font_sizes/font_size = 27
+ConsoleText/base_type = &"Label"
+ConsoleText/colors/font_shadow_color = Color(0.11372549, 0.11372549, 0.11372549, 1)
+ConsoleText/constants/shadow_offset_x = 2
+ConsoleText/constants/shadow_offset_y = 2
+LevelDescText/base_type = &"Label"
+LevelDescText/colors/font_shadow_color = Color(0.12156863, 0.12156863, 0.12156863, 1)
+LevelDescText/constants/shadow_offset_x = 2
+LevelDescText/constants/shadow_offset_y = 2
+LevelDescText/font_sizes/font_size = 21
+MenuButtonCaption/base_type = &"Label"
+MenuButtonCaption/colors/font_shadow_color = Color(0.18431373, 0.18431373, 0.18431373, 1)
+MenuButtonCaption/constants/shadow_offset_x = 2
+MenuButtonCaption/constants/shadow_offset_y = 2
+MenuPrompt/base_type = &"Label"
+MenuPrompt/colors/font_shadow_color = Color(0.18431373, 0.18431373, 0.18431373, 1)
+MenuPrompt/constants/shadow_offset_x = 3
+MenuPrompt/constants/shadow_offset_y = 3
+MenuTableText/base_type = &"Label"
+MenuTableText/colors/font_shadow_color = Color(0.12156863, 0.12156863, 0.12156863, 1)
+MenuTableText/constants/shadow_offset_x = 2
+MenuTableText/constants/shadow_offset_y = 2
+MenuTitle/base_type = &"Label"
+MenuTitle/colors/font_shadow_color = Color(0.18431373, 0.18431373, 0.18431373, 1)
+MenuTitle/constants/shadow_offset_x = 3
+MenuTitle/constants/shadow_offset_y = 3
+MenuTitle/font_sizes/font_size = 38

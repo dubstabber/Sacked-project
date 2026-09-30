@@ -11,7 +11,8 @@ extends SceneTree
 const LEVEL := preload("res://scenes/level_1.tscn")
 const TEST_PATH := "user://check_coworker_select.cfg"
 const NAME_COLOUR := Color8(250, 180, 40)
-const SHADOW_COLOUR := Color8(40, 10, 0)
+# What the (40, 10, 0) tint leaves under a white glyph (0x44D780); see "Fonts" in hud-reference.md.
+const SHADOW_COLOUR := Color8(39, 9, 0)
 
 var _failures := 0
 var _level: Node
@@ -107,12 +108,13 @@ func _check_the_name_shows_only_while_selected(boss: Node2D) -> void:
 		"the name is centred over the anchor, got x %f for width %f" % [label.position.x, label.size.x]
 	)
 	_expect(label.get_theme_color(&"font_color").is_equal_approx(NAME_COLOUR), "the name is drawn in (250, 180, 40)")
-	_expect(label.get_theme_color(&"font_shadow_color").is_equal_approx(SHADOW_COLOUR), "over a (40, 10, 0) copy")
+	_expect(label.get_theme_color(&"font_shadow_color").is_equal_approx(SHADOW_COLOUR), "over the copy the (40, 10, 0) tint draws, (39, 9, 0)")
 	_expect(
 		label.get_theme_constant(&"shadow_offset_x") == 2 and label.get_theme_constant(&"shadow_offset_y") == 2,
 		"two pixels down and right"
 	)
-	_expect(label.get_theme_font_size(&"font_size") == 24, "at the size of the Arial 24 it was drawn in")
+	# Arial 24 is a 24-pixel cell, and the em that fits it is 21. See tests/check_ui_font.gd.
+	_expect(label.get_theme_font_size(&"font_size") == 21, "at the size of the Arial 24 it was drawn in")
 	_expect(label.z_index > bubble.z_index, "the name is drawn after the bubble, above every wall")
 	_expect(label.material == null, "the name is never depth tested")
 	boss.set("display_name", "")

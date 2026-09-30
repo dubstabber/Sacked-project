@@ -166,7 +166,8 @@ Pause is `game+12740` bit `0x20`, toggled by **scancode 121** and refused while 
 is 4 (the caught pause). `sub_403780` returns immediately while it is set, so the clock, the console
 and every agent stop together and only the drawing carries on. `Main_RenderUpdate` then adds
 a panel spanning (49, 232) to (750, 372) restating the level's own CONDITION and the word
-`Pauza`, centred on x 400 with a two-pixel drop shadow. The time game writes
+`Pauza`, centred on x 400 with a two-pixel drop shadow: black under the condition, (20, 20, 20)
+under `Pauza` (0x402E30, 0x402F0F). The time game writes
 `Aby ukończyć ten poziom, musisz zdobyć` / `%d punktów w ciągu %d minut.`; the points game
 writes `Zdobądź jak najwięcej puntków w ciągu %d minut.` / `Potrzebujesz przynajmniej %d
 punktów!`. Limit and target fall back to 1200 s and 10000 exactly as the tick does.
@@ -177,7 +178,8 @@ screen 10 through `sub_407370`'s case 10, which **sets the pause bit** (`or al, 
 `sub_403710` hands screen 10 to `Main_RenderUpdate` like screen 1, so both panels are drawn
 together: the pause panel, because the bit is set (0x402D13), and above it an overlay from
 (49, 150) to (750, 230) holding `Czy na pewno chcesz wyjść?` and `(T)ak lub (N)ie`, because
-the screen is 10 (0x403478).
+the screen is 10 (0x403478). Its two lines are (250, 250, 250) over a black copy two pixels
+down and right (0x40352E).
 
 Screen 10 has an input handler of its own, `sub_404990`'s case 10 (0x404910–0x404983). It
 reads key-down events and nothing else; `sub_403FB0` is not called, so neither `Q` nor the
@@ -235,4 +237,9 @@ Three more console elements are driven from here:
 `sub_405430` registers `International.ttf` with `AddFontResource`, then creates all five of
 its fonts from **`Arial`** at sizes 20, 20, 24, 28 and 20. The bundled face is a
 third-party freeware font that is missing most Polish diacritics, so the Polish build
-cannot have rendered its own UI text with it.
+cannot have rendered its own UI text with it. The German original did: it asks for the face
+by its family name, `International Playboy`, for four of those five and for its menus, level
+description and console. Every font in both builds is regular weight. The port draws every
+language in Liberation Sans at the Polish build's sizes, each Arial N at its rounded em, and
+which face German should get is left to the user. See "Fonts" in
+[hud-reference.md](hud-reference.md).

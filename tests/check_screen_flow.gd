@@ -262,18 +262,70 @@ func _check_the_name_box_carries_the_original_caption() -> void:
 	var caption: Label = screen.get_node_or_null("SafeFrame/NameLabel")
 	_expect(caption != null, "the character-select screen labels its name box")
 	if caption != null:
-		_expect(caption.text == "highscore.name_prompt", "the caption is the original's slot 219")
+		var slot_219: String = _generated_string(&"highscore.name_prompt", "pl")
+		_expect(slot_219 == "Imię do tabeli najlepszych wyników", "slot 219 reads what the original's screen 12 shows, got %s" % slot_219)
 		_expect(
-			caption.atr(caption.text) == "Imię do tabeli najlepszych wyników",
-			"slot 219 reads what the original's screen 12 shows"
+			TranslationServer.translate(&"highscore.name_prompt") == slot_219,
+			"the caption's key is slot 219's text"
 		)
+		# sub_42B9A0 breaks it against the clip's 206 px left on the first line, as the
+		# screenshot shows it: two lines. The break comes before a word, so the blank stays at
+		# the end of the first line and taking the line feed out gives the slot back.
 		_expect(
-			caption.autowrap_mode != TextServer.AUTOWRAP_OFF,
-			"the caption wraps, because it is two lines wide in the original"
+			caption.text.replace("\n", "") == slot_219,
+			"the caption shows slot 219 and nothing else, got %s" % caption.text.c_escape()
 		)
+		_expect(caption.text.split("\n").size() == 2, "the caption is two lines, as in the original, got %s" % caption.text.c_escape())
+	_check_the_name_box_is_a_cguiinput(screen)
 	root.remove_child(screen)
 	screen.free()
 	i18n.set_language(restore)
+
+
+func _generated_string(key: StringName, language: String) -> String:
+	var file := FileAccess.open("res://resources/original/strings.json", FileAccess.READ)
+	if file == null:
+		return ""
+	var data: Variant = JSON.parse_string(file.get_as_text())
+	if not data is Dictionary:
+		return ""
+	return String((data as Dictionary).get("strings", {}).get(String(key), {}).get(language, ""))
+
+
+# sub_4245E0 builds the box as a CGUIInput (sub_45C5E0, 0x424AFF) at (336, 464, 352, 48) from
+# 0x470F58 and hands it the menu's Arial 32 (+1168, 0x424C7D). sub_45CE00 draws no panel: the
+# frame is the CO_GUI_MENU_BASE_TEXTINPUT_NAME art under it. The text is the constructor's
+# white, centred as sub_45CE00 centres, (w - text width) / 2 - 2 (0x45CEF0), over a (32, 32, 32)
+# copy two pixels right and down, which draws (31, 31, 31). A LineEdit centres exactly, so it sits
+# 2 px left of the box and the copy's label over the box, 2 px down (scenes/shared/gui_input.gd).
+func _check_the_name_box_is_a_cguiinput(screen: Node) -> void:
+	var box := screen.get_node("SafeFrame/NameEdit") as LineEdit
+	var shadow := screen.get_node_or_null("SafeFrame/NameShadow") as Label
+	_expect(box.get_rect().is_equal_approx(Rect2(334, 464, 352, 48)), "the name box's text centres 2 px left of its recovered rect, got %s" % box.get_rect())
+	for style in [&"normal", &"focus", &"read_only"]:
+		_expect(box.get_theme_stylebox(style) is StyleBoxEmpty, "the name box draws no %s panel, as a CGUIInput draws none" % style)
+	_expect(box.get_theme_font_size(&"font_size") == 29, "the name box draws in the menu's Arial 32, size 29, got %d" % box.get_theme_font_size(&"font_size"))
+	_expect(box.get_theme_color(&"font_color") == Color.WHITE, "the name box's text is white")
+	_expect(box.alignment == HORIZONTAL_ALIGNMENT_CENTER, "the name box centres its text")
+	_expect(shadow != null, "the name box has its copy")
+	if shadow == null:
+		return
+	_expect(shadow.get_rect().is_equal_approx(Rect2(336, 466, 352, 48)), "the copy sits two pixels right of the text and down, centred across the box, got %s" % shadow.get_rect())
+	_expect(shadow.get_theme_color(&"font_color") == Color8(31, 31, 31), "the copy is what the (32, 32, 32) tint leaves under a white glyph")
+	_expect(shadow.get_theme_font_size(&"font_size") == 29, "the copy is drawn in the box's size")
+	_expect(
+		shadow.horizontal_alignment == HORIZONTAL_ALIGNMENT_CENTER and shadow.vertical_alignment == VERTICAL_ALIGNMENT_CENTER,
+		"the copy is centred as the box's text is"
+	)
+	_expect(shadow.text == box.text, "the copy opens on the box's text")
+	box.text = "Ab"
+	box.text_changed.emit(box.text)
+	_expect(shadow.text == "Ab", "the copy follows what is typed, got %s" % shadow.text)
+	box.text = "Straße"
+	box.text_changed.emit(box.text)
+	_expect(box.text == "Strae" and shadow.text == "Strae", "the box refuses ß as every CGUIInput does (sub_45C880), got %s" % box.text)
+	(screen.get_node("SafeFrame/DefaultsButton") as TextureButton).pressed.emit()
+	_expect(shadow.text == "" and box.text == "", "Domyślne empties the copy with the box")
 
 
 # sub_408D00 loads LEVEL_%02dS.col in the points game. The importer only emits a second

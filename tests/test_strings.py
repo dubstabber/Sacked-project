@@ -98,6 +98,19 @@ class TextTableTest(unittest.TestCase):
                 self.assertTrue(text["description"], f"level {number} in {directory.name}")
                 self.assertTrue(text["hint"], f"level {number} in {directory.name}")
 
+    def test_level_texts_keep_their_own_line_breaks(self):
+        # sub_42B9A0 draws every CRLF as a line break: one blank line before the objective and
+        # two after it in every Polish file, three after it in every German one.
+        self.assertEqual(self.strings["level.description_layout"]["pl"], "%s\n\n%s\n\n\n%s")
+        self.assertEqual(self.strings["level.description_layout"]["de"], "%s\n\n%s\n\n\n\n%s")
+        for number in range(1, LEVEL_COUNT + 1):
+            text = level_text(ROOT / LEVEL_TEXT_DIR_REL, number, "cp1250")
+            self.assertEqual(text["layout"], self.strings["level.description_layout"]["pl"], number)
+            self.assertNotIn("\n", text["description"] + text["hint"], number)
+        # Two German descriptions are two lines in their files, and stay two lines.
+        for number in (20, 21):
+            self.assertEqual(self.strings[f"level.{number}.description"]["de"].count("\n"), 1, number)
+
     def test_german_is_generated_not_authored(self):
         generated = [key for key, entry in self.strings.items() if "de" in entry]
         self.assertGreater(len(generated), 240)

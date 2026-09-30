@@ -51,7 +51,15 @@ stored character (`0x407dd6`) with the stored name already in the box (`0x407dc3
 `ScreenManager` reads them back as the boot screen comes up, so a check that never boots keeps
 the default player. The character-select screen follows the table. One port choice stays: a
 blank name falls back to the character's default, which the box shows as a placeholder, and
-switching character carries that default across. The port used to copy the box on
+switching character carries that default across. The placeholder is Godot's grey and has no
+copy. The box itself is drawn as the coworker-name boxes are (a `CGUIInput`; see "Names are
+editable" in [names-reference.md](names-reference.md)): no panel, white text at size 29 in
+`(336, 464, 352, 48)`, started at x = (w − text width) / 2 − 2 (`0x45CEE1`–`0x45CEF0`) and
+y = (h − cell) / 2, and a label two pixels right and down mirroring it in `(31, 31, 31)`, which
+is the one centred across the box. The port's `LineEdit` sits 2 px left of that rect so that its
+exact centring lands there. Its key handler is every `CGUIInput`'s, `sub_45C880` (vtable slot
+`+0x44` of `0x4674DC`), so it refuses `ß` too; `scenes/shared/gui_input.gd` holds that and the
+copy for screens 12 and 13. The port used to copy the box on
 `Główne menu` and to reset the character on `Domyślne`, which the original does neither of.
 
 **`HIGHSCORE.DAT`** holds the per-level records, and only those. `sub_408A20` reads it and
@@ -315,6 +323,44 @@ stored as a float in the file at all. `sub_421AC0` then draws them beside their 
 Label and value are 40 px apart, pairs 96 px apart; align 0 is left and 1 is right, matching
 the screenshot's left-aligned labels over right-aligned values.
 
+**How the text is drawn.** `sub_421BA0` draws each of the nine in the screen's Arial 24. It
+first draws a `(32, 32, 32)` copy 2 px down and right, then the text in white. Align 0 starts
+4 px in from the rect's top-left corner, so the body starts at (28, 132). Its first line has
+the 460 px the clip's width leaves from there; every later line, after a wrap or a CRLF, has
+the whole 464 and still starts at x 28, so it may run to x 492, and the clip cuts its glyphs
+at x 488. Align 1 starts 4 px down and ends 7 px short of the rect's right edge, at x 769. Each
+line is one Arial 24 cell below the last, 23 px, and each CRLF of `Level_XX.txt` is a line
+break (see "Fonts" in [hud-reference.md](hud-reference.md)).
+
+So the objective sits one blank line below the description, and the hint two blank lines
+below the objective. That is the Polish files' shape, and the screenshot shows it: three
+23-pixel pitches from the objective's last line to the hint. The German files leave three
+blank lines after the objective, and two of them break their description over two lines.
+The port keeps both builds' own breaks; see [strings-reference.md](strings-reference.md).
+
+**A title wider than 800 px wraps.** `sub_423F70` centres the title by its whole width, so
+it starts at a negative x. `sub_42B9A0` wraps against what is left of the clip width from
+there, which is always less than the whole title, so the last words move to a second line.
+That line starts at the same negative x, one Arial 42 cell lower, and the screen edge cuts off
+the start of both lines. The port wraps the titles the original wraps, those wider than
+800 px. Level 15's German `Ich liebe den Geruch von Rauchbomben... (#15)` is one of them only
+since the titles moved from em 37 to em 38; GDI's Arial 42 is within 0.5 % of the port's width
+there, so the original wraps it too (see "Fonts" in [hud-reference.md](hud-reference.md)).
+The port centres each line instead, and grows the rect both ways about its middle, so a long
+title stays readable and clear of the panels.
+
+**In the port** every text on this screen sits at those coordinates. The title carries the
+theme's `MenuTitle`, and the body and the eight info texts carry `LevelDescText`. The body is
+broken by `scenes/shared/gdi_text_wrap.gd`, which applies `sub_42B9A0`'s rule with the port's
+own advances: 460 px on the first line, 464 on every later one, the blank after a word a run of
+its own and each CRLF one pixel wide. A `Label` wrapping by itself gives every line one width
+and counts the blank after a word, and at 460 px it broke level 1's hint one word early, where
+the rule breaks it as the screenshot does. Of the 126 bodies, 21 levels in two modes and three
+languages, the rule gives 12 one line fewer than that `Label` did and none a line more.
+`DescText` is 464 px wide, the room of the later lines. It does not cut the ink at x 488:
+Liberation Sans runs up to 2 px past it on five lines whose Arial stays inside it in the
+original, and the furthest ink ends at x 490, inside the panel.
+
 Buttons: `Kontynuuj` (id 1) → screen 1, starting the level. `Wróć` (id 2) → screen 15.
 
 **There is no unlock check anywhere on this path.** The tree refuses a locked level by giving
@@ -415,8 +461,22 @@ the time board it shows `record[+28]` beside `record[+48]`, formatted `"%02d:%02
 `"--:--"` when it is the 12345 sentinel. So each board names whoever set that board's record,
 which is why the two names are separate fields in the first place.
 
-Both value formats are space-padded to right-align in the original's fixed-width GUI font.
-The port's font is proportional, so it right-aligns the column instead and drops the padding.
+Every cell is drawn with align 0, left and 4 px in. The score's `"% 8d"` pads with spaces,
+which would right-align it only in a fixed-width face. In Arial a space is narrower than a
+digit, so the port right-aligns the score column instead and drops the padding. The time
+board's `"%02d:%02d"` and `"--:--"` have no padding, and the port draws them left-aligned, 4 px
+in, as the original does.
+
+**How a cell is drawn.** `sub_421380` draws every cell in the menu's Arial 22, 4 px in from
+the cell's top-left corner. It first draws a `(32, 32, 32)` copy 2 px down and right, then the
+text in white; see "Fonts" in [hud-reference.md](hud-reference.md). A title wider than the
+396 px its column leaves from the inset wraps (`sub_42B9A0`). The second line starts one
+Arial 22 cell lower, 26 px into the cell, so the 40-pixel clip shows the top 14 px of its
+22-pixel cell: the upper 10 px of its capitals and the upper half of its lowercase. In the
+port's widths three titles are that wide: Polish level 15's (416 px at em 20) and the English
+levels 9 and 15 (396 and 443 px). The port places each cell's label at the same inset, in the
+theme's `MenuTableText`. It clips a title at the column's edge instead of wrapping it, so such
+a title loses its last words rather than showing the top of them.
 
 Slot 206 (`22 do 28`) is never built, so the fourth page and its seven records stay dead.
 
@@ -446,6 +506,23 @@ picks from them:
 The base draw `sub_423F70` puts the title (`+1212`, set by `sub_4244E0`) **centred both
 ways** in its rect (`+1216`, set by `sub_424520`), in Arial 42. It draws a `(48, 48, 48)` copy
 three pixels right and down first, then the text in white.
+
+Every button on these screens is a `TGUIExtButton<T>`, whose draw `sub_422C80` puts its
+caption in the menu's Arial 22 (`+1164`). It draws a `(48, 48, 48)` copy two pixels right and
+down first, then the caption in white. The caption is centred on the button, except on the
+two character-select portraits, where it ends 7 px above the bottom edge. The
+character-select screen's own draw, `sub_424D50`, adds the name prompt at (140, 463), 2 px
+into the clip (138, 454, 208, 56) at `0x470F98`, over a `(48, 48, 48)` copy three pixels off
+in the same clip. The text's first line has 206 px of room and its second the whole 208; the
+copy, starting 5 px in, has 203 on its first line.
+
+In the port every title carries the theme's `MenuTitle`, drawn at size 38, and every caption
+on a screen's `TextureButton` carries `MenuButtonCaption`. The name prompt carries
+`MenuPrompt`, at the recovered position, and is broken by `scenes/shared/gdi_text_wrap.gd`
+with the text's 206 and 208 px. The copy is drawn from the text's own lines, which is exact
+while no language's prompt breaks differently at 203 px, and none does. Character select's
+title rect is the recovered (64, 16, 672, 64), from `0x470F48`. See "Fonts" in
+[hud-reference.md](hud-reference.md).
 
 Screens 11 and 13 use the same two bottom positions as the result screens: `Główne menu` at
 (16, 536) and `Domyślne` at (624, 536), 160 × 48. Neither has a middle button. Their layouts

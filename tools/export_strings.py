@@ -223,24 +223,32 @@ def action_name_slots(image: Image) -> dict:
 
 
 def level_text(directory: Path, number: int, encoding: str) -> dict:
-    """Split one Level_XX.txt into its description and its hint.
+    """Split one Level_XX.txt into its description, its hint and the breaks around the `%s`.
 
     Every file is a description, a lone `%s` the game replaces with the level's objective,
     and a hint, separated by blank lines. The Polish files are always exactly six lines; the
     German ones vary, two of them wrapping the description over two lines and several
     carrying trailing blanks. So the split is made on the `%s` rather than on line numbers.
+
+    sub_42B9A0 draws every CRLF as a line break, so the breaks are kept rather than folded
+    into spaces: a paragraph keeps the line breaks inside it, and `layout` is the file's own
+    shape with its three parts as `%s`, the breaks around the objective included.
     """
     path = directory / ("Level_%02d.txt" % (number - 1))
-    lines = path.read_bytes().decode(encoding).split("\r\n")
-    markers = [index for index, line in enumerate(lines) if line.strip() == "%s"]
+    lines = [line.strip() for line in path.read_bytes().decode(encoding).split("\r\n")]
+    markers = [index for index, line in enumerate(lines) if line == "%s"]
     if len(markers) != 1:
         raise SystemExit(f"{path.name} has {len(markers)} objective placeholders, expected 1")
     marker = markers[0]
-    description = " ".join(line.strip() for line in lines[:marker] if line.strip())
-    hint = " ".join(line.strip() for line in lines[marker + 1 :] if line.strip())
-    if not description or not hint:
+    written = [index for index, line in enumerate(lines) if line and index != marker]
+    before = [index for index in written if index < marker]
+    after = [index for index in written if index > marker]
+    if not before or not after:
         raise SystemExit(f"{path.name} is missing its description or its hint")
-    return {"description": description, "hint": hint}
+    description = "\n".join(lines[before[0] : before[-1] + 1])
+    hint = "\n".join(lines[after[0] : after[-1] + 1])
+    layout = "%s" + "\n" * (marker - before[-1]) + "%s" + "\n" * (after[0] - marker) + "%s"
+    return {"description": description, "hint": hint, "layout": layout}
 
 
 def build(root: Path) -> dict:
@@ -300,6 +308,7 @@ def build(root: Path) -> dict:
             "slots": [slot],
         }
 
+    layouts = {"pl": set(), "de": set()}
     for number in range(1, LEVEL_COUNT + 1):
         source = "Level_%02d.txt" % (number - 1)
         texts = {
@@ -312,6 +321,17 @@ def build(root: Path) -> dict:
                 "de": texts["de"][part],
                 "file": source,
             }
+        for language in layouts:
+            layouts[language].add(texts[language]["layout"])
+    # One shape per build: the screen puts the objective back between the paragraphs with it.
+    for language, found in layouts.items():
+        if len(found) != 1:
+            raise SystemExit(f"the {language} Level_XX.txt files disagree on their layout: {sorted(found)!r}")
+    strings["level.description_layout"] = {
+        "pl": layouts["pl"].pop(),
+        "de": layouts["de"].pop(),
+        "file": "Level_XX.txt",
+    }
 
     strings["app.window_title"] = {
         "pl": text_at(polish, WINDOW_TITLE_VA, "cp1250"),
@@ -450,6 +470,8 @@ def check(root: Path, table: dict) -> int:
         "level.1.title": ("Pierwszy ostatni dzień", "Der erste letzte Tag"),
         "level.21.title": ("Biuro Paradiso", "Büro Paradiso"),
         "level.4.title": ("Tyle pracy...", "So viel zu tun..."),
+        # One blank line before the objective and two after it; the German files leave three.
+        "level.description_layout": ("%s\n\n%s\n\n\n%s", "%s\n\n%s\n\n\n\n%s"),
         # The one string the Polish release left in the original German.
         "app.window_title": ("Gefeuert! - Dein letzter Tag", "Gefeuert! - Dein letzter Tag"),
     }

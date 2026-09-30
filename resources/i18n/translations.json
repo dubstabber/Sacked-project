@@ -740,6 +740,9 @@
   "level.21.hint": {
     "en": "Did you know problems can be solved verbally as well?"
   },
+  "level.description_layout": {
+    "en": "%s\n\n%s\n\n\n%s"
+  },
   "app.window_title": {
     "en": "Sacked! - Your Last Day"
   },

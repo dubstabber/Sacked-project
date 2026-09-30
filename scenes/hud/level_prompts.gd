@@ -13,10 +13,18 @@ const PAUSE_PANEL := Rect2(49, 232, 701, 140)
 const QUIT_PANEL := Rect2(49, 150, 701, 80)
 const SHADOW_OFFSET := Vector2(2, 2)
 const PANEL_COLOR := Color(0.0, 0.0, 0.0, 0.6)
-const SHADOW_COLOR := Color(0.078, 0.078, 0.078)
+# Main_RenderUpdate tints each copy with sub_42D1E0 before it draws it: (0, 0, 0) under the goal
+# lines (0x402E30, 0x40308C) and the quit prompt (0x40352E), (20, 20, 20) under Pauza (0x402F0F,
+# 0x40316C). The blitter multiplies the white glyph by the tint and drops the low byte, so the
+# 20 lands as 19. See docs/game-rules-reference.md and "Fonts" in docs/hud-reference.md.
+const SHADOW_COLOR := Color(0.0, 0.0, 0.0)
+const PAUSED_SHADOW_COLOR := Color(19.0 / 255.0, 19.0 / 255.0, 19.0 / 255.0)
 const PAUSE_COLOR := Color(250.0 / 255.0, 190.0 / 255.0, 100.0 / 255.0)
 const PROMPT_COLOR := Color(250.0 / 255.0, 250.0 / 255.0, 250.0 / 255.0)
 const LABEL_COLOR := Color(1.0, 1.0, 1.0)
+# Both panels draw in game+2008 (0x402D8F), which sub_405430 creates as Arial 24. That 24 is
+# CreateFontA's cell height, and the em that fits it is 21; see tests/check_ui_font.gd.
+const FONT_SIZE := 21
 
 # Slots 156-161 and 167 of the original's text table; see docs/strings-reference.md.
 const PAUSED := &"prompt.paused"
@@ -162,7 +170,7 @@ func _draw() -> void:
 		var lines := _goal_lines()
 		_draw_centred(lines[0], PAUSE_PANEL.position.y + 10.0, PAUSE_COLOR)
 		_draw_centred(lines[1], PAUSE_PANEL.position.y + 35.0, PAUSE_COLOR)
-		_draw_centred(tr(PAUSED), PAUSE_PANEL.position.y + 85.0, LABEL_COLOR)
+		_draw_centred(tr(PAUSED), PAUSE_PANEL.position.y + 85.0, LABEL_COLOR, PAUSED_SHADOW_COLOR)
 	if is_quit_prompt_open:
 		_draw_panel(panel_rect(QUIT_PANEL))
 		_draw_centred(tr(QUIT_QUESTION), QUIT_PANEL.position.y + 10.0, PROMPT_COLOR)
@@ -191,13 +199,14 @@ func _draw_panel(panel: Rect2) -> void:
 	draw_rect(panel, PANEL_COLOR)
 
 
-func _draw_centred(text: String, top: float, color: Color) -> void:
-	var font := ThemeDB.fallback_font
-	var font_size := ThemeDB.fallback_font_size
-	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-	var origin := Vector2(size.x * 0.5 - width * 0.5, top + float(font_size))
-	draw_string(font, origin + SHADOW_OFFSET, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, SHADOW_COLOR)
-	draw_string(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)
+# sub_42B9A0 puts the top of the glyph cell at the y it is given, so the baseline sits one
+# ascent below it.
+func _draw_centred(text: String, top: float, color: Color, shadow := SHADOW_COLOR) -> void:
+	var font := get_theme_default_font()
+	var width := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE).x
+	var origin := Vector2(size.x * 0.5 - width * 0.5, top + font.get_ascent(FONT_SIZE))
+	draw_string(font, origin + SHADOW_OFFSET, text, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, shadow)
+	draw_string(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, FONT_SIZE, color)
 
 
 # The label a key is drawn as, not its position, so a German player presses the J their own

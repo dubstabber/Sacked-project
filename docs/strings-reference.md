@@ -108,13 +108,24 @@ before it is the description, everything after it the hint. The Polish shape is:
 <hint paragraph>
 ```
 
+The German files have the same shape with a third blank line after the `%s`, and levels 20
+and 21 break their description over two lines.
+
 The `%s` is where the game writes the level's objective, in the same wording the pause panel
 uses. A screenshot of the description screen confirms it: level 1 shows
 `Aby ukończyć ten poziom, musisz zdobyć 4000 punktów w ciągu 6 minut.` between its two
 paragraphs, which is slots 158 and 159 run together. The `%s` is therefore structure rather
 than text, so only the two paragraphs are exported, as `level.<n>.description` and
 `level.<n>.hint`, and the screen composes the middle line from `prompt.time_goal` and
-`prompt.time_goal_format`. The exporter asserts the layout.
+`prompt.time_goal_format`.
+
+The original draws every CRLF as a line break, so the exporter keeps them. A paragraph keeps
+its own line breaks, which only the two German descriptions have. Each build's shape is
+exported too, as `level.description_layout`, with the three parts as `%s`. The Polish one is
+`%s\n\n%s\n\n\n%s`, the German one `%s\n\n%s\n\n\n\n%s`. The exporter refuses to run
+unless every file of a build has the same shape. English is authored with the Polish shape.
+The screen fills the shape of the running language; see the description screen in
+[shell-reference.md](shell-reference.md).
 
 ## What is German already
 
@@ -229,13 +240,21 @@ rather than a choice.
 
 ### Fonts are not a constraint
 
-The port draws every string with Godot's default font, which covers Polish, German and
-English. `tests/check_i18n.gd` turns that from an assumption into a fact by asking the
-fallback font for every character of every string in every language.
+The port draws every string in its bundled Liberation Sans, which covers Polish, German and
+English. `tests/check_ui_font.gd` turns that from an assumption into a fact by asking the
+face for every character of every string in every language.
 
-The original bundles `International.ttf` and registers it, then builds all five of its fonts
-from Arial. That is not an oversight: the bundled face has no Polish diacritics at all and no
-`ß`, so it could not have drawn the UI of the very release that ships it.
+The Polish release bundles `International.ttf` and registers it, then builds all five of its
+fonts from Arial. The bundled face has no `ß` and, of the Polish letters, only `ą` and `ó`, so
+it could not have drawn the UI of the very release that ships it. The German original, which
+the port's German text comes from, did use it: 13 of its 16 fonts ask for
+`International Playboy`, the face's family name. So the Polish localisation swapped the face
+for Arial. See "Fonts" in [hud-reference.md](hud-reference.md).
+
+**Which face German gets is a decision for the user.** For now the port draws German in
+Liberation Sans at the Polish build's sizes, like Polish and English. The German original
+drew its menus, level description and console in `International Playboy`, at sizes of its
+own. That face has no `ß`, so using it would need a fallback face for that one letter.
 
 ## The quit prompt's answer keys
 

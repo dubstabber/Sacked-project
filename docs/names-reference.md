@@ -142,8 +142,17 @@ for the four coworker types.
 
 **Names are editable.** Each box is a `CGUIInput` (`sub_45C5E0`), with its length cap set to
 **16** at `+356` and its text drawn in the menu's Arial 32 (`+1168`): white, a
-`(32, 32, 32)` copy two pixels right and down behind it, centred both ways in the box, and a
-caret while the box has focus. The first box has focus when the screen opens. The key handler
+`(32, 32, 32)` copy two pixels right and down behind it, and a caret while the box has focus.
+White and centred are the constructor's defaults (the colour bytes at `+96` set to 255 at
+`0x45C64E`–`0x45C654`, the alignment `+416 = 2` at `0x45C765`). Centred is not quite the
+middle: `sub_45CE00` starts the text at x = (w − text width) / 2 − 2 (`0x45CEE1`–`0x45CEF0`),
+two pixels left of centre, and at y = (h − cell) / 2 (`0x45CE97`–`0x45CEB7`). The copy, drawn
+first at (x + 2, y + 2) (`0x45CF57`–`0x45CF67`), is the one that is centred across. The other
+two alignments end the text at x = w − text width − 4 (1) or start it at x = 2 (0)
+(`0x45CEF5`–`0x45CF02`). `sub_45CE00` draws no panel of its own: the frame is the
+`TEXTINPUT_NAME` art. Screen 12's
+name box is the same class, built the same way by `sub_4245E0` (`0x424AFF`, the font at
+`0x424C7D`, the cap at `0x424C8D`, the rect `(336, 464, 352, 48)` from `0x470F58`). The first box has focus when the screen opens. The key handler
 `sub_45C880` edits with backspace, delete, home, end, the two arrows and an insert/overwrite
 toggle. It ignores Enter, Tab and F1–F12, refuses `ß`, and types every other key through
 `ToAsciiEx` on the current keyboard layout.
@@ -265,12 +274,23 @@ button 3 with `Menu2` playing. It follows the button table exactly. The arrows a
 `Główne menu` save the shown boxes first. `Domyślne` puts back the shown pool only and
 discards what was typed, and typing alone saves nothing. It opens on the boss with the first
 box focused, and a pool of one hides the other two boxes, frames included. The boxes refuse
-`ß` as `sub_45C880` does. Three things differ from the original:
+`ß` as `sub_45C880` does. The box text is size 29, the em GDI builds for Arial 32's
+32-pixel cell. A line of it is 34 pixels tall in the port's Liberation Sans, well inside the
+box's 44; see "Fonts" in [hud-reference.md](hud-reference.md). Three things differ from the
+original:
 
-- **The box text is size 31, not Arial 32.** Godot's default font needs 45 pixels of line at
-  32, one more than the box's 44, so 31 is the largest that fits.
 - **The shadow is a second label.** A `LineEdit` draws no shadow, so a label behind each box
-  mirrors its text two pixels down and right, in `(32, 32, 32)`.
+  mirrors its text two pixels down and right, in `(31, 31, 31)`, which is what the
+  `(32, 32, 32)` tint leaves under a white glyph. `scenes/shared/gui_input.gd` holds what
+  every such box does, the `ß` refusal and the mirrored copy, for screens 12 and 13.
+- **The `LineEdit` sits two pixels left of the box.** A `LineEdit` centres its text exactly,
+  and ignores a right content margin when it does, so to start the text at
+  (w − text width) / 2 − 2 each box's `LineEdit` is the recovered rect moved 2 px left
+  (`GuiInput.CENTRE_SHIFT`), and the copy's label lies over the rect itself, 2 px down, where
+  the original's copy is centred. The text and its copy land where the original draws them;
+  the `LineEdit`'s clickable area is 2 px left of the box's. Godot centres by the shaped
+  string's width, which can be a fraction of a pixel where GDI's is whole, so the text can sit
+  a pixel off either way.
 - **Some keys behave as Godot's do.** Enter does nothing, as in the original. Tab moves the
   focus, where the original ignores it, and there is no overwrite mode.
 
@@ -288,9 +308,10 @@ deals the same names again.
 
 Every agent carries a `NameLabel` from `scenes/npc/npc.tscn`, so no level had to be rebuilt.
 The label is centred over the anchor, 135 pixels up, in `(250, 180, 40)` with a
-`(40, 10, 0)` shadow two pixels down and right, at size 24. It sits at z 3, above the bubble,
-and carries no depth material, so no wall hides it. It shows only while the agent is
-selected and its name is not empty.
+`(39, 9, 0)` shadow two pixels down and right, what the `(40, 10, 0)` tint leaves under a
+white glyph (see "Fonts" in [hud-reference.md](hud-reference.md)), at size 21, which is `game+2008`'s Arial 24
+drawn at its em. It sits at z 3, above the bubble, and carries no depth material, so no wall
+hides it. It shows only while the agent is selected and its name is not empty.
 
 `scenes/player/prank_controller.gd` walks the objects and the agents as one list and keeps
 the front box, which it hands to the colleague pick every frame and to the item pick when the

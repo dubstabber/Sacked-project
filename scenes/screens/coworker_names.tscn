@@ -63,7 +63,7 @@ offset_top = 16.0
 offset_right = 736.0
 offset_bottom = 80.0
 mouse_filter = 2
-theme_override_font_sizes/font_size = 28
+theme_type_variation = &"MenuTitle"
 text = "names.title"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -112,26 +112,26 @@ texture = ExtResource("5")
 
 [node name="NameShadow0" type="Label" parent="SafeFrame"]
 layout_mode = 0
-offset_left = 234.0
+offset_left = 232.0
 offset_top = 338.0
-offset_right = 586.0
+offset_right = 584.0
 offset_bottom = 382.0
 mouse_filter = 2
 auto_translate_mode = 2
-theme_override_colors/font_color = Color(0.12549, 0.12549, 0.12549, 1)
-theme_override_font_sizes/font_size = 31
+theme_override_colors/font_color = Color(0.12156863, 0.12156863, 0.12156863, 1)
+theme_override_font_sizes/font_size = 29
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NameBox0" type="LineEdit" parent="SafeFrame"]
 layout_mode = 0
-offset_left = 232.0
+offset_left = 230.0
 offset_top = 336.0
-offset_right = 584.0
+offset_right = 582.0
 offset_bottom = 380.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/caret_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 31
+theme_override_font_sizes/font_size = 29
 theme_override_styles/normal = SubResource("StyleBoxEmpty_box")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_box")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_box")
@@ -152,26 +152,26 @@ texture = ExtResource("5")
 
 [node name="NameShadow1" type="Label" parent="SafeFrame"]
 layout_mode = 0
-offset_left = 234.0
+offset_left = 232.0
 offset_top = 398.0
-offset_right = 586.0
+offset_right = 584.0
 offset_bottom = 442.0
 mouse_filter = 2
 auto_translate_mode = 2
-theme_override_colors/font_color = Color(0.12549, 0.12549, 0.12549, 1)
-theme_override_font_sizes/font_size = 31
+theme_override_colors/font_color = Color(0.12156863, 0.12156863, 0.12156863, 1)
+theme_override_font_sizes/font_size = 29
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NameBox1" type="LineEdit" parent="SafeFrame"]
 layout_mode = 0
-offset_left = 232.0
+offset_left = 230.0
 offset_top = 396.0
-offset_right = 584.0
+offset_right = 582.0
 offset_bottom = 440.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/caret_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 31
+theme_override_font_sizes/font_size = 29
 theme_override_styles/normal = SubResource("StyleBoxEmpty_box")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_box")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_box")
@@ -192,26 +192,26 @@ texture = ExtResource("5")
 
 [node name="NameShadow2" type="Label" parent="SafeFrame"]
 layout_mode = 0
-offset_left = 234.0
+offset_left = 232.0
 offset_top = 458.0
-offset_right = 586.0
+offset_right = 584.0
 offset_bottom = 502.0
 mouse_filter = 2
 auto_translate_mode = 2
-theme_override_colors/font_color = Color(0.12549, 0.12549, 0.12549, 1)
-theme_override_font_sizes/font_size = 31
+theme_override_colors/font_color = Color(0.12156863, 0.12156863, 0.12156863, 1)
+theme_override_font_sizes/font_size = 29
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NameBox2" type="LineEdit" parent="SafeFrame"]
 layout_mode = 0
-offset_left = 232.0
+offset_left = 230.0
 offset_top = 456.0
-offset_right = 584.0
+offset_right = 582.0
 offset_bottom = 500.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/caret_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 31
+theme_override_font_sizes/font_size = 29
 theme_override_styles/normal = SubResource("StyleBoxEmpty_box")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_box")
 theme_override_styles/read_only = SubResource("StyleBoxEmpty_box")
@@ -239,6 +239,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme_type_variation = &"MenuButtonCaption"
 text = "common.main_menu"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -261,6 +262,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme_type_variation = &"MenuButtonCaption"
 text = "common.defaults"
 horizontal_alignment = 1
 vertical_alignment = 1

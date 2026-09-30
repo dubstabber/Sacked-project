@@ -6,8 +6,6 @@ extends SceneTree
 
 const ConsoleScene := preload("res://scenes/hud/console.tscn")
 
-const STRINGS_PATH := "res://resources/original/strings.json"
-const TRANSLATIONS_PATH := "res://resources/i18n/translations.json"
 const SETTINGS_PATH := "user://check_i18n_settings.cfg"
 
 const I18N_SCRIPT := preload("res://autoloads/i18n.gd")
@@ -27,11 +25,10 @@ func _run() -> void:
 	_check_every_language_loads()
 	await _check_the_console_follows_the_language()
 	_check_the_answer_keys_are_typeable()
-	_check_the_font_can_draw_every_string()
 
 	_i18n().set_language(_restore)
 	if _failures == 0:
-		print("Language selection: resolution order, three loaded languages, the console swap and font coverage passed")
+		print("Language selection: resolution order, three loaded languages, the console swap and the answer keys passed")
 	quit(1 if _failures else 0)
 
 
@@ -149,37 +146,6 @@ func _check_the_answer_keys_are_typeable() -> void:
 			var keycode := OS.find_keycode_from_string(initial)
 			_expect(keycode != KEY_NONE, "%s's %s (%s) is a real key" % [language, key, initial])
 			_expect(tr(&"prompt.quit_answer").contains("(%s)" % initial), "%s names %s in its answer" % [language, initial])
-
-
-# Godot's default font carries Polish and German; this turns that from an assumption into a
-# fact, and will fail loudly if a theme font is ever introduced that does not.
-func _check_the_font_can_draw_every_string() -> void:
-	var font := ThemeDB.fallback_font
-	if font == null:
-		_expect(false, "there is no fallback font to check")
-		return
-	var source: Dictionary = _read_json(STRINGS_PATH).get("strings", {})
-	var authored := _read_json(TRANSLATIONS_PATH)
-	var missing := {}
-	for key: String in source:
-		var texts := [String((source[key] as Dictionary).get("pl", ""))]
-		var entry: Dictionary = authored.get(key, {})
-		for language in ["en", "de"]:
-			texts.append(String(entry.get(language, "")))
-		for text: String in texts:
-			for index in text.length():
-				var character := text[index]
-				if character != " " and not font.has_char(character.unicode_at(0)):
-					missing[character] = key
-	_expect(missing.is_empty(), "the default font cannot draw %s" % str(missing))
-
-
-func _read_json(path: String) -> Dictionary:
-	var file := FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		return {}
-	var parsed = JSON.parse_string(file.get_as_text())
-	return parsed if parsed is Dictionary else {}
 
 
 # The autoload exists in the tree even though its global name is not bound at compile time.

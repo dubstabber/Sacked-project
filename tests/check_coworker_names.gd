@@ -12,6 +12,7 @@ const TEST_PATH := "user://check_coworker_names.cfg"
 const NPC_SCENE := preload("res://scenes/npc/npc.tscn")
 const NAMER := preload("res://scenes/level/coworker_namer.gd")
 const MALE_EMPLOYEE_1 := preload("res://scenes/npc/profiles/male-employee-1.tres")
+const GuiInput := preload("res://scenes/shared/gui_input.gd")
 
 # The table at 0x470538, as (x, y, width, height) inside the 800x600 frame.
 const RECOVERED_RECTS := {
@@ -161,17 +162,34 @@ func _check_the_recovered_layout(screen: Node) -> void:
 	for node_name: String in RECOVERED_RECTS:
 		var control := screen.get_node_or_null("SafeFrame/%s" % node_name) as Control
 		_expect(control != null, "screen 13 has %s" % node_name)
+		var expected: Rect2 = RECOVERED_RECTS[node_name]
+		# sub_45CE00 starts its text at (w - text width) / 2 - 2 (0x45CEF0) and a LineEdit centres
+		# exactly, so each box's LineEdit sits 2 px left of the box.
+		if node_name.begins_with("NameBox"):
+			expected.position.x += GuiInput.CENTRE_SHIFT
 		if control != null:
 			_expect(
-				control.get_rect().is_equal_approx(RECOVERED_RECTS[node_name]),
-				"%s sits at its recovered rect %s, got %s" % [node_name, RECOVERED_RECTS[node_name], control.get_rect()]
+				control.get_rect().is_equal_approx(expected),
+				"%s sits at %s, got %s" % [node_name, expected, control.get_rect()]
 			)
+	# The copy is drawn 2 px right of the text and 2 px down (0x45CF57-0x45CF67), so exactly
+	# centred across the box.
+	for i in 3:
+		var box: Rect2 = RECOVERED_RECTS["NameBox%d" % i]
+		var copy := screen.get_node("SafeFrame/NameShadow%d" % i) as Control
+		_expect(
+			copy.get_rect().is_equal_approx(Rect2(box.position + Vector2(0, 2), box.size)),
+			"name box %d's copy lies over the box, 2 px down, got %s" % [i, copy.get_rect()]
+		)
 	var title := screen.get_node("SafeFrame/Title") as Label
 	_expect(title.text == "names.title", "the title is slot 209")
 	for i in 3:
 		_expect(_box(screen, i).max_length == 16, "name box %d takes 16 characters" % i)
 		var font := _box(screen, i).get_theme_font(&"font")
 		var font_size := _box(screen, i).get_theme_font_size(&"font_size")
+		# The menu's Arial 32 is a 32-pixel cell, and the em GDI builds for it is 29. See
+		# tests/check_ui_font.gd.
+		_expect(font_size == 29, "name box %d is drawn in the menu's Arial 32, got size %d" % [i, font_size])
 		_expect(font.get_height(font_size) <= 44.0, "name box %d's text fits the recovered 44 px" % i)
 
 

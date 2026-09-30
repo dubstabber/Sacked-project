@@ -148,8 +148,14 @@ The right arrows' x is 305 and 705 as stored, one pixel off symmetry. `305 = 32 
 **The value boxes are display only.** They are the same `CGUIInput` class as the name boxes
 on screen 13, with the caret turned off (`+420 = 0`). The handler never reads their text back,
 and `sub_425A10` rewrites both as `"%d"`, a bare number with no percent sign, after every
-change. The text is the menu's Arial 32 (`+1168`): white, a `(32, 32, 32)` copy two pixels
-right and down behind it, centred both ways in the box.
+change. The text is the menu's Arial 32 (`+1168`): white, over a `(32, 32, 32)` copy two
+pixels right and down behind it. `sub_45CE00` places it as it places every `CGUIInput`'s, at
+x = (w − text width) / 2 − 2 (`0x45CEE1`–`0x45CEF0`) and y = (h − cell) / 2
+(`0x45CE97`–`0x45CEB7`), so the text sits two pixels left of centre and its copy, at
+(x + 2, y + 2), is centred across (see "Names are editable" in
+[names-reference.md](names-reference.md)). In the port each value is a `Label` filling its box
+but moved 2 px left (`offset_left` and `offset_right` −2), which centres exactly, with its copy
+as the label's shadow, 2 px right and down.
 
 `sub_403F20` case 11 handles the buttons:
 
@@ -197,9 +203,11 @@ those two rows alone.
 picture. Main-menu button 4 opens it and `Menu1` keeps playing. Each arrow calls the store,
 and the store's `settings_changed` refills the boxes. So a change reaches the bus the moment
 it is pressed, and F1 on this screen updates the display box too. The two boxes show the
-bare number, in white over a `(32, 32, 32)` copy two pixels down and right. Like every port
-screen, the text uses Godot's default font rather than Arial, and the title is drawn at the
-size the other screens use rather than Arial 42.
+bare number at size 29, which is the menu's Arial 32 drawn at its em, in white over a
+`(31, 31, 31)` copy two pixels down and right: the colour the `(32, 32, 32)` tint leaves under
+a white glyph. Like every port screen, the text is set in Liberation Sans, which has Arial's
+metrics, and the title in the theme's `MenuTitle`, Arial 42 at em 38.
+See "Fonts" in [hud-reference.md](hud-reference.md).
 
 **Two rows the original does not have.** Under the effects sits a language row, and under
 the music a display row. Each is a caption over a box between two arrows, using the same

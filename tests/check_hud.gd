@@ -45,6 +45,7 @@ func _run() -> void:
 	_check_the_bands_are_anchored(console)
 	_check_inert_elements(console)
 	_check_lamps(console)
+	_check_the_warning_captions_are_opaque(console)
 	_check_action_progress(console)
 	_check_the_stopwatch_sweeps_the_dial(console)
 	_check_the_aggression_bar(console)
@@ -135,6 +136,18 @@ func _check_inert_elements(console: Node) -> void:
 	for element: String in InertElements:
 		var node := console.get_node(element) as CanvasItem
 		_expect(not node.visible, "%s stays hidden until something drives it" % element)
+
+
+# Both banners are built at alpha 220 (+1163), but each caption is a CGUIText of its own that
+# sub_45A730 draws in mode 39, keyed and opaque, over an opaque (30, 30, 30) copy. So only the
+# banner art is translucent; the caption must not inherit its alpha.
+func _check_the_warning_captions_are_opaque(console: Node) -> void:
+	for banner_path in ["Banners/ThermoUp", "Banners/AggroUp"]:
+		var banner := console.get_node(banner_path) as Sprite2D
+		var caption := banner.get_child(0) as Label
+		_expect(is_equal_approx(banner.self_modulate.a, 220.0 / 255.0), "%s's art is drawn at alpha 220" % banner_path)
+		var inherited := banner.modulate.a * caption.modulate.a * caption.self_modulate.a
+		_expect(is_equal_approx(inherited, 1.0), "%s's caption draws opaque, got alpha %f" % [banner_path, inherited])
 
 
 # The lamps read player+1008 directly: smoking needs both of its slots, the other two one

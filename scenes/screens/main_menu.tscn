@@ -78,6 +78,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"MenuButtonCaption"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -98,6 +99,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"MenuButtonCaption"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -118,6 +120,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"MenuButtonCaption"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -138,6 +141,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"MenuButtonCaption"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -158,6 +162,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"MenuButtonCaption"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -178,5 +183,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"MenuButtonCaption"
 horizontal_alignment = 1
 vertical_alignment = 1

@@ -1791,7 +1791,7 @@
     },
     "level.20.description": {
       "pl": "Szybki, wszechstronny, dynamiczny - to cechy dobrego urzędnika. Nigdy nie jest za późno, by je w sobie odnaleźć - nawet ostatniego dnia w pracy.",
-      "de": "Schnell, flexibel, dynamisch... manche Fähigkeiten wollen am letzten Tag noch entdeckt werden.",
+      "de": "Schnell, flexibel, dynamisch...\nmanche Fähigkeiten wollen am letzten Tag noch entdeckt werden.",
       "file": "Level_19.txt"
     },
     "level.20.hint": {
@@ -1801,13 +1801,18 @@
     },
     "level.21.description": {
       "pl": "Długie korytarze, drogie dywany, wielka i czysta kuchnia, atrakcyjny personel i bogate wyposażenie, które czeka żeby je zniszczyć.",
-      "de": "Lange, blau leuchtende Flure, herrlich weiss glänzende Küchen und ein ganzes Sortiment an zu zerstörenden Gegenständen. Buchen Sie noch heute ...",
+      "de": "Lange, blau leuchtende Flure, herrlich weiss glänzende Küchen und ein ganzes Sortiment an zu zerstörenden Gegenständen.\nBuchen Sie noch heute ...",
       "file": "Level_20.txt"
     },
     "level.21.hint": {
       "pl": "Wiesz, że problemy można rozwiązywać także werbalnie?",
       "de": "Wusstest Du schon, dass man Probleme auch verbal lösen kann?",
       "file": "Level_20.txt"
+    },
+    "level.description_layout": {
+      "pl": "%s\n\n%s\n\n\n%s",
+      "de": "%s\n\n%s\n\n\n\n%s",
+      "file": "Level_XX.txt"
     },
     "app.window_title": {
       "pl": "Gefeuert! - Dein letzter Tag",

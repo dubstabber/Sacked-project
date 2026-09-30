@@ -18,6 +18,11 @@ const ROW_X := 16.0
 const ROW_FIRST_Y := 154.0
 const ROW_STEP := 46.0
 const ROWS_PER_PAGE := 7
+# sub_421380 draws every cell in the menu's Arial 22 (+1164), 4 px in from the cell's top-left
+# corner, over a (32, 32, 32) copy 2 px down and right: the theme's MenuTableText. See "Fonts"
+# in docs/hud-reference.md.
+const CELL_INSET := Vector2(4.0, 4.0)
+const CELL_VARIATION := &"MenuTableText"
 # sub_420A20 builds buttons for pages 0 to 2 only; the fourth page's caption exists but its
 # button is never constructed, so the seven records behind it are unreachable.
 const PAGE_COUNT := 3
@@ -61,15 +66,10 @@ func _build_rows() -> void:
 			var spec: Vector3 = COLUMNS[column]
 			var label := Label.new()
 			label.name = column
-			label.position = Vector2(spec.x, spec.y)
-			label.size = Vector2(spec.z, ROW_HEIGHT)
+			label.position = Vector2(spec.x, spec.y) + CELL_INSET
+			label.size = Vector2(spec.z - CELL_INSET.x, ROW_HEIGHT - CELL_INSET.y)
 			label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			label.add_theme_font_size_override(&"font_size", 20)
-			# The original space-pads the value to right-align it in a fixed-width font; the
-			# port's font is proportional, so the column is right-aligned instead.
-			if column == "value":
-				label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			label.theme_type_variation = CELL_VARIATION
 			label.clip_text = true
 			holder.add_child(label)
 
@@ -84,7 +84,14 @@ func _fill() -> void:
 		(holder.get_node("number") as Label).text = NUMBER_FORMAT % level
 		(holder.get_node("title") as Label).text = tr(&"level.%d.title" % level)
 		(holder.get_node("name") as Label).text = _name_for(level)
-		(holder.get_node("value") as Label).text = _value_for(level)
+		var value := holder.get_node("value") as Label
+		value.text = _value_for(level)
+		# sub_421120 draws every cell left-aligned. The score's "% 8d" space-pads it to the
+		# right, but Arial's space is narrower than its digits, so the port right-aligns the
+		# score column instead; the time board's "%02d:%02d" has no padding and stays left.
+		value.horizontal_alignment = (
+			HORIZONTAL_ALIGNMENT_RIGHT if _board == BOARD_SCORE else HORIZONTAL_ALIGNMENT_LEFT
+		)
 
 
 func _name_for(level: int) -> String:

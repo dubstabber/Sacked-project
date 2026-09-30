@@ -31,6 +31,7 @@ func _run() -> void:
 	await _check_a_fresh_board_is_all_sentinels()
 	await _check_each_page_lists_its_own_seven_levels()
 	await _check_the_toggle_moves_the_name_with_the_value()
+	await _check_each_cell_starts_where_sub_421380_draws_it()
 
 	store.path = _restore_path
 	store.reload()
@@ -128,5 +129,43 @@ func _check_the_toggle_moves_the_name_with_the_value() -> void:
 	_expect(_cell(screen, 1, "value") == "--:--", "an unplayed level shows --:-- on the time board")
 	screen._on_column_pressed()
 	_expect(_cell(screen, 1, "value") == "---", "an unplayed level shows --- on the score board")
+	screen.queue_free()
+	await process_frame
+
+
+# sub_421120 draws each row's four cells from the column rects at 0x470820, offset by the
+# row's own (16, y) from 0x470880, and every call passes align 0: sub_421380 starts the text
+# 4 px in from the cell's top-left corner. The port right-aligns only the score column.
+func _check_each_cell_starts_where_sub_421380_draws_it() -> void:
+	var columns := {
+		"number": Rect2(0, 0, 64, 40),
+		"title": Rect2(72, 0, 400, 40),
+		"name": Rect2(480, 0, 184, 40),
+		"value": Rect2(672, 0, 96, 40),
+	}
+	_expect(HIGHSCORES_SCRIPT.CELL_INSET == Vector2(4, 4), "every cell starts 4 px in, as sub_421380 does")
+	var screen := await _open()
+	for row in HIGHSCORES_SCRIPT.ROWS_PER_PAGE:
+		var holder := screen.get_node("SafeFrame/Rows/Row%d" % row) as Control
+		var origin := Vector2(16, 154 + 46 * row)
+		_expect(holder.position == origin, "row %d sits at %s, got %s" % [row, origin, holder.position])
+		for column: String in columns:
+			var rect: Rect2 = columns[column]
+			var label := holder.get_node(column) as Label
+			_expect(
+				label.position == rect.position + Vector2(4, 4),
+				"row %d's %s starts at %s, got %s" % [row, column, rect.position + Vector2(4, 4), label.position]
+			)
+			_expect(
+				is_equal_approx(label.position.x + label.size.x, rect.end.x),
+				"row %d's %s ends at the column's edge %d, got %s" % [row, column, rect.end.x, label.position.x + label.size.x]
+			)
+	var value := screen.get_node("SafeFrame/Rows/Row0/value") as Label
+	_expect(value.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT, "the score column is right-aligned")
+	screen._on_column_pressed()
+	_expect(
+		value.horizontal_alignment == HORIZONTAL_ALIGNMENT_LEFT,
+		"the time column starts 4 px in, as sub_421120's align 0 draws it"
+	)
 	screen.queue_free()
 	await process_frame

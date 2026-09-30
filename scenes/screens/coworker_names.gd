@@ -12,6 +12,8 @@ extends Control
 
 const BOX_COUNT := 3
 const PORTRAIT_PATH := "res://images/gui/menu/portrait-%s.png"
+# Each box is a CGUIInput, drawn and keyed as this says.
+const GuiInput := preload("res://scenes/shared/gui_input.gd")
 
 @onready var _store: Node = get_node_or_null("/root/SettingsStore")
 @onready var _screens: Node = get_node_or_null("/root/ScreenManager")
@@ -65,8 +67,7 @@ func _names_for(type: int) -> PackedStringArray:
 
 
 func _set_box(i: int, text: String) -> void:
-	_boxes[i].text = text
-	_shadows[i].text = text
+	GuiInput.show_text(_boxes[i], _shadows[i], text)
 
 
 func _save_shown() -> void:
@@ -98,12 +99,5 @@ func _on_main_menu_pressed() -> void:
 		_screens.change_to_main_menu()
 
 
-# sub_45C880 refuses ß and takes every other printable key as typed.
 func _on_text_changed(text: String, i: int) -> void:
-	if text.contains("ß"):
-		var caret := _boxes[i].caret_column
-		var before := text.length()
-		text = text.replace("ß", "")
-		_boxes[i].text = text
-		_boxes[i].caret_column = maxi(0, caret - (before - text.length()))
-	_shadows[i].text = text
+	GuiInput.take_text(_boxes[i], _shadows[i], text)
