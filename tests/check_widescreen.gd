@@ -9,6 +9,7 @@ const ConsoleScene := preload("res://scenes/hud/console.tscn")
 const MenuScene := preload("res://scenes/hud/round_menu.tscn")
 const PromptsScene := preload("res://scenes/hud/level_prompts.tscn")
 const PROMPTS := preload("res://scenes/hud/level_prompts.gd")
+const MinigameScene := preload("res://scenes/level/catch_minigame.tscn")
 
 const ORIGINAL := Vector2(800.0, 600.0)
 const CONSOLE_HEIGHT := 200.0
@@ -43,9 +44,10 @@ func _run() -> void:
 		await _check_the_prompt_panels(size)
 		for path in SCREENS:
 			await _check_a_safe_frame(path, size)
+		await _check_the_duel_keeps_its_swirl_in_the_frame(size)
 
 	if _failures == 0:
-		print("Wide-screen: console bands, ring centre, prompt panels and safe frames hold at 4:3, 16:9 and 5:4")
+		print("Wide-screen: console bands, ring centre, prompt panels, safe frames and the duel's clip hold at 4:3, 16:9 and 5:4")
 	quit(1 if _failures else 0)
 
 
@@ -175,4 +177,27 @@ func _check_a_safe_frame(path: String, size: Vector2i) -> void:
 			"%s's margin is drawn behind its safe frame" % path
 		)
 
+	_drop(viewport)
+
+
+# The duel is screen 5, drawn on the original's 800x600 surface, so its 800x800 swirl (scaled
+# 1.25 and turned every frame, sub_4138A0) is cut at the screen's edges. On a wider canvas the
+# safe frame is that edge: it clips, and the margin either side stays black.
+func _check_the_duel_keeps_its_swirl_in_the_frame(size: Vector2i) -> void:
+	var minigame := MinigameScene.instantiate()
+	var viewport := await _mount(minigame, size)
+	var view := Vector2(size)
+	var frame := minigame.get_node("SafeFrame") as Control
+	var expected := Rect2((view.x - ORIGINAL.x) * 0.5, (view.y - ORIGINAL.y) * 0.5, ORIGINAL.x, ORIGINAL.y)
+	_expect(frame.get_global_rect().is_equal_approx(expected), "%s: the duel centres its 800x600 frame, got %s" % [size, frame.get_global_rect()])
+	_expect(frame.clip_contents, "%s: the duel's frame clips what it draws, as the original's screen edge does" % size)
+	var swirl := minigame.get_node("SafeFrame/Background") as Sprite2D
+	var drawn := swirl.get_global_transform() * swirl.get_rect()
+	_expect(not expected.encloses(drawn), "%s: the swirl overhangs the frame, so the clip is what keeps the margin black" % size)
+	var margin := minigame.get_node("Margin") as ColorRect
+	_expect(margin.color == Color.BLACK, "the duel's margin is the original's pillarbox black")
+	_expect(
+		margin.get_global_rect().is_equal_approx(Rect2(0.0, 0.0, view.x, view.y)),
+		"%s: the duel's margin covers the canvas, got %s" % [size, margin.get_global_rect()]
+	)
 	_drop(viewport)

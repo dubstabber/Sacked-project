@@ -239,7 +239,10 @@ Two port decisions worth naming:
 - **The backdrop.** The original spins the texture coordinates of a quad pinned to the
   screen, so it never shows an edge. The port spins the sprite and scales it by 1.25, which
   is enough for the frame's corners to stay covered at every angle. The pattern is therefore
-  slightly larger than the original's.
+  slightly larger than the original's. The scaled sprite overhangs the 800 × 600 frame, so
+  the frame (`SafeFrame`) clips its contents, as the original's screen edge does; on a
+  canvas wider than 4:3 the margin either side stays black (see
+  [widescreen.md](widescreen.md), "Art screens", and `tests/check_widescreen.gd`).
 - **The banners** use each retail build's own painted art, and a drawn label for any language
   that has none. The Polish build's `YOURTURN` and `WIN` are swapped relative to what their
   names say, which the port reproduces by showing that build's art where its name belongs.

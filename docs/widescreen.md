@@ -136,6 +136,9 @@ pillarboxing, so it uses the navy and never the black.
 
 This applies to `boot_loading`, `main_menu`, `character_select`, `level_tree`,
 `level_description`, `level_result` and `highscores` today, and to every screen built later.
+The catch duel (`scenes/level/catch_minigame.tscn`) follows it too, and its `SafeFrame` also
+clips, because its turning 800 × 800 swirl overhangs the frame and would otherwise sweep over
+the margin.
 
 **One visible change at 4:3.** The main menu's background art is 800 × 800 and was being
 letterboxed into an 800 × 600 rect, leaving bars down both sides. It now covers that rect,
@@ -205,8 +208,9 @@ It is answered under "Off-map colour" above.
 
 ## Verifying
 
-`tests/check_widescreen.gd` drives the console, the ring, the prompts and all four art
-screens at 800 × 600, 1067 × 600 and 800 × 640, and asserts each one keeps a black margin behind its frame. The headless root window reports no size, so
+`tests/check_widescreen.gd` drives the console, the ring, the prompts, every art screen and
+the duel at 800 × 600, 1067 × 600 and 800 × 640, and asserts each one keeps a black margin
+behind its frame and that the duel's frame clips its swirl. The headless root window reports no size, so
 each fixture is mounted in a `SubViewport` of its own.
 
 In the running game:
