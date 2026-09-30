@@ -269,7 +269,10 @@ player presses the J their own prompt names.
   auto-translate, so its owner rebuilds it on `NOTIFICATION_TRANSLATION_CHANGED`.
 - Painted words follow the console recipe: original art for the language it is painted in,
   an exporter-derived erased copy plus a keyed Label for the rest. The catch minigame's four
-  banners are the next case.
+  banners follow it too, without the erased copy, because the words are the whole sprite:
+  Polish shows `images/gui/minigame/{getready,yourturn,win,loose}.png`, German the `-de.png`
+  copies, and any other language a `minigame.banner.*` Label
+  (`scenes/level/catch_minigame_art.gd`).
 - A translation keeps the same `%` tokens in the same order; Godot's `%` is positional. The
   token pattern deliberately rejects printf's space flag, because one German action name
   reads `85% der Menschheit leben ohne Klopapier` and that literal percent is not a

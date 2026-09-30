@@ -390,6 +390,18 @@ holds is named by a 21-entry table of `char*` at **`0x46EC04`**:
 | 5 | `KICK` | 12 | `SMOKE` | 19 | `FLIPBAG` |
 | 6 | `PUNCH` | 13 | `SPRAY` | 20 | `FLIPBAG2` |
 
+Not every slot is reached through a record:
+
+- **Slot 1 `IDLE#2` is never selected.** The free-mode tick `sub_41B0C0` plays only slot 0
+  standing and slot 2 walking (`sub_41A510` is called with those two only), so the player
+  has no second idle, where a coworker's tick does pick its own `IDLE#2`.
+- **Slots 7 `PISS#1` and 12 `SMOKE`** belong to the lamp abilities: mode 3 (urinating) and
+  mode 2 (smoking).
+- **Slot 11 `FOAMING`** belongs to mode 4, which is unreachable, and `CO_CHARS` ships no
+  sprites for it.
+
+The abilities are in [player-ability-reference.md](player-ability-reference.md).
+
 Composed with the selector map in `sub_41B240`, a record's `+0x18` therefore chooses:
 
 | Selector | Slot | Clip | Selector | Slot | Clip |

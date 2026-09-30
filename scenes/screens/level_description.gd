@@ -4,9 +4,9 @@ extends Control
 # and its .col header, and sub_408B60 drops the level's objective into the `%s` of
 # Level_XX.txt. See docs/shell-reference.md.
 #
-# One divergence, recorded rather than hidden: the original can start any level whose node
-# the tree let you click, because every level ships with it. This port has only imported
-# some of the 21, so a level with no scene yet opens its description and refuses to start.
+# The original can start any level whose node the tree let you click, because every level
+# ships with it. All 21 are imported here too; the start button still checks that the level's
+# scene exists, so a missing one opens its description and refuses to start.
 
 # sub_421CD0 formats these as C literals rather than text-table slots, so unlike every other
 # string on this screen they are the same in all three languages.

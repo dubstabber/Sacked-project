@@ -110,6 +110,15 @@ Three things worth keeping:
 The name is copied with `strncpy(..., 16)` into a 20-byte field after the field is zeroed,
 so it is NUL-terminated in practice but not guaranteed by the copy.
 
+**There is no ending.** `sub_406E70` has no last-level branch. Whatever level was won, it
+sets the mode's unlock bit (`game+20664` points, `+20660` time), writes the registry through
+`sub_426260`, updates that level's 52-byte record (points: best score `+19220` and name
+`+19200`; time: best time `+19244` and name `+19224`, each plus 52 × the level index), saves
+`HIGHSCORE.DAT` through `sub_408AC0`, tears the level down with `sub_407140` and builds
+`m_Screen_Win` (`game+15124`) with `sub_425BB0`. Nothing in it compares the level index with
+the last level. So winning level 21, *Biuro Paradiso*, is an ordinary win and leads to the
+ordinary win screen: the game has no ending and no credits.
+
 **There is no post-level name prompt.** The name comes straight from `game+20668`, typed once
 on the character-select screen, so beating a record never asks who you are. Slot 219
 (`Imię do tabeli najlepszych wyników`) is that screen's own caption rather than a prompt

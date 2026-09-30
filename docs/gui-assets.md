@@ -104,3 +104,42 @@ its pivot is not used. `tools/export_gui_assets.py` owns the still, the pot and
 `LOADING_EVIL` in `images/gui/screens/`, and the five stream frames in
 `images/gui/screens/stream/`. The frames are 187 to 189 pixels long. The boot screen draws
 all of them the way the original does; see [shell-reference.md](shell-reference.md).
+
+## The `CO_EFFECT` archive
+
+`sub_403E20` loads `CO_EFFECT.OGD` (string `0x46B794`) with the other archives. The executable
+names only these sprites in it, and every name has a reference:
+
+| Sprite | String | Used by | In the port |
+| --- | --- | --- | --- |
+| `CO_EFFECT_FONT_SCORE` | `0x46BCE8` | the rising score numbers | `images/gui/fonts/score-digits.png` |
+| the ten `CO_EFFECT_BUBBLES_*` | `0x46E910`–`0x46EA04`, table `0x46E7A8` | the agents' thought bubbles | `images/effects/bubbles/` |
+| `CO_EFFECT_SHADOW_SHADOW` | `0x46EB20` | the character shadow | `images/effects/shadow/shadow.png` |
+| `CO_EFFECT_STRINGS` | `0x46EDC0` | the smoking ability `sub_41BC50` (`0x41BEC0`) and the foam ability `sub_41C660` (`0x41CAF3`) | `images/effects/strings/`, sixteen frames |
+| `CO_EFFECT_FOAM` | `0x46EE60` | `sub_41D630`, the player's sprite setup, into `player+1096`, which only `sub_41C660` reads | not exported |
+
+The smoke the smoking ability puts over the player's head is drawn with `STRINGS`, not with
+the archive's own `Smoke_*` frames. `Smoke_*` (16 frames), `Star_*` (4), `STAUB_*` (13) and
+`FEUER_PALETTE` are referenced by nothing: no string in the image names them. So whatever
+burns in a reference screenshot (`Zemsta-Urzedasa-3_wynik.jpg`, top right) is an object's
+own state art, not an effect. `FOAM` belongs to mode 4, which nothing can start; see
+[player-ability-reference.md](player-ability-reference.md).
+
+**The room-name diamonds are dead art.** `sub_412540` walks the names at `off_46E044`,
+formats each into `CO_BACKGROUND_OFFICE_AREATAGS_%s` (`0x46E0B0`) and stores the sprite it
+finds, or null, into an array on the map object from `+0x6F8` (+1784). The table holds nine
+names, `FLUR` first, and the archive has no `FLUR` diamond, so the eight room diamonds fill
+the rest. Nothing reads the array: the loader's `lea` at `0x41276A` is the only `+6F8h`
+reference in the image. The port does not export them.
+
+## Kept but unreferenced
+
+Three sets of files are in `images/` although nothing in the game draws them:
+
+- `images/gui/cursors/walking/`, eight `walk-*.png` arrows copied out by hand before the
+  exporter existed. The right-button walk uses `images/gui/cursors/active/`.
+  `tests/test_gui_assets.py` keeps `walk-315.png` as one of its decode checks.
+- `images/gui/minigame/mousecursor.png`, the duel's own `CGUIMiniGameMouse` sprite
+  ([minigame-reference.md](minigame-reference.md)). The port's duel does not use it yet.
+- `images/gui/acticons/strom.png`, icon 6 of the action icon table. No action record picks
+  icon 6, so no ring ever shows it.

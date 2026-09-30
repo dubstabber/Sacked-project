@@ -7,6 +7,12 @@ var _elapsed := 0.0
 
 
 func _ready() -> void:
+	# Every generated level carries this label; only debug builds, the editor and the headless
+	# checks among them, show it.
+	if not OS.is_debug_build():
+		hide()
+		set_process(false)
+		return
 	_update_text()
 
 

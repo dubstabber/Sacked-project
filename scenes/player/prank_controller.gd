@@ -610,7 +610,8 @@ func _play_action_animation(action: Dictionary) -> void:
 		facing = _nearest_asscopy_facing(_player.get("last_direction"))
 	_player.set("last_direction", facing)
 	if clip == "" or not _player.play_action_animation(clip, facing):
-		# No clip for this selector yet: the action still runs, the player just stands.
+		# Every selector the table uses has a clip in every view picked above, so this is only
+		# a guard: the action still runs, the player just stands.
 		_player.get_node("AnimationController").play_idle(facing)
 
 
@@ -760,9 +761,9 @@ func abort_action() -> void:
 	action_aborted.emit(action, point if is_instance_valid(point) else null)
 
 
-# ASSCOPY has two views rather than eight. The original picks a side when it repositions the
-# player onto the copier; until that lands, the nearer of the two is used so the clip is at
-# least facing the right way. See docs/player-action-reference.md.
+# ASSCOPY has two views rather than eight. _step_onto_object has already turned the player to
+# the one the copier's orientation chooses, so this returns it unchanged; the nearer of the
+# two only matters when there was no object to step onto. See docs/player-action-reference.md.
 func _nearest_asscopy_facing(facing: Vector2) -> Vector2:
 	var best := facing
 	var best_dot := -INF

@@ -184,8 +184,12 @@ sub_406430(n4, game+19052 + 2, 8, 8, sub_407840(catcher));
 ```
 
 `game-rules-reference.md:88` read the 7/4 as the opponent portrait. It is not: the portrait
-is the fifth argument, a sprite **name**, and 7/4 is a separate difficulty-shaped argument
-whose meaning `sub_406430` settles. That is left to the task that builds the minigame.
+is the fifth argument, a sprite **name**. The 7/4 is how many distinct icons the round draws
+from, and the second argument is how many casts it holds. `game+19052` counts the duels of
+one attempt at a level: `sub_406430` raises it each time it builds a duel and clamps it to 9,
+and the level setup `sub_406AF0` and the teardown `sub_407140` zero it. So the casts grow
+2, 3, 4 … within an attempt and start again at two on the next. The two 8s are the starting
+energy of each side. All of it is in [minigame-reference.md](minigame-reference.md).
 
 `sub_407840` maps the catcher to its portrait sprite, from the type at `agent+1740`, the
 gender at `agent+1744` and the variant at `agent+1748`:
@@ -282,8 +286,8 @@ Those include the four workstation types 152–155 and both toilet cubicles, 173
 
 Note that none of the four per-tick functions has a branch for the repair job, so an agent
 filing one keeps whatever clip its other flags choose — the janitor's `STAND#USE` (slot 3)
-is never selected by `sub_41A8D0`. Whether anything else raises it is left to the task that
-implements the goal.
+is never selected by `sub_41A8D0`, and no other selector of it is recorded, so it is not
+imported (see "The janitor has no seated work clip" in [npc-reference.md](npc-reference.md)).
 
 ## The archetype animation tables
 
@@ -375,8 +379,8 @@ later and are in [minigame-reference.md](minigame-reference.md).
 
 ### How screen 5 is built
 
-`sub_407370`'s case 5 is short, and its five arguments are a head start for the sitting that
-builds the screen:
+`sub_407370`'s case 5 is short; its five arguments are these (the screen they build is in
+[minigame-reference.md](minigame-reference.md)):
 
 ```c
 ebx = 1;                                  // set once in the prologue: the boss's type
@@ -387,11 +391,13 @@ portrait = sub_407840(game, game+14688);      // the ENEMY_* name for that catch
 sub_406430(game, difficulty, game+19052 + 2, 8, 8, portrait);
 ```
 
-So the "7 for the boss, 4 otherwise" really is a difficulty, passed first; the second
-argument is the **current level index plus two**, which suggests the duel gets harder as the
-campaign does; and the two 8s are a pair whose meaning `sub_406430` settles. `game+14688` is
-the catcher stored by the hand-off above, and `agent+1740 == 1` is the boss, matching the
-janitor's 3 in [npc-reference.md](npc-reference.md).
+So the "7 for the boss, 4 otherwise" really is a difficulty, passed first: the number of
+distinct icons the round draws from. The second argument is the **cast count**, the duels
+already fought in this attempt at the level plus two, so the duel gets harder within one
+attempt rather than across the campaign, and it is capped at 11. The two 8s are the starting
+energy of the opponent and the player. [minigame-reference.md](minigame-reference.md) has the
+counter's resets and the rules. `game+14688` is the catcher stored by the hand-off above, and
+`agent+1740 == 1` is the boss, matching the janitor's 3 in [npc-reference.md](npc-reference.md).
 
 ## What the port implements
 

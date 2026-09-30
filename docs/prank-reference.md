@@ -223,10 +223,13 @@ Two details the earlier note had wrong or missing:
 - **79's countdown starts at 400.0.** `player+1068` is set to that float, and it counts down
   by `dt * 10`, so the type-253 items stay in state 9 for **40 seconds** before
   `sub_411070`/`sub_40FDA0` put them back.
-- **Up to level 14, 79 reaches nothing but its own object.** Level 13 is the first to place
-  it, on the climate control `KLIMASTEUERUNG`, but no level from 1 to 14 has an item of type
-  253. So the control takes its own result state, the score is paid, and nothing else goes
-  dark. The original walks the same empty list.
+- **79 blacks out something on two levels.** Three levels place it, each time on the climate
+  control `KLIMASTEUERUNG` (type 254): 13, 15 and 19. Only two of them have items of type
+  253, the air conditioners `KLIMAANLAGE`: **6 on level 15 and 8 on level 19**, in both of
+  level 19's scenes. Those are what go dark for the 40 seconds. Level 13 has none, so there
+  the control takes its own result state, the score is paid, and nothing else goes dark; the
+  original walks the same empty list. No other level has an item of type 253. The counts are
+  from the imported manifests, `resources/levels/level_*.json`.
 
 ## What LEVEL_00 is worth
 

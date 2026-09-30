@@ -129,10 +129,11 @@ every node beyond them red. Read against the sprite names `LEVEL_BUTTON_FREE`, `
 and `_LOCKED`, that is played, playable and locked, with the yellow frontier sitting exactly
 where the green ends. The title `Wybór poziomu` (slot 190) sits along the top and a single
 `Główne menu` button (slot 191) in the bottom-left corner, which confirms both keys. The
-linking bars are drawn in the same two colours as the nodes they join, so the path already
-taken is lit differently from the path ahead. The node coordinates, the unlock rule behind
-the three colours and the per-level difficulty index are all recovered in
-[shell-reference.md](shell-reference.md).
+linking bars are not drawn by the screen: they are painted into the backdrop
+`CO_GUI_SCREENS_LEVELTREE` (`images/gui/screens/level-tree.png`), one fixed lattice glowing
+white and yellow, and they look the same however far the player has got. Only the nodes show
+progress. The node coordinates, the unlock rule behind the three colours and the per-level
+difficulty index are all recovered in [shell-reference.md](shell-reference.md).
 
 ### What the description screen draws
 
