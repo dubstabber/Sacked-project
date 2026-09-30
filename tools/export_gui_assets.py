@@ -17,6 +17,7 @@ Run with --check to verify the exported files without writing.
 """
 
 import argparse
+import json
 import re
 from pathlib import Path
 
@@ -123,6 +124,14 @@ BUBBLE_PREFIX = "CO_EFFECT_Bubbles_"
 MINIGAME_PREFIX = "CO_GUI_MINIGAME_"
 # The five frames of the stream the boot screen draws into the pot.
 STREAM_PREFIX = "CO_GUI_SCREENS_PINKELSTRAHL_"
+# The sixteen frames the smoking ability's CSfxSmoke is textured with. sub_41BC50 finds the
+# ANIM record by name, _stricmp against "CO_EFFECT_STRINGS" at 0x41bec0, so the archive's
+# mixed-case "CO_EFFECT_Strings" is the one it gets.
+STRINGS_PREFIX = "CO_EFFECT_Strings_"
+# That record's timing, as extract-sacked-assets/tools/animation_exporter.py reads it from
+# CO_EFFECT.OGD. The extraction is not shipped, so the port reads the copy written below.
+STRINGS_ANIMATION = "extract-sacked-assets/extracted/animations_godot/CO_EFFECT_CO_EFFECT_Strings_godot.json"
+STRINGS_TIMING = "resources/effects/strings.json"
 
 # Sprites with words painted into them, which therefore differ per release. The port ships
 # both builds' copies and picks by language; English falls back to a drawn label over the
@@ -169,6 +178,44 @@ def acticon_destination(sprite: str) -> str:
     return f"images/gui/acticons/{slug(sprite[len(ACTICON_PREFIX):])}.png"
 
 
+def strings_destination(sprite: str) -> str:
+    name = sprite[len(STRINGS_PREFIX):]
+    return f"images/effects/strings/{slug(name.removesuffix('_alpha'))}.png"
+
+
+def strings_timing(root: Path) -> str:
+    """The Strings ANIM record as the port plays it, serialised byte-deterministically.
+
+    Each frame's offset is Sprite2D.offset with centered = false, which is minus the SPRITE
+    header's pivot. The loop flag is the engine's default: the ANIM payload does not store one.
+    """
+    source = json.loads((root / STRINGS_ANIMATION).read_text())
+    if source["default_pivot"] != "ogd":
+        raise SystemExit(f"{STRINGS_ANIMATION}: offsets were not taken from the SPRITE pivots")
+    if len(source["frames"]) != source["frame_count"]:
+        raise SystemExit(f"{STRINGS_ANIMATION}: {len(source['frames'])} frames, record says {source['frame_count']}")
+    frames = []
+    for frame in source["frames"]:
+        sprite = frame["sprite_name"]
+        if frame.get("inferred") or not sprite or not sprite.startswith(STRINGS_PREFIX):
+            raise SystemExit(f"{STRINGS_ANIMATION}: frame {sprite!r} is not a resolved Strings sprite")
+        frames.append(
+            {
+                "duration": frame["duration_sec"],
+                "offset": [frame["offset"]["x"], frame["offset"]["y"]],
+                "texture": "res://" + strings_destination(sprite),
+            }
+        )
+    table = {
+        "fps": source["effective_fps"],
+        "frames": frames,
+        "generated_by": "tools/export_gui_assets.py",
+        "loop": source["loop"],
+        "source": source["name"],
+    }
+    return json.dumps(table, indent=2, sort_keys=True) + "\n"
+
+
 def specs(root: Path) -> list:
     """Every (archive, sprite, destination, source) this tool owns, in a stable order.
 
@@ -193,6 +240,9 @@ def specs(root: Path) -> list:
 
     for sprite in SpriteSource(root, GUI).names(STREAM_PREFIX):
         result.append((GUI, sprite, f"images/gui/screens/stream/{slug(sprite[len(STREAM_PREFIX):])}.png", None))
+
+    for sprite in SpriteSource(root, EFFECT).names(STRINGS_PREFIX):
+        result.append((EFFECT, sprite, strings_destination(sprite), None))
 
     for sprite, destination in GERMAN_SPRITES:
         result.append((GUI, sprite, destination, GERMAN_TEXTURE_ROOT))
@@ -228,10 +278,21 @@ def export(root: Path, check: bool) -> int:
             path.parent.mkdir(parents=True, exist_ok=True)
             image.save(path, optimize=True)
 
+    timing = strings_timing(root)
+    path = root / STRINGS_TIMING
+    if check:
+        if not path.is_file():
+            failures.append(f"{STRINGS_TIMING} is missing")
+        elif path.read_bytes() != timing.encode():
+            failures.append(f"{STRINGS_TIMING} is stale")
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(timing.encode())
+
     if failures:
         print("GUI asset check failed:\n" + "\n".join(f"  {line}" for line in failures))
         return 1
-    print(f"{'Verified' if check else 'Exported'} {count} GUI and effect sprites.")
+    print(f"{'Verified' if check else 'Exported'} {count} GUI and effect sprites and {STRINGS_TIMING}.")
     return 0
 
 
@@ -252,6 +313,7 @@ def main() -> int:
             else:
                 suffix = ""
             print(f"{archive:10} {sprite:44} -> {destination}{suffix}")
+        print(f"{'':10} {'CO_EFFECT_Strings (ANIM)':44} -> {STRINGS_TIMING}")
         return 0
     return export(root, args.check)
 

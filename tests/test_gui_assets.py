@@ -1,3 +1,4 @@
+import json
 import unittest
 from pathlib import Path
 
@@ -6,14 +7,18 @@ from PIL import Image
 from tools.export_gui_assets import (
     CONSOLE_FILL,
     CONSOLE_LABEL_BOXES,
+    STRINGS_ANIMATION,
+    STRINGS_TIMING,
     UNLABELLED_CONSOLE,
     slug,
     specs,
+    strings_timing,
 )
 from tools.sprite_source import SpriteSource
 
 ROOT = Path(__file__).resolve().parents[1]
 EXTRACTION = ROOT / "extract-sacked-assets/extracted/textures"
+STRINGS_FRAMES = [f"images/effects/strings/strings-{number:03d}.png" for number in range(1, 17)]
 
 
 @unittest.skipUnless(EXTRACTION.is_dir(), "extracted textures are not available")
@@ -72,6 +77,15 @@ class SpriteDecodeTest(unittest.TestCase):
         self.assertEqual({pixel[3] for pixel in decoded.get_flattened_data()}, {255})
         self.assertEqual(decoded.getpixel((0, 0))[:3], (0, 43, 149))
 
+    def test_strings_frames_are_black_and_white_under_a_graded_alpha(self):
+        # The smoke texture's shape is all in its alpha; its colour bytes are only ever 0 or
+        # 255, so a decode that dropped the fourth byte would leave nothing recognisable.
+        frame = SpriteSource(ROOT, "CO_EFFECT").decode("CO_EFFECT_Strings_strings_001_alpha")
+        pixels = list(frame.get_flattened_data())
+        self.assertEqual(frame.size, (64, 64))
+        self.assertEqual({pixel[:3] for pixel in pixels}, {(0, 0, 0), (255, 255, 255)})
+        self.assertGreater(len({pixel[3] for pixel in pixels}), 100)
+
     def test_colour_key_applies_when_given(self):
         source = SpriteSource(ROOT, "CO_GUI")
         keyed = source.decode("CO_GUI_CONSOLE_CLOCK_FULL", colour_key=(74, 109, 231))
@@ -126,6 +140,11 @@ class ExportTableTest(unittest.TestCase):
         self.assertEqual(len(icons), 64)
         self.assertEqual(len(bubbles), 10)
 
+    def test_table_covers_the_sixteen_strings_frames(self):
+        destinations = [destination for _, _, destination, _ in specs(ROOT)]
+        strings = [path for path in destinations if path.startswith("images/effects/strings/")]
+        self.assertEqual(strings, STRINGS_FRAMES)
+
     def test_every_exported_file_exists(self):
         for _, sprite, destination, _ in specs(ROOT):
             with self.subTest(sprite=sprite):
@@ -152,6 +171,47 @@ class ExportTableTest(unittest.TestCase):
                     self.assertEqual(after[x, y], CONSOLE_FILL)
         # If nothing changed the words are still there, which is the failure that matters.
         self.assertGreater(changed, 500)
+
+
+class StringsTimingTest(unittest.TestCase):
+    """resources/effects/strings.json is the port's copy of the CO_EFFECT_Strings ANIM record."""
+
+    def setUp(self):
+        self.timing = json.loads((ROOT / STRINGS_TIMING).read_text())
+
+    def test_the_record_is_the_one_the_executable_names(self):
+        # sub_41BC50 compares with _stricmp, so the upper-case spelling finds this record.
+        self.assertEqual(self.timing["source"], "CO_EFFECT_Strings")
+        self.assertEqual(self.timing["source"].upper(), "CO_EFFECT_STRINGS")
+
+    def test_sixteen_frames_at_eight_per_second_looping(self):
+        frames = self.timing["frames"]
+        self.assertEqual([frame["texture"] for frame in frames], ["res://" + path for path in STRINGS_FRAMES])
+        self.assertEqual(self.timing["fps"], 8.0)
+        self.assertEqual({frame["duration"] for frame in frames}, {0.125})
+        self.assertEqual(sum(frame["duration"] for frame in frames), 2.0)
+        # The ANIM payload stores no loop flag, so the record keeps the allocator's default.
+        self.assertIs(self.timing["loop"], True)
+
+    def test_every_frame_is_pivoted_on_its_centre(self):
+        for frame in self.timing["frames"]:
+            with self.subTest(texture=frame["texture"]):
+                path = ROOT / frame["texture"].removeprefix("res://")
+                with Image.open(path) as image:
+                    self.assertEqual(image.size, (64, 64))
+                    self.assertEqual(frame["offset"], [-image.width // 2, -image.height // 2])
+
+    @unittest.skipUnless((ROOT / STRINGS_ANIMATION).is_file(), "CO_EFFECT animation JSON is not available")
+    def test_the_committed_file_is_what_the_exporter_writes(self):
+        self.assertEqual((ROOT / STRINGS_TIMING).read_bytes(), strings_timing(ROOT).encode())
+
+    @unittest.skipUnless((ROOT / STRINGS_ANIMATION).is_file(), "CO_EFFECT animation JSON is not available")
+    def test_frame_order_is_the_animcells_order(self):
+        source = json.loads((ROOT / STRINGS_ANIMATION).read_text())
+        names = [frame["sprite_name"] for frame in source["frames"]]
+        self.assertEqual(names, [f"CO_EFFECT_Strings_strings_{number:03d}_alpha" for number in range(1, 17)])
+        ids = [frame["sprite_id"] for frame in source["frames"]]
+        self.assertEqual(ids, list(range(ids[0], ids[0] + 16)))
 
 
 if __name__ == "__main__":

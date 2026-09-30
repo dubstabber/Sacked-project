@@ -53,14 +53,54 @@ func _run() -> void:
 			quit(1)
 			return
 		print("Saved %s (%d clips)" % [path, library.get_animation_list().size()])
+
+	# An effect is a CO_CHARS record the executable names outright, such as the puddle
+	# sub_41D630 gives both characters (0x41D716): one view, frames numbered in play order.
+	for effect in spec.get("effects", []):
+		var effect_name := String(effect["name"])
+		var record := String(effect["record"])
+		var frame_path := func(index: int, _frame: Dictionary) -> String:
+			return "res://images/effects/%s/%s-%03d.png" % [effect_name, effect_name, index]
+		var library := AnimationLibrary.new()
+		var animation := _animation_from_source(
+			"res://extract-sacked-assets/extracted/animations_godot/CO_CHARS_%s_godot.json" % record,
+			effect,
+			frame_path,
+			record
+		)
+		if _failed:
+			quit(1)
+			return
+		library.add_animation(effect_name, animation)
+		var path := "res://scenes/effects/%s_animations.res" % effect_name
+		var error := ResourceSaver.save(library, path)
+		if error != OK:
+			push_error("Failed to save %s: %s" % [path, error_string(error)])
+			quit(1)
+			return
+		print("Saved %s (%d frames)" % [path, animation.track_get_key_count(0)])
 	quit(0)
 
 
 func _build_animation(character: String, row: Dictionary, angle: String) -> Animation:
-	var action := String(row["action"])
-	var source_path := "res://extract-sacked-assets/extracted/animations_godot/CO_CHARS_CO_CHARS_%s_%s_godot.json" % [String(row["source"]), angle]
+	var clip := "%s-%s-%s" % [character, String(row["action"]), DIRECTIONS[angle]]
+	var frame_path := func(_index: int, frame: Dictionary) -> String:
+		return "res://images/characters/%s/%s/%s-%s.png" % [character, clip, clip, String(frame["sprite_name"]).right(3)]
+	return _animation_from_source(
+		"res://extract-sacked-assets/extracted/animations_godot/CO_CHARS_CO_CHARS_%s_%s_godot.json" % [String(row["source"]), angle],
+		row,
+		frame_path
+	)
+
+
+# frame_path maps (frame index, source frame) to the exported texture. A non-empty record
+# must be the name the source file holds, so an effect row cannot silently load another clip.
+func _animation_from_source(source_path: String, row: Dictionary, frame_path: Callable, record := "") -> Animation:
 	var source := _read_source(source_path)
 	if source.is_empty():
+		return null
+	if not record.is_empty() and (String(source.get("container", "")) != "CO_CHARS" or String(source.get("name", "")) != record):
+		_fail("%s does not hold CO_CHARS/%s" % [source_path, record])
 		return null
 	var frames: Array = source.get("frames", [])
 	if frames.is_empty() or frames.size() != int(source.get("frame_count", 0)):
@@ -78,13 +118,13 @@ func _build_animation(character: String, row: Dictionary, angle: String) -> Anim
 	for track in [texture_track, offset_track]:
 		animation.value_track_set_update_mode(track, Animation.UPDATE_DISCRETE)
 		animation.track_set_interpolation_type(track, Animation.INTERPOLATION_NEAREST)
-	var clip := "%s-%s-%s" % [character, action, DIRECTIONS[angle]]
 	var time := 0.0
-	for frame in frames:
-		var path := "res://images/characters/%s/%s/%s-%s.png" % [character, clip, clip, String(frame["sprite_name"]).right(3)]
+	for index in range(frames.size()):
+		var frame: Dictionary = frames[index]
+		var path: String = frame_path.call(index, frame)
 		var texture := load(path) as Texture2D
 		if texture == null:
-			_fail("Missing NPC action frame: %s" % path)
+			_fail("Missing action frame: %s" % path)
 			return null
 		animation.track_insert_key(texture_track, time, texture)
 		animation.track_insert_key(offset_track, time, _frame_offset(frame))

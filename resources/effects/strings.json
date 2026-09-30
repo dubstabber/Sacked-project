@@ -1,0 +1,136 @@
+{
+  "fps": 8.0,
+  "frames": [
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-001.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-002.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-003.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-004.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-005.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-006.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-007.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-008.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-009.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-010.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-011.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-012.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-013.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-014.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-015.png"
+    },
+    {
+      "duration": 0.125,
+      "offset": [
+        -32,
+        -32
+      ],
+      "texture": "res://images/effects/strings/strings-016.png"
+    }
+  ],
+  "generated_by": "tools/export_gui_assets.py",
+  "loop": true,
+  "source": "CO_EFFECT_Strings"
+}
