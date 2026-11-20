@@ -528,6 +528,48 @@ Screens 11 and 13 use the same two bottom positions as the result screens: `Gł�
 (16, 536) and `Domyślne` at (624, 536), 160 × 48. Neither has a middle button. Their layouts
 are in [sound-reference.md](sound-reference.md) and [names-reference.md](names-reference.md).
 
+### The menu moves: a turning backdrop, swaying buttons and an orbiting figure
+
+The menu is not a still screen. Three things animate every frame, driven by two accumulators
+on the screen object that its constructor zeroes (`menu+1260` and `menu+1264`, dwords 315 and
+316). `tools/export_menu_animation.py` reads the constants out of `sacked.exe`.
+
+**The backdrop turns.** The shared base update `sub_423710` keeps a rotation angle at
+`menu+1260` and advances it by **0.01 radians a frame** (`flt_465308`, read at `0x4237F0`;
+`0x4237EA`–`0x423826`), then draws the screen's `+116` sprite as a screen-filling quad whose
+texture coordinates are a **500 × 500 region centred on (400, 400)** rotated by that angle, as
+two `sub_42C900` triangles. On the main menu that `+116` sprite is the 800 × 800
+`CO_GUI_SCREENS_MENU_BACKGROUND` swirl, so the swirl spins. It is the same fixed **0.01**/frame
+the duel's swirl turns by (`sub_4138A0`; see [minigame-reference.md](minigame-reference.md)),
+and the rotation is about the texture's centre, so the 800 × 800 art is **centre-cropped** into
+the 800 × 600 view — which settles the widescreen open question (see
+[widescreen.md](widescreen.md)). The 500 × 500 sample is a 1.6× horizontal, 1.2× vertical zoom
+of the swirl.
+
+**The six buttons sway.** `CMainMenu`'s update `sub_423630` keeps a phase at `menu+1264`,
+advances it by the clock's frame delta (`clock+592`), and sets button *i*'s x to
+`sin(i · 2π/10 + phase) · 32.0 + 380.0` (`dbl_4662B0` at `0x42367E`, `flt_4662AC` at `0x42368C`,
+`flt_4662A8` at `0x423692`), each button a fifth of a turn out of phase with the last. Their y
+stays on the constructor's row (116, 180, 244, 308, 372, 452).
+
+**The character orbits.** `sub_423AE0` reads the same phase, multiplies it by **π/4**
+(`flt_4662BC` at `0x423AE7`, stored as the rounded `0.78539902`), and sets the
+`CO_GUI_SCREENS_MENU_CHAR` figure's top-left to
+`(64 − sin(phase·π/4)·(−32), 32 − cos(phase·π/4)·32)` — a radius-32 circle about (64, 32)
+(`flt_4662B8` at `0x423AFA`, `flt_4662AC` at `0x423B15`).
+
+#### In the port
+
+`scenes/screens/main_menu.gd` reproduces all three from `resources/original/menu_animation.json`.
+The backdrop is a centred `Sprite2D` under a `clip_contents` `SafeFrame`, turned
+`rotation += 0.01` a frame and scaled **1.6** so a turn never bares a corner (the frame's
+half-diagonal needs only 1.25, and 1.6 matches the recovered horizontal zoom) — the same
+rotating-sprite approach the duel uses, clipped the same way (see
+[widescreen.md](widescreen.md), "Art screens"). The buttons sway from a phase that accumulates
+the real frame delta, and the character orbits its circle from the same phase.
+`tests/check_main_menu.gd` drives the scene's `_process` and pins every element against the
+recovered formula.
+
 ## The boot loading screen, 2
 
 Screen 2 is the only loading screen the original has. It is where the game starts:

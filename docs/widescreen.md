@@ -142,8 +142,8 @@ the margin.
 
 **One visible change at 4:3.** The main menu's background art is 800 × 800 and was being
 letterboxed into an 800 × 600 rect, leaving bars down both sides. It now covers that rect,
-showing the centre crop at 1:1. Where the original placed this sprite is an open question
-below.
+showing the centre crop — which is where the original places it, rotating, confirmed under
+"Open questions" below.
 
 ## The camera
 
@@ -199,9 +199,13 @@ same hand motion turns it at any window size (see
 Filed rather than guessed, in the order they matter. The camera's edge clamp used to head
 this list; it is recovered above, and there is none.
 
-1. **Where the original places `CO_GUI_SCREENS_MENU_BACKGROUND`.** Its `+8`/`+12` and
-   `+1140` in the screen-3 builder decide whether the 800 × 800 swirl is centre-cropped or
-   top-aligned. The port centre-crops.
+*(None open. The two that stood here are answered below.)*
+
+**Where the original places `CO_GUI_SCREENS_MENU_BACKGROUND`** — answered. The base menu update
+`sub_423710` draws it as a screen-filling quad whose texture coordinates are a 500 × 500 region
+**centred on (400, 400)** of the 800 × 800 art, rotated 0.01 radians a frame. So it is
+centre-cropped (and turning), which is what the port does. See "The menu moves" in
+[shell-reference.md](shell-reference.md), recovered by `tools/export_menu_animation.py`.
 
 The DirectDraw clear colour behind the sampled `(16, 16, 74)` used to be the second question.
 It is answered under "Off-map colour" above.

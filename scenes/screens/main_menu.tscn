@@ -38,23 +38,20 @@ offset_right = 400.0
 offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
+clip_contents = true
 mouse_filter = 2
 
 
-[node name="Background" type="TextureRect" parent="SafeFrame" unique_id=204783885]
-layout_mode = 0
-offset_right = 800.0
-offset_bottom = 600.0
+[node name="Background" type="Sprite2D" parent="SafeFrame" unique_id=204783885]
+texture_filter = 1
+position = Vector2(400, 300)
+scale = Vector2(1.6, 1.6)
 texture = ExtResource("2_bg")
-expand_mode = 1
-stretch_mode = 6
 
-[node name="Char" type="TextureRect" parent="SafeFrame" unique_id=1100630806]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 32.0
-offset_right = 194.0
-offset_bottom = 583.0
+[node name="Char" type="Sprite2D" parent="SafeFrame" unique_id=1100630806]
+texture_filter = 1
+centered = false
+position = Vector2(64, 0)
 texture = ExtResource("3_char")
 
 [node name="Buttons" type="Control" parent="SafeFrame" unique_id=240105901]
