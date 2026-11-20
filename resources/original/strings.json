@@ -1842,6 +1842,11 @@
       "origin": "port",
       "reason": "painted into both builds' console art; only English draws a Label"
     },
+    "boot.title": {
+      "pl": "zemsta\nurzędasa",
+      "origin": "port",
+      "reason": "painted into both builds' boot still; only English draws a Label"
+    },
     "sound.language": {
       "pl": "Język",
       "origin": "port",

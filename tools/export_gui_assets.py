@@ -180,6 +180,65 @@ def unlabelled_console(image):
     return result
 
 
+# The boot still has the game's title painted into its top left. English has no painted title,
+# so a copy is derived with it painted out and the port draws a Label there instead. The
+# backdrop is a vertical gradient: in the title's rows, no pixel of the strip below, which is
+# clear of the title, the character and the publisher's badge, is more than 2 per channel from
+# its row's median. So each pixel of the title takes the strip's pixel from its own row, which
+# keeps the palette's dither. The title is one connected shape that does not touch the
+# character, so it is found by flooding from a point inside it through every pixel that
+# differs from its row's background by more than 2. See docs/strings-reference.md.
+LOADING_TITLE_SEED = (100, 60)
+LOADING_BACKGROUND_STRIP = (560, 700)
+LOADING_BACKGROUND_TOLERANCE = 2
+UNTITLED_LOADING = "images/gui/screens/loading-untitled.png"
+
+
+def loading_title_pixels(image) -> set:
+    """Every pixel of the title's connected shape in the boot still."""
+    rgb = image.convert("RGB")
+    pixels = rgb.load()
+    width, height = rgb.size
+    x0, x1 = LOADING_BACKGROUND_STRIP
+
+    backgrounds = []
+    for y in range(height):
+        row = sorted(pixels[x, y] for x in range(x0, x1))
+        backgrounds.append(row[len(row) // 2])
+
+    def is_title(x, y):
+        background = backgrounds[y]
+        return max(abs(a - b) for a, b in zip(pixels[x, y], background)) > LOADING_BACKGROUND_TOLERANCE
+
+    if not is_title(*LOADING_TITLE_SEED):
+        raise SystemExit(f"CO_GUI_SCREENS_LOADING: {LOADING_TITLE_SEED} is not inside the title")
+    found = {LOADING_TITLE_SEED}
+    pending = [LOADING_TITLE_SEED]
+    while pending:
+        x, y = pending.pop()
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                point = (x + dx, y + dy)
+                if point in found or not (0 <= point[0] < width and 0 <= point[1] < height):
+                    continue
+                if is_title(*point):
+                    found.add(point)
+                    pending.append(point)
+    if any(x0 <= x < x1 for x, _ in found):
+        raise SystemExit("CO_GUI_SCREENS_LOADING: the title reaches the background strip")
+    return found
+
+
+def untitled_loading(image):
+    """Paint the title out of the boot still, leaving everything else untouched."""
+    result = image.convert("RGBA").copy()
+    pixels = result.load()
+    x0, x1 = LOADING_BACKGROUND_STRIP
+    for x, y in loading_title_pixels(image):
+        pixels[x, y] = pixels[x0 + x % (x1 - x0), y]
+    return result
+
+
 def slug(name: str) -> str:
     # The archive names are CamelCase runs; split them so the exported files stay readable.
     name = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "-", name)
@@ -239,6 +298,7 @@ def specs(root: Path) -> list:
     for sprite, destination in CONSOLE + SCREENS + MENU:
         result.append((GUI, sprite, destination, None))
     result.append(("CO_GUI", "CO_GUI_CONSOLE_CONSOLE", UNLABELLED_CONSOLE, unlabelled_console))
+    result.append(("CO_GUI", "CO_GUI_SCREENS_LOADING", UNTITLED_LOADING, untitled_loading))
     for sprite, destination in FONTS:
         result.append((EFFECT, sprite, destination, None))
 

@@ -9,7 +9,9 @@ from tools.export_gui_assets import (
     CONSOLE_LABEL_BOXES,
     STRINGS_ANIMATION,
     STRINGS_TIMING,
+    LOADING_BACKGROUND_STRIP,
     UNLABELLED_CONSOLE,
+    UNTITLED_LOADING,
     slug,
     specs,
     strings_timing,
@@ -171,6 +173,40 @@ class ExportTableTest(unittest.TestCase):
                     self.assertEqual(after[x, y], CONSOLE_FILL)
         # If nothing changed the words are still there, which is the failure that matters.
         self.assertGreater(changed, 500)
+
+
+    def test_the_untitled_still_erases_the_title_and_nothing_else(self):
+        """English draws the game's title itself, over a still with the painted one removed."""
+        painted = Image.open(ROOT / "images/gui/screens/loading.png").convert("RGB")
+        erased = Image.open(ROOT / UNTITLED_LOADING).convert("RGB")
+        self.assertEqual(painted.size, erased.size)
+        before, after = painted.load(), erased.load()
+        x0, x1 = LOADING_BACKGROUND_STRIP
+
+        def background(y):
+            row = sorted(before[x, y] for x in range(x0, x1))
+            return row[len(row) // 2]
+
+        def off_background(pixel, y):
+            return max(abs(a - b) for a, b in zip(pixel, background(y))) > 2
+
+        # The painted title's bounds, measured on the Polish still.
+        left, top, right, bottom = 12, 14, 347, 183
+        changed = 0
+        kept_character = 0
+        for y in range(painted.size[1]):
+            for x in range(painted.size[0]):
+                inside = left <= x <= right and top <= y <= bottom
+                if before[x, y] != after[x, y]:
+                    changed += 1
+                    self.assertTrue(inside, f"pixel {(x, y)} changed outside the title")
+                    self.assertFalse(off_background(after[x, y], y), f"pixel {(x, y)} is not the backdrop")
+                elif inside and off_background(after[x, y], y):
+                    # Only the character reaches into the title's bounds, from x 318.
+                    self.assertGreaterEqual(x, 318, f"pixel {(x, y)} of the title survived")
+                    kept_character += 1
+        self.assertGreater(changed, 40000)
+        self.assertGreater(kept_character, 0, "the character's ear and shoulder are untouched")
 
 
 class StringsTimingTest(unittest.TestCase):

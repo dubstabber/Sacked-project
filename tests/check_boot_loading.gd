@@ -131,13 +131,21 @@ func _check_the_666th_launch() -> void:
 		)
 
 
-# The title is painted into the still, so each build's own art shows in its own language.
+# The title is painted into the still, so each build's own art shows in its own language, and
+# English, which no build paints, draws it as text over the still with the title erased.
 func _check_each_build_shows_its_own_title(screen: Node) -> void:
 	_expect(
 		BootLoading.background_for(1, &"de").resource_path.ends_with("loading-de.png"),
 		"German shows the German build's still"
 	)
+	_expect(
+		BootLoading.background_for(1, &"en").resource_path.ends_with("loading-untitled.png"),
+		"English shows the still with the title painted out"
+	)
 	var background := screen.get_node("SafeFrame/Background") as TextureRect
+	var title := screen.get_node("SafeFrame/Title") as Control
+	var title_name := screen.get_node("SafeFrame/Title/Name") as Label
+	var tagline := screen.get_node("SafeFrame/Title/Tagline") as Label
 	var before := TranslationServer.get_locale()
 	for language: String in ["pl", "de"]:
 		TranslationServer.set_locale(language)
@@ -146,6 +154,23 @@ func _check_each_build_shows_its_own_title(screen: Node) -> void:
 			background.texture == BootLoading.BACKGROUNDS[StringName(language)],
 			"switching to %s swaps the still" % language
 		)
+		_expect(not title.visible, "%s draws no title over its painted one" % language)
+	TranslationServer.set_locale("en")
+	screen.notification(Node.NOTIFICATION_TRANSLATION_CHANGED)
+	_expect(background.texture == BootLoading.UNTITLED_BACKGROUND, "switching to English erases the painted title")
+	_expect(title.visible, "and draws English's own")
+	_expect(
+		title_name.text == "Sacked!" and tagline.text == "Your last day...",
+		"its first line is the name and the second the tagline, got %s / %s" % [title_name.text, tagline.text]
+	)
+	_expect(
+		title.get_rect().end.x <= 348.0 and title.get_rect().end.y <= 184.0,
+		"the title stays inside the painted title's bounds, got %s" % title.get_rect()
+	)
+	screen._launch = BootLoading.EVIL_LAUNCH
+	screen.notification(Node.NOTIFICATION_TRANSLATION_CHANGED)
+	_expect(not title.visible, "the evil still carries its own words, so English draws no title over it")
+	screen._launch = 0
 	TranslationServer.set_locale(before)
 	screen.notification(Node.NOTIFICATION_TRANSLATION_CHANGED)
 

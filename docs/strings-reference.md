@@ -147,13 +147,14 @@ text table. See [names-reference.md](names-reference.md).
 
 ## Keys the original has no wording for
 
-Nine, each declared in `PORT_STRINGS` with its reason — the two console labels and the
-seven sound-setup keys below:
+Ten, each declared in `PORT_STRINGS` with its reason — the two console labels, the boot
+screen's title and the seven sound-setup keys below:
 
 | Key | Polish | Why |
 | --- | --- | --- |
 | `hud.console.time_label` | `czas` | painted into the console art |
 | `hud.console.score_label` | `wynik` | painted into the console art |
+| `boot.title` | `zemsta\nurzędasa` | painted into the boot screen's still |
 | `sound.language` | `Język` | the port's language row on screen 11; each build ships one language |
 | `sound.display` | `Ekran` | the port's display row on screen 11; the original has no display option |
 | `sound.windowed` | `W oknie` | the display row's windowed value |
@@ -222,15 +223,29 @@ means "talked your way out", the English one only "you win". The archive also ho
 names those either, and the port does not export them.
 
 The boot screen's still carries the game's title, hand-lettered in each build's language:
-the Polish `zemsta urzędasa`, the German `gefeuert! dein letzter tag...`. Each language shows
-its own build's still (`loading.png`, `loading-de.png`), and the 666th launch's evil still,
-whose words are English in both builds, replaces either.
+the Polish `zemsta urzędasa`, the German `gefeuert! dein letzter tag...`. Polish and German
+each show their own build's still (`loading.png`, `loading-de.png`). English follows the
+console recipe: `export_gui_assets.py` derives `loading-untitled.png` from the Polish still,
+and the screen draws `boot.title` over it, its first line large in the logo's red and the
+rest beneath in white, both outlined in black and tilted a little as the German logo is. The
+English is `Sacked!` over `Your last day...`, the German title as the window title already
+translates it. The 666th launch's evil still, whose words are English in both builds,
+replaces any of the three and draws no title.
+
+The erase does not use a box, because the character's ear and shoulder reach into the
+title's bounds (`(12, 14)`–`(347, 183)`). The backdrop is a vertical gradient: across the
+strip x 560–699, in every row the title spans, no pixel is more than 2 per channel from the
+row's median.
+The title, its ellipse included, is one connected shape that does not touch the character,
+so the exporter floods it from `(100, 60)` through every pixel more than 2 away from its
+row's background, and gives each of those pixels the strip's pixel from the same row. That
+keeps the palette's dither, so the fill leaves no seam.
 
 ## How it loads
 
 `resources/original/strings.json` is generated and holds Polish and German.
 `resources/i18n/translations.json` is authored and holds **only what neither build has
-wording for**: English throughout, plus German for the nine port strings. The exporter fails
+wording for**: English throughout, plus German for the ten port strings. The exporter fails
 if the authored file names a language a build already provides, which is what stops the two
 drifting apart.
 

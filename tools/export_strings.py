@@ -144,6 +144,9 @@ UNUSED_SLOTS = {168: "Rozpocznij poziom 1", 169: "Rozpocznij poziom 2",
 PORT_STRINGS = {
     "hud.console.time_label": ("czas", "painted into both builds' console art; only English draws a Label"),
     "hud.console.score_label": ("wynik", "painted into both builds' console art; only English draws a Label"),
+    # The game's title as each build paints it into the boot still, one line per painted line.
+    # The screen draws the first line large and the rest beneath it.
+    "boot.title": ("zemsta\nurzędasa", "painted into both builds' boot still; only English draws a Label"),
     # Two rows the port adds to the sound-setup screen. The original ships one language per
     # build and has no display option, so neither has wording in either build.
     "sound.language": ("Język", "the port's language row on screen 11; each build ships one language"),

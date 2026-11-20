@@ -760,6 +760,10 @@
     "en": "score",
     "de": "Punkte"
   },
+  "boot.title": {
+    "en": "Sacked!\nYour last day...",
+    "de": "gefeuert!\ndein letzter tag..."
+  },
   "sound.language": {
     "en": "Language",
     "de": "Sprache"

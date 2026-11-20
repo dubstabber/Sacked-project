@@ -44,6 +44,42 @@ offset_bottom = 600.0
 mouse_filter = 2
 texture = ExtResource("2_bg")
 
+[node name="Title" type="Control" parent="SafeFrame"]
+visible = false
+layout_mode = 0
+offset_left = 14.0
+offset_top = 22.0
+offset_right = 346.0
+offset_bottom = 172.0
+rotation = -0.07
+pivot_offset = Vector2(166, 75)
+mouse_filter = 2
+
+[node name="Name" type="Label" parent="SafeFrame/Title"]
+auto_translate_mode = 2
+layout_mode = 0
+offset_right = 332.0
+offset_bottom = 96.0
+theme_override_colors/font_color = Color(0.996, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.004, 0.004, 0.004, 1)
+theme_override_constants/outline_size = 14
+theme_override_font_sizes/font_size = 76
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Tagline" type="Label" parent="SafeFrame/Title"]
+auto_translate_mode = 2
+layout_mode = 0
+offset_top = 86.0
+offset_right = 332.0
+offset_bottom = 132.0
+theme_override_colors/font_color = Color(0.996, 0.996, 0.996, 1)
+theme_override_colors/font_outline_color = Color(0.004, 0.004, 0.004, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 34
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Stream" type="Sprite2D" parent="SafeFrame"]
 position = Vector2(397, 343)
 texture = ExtResource("4_stream")

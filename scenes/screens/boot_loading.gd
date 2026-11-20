@@ -27,13 +27,14 @@ const STREAM_ORIGIN := Vector2(397, 343)
 # sub_422630 swaps the background on the 666th launch, counted in the registry.
 const EVIL_LAUNCH := 666
 
-# Each build paints the game's title into the still in its own language; the evil still's
-# words are English in both. See docs/strings-reference.md.
+# Each build paints the game's title into the still in its own language. Any other language
+# gets the still with the title painted out and draws the title as text. The evil still's
+# words are English in both builds. See docs/strings-reference.md.
 const BACKGROUNDS := {
 	&"pl": preload("res://images/gui/screens/loading.png"),
 	&"de": preload("res://images/gui/screens/loading-de.png"),
 }
-const FALLBACK_LANGUAGE := &"pl"
+const UNTITLED_BACKGROUND := preload("res://images/gui/screens/loading-untitled.png")
 const BACKGROUND_EVIL := preload("res://images/gui/screens/loading_evil.png")
 const STREAM_FRAMES: Array[Texture2D] = [
 	preload("res://images/gui/screens/stream/piss-000.png"),
@@ -49,6 +50,9 @@ const STREAM_FRAMES: Array[Texture2D] = [
 @onready var _background: TextureRect = $SafeFrame/Background
 @onready var _pot: Sprite2D = $SafeFrame/Pot
 @onready var _stream: Sprite2D = $SafeFrame/Stream
+@onready var _title: Control = $SafeFrame/Title
+@onready var _title_name: Label = $SafeFrame/Title/Name
+@onready var _title_tagline: Label = $SafeFrame/Title/Tagline
 
 var step := 0
 var _clock := 0.0
@@ -77,6 +81,11 @@ func _notification(what: int) -> void:
 func _match_background_to_language() -> void:
 	var language := StringName(TranslationServer.get_locale().substr(0, 2))
 	_background.texture = background_for(_launch, language)
+	_title.visible = _background.texture == UNTITLED_BACKGROUND
+	# The first painted line is the name and the rest its tagline, as both builds paint it.
+	var lines := tr(&"boot.title").split("\n", true, 1)
+	_title_name.text = lines[0]
+	_title_tagline.text = lines[1] if lines.size() > 1 else ""
 
 
 func _process(delta: float) -> void:
@@ -110,7 +119,7 @@ func show_step(value: int) -> void:
 static func background_for(launch: int, language: StringName) -> Texture2D:
 	if launch == EVIL_LAUNCH:
 		return BACKGROUND_EVIL
-	return BACKGROUNDS.get(language, BACKGROUNDS[FALLBACK_LANGUAGE])
+	return BACKGROUNDS.get(language, UNTITLED_BACKGROUND)
 
 
 # game+19048 * 0.01, stored as a float and clamped to 0..1 by the draw.

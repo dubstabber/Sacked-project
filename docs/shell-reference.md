@@ -634,8 +634,9 @@ the full `loading_item1.png`, and the progress goes through a float32 array so t
 lands on the original's frames. When it is the tree's current scene, as it is at launch, it
 counts the launch in `SettingsStore` (`[launch] count`) and asks `ScreenManager` to start
 `Menu1`. A check that only mounts the screen does neither, so a check run never moves the
-player's count. The still has the game's title painted in, so each language shows its own
-build's copy; see "The two painted words" in [strings-reference.md](strings-reference.md). `tests/check_boot_loading.gd` pins the frames and clips at chosen steps
+player's count. The still has the game's title painted in, so Polish and German show their
+own build's copy and English draws the title as text over a copy with it painted out; see
+"The two painted words" in [strings-reference.md](strings-reference.md). `tests/check_boot_loading.gd` pins the frames and clips at chosen steps
 against values computed from the executable's constants, the clock, the missing input
 handlers, the counter and `LOADING_EVIL` on launch 666.
 
