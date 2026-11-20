@@ -58,6 +58,9 @@ func _check_every_step_draws_the_recovered_frame_and_clip(screen: Node) -> void:
 	var pot := screen.get_node("SafeFrame/Pot") as Sprite2D
 	var stream := screen.get_node("SafeFrame/Stream") as Sprite2D
 	_expect(stream.position == Vector2(397, 343), "the stream is drawn at (400, 300) less its (3, -43) pivot")
+	# The original blits the stream at a far z (0x4228A3), so the pot and its rising liquid cover
+	# its lower end; the port gets that by drawing the Stream node before the Pot.
+	_expect(stream.get_index() < pot.get_index(), "the stream is drawn behind the pot, so the liquid pours in over it")
 	screen.step = 0
 	screen.show_step(0)
 	for step in range(0, 101):

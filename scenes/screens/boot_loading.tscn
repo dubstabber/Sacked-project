@@ -44,14 +44,14 @@ offset_bottom = 600.0
 mouse_filter = 2
 texture = ExtResource("2_bg")
 
+[node name="Stream" type="Sprite2D" parent="SafeFrame"]
+position = Vector2(397, 343)
+texture = ExtResource("4_stream")
+centered = false
+
 [node name="Pot" type="Sprite2D" parent="SafeFrame"]
 position = Vector2(375, 538)
 texture = ExtResource("3_item")
 centered = false
 region_enabled = true
 region_rect = Rect2(0, 51, 55, 0)
-
-[node name="Stream" type="Sprite2D" parent="SafeFrame"]
-position = Vector2(397, 343)
-texture = ExtResource("4_stream")
-centered = false

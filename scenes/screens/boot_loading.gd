@@ -6,7 +6,10 @@ extends Control
 # 40, 60 and 80; once it reads 100 it moves to the main menu. Nothing skips it. The draw
 # sub_422750 reveals the full pot LOADING_ITEM1 from the bottom up by clipping its top
 # h - h * progress rows, and shows stream frame (int)(progress * 100) % 5 at (400, 300) less
-# the frames' own (3, -43) pivot. Case 2 starts Menu1 as the screen comes up.
+# the frames' own (3, -43) pivot. It blits the stream in mode 6 at a far z (32769, 0x4228A3), so
+# the pot and its rising liquid occlude the stream's lower end -- the stream pours in behind
+# them. The port draws the Stream node before the Pot to get the same order. Case 2 starts Menu1
+# as the screen comes up.
 #
 # The port has nothing to load here, so the screen only runs its hundred steps. The original
 # takes one per rendered frame at the monitor's refresh; the port takes one per 1/60 s, the
