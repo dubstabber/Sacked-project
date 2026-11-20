@@ -251,10 +251,10 @@ the port's German text comes from, did use it: 13 of its 16 fonts ask for
 `International Playboy`, the face's family name. So the Polish localisation swapped the face
 for Arial. See "Fonts" in [hud-reference.md](hud-reference.md).
 
-**Which face German gets is a decision for the user.** For now the port draws German in
-Liberation Sans at the Polish build's sizes, like Polish and English. The German original
-drew its menus, level description and console in `International Playboy`, at sizes of its
-own. That face has no `ß`, so using it would need a fallback face for that one letter.
+**The port draws German in Liberation Sans, like Polish and English** (a settled decision).
+The German original drew its menus, level description and console in `International Playboy`,
+at sizes of its own, but that face has no `ß` and would need a fallback for that one letter, so
+the port keeps one uniform face across all three languages rather than bring it in.
 
 ## The quit prompt's answer keys
 

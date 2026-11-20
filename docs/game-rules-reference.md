@@ -240,6 +240,6 @@ third-party freeware font that is missing most Polish diacritics, so the Polish 
 cannot have rendered its own UI text with it. The German original did: it asks for the face
 by its family name, `International Playboy`, for four of those five and for its menus, level
 description and console. Every font in both builds is regular weight. The port draws every
-language in Liberation Sans at the Polish build's sizes, each Arial N at its rounded em, and
-which face German should get is left to the user. See "Fonts" in
+language in Liberation Sans at the Polish build's sizes, each Arial N at its rounded em,
+German included (a settled decision, not an open question). See "Fonts" in
 [hud-reference.md](hud-reference.md).

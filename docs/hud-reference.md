@@ -383,8 +383,8 @@ localisation moved every International Playboy font to Arial and resized each on
 has no Polish letters, which is presumably why; that is inferred. The German build's menus,
 level description and console were set in International Playboy, regular, though its cmap has
 no `ß`. The port takes its German text from that build (see
-[strings-reference.md](strings-reference.md)); which face German gets is still open (see "In
-the port" below).
+[strings-reference.md](strings-reference.md)); it draws every language in Liberation Sans,
+German included (a settled decision, see "In the port" below).
 
 Charset `0xEE` is how the Polish build's Arial reaches the CP1250 letters. Godot works from
 Unicode, so that part needs no porting.
@@ -398,11 +398,12 @@ has Arial's advance widths and vertical metrics. It is the default font of
 draws in it. Nothing under `scenes/` or `autoloads/` names another face, and the face does not
 fall back to the system's for a character it lacks.
 
-**One face for every language, for now.** The German text is drawn in Liberation Sans at the
-Polish build's sizes, like the other two languages. The German original drew its menus, level
+**One face for every language.** The German text is drawn in Liberation Sans at the Polish
+build's sizes, like the other two languages. The German original drew its menus, level
 description and console in `International Playboy` at its own sizes (the table above), and
-that face has no `ß`. Whether German should get that face, with a fallback for `ß`, is a
-decision for the user; until then it gets the Polish build's Arial.
+that face has no `ß`. The port **keeps Liberation Sans for every language** rather than bring
+that face in for German (a settled decision, not an open question): one face reads uniformly
+across the three languages, and `International Playboy` would still need a fallback for `ß`.
 
 **The rasterisation** is set by `[importer_defaults]` in `project.godot`, because the
 `.import` sidecar is not committed:
