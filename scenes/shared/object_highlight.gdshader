@@ -1,12 +1,17 @@
 shader_type canvas_item;
-render_mode unshaded, blend_add;
+render_mode unshaded;
 
-// The second draw the original makes over an item the cursor is over: Main_RenderUpdate
-// draws the item normally, then draws it again tinted from item+4..6 in mode 54, blended at a
-// fixed weight (item+7 = 180, 200 for a colleague) with a brightness lift that pulses between
-// 40 and 200. The item itself never goes transparent. This pass still blends by an older,
-// additive reading of that draw, a recorded divergence the backlog holds: see "How the
-// highlight is drawn" in docs/player-action-reference.md.
+// The second draw the original makes over an item the cursor is over: Main_RenderUpdate draws
+// the item normally, then draws it again in mode 54 (sub_43B050). That pass is a brightened,
+// tinted copy of the sprite blended over what is already there at a fixed weight, not an
+// additive wash: out_i = (c_i * w + dst_i * (255 - w)) >> 8, where c_i = min(255,
+// (sprite_i * tint_i >> 8) + brightness). The weight w is item+7 -- 180 for an object
+// (0x403431-0x40343D, 0x403449-0x403455, 0x4033b0-0x403455), 200 for a colleague
+// (0x403258-0x40326D) -- and the brightness is 120 + 80*sin(2.5 * phase), truncated, between
+// 40 and 200 (0x411EFF, 0x402A7A). The item itself is never modulated and never goes
+// transparent; only this copy pulses. `weight` and `brightness` arrive from
+// prank_controller.gd as 0..1, so COLOR.rgb carries the tint and the normal blend does the
+// mix. See "How the highlight is drawn" in docs/player-action-reference.md.
 //
 // The depth test is the same one characters use, so the pulse only reaches the pixels where
 // the object is actually visible. Underneath, the object is either baked into the static
@@ -28,6 +33,9 @@ uniform vec2 pixel_snap = vec2(0.0, 0.0);
 uniform bool depth_map_enabled = false;
 uniform bool world_depth_enabled = false;
 uniform bool cluster_depth_enabled = false;
+// item+7 as 0..1 (180/255 object, 200/255 colleague), and the pulsing lift 120+80*sin(2.5 t).
+uniform float weight = 0.0;
+uniform float brightness = 0.0;
 
 varying vec2 world_position;
 
@@ -67,5 +75,9 @@ void fragment() {
 			}
 		}
 	}
-	COLOR = vec4(source.rgb * COLOR.rgb, source.a) * COLOR.a;
+	// The brightened, tinted copy, blended over the destination at the fixed weight. The normal
+	// (non-additive) blend turns weight * source.a into mix(dst, c, weight) where the sprite is
+	// opaque, which is the original's (c*w + dst*(255-w)) >> 8.
+	vec3 c = min(vec3(1.0), source.rgb * COLOR.rgb + vec3(brightness));
+	COLOR = vec4(c, weight * source.a);
 }

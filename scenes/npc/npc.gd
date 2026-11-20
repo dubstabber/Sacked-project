@@ -25,6 +25,17 @@ const HEADING_EASING := 0.125
 # thought bubble is drawn from. See docs/names-reference.md.
 const NAME_OFFSET_Y := -135.0
 
+# agent+92, raised while this colleague is under the cursor. The agent's draw (sub_417460) is
+# called a second time for the hovered one (0x402A24), but it writes its own blend mode, so the
+# opaque body (mode 7) is redrawn unchanged -- it does not brighten and does not pulse -- while
+# the thought bubble (mode 20, alpha 180) is drawn twice and comes out lighter. The original also
+# shows a stronger shadow under a hovered colleague; its exact draw was not traced, so the port
+# strengthens the shadow the same way the bubble lightens, by the double-draw's 1 - (1 - a)^2.
+# The mode-54 weight the loop sets (agent+7 = 200) is overridden by sub_417460, so it is dead.
+# See docs/player-action-reference.md.
+const SHADOW_ALPHA := 0.5
+const SHADOW_HOVER_ALPHA := 1.0 - (1.0 - SHADOW_ALPHA) * (1.0 - SHADOW_ALPHA)
+
 enum Command { NONE, TRAVEL, ACTIVITY }
 
 @export var profile: Resource
@@ -49,6 +60,12 @@ var selected := false:
 	set(value):
 		selected = value
 		_refresh_name_label()
+var hovered := false:
+	set(value):
+		if value == hovered:
+			return
+		hovered = value
+		_refresh_hover()
 var last_direction: Vector2 = Vector2.RIGHT
 # agent+1792, which the Matrix pill's sub_41CD10 raises on every agent for its forty seconds.
 # Each agent tick then puts 0.2 instead of 1.0 into the walk multiplier +76 and the current
@@ -136,6 +153,16 @@ func _refresh_name_label() -> void:
 	label.visible = selected and display_name != ""
 	label.reset_size()
 	label.position = Vector2(-label.size.x * 0.5, NAME_OFFSET_Y)
+
+
+# The hover redraw strengthens the shadow and lightens the bubble; the opaque body is untouched.
+func _refresh_hover() -> void:
+	var shadow := get_node_or_null("Shadow") as CanvasItem
+	if shadow != null:
+		shadow.modulate.a = SHADOW_HOVER_ALPHA if hovered else SHADOW_ALPHA
+	var bubble := get_node_or_null("ThoughtBubble")
+	if bubble != null and bubble.has_method("set_emphasis"):
+		bubble.set_emphasis(hovered)
 
 
 func _physics_process(delta: float) -> void:

@@ -4,9 +4,11 @@ extends SceneTree
 # agent+1752 centred 135 px above the agent in (250, 180, 40) over a (40, 10, 0) copy, only
 # while agent+1788 is set, and the level tick sets that flag on the colleague under the cursor
 # when the act input comes, clearing it on everyone else. The pick shares one list of boxes
-# with the items, so whichever box is in front answers, and a hovered colleague gets the same
-# white pulse a hovered item does. The live store is pointed at a file of the check's own, so
-# the player's own renames cannot change the names read here.
+# with the items, so whichever box is in front answers. Unlike a hovered item, a hovered
+# colleague is not a brightened pulse: its draw overrides the blend mode, so only its shadow and
+# bubble strengthen while its opaque body is left alone (docs/player-action-reference.md). The
+# live store is pointed at a file of the check's own, so the player's own renames cannot change
+# the names read here.
 
 const LEVEL := preload("res://scenes/level_1.tscn")
 const TEST_PATH := "user://check_coworker_select.cfg"
@@ -56,7 +58,7 @@ func _run() -> void:
 	_check_a_click_selects_one_colleague(boss, coworker)
 	_check_the_player_is_never_picked(player)
 	await _check_one_box_answers_both_picks(boss)
-	await _check_a_hovered_colleague_pulses_white(boss)
+	await _check_a_hovered_colleague_strengthens_its_shadow_and_bubble(boss)
 
 	root.remove_child(_level)
 	_level.free()
@@ -65,7 +67,7 @@ func _run() -> void:
 		store.reload()
 	DirAccess.remove_absolute(TEST_PATH)
 	if _failures == 0:
-		print("Coworker selection: the dealt names, the label over a clicked colleague, one pick for items and colleagues, and the white pulse passed")
+		print("Coworker selection: the dealt names, the label over a clicked colleague, one pick for items and colleagues, and the hover strengthening the shadow and bubble passed")
 	quit(1 if _failures else 0)
 
 
@@ -178,8 +180,13 @@ func _hover(point: Vector2) -> void:
 	_controller._update_hover()
 
 
-func _check_a_hovered_colleague_pulses_white(boss: Node2D) -> void:
-	var sprite := boss.get_node("Sprite2D") as Sprite2D
+func _check_a_hovered_colleague_strengthens_its_shadow_and_bubble(boss: Node2D) -> void:
+	var body := boss.get_node("Sprite2D") as Sprite2D
+	var shadow := boss.get_node("Shadow") as Sprite2D
+	var bubble := boss.get_node_or_null("ThoughtBubble")
+	# Give the colleague a bubble to show, so its lightening can be measured.
+	if bubble != null:
+		bubble.show_goal(0)
 	var point := _winning_point(boss)
 	_expect(point.is_finite(), "some point of the boss's box answers with the boss")
 	if not point.is_finite():
@@ -187,24 +194,18 @@ func _check_a_hovered_colleague_pulses_white(boss: Node2D) -> void:
 	await _hover(point)
 	_expect(_controller.hovered_agent == boss, "the pointer over the boss hovers him")
 	_expect(_controller.focus_point == null, "and focuses no object, since his box is the one in front")
-	var pulse := _controller.get("_agent_highlight") as Sprite2D
-	_expect(pulse != null and pulse.visible, "the hovered colleague gets a pulse pass")
-	if pulse == null:
-		return
-	_expect(pulse.texture == sprite.texture, "the pass redraws the colleague's own frame")
-	_expect(
-		Color(pulse.modulate.r, pulse.modulate.g, pulse.modulate.b).is_equal_approx(Color.WHITE),
-		"in white, as game+14696's tint is"
-	)
-	_expect(pulse.modulate.a >= 40.0 / 255.0 - 0.001 and pulse.modulate.a <= 200.0 / 255.0 + 0.001, "pulsing between 40 and 200")
-	_expect(pulse.z_index == sprite.z_index + 1, "one z above the colleague it lights")
-	var material := pulse.material as ShaderMaterial
-	var compositor := _world.get_node("CharacterDepthCompositor") as CharacterDepthCompositor
-	_expect(
-		material.get_shader_parameter("depth_map") == compositor.depth_texture_for(sprite),
-		"the pass tests the colleague's own depth plane, so walls in front still hide it"
-	)
+	_expect(boss.hovered, "the boss is flagged hovered")
+	# The body is an opaque mode-7 copy, redrawn unchanged: no brightened pulse is drawn over it.
+	_expect(_controller.get("_agent_highlight") == null, "no brightened copy is drawn over the colleague")
+	_expect(body.modulate.is_equal_approx(Color.WHITE), "the colleague's body is left untouched")
+	# Its shadow strengthens and its bubble lightens, the double draw's 1 - (1 - a)^2, and neither pulses.
+	_expect(boss.SHADOW_HOVER_ALPHA > boss.SHADOW_ALPHA, "a hovered shadow is stronger than at rest")
+	_expect(is_equal_approx(shadow.modulate.a, boss.SHADOW_HOVER_ALPHA), "the shadow strengthens to %f, got %f" % [boss.SHADOW_HOVER_ALPHA, shadow.modulate.a])
+	if bubble != null:
+		_expect(bubble.HOVER_ALPHA > bubble.ALPHA, "a hovered bubble is lighter than at rest")
+		_expect(is_equal_approx(bubble.modulate.a, bubble.HOVER_ALPHA), "the bubble lightens to %f, got %f" % [bubble.HOVER_ALPHA, bubble.modulate.a])
 	var item_pulse := _controller.get("_highlight") as Sprite2D
 	_expect(item_pulse == null or not item_pulse.visible, "no object pulses while a colleague is in front")
 	_controller._set_hovered_agent(null)
-	_expect(not pulse.visible, "the pulse goes when the cursor leaves")
+	_expect(not boss.hovered, "the flag clears when the cursor leaves")
+	_expect(is_equal_approx(shadow.modulate.a, boss.SHADOW_ALPHA), "and the shadow returns to its resting alpha")

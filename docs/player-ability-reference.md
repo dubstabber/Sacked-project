@@ -890,15 +890,20 @@ brightness pulses:
   `sub_42D1D0` (`0x411EC8`) and the tint `item+4..6`. `item+7` is 180 for every item tint. The
   brightness is `0x78 − ftol(sin(item+0x48 * flt_4652F0) * dbl_4652E8)`, set through
   `sub_42D200` (`0x411EFF`), so it is the brightness that swings between 40 and 200.
-- **Agents.** The character loop does the same (`0x402A3D`, `0x402A7A`) with weight 200.
-- **The effects list** does the same (`0x402BAF`).
+- **Agents.** The character loop sets the same mode 54 with weight 200 (`0x402A3D`, `0x402A7A`)
+  but calls the agent's own draw `sub_417460`, which overwrites the blend mode (mode 7 body,
+  mode 20 bubble), so for a colleague the weight is dead: its opaque body does not change and
+  its shadow and bubble just draw twice (stronger, lighter). See "How the highlight is drawn" in
+  [player-action-reference.md](player-action-reference.md).
+- **The effects list** does the item's brightened pass (`0x402BAF`).
 
-So the highlight is a blend at a fixed weight, 180/256 for items and 200/256 for agents, with a
-pulsing brightness lift. It is not additive.
+So an **item's** highlight is a blend at the fixed weight 180/256 with a pulsing brightness lift;
+it is not additive. A **colleague's** is not a brightened copy at all.
 [player-action-reference.md](player-action-reference.md) and
 [names-reference.md](names-reference.md) now describe it this way.
-`scenes/shared/object_highlight.gdshader` (`blend_add`, with alpha `120/255 + 80/255 sin`)
-still follows the old additive reading, so the green copies should not copy that shader.
+`scenes/shared/object_highlight.gdshader` blends that brightened copy at the item weight
+(180/255), not additively; see
+[player-action-reference.md](player-action-reference.md).
 
 **The overlay.** `player+1044` has one reader, the player's draw `sub_41D500` (`0x41D514`).
 While it is 1 and the player is on screen, that draw first paints a four-corner gradient
@@ -1635,7 +1640,7 @@ the 2 depth units and the two jitters, come from `slowdown.json`, read from `sub
   `c = min(255, (src * tint >> 8) + 60)` with tint (40, 255, 40), written as `(c * 120) >> 8`
   with an alpha of `121 / 256`, so the back buffer keeps `135 / 256` of itself. The destination
   half is not truncated, so a pixel can come out one above the blitter's. It is a plain blend,
-  like the blitter; `scenes/shared/object_highlight.gdshader` was not the model.
+  like the blitter, the same mode-54 form `scenes/shared/object_highlight.gdshader` now uses.
 - **Depth.** Each pixel's score is the agent's base `ceil(int(y) / 2)` plus 2, less the frame's
   own Z-plane value, and it is tested with the effects' helper, `scenes/effects/effect_depth.gd`,
   against the world composite and the depth planes of the six nearest overlapping actors. The

@@ -14,8 +14,6 @@ const MAX_ACTION_RANGE := 2.0
 const TINT_READY := Color(1.0, 1.0, 1.0)
 const TINT_OUT_OF_REACH := Color(1.0, 1.0, 50.0 / 255.0)
 const TINT_NO_ACTION := Color(1.0, 50.0 / 255.0, 50.0 / 255.0)
-# game+14696's +4..6 while the cursor is over a colleague (0x40325B).
-const TINT_AGENT := Color(1.0, 1.0, 1.0)
 const AGENT_GROUP := &"npc_agents"
 # sub_42D200(120 - sin(phase * 2.5) * -80) -- the pulse the highlight is drawn with.
 const PULSE_CENTRE := 120.0 / 255.0
@@ -59,6 +57,9 @@ const BOSS_PROFILE: StringName = &"boss"
 
 const PULSE_SWING := 80.0 / 255.0
 const PULSE_RATE := 2.5
+# The fixed weight the mode-54 copy is blended at (item+7 = 180 for an object, 0x403431-0x40343D).
+# See docs/player-action-reference.md, "How the highlight is drawn".
+const WEIGHT_OBJECT := 180.0 / 255.0
 # sub_41A510 maps a record's animation selector (+0x18) to a slot in the player's animation
 # table at 0x46EC04. These are every selector the campaign places. See
 # tools/character_action_clips.json and docs/player-action-reference.md.
@@ -113,7 +114,6 @@ var _player: Node2D
 var _hovered: Node2D
 var _highlight: Sprite2D
 var _highlight_material: ShaderMaterial
-var _agent_highlight: Sprite2D
 var _world_mask: Node2D
 var _characters: CharacterDepthCompositor
 # player+1068: how much of the blackout action's forty seconds is left.
@@ -529,8 +529,8 @@ func _update_hover() -> void:
 # The original leaves the item itself alone and draws a second copy over it in mode 54, at a
 # fixed weight (item+7 = 180, 200 for a colleague) with a brightness lift that pulses between 40
 # and 200. So the object stays in the static composite and never turns transparent; only this
-# pass pulses. The pass still blends by an older, additive reading, a recorded divergence the
-# backlog holds: see "How the highlight is drawn" in docs/player-action-reference.md.
+# pass pulses. object_highlight.gdshader now blends that brightened copy at the fixed weight,
+# not additively: see "How the highlight is drawn" in docs/player-action-reference.md.
 func _draw_highlight(object: Node2D, tint: Color) -> void:
 	if object == null:
 		if is_instance_valid(_highlight):
@@ -543,34 +543,28 @@ func _draw_highlight(object: Node2D, tint: Color) -> void:
 		_highlight = _new_pulse("FocusHighlight")
 		_highlight_material = _highlight.material as ShaderMaterial
 	var depth: Texture2D = object.get("depth_texture")
-	_draw_pulse(_highlight, sprite, object.get("color_texture"), depth, _depth_base(object.global_position), tint)
+	_draw_pulse(_highlight, sprite, object.get("color_texture"), depth, _depth_base(object.global_position), tint, WEIGHT_OBJECT)
 	_apply_cluster_depth()
 
 
 # Main_RenderUpdate raises agent+92 on the hovered colleague (0x403258), so the character loop
-# draws it a second time exactly as the item loop does a hovered item (0x402A24), in white.
+# draws it a second time (0x402A24). Unlike an item, the agent's own draw (sub_417460) overrides
+# the blend mode, so the opaque body is redrawn unchanged while its shadow and bubble, both
+# blended, double and come out stronger and lighter. So a hovered colleague is not a brightened
+# copy; it is the agent showing itself emphasised. See docs/player-action-reference.md.
 func _update_agent_hover() -> void:
 	var front := _front_under_cursor()
 	_set_hovered_agent(front if _is_agent(front) else null)
 
 
 func _set_hovered_agent(agent: Node2D) -> void:
+	if agent == hovered_agent:
+		return
+	if is_instance_valid(hovered_agent):
+		hovered_agent.set("hovered", false)
 	hovered_agent = agent
-	if agent == null:
-		if is_instance_valid(_agent_highlight):
-			_agent_highlight.visible = false
-		return
-	var sprite := agent.get_node_or_null("Sprite2D") as Sprite2D
-	if sprite == null or sprite.texture == null or _world_depth_mask() == null:
-		return
-	if not is_instance_valid(_agent_highlight):
-		_agent_highlight = _new_pulse("AgentHighlight")
-	var compositor := _character_compositor()
-	var depth := compositor.depth_texture_for(sprite) if compositor != null else null
-	# A character's depth base is its sprite's own anchor, lifted with it, as the compositor
-	# draws it.
-	_draw_pulse(_agent_highlight, sprite, sprite.texture, depth, _depth_base(sprite.global_position), TINT_AGENT)
-	_apply_cluster_depth()
+	if is_instance_valid(agent):
+		agent.set("hovered", true)
 
 
 func _new_pulse(pulse_name: String) -> Sprite2D:
@@ -591,15 +585,19 @@ func _new_pulse(pulse_name: String) -> Sprite2D:
 	return pulse
 
 
-func _draw_pulse(pulse: Sprite2D, sprite: Sprite2D, texture: Texture2D, depth: Texture2D, base_y: float, tint: Color) -> void:
+func _draw_pulse(pulse: Sprite2D, sprite: Sprite2D, texture: Texture2D, depth: Texture2D, base_y: float, tint: Color, weight: float) -> void:
 	var origin: Vector2 = sprite.to_global(sprite.offset)
-	var alpha := PULSE_CENTRE + PULSE_SWING * sin(float(Time.get_ticks_msec()) * 0.001 * PULSE_RATE)
+	# 120 + 80*sin(2.5 t), as 0..1: the brightness added to the tinted copy, not an alpha.
+	var brightness := PULSE_CENTRE + PULSE_SWING * sin(float(Time.get_ticks_msec()) * 0.001 * PULSE_RATE)
 	var material := pulse.material as ShaderMaterial
 	pulse.visible = true
 	pulse.z_index = sprite.z_index + 1
 	pulse.texture = texture
 	pulse.global_position = origin
-	pulse.modulate = Color(tint.r, tint.g, tint.b, alpha)
+	# The copy carries the tint in its colour; the shader blends it at the fixed weight.
+	pulse.modulate = Color(tint.r, tint.g, tint.b, 1.0)
+	material.set_shader_parameter("weight", weight)
+	material.set_shader_parameter("brightness", brightness)
 	material.set_shader_parameter("pixel_snap", origin.round() - origin)
 	material.set_shader_parameter("base_y", base_y)
 	material.set_shader_parameter("depth_map", depth)
@@ -623,12 +621,10 @@ func _depth_base(anchor: Vector2) -> float:
 # Above an actor the pass is drawn over every character too, so where the object overlaps
 # one it has to test the scores the compositor composed the two with. The compositor runs
 # after this node each frame and calls back once it has composed, so the test always matches
-# the surface that is drawn. A colleague drawn on a surface is tested the same way.
+# the surface that is drawn.
 func _apply_cluster_depth() -> void:
 	if is_instance_valid(_hovered):
 		_apply_pulse_cluster(_highlight, _hovered.get_node_or_null("Sprite2D") as Sprite2D)
-	if is_instance_valid(hovered_agent):
-		_apply_pulse_cluster(_agent_highlight, hovered_agent.get_node_or_null("Sprite2D") as Sprite2D)
 
 
 func _apply_pulse_cluster(pulse: Sprite2D, sprite: Sprite2D) -> void:

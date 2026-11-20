@@ -193,6 +193,12 @@ func _expect_lit_over(object: Node2D, label: String) -> void:
 		highlight.get_parent() == _world and highlight.get_index(true) < _world.get_child(0).get_index(true),
 		"%s: the highlight comes first on its z" % label
 	)
+	# The mode-54 blend: a brightened copy at the fixed object weight (item+7 = 180), opaque, so
+	# the swing is in the brightness, not an additive alpha. See docs/player-action-reference.md.
+	_expect(is_equal_approx(float(_highlight_parameter("weight")), 180.0 / 255.0), "%s: the copy blends at the object weight 180/255" % label)
+	var brightness := float(_highlight_parameter("brightness"))
+	_expect(brightness >= 40.0 / 255.0 - 0.001 and brightness <= 200.0 / 255.0 + 0.001, "%s: the brightness lift stays in [40, 200], got %f" % [label, brightness * 255.0])
+	_expect(is_equal_approx(highlight.modulate.a, 1.0), "%s: the copy is opaque; the pulse is the brightness, not an alpha" % label)
 
 
 func _check_copier_after_asscopy() -> void:

@@ -233,15 +233,18 @@ Verified on 2026-09-25 on a disposable copy of `sacked.exe.i64`.
   (`0x415f20`). `CObj_Player`'s (`sub_41ADB0`) leaves it at 0 (`0x41ae15`), so the player's
   box is never registered. The selection loop's test that skips the player is therefore never
   needed.
-- **The hovered agent pulses, it is not tinted.** The pick raises `+92` on the agent
-  (`0x403258`) and clears it on the one before (`0x403211`), and stores `(255, 255, 255, 200)`
-  in `+4..7`. The character loop then draws a flagged agent a second time in mode 54, the same
-  pass items get (`0x402a24`–`0x402a83`): weight `+7` = 200 through `sub_42D1D0`
-  (`0x402a3d`), and a brightness that swings between 40 and 200 through `sub_42D200`
-  (`0x402a7a`). The copy is a blend at a fixed weight of 200/256 with a pulsing brightness
-  lift, not an additive pass (see [player-action-reference.md](player-action-reference.md)).
-  The pulse is white, where an item's depends on its reach, and it follows the cursor every
-  frame whatever the selection.
+- **The hovered agent's shadow and bubble strengthen; its body does not.** The pick raises
+  `+92` on the agent (`0x403258`) and clears it on the one before (`0x403211`), and stores
+  `(255, 255, 255, 200)` in `+4..7` and mode 54, meaning to draw it a second time the way an
+  item is drawn (`0x402a24`–`0x402a83`). But an agent's draw is `sub_417460`, which **writes the
+  blend mode itself** — mode 7 for the body (`0x417477`), mode 20 for the bubble (`0x41751D`) —
+  so the mode 54 and the weight 200 are overwritten and never used. The body is an opaque mode-7
+  copy, redrawn identically, so it does not change and does not pulse; the bubble is a mode-20
+  blend at alpha 180, drawn twice, so it comes out lighter. The original also shows a stronger
+  shadow under a hovered colleague, though `sub_417460` does not itself draw the shadow. So
+  hovering a colleague is **not** the item's brightened pulse: only its shadow and bubble
+  change, steadily, and it follows the cursor every frame whatever the selection (see
+  [player-action-reference.md](player-action-reference.md), "How the highlight is drawn").
 
 The same flag feeds one more system, recovered in
 [field-of-view-reference.md](field-of-view-reference.md). `sub_402260` runs each frame

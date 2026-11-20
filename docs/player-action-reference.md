@@ -375,23 +375,39 @@ c_i   = min(255, (palette_i * tint_i >> 8) + brightness)
 out_i = (c_i * weight >> 8) + (dst_i * (255 - weight) >> 8)
 ```
 
-So the item itself is never modulated and never goes transparent. The highlight is a second
-pass blended at a **fixed weight**, `item+7`, which is 180 for every tint in the table above.
-What swings is the **brightness** added to the tinted copy, `120 + 80 sin(2.5 · item+72)`,
-between **40 and 200** at 2.5 rad/s. That is what makes it pulse. `item+72` is the item's own
-phase and `item+4..6` the tint colour. The pass is not additive. The character loop draws the
-hovered agent's pass the same way (`0x402A3D`, `0x402A7A`), and so does the effects list
-(`0x402BAF`); see [player-ability-reference.md](player-ability-reference.md).
+So the item itself is never modulated and never goes transparent. An **object's** highlight is a
+second pass blended at a **fixed weight** `item+7` = **180** (set with its tint at `0x403431`–
+`0x40343D` reachable, `0x403449`–`0x403455` wall-blocked, `0x4033b0`–`0x403455` no-action). What
+swings is the **brightness** added to the tinted copy, `120 + 80 sin(2.5 · item+72)`, between
+**40 and 200** at 2.5 rad/s — that is what makes it pulse. `item+72` is the item's own phase and
+`item+4..6` the tint colour: white `(255, 255, 255)` when the action is reachable, `(255, 255,
+50)` when a wall blocks it, `(255, 50, 50)` when there is no action. The pass is not additive.
 
-The port leaves the object itself opaque and untouched and draws a second sprite over it with
-`scenes/shared/object_highlight.gdshader`. That shader uses the same depth test characters
-use, so the pulse only reaches pixels where the object is actually visible. **Its blend follows
-an older, wrong reading of this pass**: it is `blend_add`, with
-`modulate = (tint.rgb, 120/255 + 80/255 * sin(2.5 t))`, so it swings an additive alpha instead
-of blending a brightened copy at a fixed weight. The copy sits one z above the object's
-sprite; over an object drawn as a depth actor (a looping state) it also tests the character
-compositor's cluster scores, so it never lands on a character standing in front. See
-[map-rendering.md](map-rendering.md).
+**A colleague is different — and this is easy to get wrong.** The character loop raises
+`agent+92` and sets the same mode 54 with weight 200 and a white tint (`0x403258`–`0x40326D`),
+then calls the agent's draw a second time (`0x402A24`). But the agent's draw, `sub_417460`,
+**writes the blend mode itself** — mode 7 for the body (`0x417477`) and mode 20 for the bubble
+(`0x41751D`) — so the mode-54 pass and its weight are **overwritten and never consumed**. The
+body is an opaque mode-7 copy, identical both times, so it does **not** brighten and does **not**
+pulse; the thought bubble is a mode-20 blend at alpha 180 drawn twice, so it comes out more
+opaque — **lighter**. The original also shows a **stronger shadow** under a hovered colleague;
+`sub_417460` does not itself draw the shadow, so that draw was not traced here. A hovered
+colleague is therefore not a brightened body; only its shadow and bubble change, steadily. (The
+effects list, `0x402BAF`, draws its pass the item's brightened way; see
+[player-ability-reference.md](player-ability-reference.md).)
+
+The port follows the split. An **object** is left opaque and a second sprite is drawn over it
+with `scenes/shared/object_highlight.gdshader`, which uses the same depth test characters use so
+the pulse only reaches visible pixels. It reproduces the mode-54 blend: `c = min(1, sprite · tint
++ brightness)` drawn over the destination at the fixed `weight` 180/255 with the normal,
+non-additive blend, so an opaque pixel resolves to `mix(dst, c, weight)` — the original's
+`(c·w + dst·(255 − w)) >> 8`. `prank_controller.gd` feeds `weight` and the pulsing `brightness`
+(`120/255 + 80/255 · sin(2.5 t)`) as uniforms, and the tint through the copy's colour. The copy
+sits one z above the object's sprite; over an object drawn as a depth actor (a looping state) it
+also tests the character compositor's cluster scores, so it never lands on a character standing
+in front (see [map-rendering.md](map-rendering.md)). A **colleague** instead sets its own
+`hovered` flag (`scenes/npc/npc.gd`), which strengthens its shadow and lightens its bubble — the
+double draw's `1 − (1 − a)²` — and leaves its opaque body untouched.
 
 ## The player's animation slots
 

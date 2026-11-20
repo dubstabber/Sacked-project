@@ -7,6 +7,11 @@ extends Sprite2D
 
 const HEAD_OFFSET := Vector2(0.0, -135.0)
 const ALPHA := 180.0 / 255.0
+# While the colleague is hovered, sub_417460 draws over its bubble a second time (the agent's
+# draw is called again for the hovered one, 0x402A24), and mode 20 blends without a key, so the
+# bubble comes out as the same alpha composited over itself: 1 - (1 - a)^2. It is lighter, and
+# it does not pulse. See docs/player-action-reference.md.
+const HOVER_ALPHA := 1.0 - (1.0 - ALPHA) * (1.0 - ALPHA)
 # sub_417460 switches the blitter to mode 20 for the bubble and back afterwards, and mode 20
 # is the one entry the tables share between the z-tested and untested sprite paths
 # (0x431030 in both): it blends and writes z but never tests it, so nothing already in the
@@ -44,3 +49,9 @@ func show_goal(goal: int) -> void:
 		return
 	texture = _textures[goal]
 	visible = true
+
+
+# The colleague this bubble belongs to is, or is not, the one under the cursor: draw lighter
+# while it is, as the hover redraw does, and back to its own alpha when it is not.
+func set_emphasis(on: bool) -> void:
+	modulate.a = HOVER_ALPHA if on else ALPHA
