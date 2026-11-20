@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://images/gui/minigame/bubble.png" id="5"]
 [ext_resource type="Texture2D" path="res://images/gui/minigame/bar-enemy.png" id="6"]
 [ext_resource type="Texture2D" path="res://images/gui/minigame/bar-jobless.png" id="7"]
+[ext_resource type="Script" path="res://scenes/level/catch_countdown.gd" id="8"]
 
 [node name="CatchMinigame" type="CanvasLayer"]
 layer = 60
@@ -91,13 +92,11 @@ texture = ExtResource("7")
 region_enabled = true
 region_rect = Rect2(0, 0, 370, 30)
 
-[node name="Countdown" type="Label" parent="SafeFrame"]
-offset_left = 384.0
-offset_top = 52.0
-offset_right = 464.0
-offset_bottom = 92.0
-theme_override_font_sizes/font_size = 28
-text = "00"
+[node name="Countdown" type="Control" parent="SafeFrame"]
+texture_filter = 1
+position = Vector2(370, 60)
+mouse_filter = 2
+script = ExtResource("8")
 
 [node name="Console" type="Sprite2D" parent="SafeFrame"]
 texture_filter = 1

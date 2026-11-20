@@ -108,7 +108,11 @@ func _check_the_portraits() -> void:
 # label stands in for the strip, left-aligned there, in the 800 x 600 frame at any canvas width.
 # See docs/minigame-reference.md, "The countdown is a digit strip".
 func _check_the_countdown_starts_at_the_first_digit() -> void:
-	var first_digit := TIME_X + float(DIGIT_STRIP.get_width())
+	# The strip's draw puts digit i at x = 370 + (i + 1) * 14 + i * 3, so the two digits land at
+	# 384 and 401, sourced out of CO_GUI_CONSOLE_NUMBERS rather than drawn as Arial text.
+	var cell := float(DIGIT_STRIP.get_width())
+	var first_digit := TIME_X + cell
+	var second_digit := first_digit + cell + 3.0
 	for size in [Vector2i(800, 600), Vector2i(1067, 600)]:
 		var viewport := SubViewport.new()
 		viewport.size = size
@@ -117,11 +121,14 @@ func _check_the_countdown_starts_at_the_first_digit() -> void:
 		viewport.add_child(minigame)
 		await process_frame
 		await process_frame
-		var countdown := minigame.get_node("SafeFrame/Countdown") as Label
+		var countdown = minigame.get_node("SafeFrame/Countdown")
 		var frame := minigame.get_node("SafeFrame") as Control
-		_expect(countdown.horizontal_alignment == HORIZONTAL_ALIGNMENT_LEFT, "%s: the countdown is left-aligned, as the strip runs from its first digit" % size)
-		var x := countdown.get_global_rect().position.x - frame.get_global_rect().position.x
-		_expect(is_equal_approx(x, first_digit), "%s: the countdown starts at the strip's first digit, x %d of the frame, got %f" % [size, int(first_digit), x])
+		_expect(countdown.STRIP == DIGIT_STRIP, "%s: the countdown blits the digit strip, not text" % size)
+		var base_x: float = countdown.global_position.x - frame.global_position.x
+		var x0: float = base_x + countdown.digit_x(0)
+		var x1: float = base_x + countdown.digit_x(1)
+		_expect(is_equal_approx(x0, first_digit), "%s: the first digit starts at x %d, got %f" % [size, int(first_digit), x0])
+		_expect(is_equal_approx(x1, second_digit), "%s: the second digit starts at x %d, got %f" % [size, int(second_digit), x1])
 		root.remove_child(viewport)
 		viewport.free()
 
@@ -303,7 +310,7 @@ func _check_the_answer_clock() -> void:
 			_advance_until(minigame, leaving)
 		_expect(minigame.state == minigame.State.ANSWERING, "%d casts reach the player's turn" % casts)
 		_expect(is_equal_approx(minigame._countdown_seconds, 3.999), "the round's clock starts at 3.999")
-		_expect(minigame._countdown.text == "03", "which reads 03, got %s" % minigame._countdown.text)
+		_expect(minigame._countdown.value == 3, "which reads 03, got %02d" % minigame._countdown.value)
 		if casts == 3:
 			# Answer once, then leave it: the round runs out four seconds after that click.
 			minigame.answer(int(minigame._serial[0]))

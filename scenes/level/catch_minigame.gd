@@ -10,6 +10,7 @@ extends CanvasLayer
 signal finished(won: bool)
 
 const MinigameArt := preload("res://scenes/level/catch_minigame_art.gd")
+const CatchCountdown := preload("res://scenes/level/catch_countdown.gd")
 
 # sub_414870's constants, in the order its state machine uses them.
 const GET_READY_SECONDS := 2.0
@@ -42,7 +43,7 @@ enum State { IDLE, GET_READY, BUILD, CASTING, YOUR_TURN, ANSWERING, ROUND_LOST, 
 @onready var _answer_spell: Sprite2D = $SafeFrame/AnswerSpell
 @onready var _bar_enemy: Sprite2D = $SafeFrame/BarEnemy
 @onready var _bar_player: Sprite2D = $SafeFrame/BarPlayer
-@onready var _countdown: Label = $SafeFrame/Countdown
+@onready var _countdown: CatchCountdown = $SafeFrame/Countdown
 @onready var _background: Sprite2D = $SafeFrame/Background
 @onready var _buttons: Control = $SafeFrame/Buttons
 @onready var _banners: Control = $SafeFrame/Banners
@@ -312,7 +313,7 @@ func _refresh_bars() -> void:
 	_bar_enemy.position = Vector2(20.0 + full.x - enemy_width, 20.0)
 	var player_width := int(full.x * clampf(float(player_energy) / float(ENERGY_START), 0.0, 1.0))
 	_bar_player.region_rect = Rect2(0.0, 0.0, player_width, full.y)
-	_countdown.text = "%02d" % int(_countdown_seconds)
+	_countdown.value = int(_countdown_seconds)
 
 
 func _build_buttons() -> void:

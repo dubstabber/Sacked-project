@@ -209,10 +209,13 @@ pushed at `0x45C1C7`), 25 px of strip a digit (`+108 = 25`, `0x45C1CC`):
   moves toward 25 × d by `+120` a frame, up or down (`0x45C2E1`–`0x45C31E`), so a digit that
   changes slides through the strip instead of snapping.
 
-The port draws the countdown as a text `Label` instead, left-aligned at x 384, where the
-strip's first digit starts; the strip itself is not ported. `tests/check_minigame.gd` pins that
-place, as 370 plus the strip's width, in the frame at 4:3 and 16:9. The strip's draw is decoded
-in "The digit strip" in [hud-reference.md](hud-reference.md).
+The port draws it as the strip, in `scenes/level/catch_countdown.gd`: each of the two digits is
+blitted from `CO_GUI_CONSOLE_NUMBERS` 14 px wide, sourced at `y = 25 · digit`, and a changed
+digit eases toward its new row by 4 px a frame (`+120 = 4.0`, with `+112` clear), so it slides
+rather than snaps. The digits land at 384 and 401 (`x = 370 + (i + 1)·14 + i·3`), and the first
+value shown snaps while later changes roll. `tests/check_minigame.gd` pins both digit places, in
+the frame at 4:3 and 16:9. The strip's draw is decoded in "The digit strip" in
+[hud-reference.md](hud-reference.md).
 
 ## Sizing
 
