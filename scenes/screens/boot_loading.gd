@@ -27,7 +27,13 @@ const STREAM_ORIGIN := Vector2(397, 343)
 # sub_422630 swaps the background on the 666th launch, counted in the registry.
 const EVIL_LAUNCH := 666
 
-const BACKGROUND := preload("res://images/gui/screens/loading.png")
+# Each build paints the game's title into the still in its own language; the evil still's
+# words are English in both. See docs/strings-reference.md.
+const BACKGROUNDS := {
+	&"pl": preload("res://images/gui/screens/loading.png"),
+	&"de": preload("res://images/gui/screens/loading-de.png"),
+}
+const FALLBACK_LANGUAGE := &"pl"
 const BACKGROUND_EVIL := preload("res://images/gui/screens/loading_evil.png")
 const STREAM_FRAMES: Array[Texture2D] = [
 	preload("res://images/gui/screens/stream/piss-000.png"),
@@ -46,21 +52,31 @@ const STREAM_FRAMES: Array[Texture2D] = [
 
 var step := 0
 var _clock := 0.0
+var _launch := 0
 
 
 func _ready() -> void:
-	var launch := 0
 	# Only the game's own boot counts a launch and starts the music, not a check that mounts
 	# the screen.
 	if get_tree().current_scene == self:
 		var store := get_node_or_null("/root/SettingsStore")
 		if store != null:
-			launch = store.count_launch()
+			_launch = store.count_launch()
 		var screens := get_node_or_null("/root/ScreenManager")
 		if screens != null:
 			screens.enter_boot_screen()
-	_background.texture = background_for(launch)
+	_match_background_to_language()
 	show_step(0)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and _background != null:
+		_match_background_to_language()
+
+
+func _match_background_to_language() -> void:
+	var language := StringName(TranslationServer.get_locale().substr(0, 2))
+	_background.texture = background_for(_launch, language)
 
 
 func _process(delta: float) -> void:
@@ -91,8 +107,10 @@ func show_step(value: int) -> void:
 	_stream.texture = STREAM_FRAMES[stream_frame(progress)]
 
 
-static func background_for(launch: int) -> Texture2D:
-	return BACKGROUND_EVIL if launch == EVIL_LAUNCH else BACKGROUND
+static func background_for(launch: int, language: StringName) -> Texture2D:
+	if launch == EVIL_LAUNCH:
+		return BACKGROUND_EVIL
+	return BACKGROUNDS.get(language, BACKGROUNDS[FALLBACK_LANGUAGE])
 
 
 # game+19048 * 0.01, stored as a float and clamped to 0..1 by the draw.

@@ -133,15 +133,18 @@ STRINGS_PREFIX = "CO_EFFECT_Strings_"
 STRINGS_ANIMATION = "extract-sacked-assets/extracted/animations_godot/CO_EFFECT_CO_EFFECT_Strings_godot.json"
 STRINGS_TIMING = "resources/effects/strings.json"
 
-# Sprites with words painted into them, which therefore differ per release. The port ships
-# both builds' copies and picks by language; English falls back to a drawn label over the
-# erased console. See docs/strings-reference.md.
+# Sprites with words painted into them, which therefore differ per release: these six are
+# the only sprites whose bytes differ between the two builds' archives. The port ships both
+# builds' copies and picks by language; English falls back to a drawn label over the erased
+# console. See docs/strings-reference.md.
 GERMAN_SPRITES = [
     ("CO_GUI_CONSOLE_CONSOLE", "images/gui/hud/console-de.png"),
     ("CO_GUI_MINIGAME_GETREADY", "images/gui/minigame/getready-de.png"),
     ("CO_GUI_MINIGAME_YOURTURN", "images/gui/minigame/yourturn-de.png"),
     ("CO_GUI_MINIGAME_WIN", "images/gui/minigame/win-de.png"),
     ("CO_GUI_MINIGAME_LOOSE", "images/gui/minigame/loose-de.png"),
+    # The boot screen's still, with the game's title painted in each build's language.
+    ("CO_GUI_SCREENS_LOADING", "images/gui/screens/loading-de.png"),
 ]
 
 # The console art has the words "czas" and "wynik" painted into it, over the wrong fields --

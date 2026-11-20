@@ -3,9 +3,9 @@ extends SceneTree
 # The boot screen, 2, as recovered in docs/shell-reference.md: a hundred steps of
 # sub_403E20, the full pot revealed from the bottom by clipping _ftol(h - h * progress) rows
 # off its top, stream frame _ftol(progress * 100) % 5, no key or click that skips it, Menu1
-# from the first frame, and LOADING_EVIL on the 666th launch. The expected frames and clips
-# below were computed from the executable's own float constants (0.01f at 0x465308, 100.0f at
-# 0x465304), outside the port.
+# from the first frame, LOADING_EVIL on the 666th launch, and each build's own titled still in
+# its own language. The expected frames and clips below were computed from the executable's
+# own float constants (0.01f at 0x465308, 100.0f at 0x465304), outside the port.
 
 const SCREEN := preload("res://scenes/screens/boot_loading.tscn")
 const BootLoading := preload("res://scenes/screens/boot_loading.gd")
@@ -38,13 +38,14 @@ func _run() -> void:
 	_check_the_clock_steps_at_the_nominal_rate(screen)
 	_check_nothing_skips_it(screen)
 	_check_the_666th_launch()
+	_check_each_build_shows_its_own_title(screen)
 	_check_menu1_starts_with_the_screen(manager)
 
 	screen.queue_free()
 	await process_frame
 	DirAccess.remove_absolute(TEST_PATH)
 	if _failures == 0:
-		print("Boot screen: a hundred recovered steps of pot and stream, the nominal clock, no skipping, Menu1, and the 666th launch passed")
+		print("Boot screen: a hundred recovered steps of pot and stream, the nominal clock, no skipping, Menu1, the 666th launch and each build's own title passed")
 	quit(1 if _failures else 0)
 
 
@@ -120,13 +121,33 @@ func _check_the_666th_launch() -> void:
 	store.free()
 	for launch: int in [1, 665, 667, 1332]:
 		_expect(
-			BootLoading.background_for(launch).resource_path.ends_with("loading.png"),
+			BootLoading.background_for(launch, &"pl").resource_path.ends_with("loading.png"),
 			"launch %d shows the ordinary still" % launch
 		)
+	for language: StringName in [&"pl", &"de", &"en"]:
+		_expect(
+			BootLoading.background_for(666, language).resource_path.ends_with("loading_evil.png"),
+			"launch 666 shows LOADING_EVIL in %s" % language
+		)
+
+
+# The title is painted into the still, so each build's own art shows in its own language.
+func _check_each_build_shows_its_own_title(screen: Node) -> void:
 	_expect(
-		BootLoading.background_for(666).resource_path.ends_with("loading_evil.png"),
-		"launch 666 shows LOADING_EVIL"
+		BootLoading.background_for(1, &"de").resource_path.ends_with("loading-de.png"),
+		"German shows the German build's still"
 	)
+	var background := screen.get_node("SafeFrame/Background") as TextureRect
+	var before := TranslationServer.get_locale()
+	for language: String in ["pl", "de"]:
+		TranslationServer.set_locale(language)
+		screen.notification(Node.NOTIFICATION_TRANSLATION_CHANGED)
+		_expect(
+			background.texture == BootLoading.BACKGROUNDS[StringName(language)],
+			"switching to %s swaps the still" % language
+		)
+	TranslationServer.set_locale(before)
+	screen.notification(Node.NOTIFICATION_TRANSLATION_CHANGED)
 
 
 func _check_menu1_starts_with_the_screen(manager: Node) -> void:

@@ -191,8 +191,19 @@ plus two Labels, placed in the **German** order — score on the left, time on t
 because copying the Polish mistake into a language that never made it would be wrong.
 
 The German `CO_GUI.OGD` is dumped to `extract-sacked-assets/extracted-de/`, and
-`export_gui_assets.py` reads exactly five sprites from it: the console and the duel's four
-banners, the only art in the port with words painted in.
+`export_gui_assets.py` reads exactly six sprites from it: the console, the duel's four
+banners and the boot screen's still. **Those six are the whole list of localised art.** Of
+the five archives only `CO_GUI.OGD` differs between the builds (`CO_CHARS`, `CO_OBJECTS`,
+`CO_BACKGROUND` and `CO_EFFECT` are byte-identical, and so is every sound), and inside it only
+those six sprites' pixels differ. Everything else with letters in it says the same thing in
+both builds:
+
+| Art | Words | Why it stays |
+| --- | --- | --- |
+| `LOADING`, both copies | `...loading...`, `published by:` | English in both builds |
+| `LOADING_EVIL` | `...isn't it scary?`, `...you have started the game for 666 times now...` | English in both builds |
+| action icons | `CONFIDENTIAL`, `TOP SECRET`, `DATA`, `COPY`, `C:\ FORMAT`, `SMS`, `SEX` | English in both builds |
+| world objects | `SMILE :)` on the reception desk; notices, standees, vending machines | a few pixels tall, unreadable in play |
 
 The duel's banners disagree between the builds too, and again the Polish release is the one
 at fault. The German `YOURTURN` reads `DEINE ANTWORT !` and `WIN` reads `RAUSGEREDET !`,
@@ -201,8 +212,10 @@ which match what their sprite names say they are for. The Polish pair is the oth
 build's art where its name says, so a Polish player sees them swapped, and English draws
 labels in the German roles.
 
-`loading.png` also carries Polish, the hand-lettered title `zemsta urzędasa`. That is the
-Polish edition's box art rather than a UI string, so it stays as a logo in every language.
+The boot screen's still carries the game's title, hand-lettered in each build's language:
+the Polish `zemsta urzędasa`, the German `gefeuert! dein letzter tag...`. Each language shows
+its own build's still (`loading.png`, `loading-de.png`), and the 666th launch's evil still,
+whose words are English in both builds, replaces either.
 
 ## How it loads
 
