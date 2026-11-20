@@ -9,6 +9,7 @@ const STORE_SCRIPT := preload("res://autoloads/progress_store.gd")
 const TEST_PATH := "user://check_level_tree.cfg"
 
 const LOCKED_FACE := preload("res://images/gui/menu/level-node-locked-passive.png")
+const LOCKED_ACTIVE_FACE := preload("res://images/gui/menu/level-node-locked-active.png")
 const PLAYABLE_FACE := preload("res://images/gui/menu/level-node-played-passive.png")
 const CLEARED_FACE := preload("res://images/gui/menu/level-node-free-passive.png")
 
@@ -35,7 +36,7 @@ func _run() -> void:
 	store.reload()
 	DirAccess.remove_absolute(TEST_PATH)
 	if _failures == 0:
-		print("Level tree: the lattice, its three node states and the locked node's dead click passed")
+		print("Level tree: the lattice, its three node states and the locked node's live hover but dead click passed")
 	quit(1 if _failures else 0)
 
 
@@ -71,8 +72,11 @@ func _check_a_fresh_profile_shows_one_open_node() -> void:
 		_expect(button != null, "the tree builds a node for level %d" % number)
 		if button != null:
 			_expect(button.texture_normal == LOCKED_FACE, "level %d wears the locked face" % number)
-			# sub_421FE0 gives a locked node button id 0, so the click goes nowhere.
-			_expect(button.disabled, "level %d refuses the click while it is locked" % number)
+			# sub_421FE0 gives a locked node button id 0: it still lights on hover, but the
+			# click goes nowhere. So it stays enabled (to show the hover) with no action wired.
+			_expect(button.texture_hover == LOCKED_ACTIVE_FACE, "level %d still lights to its active face on hover" % number)
+			_expect(not button.disabled, "level %d stays live so it can show that hover" % number)
+			_expect(button.pressed.get_connections().is_empty(), "level %d refuses the click while it is locked" % number)
 	screen.queue_free()
 	await process_frame
 

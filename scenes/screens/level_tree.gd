@@ -57,11 +57,13 @@ func _build_nodes() -> void:
 		button.texture_normal = faces[0]
 		button.texture_pressed = faces[1]
 		button.texture_hover = faces[1]
-		# sub_421FE0 gives a locked node button id 0, which the dispatcher ignores. The node
-		# is still drawn, so it stays here and simply refuses the click.
-		button.disabled = state == LevelProgress.State.LOCKED
+		# sub_421FE0 gives a locked node button id 0, which the dispatcher ignores: the node is
+		# still drawn and still lights to its active face on hover, it just refuses the click. So
+		# the button stays enabled -- a disabled TextureButton would not show its hover face --
+		# and the action is wired only for a node that can actually be opened.
 		button.tooltip_text = tr(&"level.%d.title" % number)
-		button.pressed.connect(_on_level_pressed.bind(number))
+		if state != LevelProgress.State.LOCKED:
+			button.pressed.connect(_on_level_pressed.bind(number))
 		_nodes.add_child(button)
 
 
