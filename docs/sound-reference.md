@@ -117,6 +117,14 @@ default. `sub_405430` applies both before the first screen, and case 2 applies t
 again right after it starts `Menu1`. A music change reaches the playing track at once. An
 effects change only affects sounds started after it.
 
+**How a 0–1 volume becomes attenuation.** The stored 0–1 volume reaches a DirectSound buffer
+through `sub_45FB00`, which sets its volume to `(1 − v) × −10000` centibels, clamped to
+`[−10000, 0]` (`0x45FB10`). That is **linear in decibels**: a 0–1 volume `v` plays at
+`(v − 1) × 100` centibels, so the 0–100 slider maps straight onto `dB = volume − 100` — 100 at
+0 dB, 75 at −25 dB, 65 at −35 dB, 0 at −100 dB (inaudible, but not a hard mute). The music
+stream and every effect buffer both go through `sub_45FB00` — its only two callers are
+`sub_45EFD0` and `sub_45F560` — so one curve serves both.
+
 ## The sound setup screen, 11
 
 `CSoundSetup`. `sub_407370`'s case 11 calls `sub_407A90`, which builds it with `sub_425050`
@@ -182,15 +190,25 @@ footsteps sit on the Music and SFX buses along with everything else.
 ### The two volumes
 
 `autoloads/settings_store.gd` keeps the two volumes and the step-5, clamp-0–100 rule in
-`user://settings.cfg` rather than the registry, and applies them to the two buses as
-`linear_to_db(value / 100)`. The defaults are the original's, effects 75 and music 65.
-`default_bus_layout.tres` carries them in decibels (SFX −2.5 dB, Music −3.7 dB), which is
-what plays for the instant before the store is ready. From then on the store is the source
-of truth. The port had the two defaults the other way round until the screen was built.
+`user://settings.cfg` rather than the registry, and applies each to its bus as the original's
+curve, **`dB = volume − 100`** (`sub_45FB00`, above): a straight line in decibels, not the
+`linear_to_db(value / 100)` the port used, which left 75 at −2.5 dB where the original has it
+at −25. The defaults are the original's, effects 75 (−25 dB) and music 65 (−35 dB), and
+`default_bus_layout.tres` carries those decibels for the instant before the store is ready.
+From then on the store is the source of truth. The port had the two defaults the other way
+round until the screen was built.
 
-**One port decision.** `linear_to_db(0)` is negative infinity, so a volume of 0 mutes its
-bus instead of being handed to it. The original's own mixer is not recovered; silence at
-the bottom of a slider the screen lets you take all the way down is this port's reading.
+**Volume 0 is −100 dB, not a mute.** The original clamps to −10000 centibels at the bottom of
+the slider (`sub_45FB00`), which is inaudible but not a hard mute. The port used to mute the
+bus there, because `linear_to_db(0)` is −infinity; now it hands the bus −100 dB and matches.
+
+**One approximation left.** The original folds a sound's own factors — the `quiet` flag's 0.1
+and the distance attenuation of `sub_42A970` — into its linear volume *before* `sub_45FB00`
+converts the whole to decibels, so a quiet sound at full effects plays at `(0.1 − 1) × 100 =`
+−90 dB. The port keeps the master on the bus and a sound's own factor as a fixed dB offset on
+top (a quiet sound at `linear_to_db(0.1) =` −20 dB), which only matches for a sound at the
+full factor. Folding each sound's factor into the curve per sound would mean dropping the bus
+master, so it is left as is.
 
 The store also holds the language the player picked and whether the window is full screen.
 Neither is the original's: it ships one language per build and has no display option. So

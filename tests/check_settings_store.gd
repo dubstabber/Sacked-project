@@ -23,7 +23,7 @@ func _run() -> void:
 	_check_a_fresh_profile_starts_at_the_original_defaults()
 	_check_each_step_moves_five_and_stops_at_the_ends()
 	_check_a_volume_reaches_its_bus()
-	_check_zero_mutes_rather_than_asking_for_silence_in_decibels()
+	_check_zero_is_minus_a_hundred_decibels_not_a_mute()
 	_check_defaults_restore_only_the_volumes()
 	_check_settings_survive_a_reload()
 	_check_a_language_is_written_and_applied(i18n)
@@ -56,11 +56,9 @@ func _fresh_store() -> Node:
 	return store
 
 
-func _bus_linear(bus: StringName) -> float:
+func _bus_db(bus: StringName) -> float:
 	var index := AudioServer.get_bus_index(bus)
-	if index < 0 or AudioServer.is_bus_mute(index):
-		return 0.0
-	return db_to_linear(AudioServer.get_bus_volume_db(index))
+	return AudioServer.get_bus_volume_db(index) if index >= 0 else -INF
 
 
 func _check_a_fresh_profile_starts_at_the_original_defaults() -> void:
@@ -91,23 +89,24 @@ func _check_each_step_moves_five_and_stops_at_the_ends() -> void:
 func _check_a_volume_reaches_its_bus() -> void:
 	var store := _fresh_store()
 	store.apply_audio()
-	_expect(absf(_bus_linear(&"Music") - 0.65) < 0.001, "the default music volume reaches its bus")
-	_expect(absf(_bus_linear(&"SFX") - 0.75) < 0.001, "the default effects volume reaches its bus")
+	# The original maps the slider straight onto decibels: dB = volume - 100 (sub_45FB00).
+	_expect(is_equal_approx(_bus_db(&"Music"), -35.0), "the default music volume (65) reaches its bus at -35 dB, got %f" % _bus_db(&"Music"))
+	_expect(is_equal_approx(_bus_db(&"SFX"), -25.0), "the default effects volume (75) reaches its bus at -25 dB, got %f" % _bus_db(&"SFX"))
 	store.set_music_volume(40)
-	_expect(absf(_bus_linear(&"Music") - 0.40) < 0.001, "a changed volume reaches its bus at once")
+	_expect(is_equal_approx(_bus_db(&"Music"), -60.0), "a changed volume reaches its bus at once, 40 -> -60 dB, got %f" % _bus_db(&"Music"))
 	store.free()
 
 
-func _check_zero_mutes_rather_than_asking_for_silence_in_decibels() -> void:
-	# linear_to_db(0) is -inf, so the port mutes the bus instead. Port decision, recorded
-	# in docs/sound-reference.md.
+func _check_zero_is_minus_a_hundred_decibels_not_a_mute() -> void:
+	# The original clamps to -10000 centibels at volume 0 (sub_45FB00), i.e. -100 dB: inaudible
+	# but not a hard mute. The port used to mute instead. See docs/sound-reference.md.
 	var store := _fresh_store()
 	store.set_music_volume(0)
 	var index := AudioServer.get_bus_index(&"Music")
-	_expect(AudioServer.is_bus_mute(index), "a volume of 0 mutes its bus")
-	_expect(is_finite(AudioServer.get_bus_volume_db(index)), "the bus is never given an infinite volume")
+	_expect(not AudioServer.is_bus_mute(index), "a volume of 0 is not a hard mute")
+	_expect(is_equal_approx(AudioServer.get_bus_volume_db(index), -100.0), "it lands on -100 dB, got %f" % AudioServer.get_bus_volume_db(index))
 	store.set_music_volume(50)
-	_expect(not AudioServer.is_bus_mute(index), "raising the volume unmutes the bus")
+	_expect(is_equal_approx(AudioServer.get_bus_volume_db(index), -50.0), "raising it to 50 gives -50 dB")
 	store.free()
 
 

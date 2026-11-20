@@ -109,16 +109,17 @@ func apply_audio() -> void:
 	_apply_bus(EFFECTS_BUS, effects_volume())
 
 
-# A volume of 0 mutes the bus rather than being handed to linear_to_db, which answers -inf.
-# The original's own mixer is not recovered; silence at 0 is the port's reading of a slider
-# the screen lets you take all the way down.
+# The original hands the DirectSound buffer SetVolume((1 - v/100) * -10000) centibels, clamped
+# to [-10000, 0] (sub_45FB00, 0x45FB10) -- that is the slider mapped straight onto decibels,
+# dB = volume - 100, not the gentle linear-in-amplitude curve (linear_to_db(v/100)) the port
+# used, which left 75 at -2.5 dB where the original has it at -25. Volume 0 lands on -100 dB,
+# inaudible but not a hard mute, which is what the original does too. See docs/sound-reference.md.
 func _apply_bus(bus: StringName, volume: int) -> void:
 	var index := AudioServer.get_bus_index(bus)
 	if index < 0:
 		return
-	AudioServer.set_bus_mute(index, volume <= VOLUME_MIN)
-	if volume > VOLUME_MIN:
-		AudioServer.set_bus_volume_db(index, linear_to_db(float(volume) / float(VOLUME_MAX)))
+	AudioServer.set_bus_mute(index, false)
+	AudioServer.set_bus_volume_db(index, float(clampi(volume, VOLUME_MIN, VOLUME_MAX)) - float(VOLUME_MAX))
 
 
 func _volume(key: String, fallback: int) -> int:

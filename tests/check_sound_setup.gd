@@ -89,11 +89,9 @@ func _value(screen: Node, box: String) -> String:
 	return (screen.get_node("SafeFrame/%s/Value" % box) as Label).text
 
 
-func _bus_linear(bus: StringName) -> float:
+func _bus_db(bus: StringName) -> float:
 	var index := AudioServer.get_bus_index(bus)
-	if index < 0 or AudioServer.is_bus_mute(index):
-		return 0.0
-	return db_to_linear(AudioServer.get_bus_volume_db(index))
+	return AudioServer.get_bus_volume_db(index) if index >= 0 else -INF
 
 
 func _check_the_recovered_layout(screen: Node) -> void:
@@ -125,15 +123,17 @@ func _check_the_arrows_step_and_clamp(screen: Node) -> void:
 	_expect(_value(screen, "EffectsBox") == "80", "one right arrow adds 5 to the effects")
 	_press(screen, "EffectsUp", 5)
 	_expect(_value(screen, "EffectsBox") == "100", "the effects stop at 100, got %s" % _value(screen, "EffectsBox"))
-	_expect(absf(_bus_linear(&"SFX") - 1.0) < 0.001, "the effects bus follows at once")
+	# dB = volume - 100 (sub_45FB00): 100 is 0 dB, 0 is -100 dB, 5 is -95 dB.
+	_expect(is_equal_approx(_bus_db(&"SFX"), 0.0), "the effects bus follows at once, 100 -> 0 dB")
 	_press(screen, "MusicDown")
 	_expect(_value(screen, "MusicBox") == "60", "one left arrow takes 5 off the music")
 	_press(screen, "MusicDown", 13)
 	_expect(_value(screen, "MusicBox") == "0", "the music stops at 0, got %s" % _value(screen, "MusicBox"))
-	_expect(AudioServer.is_bus_mute(AudioServer.get_bus_index(&"Music")), "music at 0 mutes its bus")
+	_expect(not AudioServer.is_bus_mute(AudioServer.get_bus_index(&"Music")), "music at 0 is -100 dB, not a hard mute")
+	_expect(is_equal_approx(_bus_db(&"Music"), -100.0), "music at 0 lands on -100 dB, got %f" % _bus_db(&"Music"))
 	_press(screen, "MusicUp")
 	_expect(_value(screen, "MusicBox") == "5", "the music comes back up from 0")
-	_expect(absf(_bus_linear(&"Music") - 0.05) < 0.001, "the music bus unmutes at once")
+	_expect(is_equal_approx(_bus_db(&"Music"), -95.0), "the music bus follows at once, 5 -> -95 dB")
 
 
 func _check_defaults_restore_the_volumes(screen: Node, store: Node) -> void:
