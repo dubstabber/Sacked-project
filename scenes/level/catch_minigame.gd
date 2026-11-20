@@ -334,8 +334,7 @@ func _build_buttons() -> void:
 			button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
-# Each banner is the build's own painted art where there is one, and a drawn label where
-# there is not. See docs/strings-reference.md.
+# Each banner is painted art in the running language. See docs/strings-reference.md.
 func _build_banners() -> void:
 	for role in MinigameArt.BANNER_ROLES:
 		var holder := Control.new()
@@ -348,17 +347,6 @@ func _build_banners() -> void:
 		art.centered = false
 		art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		holder.add_child(art)
-		var label := Label.new()
-		label.name = "Text"
-		label.text = "minigame.banner.%s" % String(role)
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.add_theme_font_size_override("font_size", 40)
-		label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.0))
-		label.add_theme_color_override("font_outline_color", Color(0.1, 0.1, 0.1))
-		label.add_theme_constant_override("outline_size", 6)
-		label.size = Vector2(800.0, MinigameArt.BANNER_HEIGHT)
-		label.position = Vector2(0.0, (600.0 - MinigameArt.BANNER_HEIGHT) * 0.5)
-		holder.add_child(label)
 		_banner_nodes[role] = holder
 	_match_banners_to_language()
 
@@ -370,12 +358,8 @@ func _match_banners_to_language() -> void:
 		var art := holder.get_node("Art") as Sprite2D
 		var texture := MinigameArt.banner(role, language)
 		art.texture = texture
-		art.visible = texture != null
-		if texture != null:
-			# Flag 16 centres it on both axes, and the two builds' banners differ in height.
-			var art_size := texture.get_size()
-			art.position = (Vector2(800.0, 600.0) - art_size) * 0.5
-		(holder.get_node("Text") as Label).visible = texture == null
+		# Flag 16 centres it on both axes, and the languages' banners differ in size.
+		art.position = (Vector2(800.0, 600.0) - texture.get_size()) * 0.5
 
 
 func _show_banner(role: StringName) -> void:

@@ -338,23 +338,30 @@ func _check_the_answer_clock() -> void:
 		_drop(minigame)
 
 
+# Each language shows painted art: the Polish and German builds their own, English the
+# original's unused English set.
 func _check_the_banners_follow_the_language() -> void:
 	var minigame := _mount(7)
 	await process_frame
-	for language: StringName in [&"pl", &"de"]:
+	var suffixes := {&"pl": ".png", &"de": "-de.png", &"en": "-en.png"}
+	for language: StringName in suffixes:
 		_i18n().set_language(language)
 		await process_frame
 		for role in Art.BANNER_ROLES:
 			var holder := minigame._banner_nodes[role] as Control
-			_expect((holder.get_node("Art") as Sprite2D).texture != null, "%s has painted art for %s" % [language, role])
-			_expect(not (holder.get_node("Text") as Label).visible, "%s draws no label over its art" % language)
-	_i18n().set_language(&"en")
-	await process_frame
-	for role in Art.BANNER_ROLES:
-		var holder := minigame._banner_nodes[role] as Control
-		_expect((holder.get_node("Art") as Sprite2D).texture == null, "English has no painted banner for %s" % role)
-		var label := holder.get_node("Text") as Label
-		_expect(label.visible, "so English draws one for %s" % role)
-		_expect(label.atr(label.text) != label.text, "and it is translated")
+			var art := holder.get_node("Art") as Sprite2D
+			_expect(art.texture != null, "%s has painted art for %s" % [language, role])
+			if art.texture == null:
+				continue
+			var file := art.texture.resource_path.get_file()
+			_expect(
+				file == String(Art.BANNER_ART[role][&"pl"]) + String(suffixes[language]),
+				"%s shows its own %s banner, got %s" % [language, role, file]
+			)
+			_expect(
+				art.position == (Vector2(800, 600) - art.texture.get_size()) * 0.5,
+				"%s's %s banner is centred" % [language, role]
+			)
+			_expect(holder.get_child_count() == 1, "%s draws nothing over its %s art" % [language, role])
 	_i18n().set_language(&"pl")
 	_drop(minigame)

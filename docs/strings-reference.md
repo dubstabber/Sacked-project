@@ -147,9 +147,8 @@ text table. See [names-reference.md](names-reference.md).
 
 ## Keys the original has no wording for
 
-Thirteen, each declared in `PORT_STRINGS` with its reason — the two console labels and the
-seven sound-setup keys below, and the duel's four `minigame.banner.*` keys, which *The two
-painted words* covers:
+Nine, each declared in `PORT_STRINGS` with its reason — the two console labels and the
+seven sound-setup keys below:
 
 | Key | Polish | Why |
 | --- | --- | --- |
@@ -191,12 +190,12 @@ plus two Labels, placed in the **German** order — score on the left, time on t
 because copying the Polish mistake into a language that never made it would be wrong.
 
 The German `CO_GUI.OGD` is dumped to `extract-sacked-assets/extracted-de/`, and
-`export_gui_assets.py` reads exactly six sprites from it: the console, the duel's four
-banners and the boot screen's still. **Those six are the whole list of localised art.** Of
-the five archives only `CO_GUI.OGD` differs between the builds (`CO_CHARS`, `CO_OBJECTS`,
-`CO_BACKGROUND` and `CO_EFFECT` are byte-identical, and so is every sound), and inside it only
-those six sprites' pixels differ. Everything else with letters in it says the same thing in
-both builds:
+`export_gui_assets.py` reads ten sprites from it: the console, the duel's four banners and the
+boot screen's still, which are German, and four unused English banners (below). **Those six
+German sprites are the whole list of localised art.** Of the five archives only `CO_GUI.OGD`
+differs between the builds (`CO_CHARS`, `CO_OBJECTS`, `CO_BACKGROUND` and `CO_EFFECT` are
+byte-identical, and so is every sound), and of the sprites both copies share, only those six
+differ in their pixels. Everything else with letters in it says the same thing in both builds:
 
 | Art | Words | Why it stays |
 | --- | --- | --- |
@@ -209,8 +208,18 @@ The duel's banners disagree between the builds too, and again the Polish release
 at fault. The German `YOURTURN` reads `DEINE ANTWORT !` and `WIN` reads `RAUSGEREDET !`,
 which match what their sprite names say they are for. The Polish pair is the other way round:
 `YOURTURN` carries `Tania wymówka!` and `WIN` carries `Twoja odpowiedź!`. The port draws each
-build's art where its name says, so a Polish player sees them swapped, and English draws
-labels in the German roles.
+build's art where its name says, so a Polish player sees them swapped.
+
+**English has original banner art too.** The German archive carries four sprites the Polish
+one lacks, `CO_GUI_MINIGAME_{GETREADY,YOURTURN,WIN,LOOSE}_ALT`, painted in the same flat
+orange as the German set but in English: `GET READY!`, `YOUR TURN!`, `YOU WIN!`, `YOU LOSE!`.
+Neither executable names them (the only banner strings in either are the four plain names),
+so no retail build ever showed them. Each matches the role its name gives, so the port's
+English shows them as `{getready,yourturn,win,loose}-en.png`, and the duel draws no words of
+its own in any language. The wording is plainer than the shipped sets': the German `WIN`
+means "talked your way out", the English one only "you win". The archive also holds
+`CONSOLE_CONSOLE_OLD`, an older console with `punkte` and `zeit`, and `AGGRO_UP_OLD`; nothing
+names those either, and the port does not export them.
 
 The boot screen's still carries the game's title, hand-lettered in each build's language:
 the Polish `zemsta urzędasa`, the German `gefeuert! dein letzter tag...`. Each language shows
@@ -221,7 +230,7 @@ whose words are English in both builds, replaces either.
 
 `resources/original/strings.json` is generated and holds Polish and German.
 `resources/i18n/translations.json` is authored and holds **only what neither build has
-wording for**: English throughout, plus German for the thirteen port strings. The exporter fails
+wording for**: English throughout, plus German for the nine port strings. The exporter fails
 if the authored file names a language a build already provides, which is what stops the two
 drifting apart.
 
@@ -301,10 +310,9 @@ player presses the J their own prompt names.
   auto-translate, so its owner rebuilds it on `NOTIFICATION_TRANSLATION_CHANGED`.
 - Painted words follow the console recipe: original art for the language it is painted in,
   an exporter-derived erased copy plus a keyed Label for the rest. The catch minigame's four
-  banners follow it too, without the erased copy, because the words are the whole sprite:
-  Polish shows `images/gui/minigame/{getready,yourturn,win,loose}.png`, German the `-de.png`
-  copies, and any other language a `minigame.banner.*` Label
-  (`scenes/level/catch_minigame_art.gd`).
+  banners need no Label, because every language has original art: Polish shows
+  `images/gui/minigame/{getready,yourturn,win,loose}.png`, German the `-de.png` copies and
+  English the `-en.png` ones (`scenes/level/catch_minigame_art.gd`).
 - A translation keeps the same `%` tokens in the same order; Godot's `%` is positional. The
   token pattern deliberately rejects printf's space flag, because one German action name
   reads `85% der Menschheit leben ohne Klopapier` and that literal percent is not a

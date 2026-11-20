@@ -260,7 +260,8 @@ Two port decisions worth naming:
   the frame (`SafeFrame`) clips its contents, as the original's screen edge does; on a
   canvas wider than 4:3 the margin either side stays black (see
   [widescreen.md](widescreen.md), "Art screens", and `tests/check_widescreen.gd`).
-- **The banners** use each retail build's own painted art, and a drawn label for any language
-  that has none. The Polish build's `YOURTURN` and `WIN` are swapped relative to what their
-  names say, which the port reproduces by showing that build's art where its name belongs.
-  See [strings-reference.md](strings-reference.md).
+- **The banners** use each retail build's own painted art, and English the original's unused
+  English set from the German archive, so every language shows painted art and none draws a
+  label. The Polish build's `YOURTURN` and `WIN` are swapped relative to what their names say,
+  which the port reproduces by showing that build's art where its name belongs. See
+  [strings-reference.md](strings-reference.md).

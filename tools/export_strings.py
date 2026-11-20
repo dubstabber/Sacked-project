@@ -144,13 +144,6 @@ UNUSED_SLOTS = {168: "Rozpocznij poziom 1", 169: "Rozpocznij poziom 2",
 PORT_STRINGS = {
     "hud.console.time_label": ("czas", "painted into both builds' console art; only English draws a Label"),
     "hud.console.score_label": ("wynik", "painted into both builds' console art; only English draws a Label"),
-    # The four duel banners are painted art in both builds, so only English needs words. The
-    # Polish release swapped two of them, and the port shows each build's art as it ships, so
-    # these are the roles the sprite names give rather than what the Polish art reads.
-    "minigame.banner.get_ready": ("Uwaga!", "painted into both builds' banner art"),
-    "minigame.banner.your_turn": ("Twoja odpowiedź!", "painted into both builds' banner art"),
-    "minigame.banner.win": ("Tania wymówka!", "painted into both builds' banner art"),
-    "minigame.banner.lose": ("Złapany!", "painted into both builds' banner art"),
     # Two rows the port adds to the sound-setup screen. The original ships one language per
     # build and has no display option, so neither has wording in either build.
     "sound.language": ("Język", "the port's language row on screen 11; each build ships one language"),

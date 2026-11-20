@@ -36,16 +36,17 @@ const BUTTON_Y := 550
 const SEQUENCE_SHIFT := 46
 const ANSWER_MIN_X := 430
 
-# Alignment flag 16 centres a banner in the viewport, so each sits on its own height.
-const BANNER_HEIGHT := 60.0
 const BANNER_ROLES: Array[StringName] = [&"get_ready", &"your_turn", &"win", &"lose"]
-# Both retail builds paint these; anything else draws a label instead.
+# Every language has painted art: each build its own, and English the original's unused
+# English set from the German archive. See docs/strings-reference.md.
 const BANNER_ART := {
-	&"get_ready": {&"pl": "getready", &"de": "getready-de"},
-	&"your_turn": {&"pl": "yourturn", &"de": "yourturn-de"},
-	&"win": {&"pl": "win", &"de": "win-de"},
-	&"lose": {&"pl": "loose", &"de": "loose-de"},
+	&"get_ready": {&"pl": "getready", &"de": "getready-de", &"en": "getready-en"},
+	&"your_turn": {&"pl": "yourturn", &"de": "yourturn-de", &"en": "yourturn-en"},
+	&"win": {&"pl": "win", &"de": "win-de", &"en": "win-en"},
+	&"lose": {&"pl": "loose", &"de": "loose-de", &"en": "loose-en"},
 }
+# The project's locale/fallback.
+const FALLBACK_LANGUAGE := &"pl"
 
 const ROOT := "res://images/gui/minigame/"
 
@@ -80,9 +81,9 @@ static func answer_spell(index: int) -> Texture2D:
 
 static func banner(role: StringName, language: StringName) -> Texture2D:
 	var art: Dictionary = BANNER_ART.get(role, {})
-	if not art.has(language):
+	if art.is_empty():
 		return null
-	return _texture(String(art[language]))
+	return _texture(String(art.get(language, art[FALLBACK_LANGUAGE])))
 
 
 # Which of the fourteen slots exist, and what each one is for. The gap in the middle is the

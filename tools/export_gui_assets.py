@@ -147,6 +147,16 @@ GERMAN_SPRITES = [
     ("CO_GUI_SCREENS_LOADING", "images/gui/screens/loading-de.png"),
 ]
 
+# The German archive also carries the four duel banners painted in English, under names
+# neither executable references. They are the original artists' own English, so the port's
+# English shows them rather than drawing words of its own.
+ENGLISH_SPRITES = [
+    ("CO_GUI_MINIGAME_GETREADY_ALT", "images/gui/minigame/getready-en.png"),
+    ("CO_GUI_MINIGAME_YOURTURN_ALT", "images/gui/minigame/yourturn-en.png"),
+    ("CO_GUI_MINIGAME_WIN_ALT", "images/gui/minigame/win-en.png"),
+    ("CO_GUI_MINIGAME_LOOSE_ALT", "images/gui/minigame/loose-en.png"),
+]
+
 # The console art has the words "czas" and "wynik" painted into it, over the wrong fields --
 # the original's own mistake, which the port keeps. They are the only Polish text baked into
 # a sprite the port ships, so a second copy is derived with them painted out and the port
@@ -247,7 +257,7 @@ def specs(root: Path) -> list:
     for sprite in SpriteSource(root, EFFECT).names(STRINGS_PREFIX):
         result.append((EFFECT, sprite, strings_destination(sprite), None))
 
-    for sprite, destination in GERMAN_SPRITES:
+    for sprite, destination in GERMAN_SPRITES + ENGLISH_SPRITES:
         result.append((GUI, sprite, destination, GERMAN_TEXTURE_ROOT))
 
     destinations = [destination for _, _, destination, _ in result]
