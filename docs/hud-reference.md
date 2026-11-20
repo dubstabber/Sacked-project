@@ -286,10 +286,12 @@ That holds while renderer `+48` is not 1 and the renderer's scale, `+32`/`+36`, 
   [field-of-view-reference.md](field-of-view-reference.md)). The console never depends on
   the order: the default is white (`sub_45A480`) and the hover text is (250, 250, 250).
 - **The edges.** An antialiased edge pixel, white blended toward magenta, does not match the
-  exact key, so it is drawn, tinted, on both passes. The binary cannot say whether Windows
-  emits such pixels for `ANTIALIASED_QUALITY`, but the reference screenshots show it does:
-  every glyph edge in them is pink and every shadow edge purple, over the orange panels and
-  the blue backdrops alike.
+  exact key, so in principle it would be drawn, tinted, on both passes. The 16-bit reference
+  screenshots show pink glyph edges and purple shadow edges, which this section once read as the
+  game doing exactly that. **The running original does not:** its shadows are plain black and its
+  glyphs have no coloured edge (observed in the game on 2026-11-20). So the pink and purple in
+  the screenshots are capture chroma — JPEG subsampling and RGB565 at the high-contrast glyph
+  edges — not what the game renders. There is no fringe to reproduce.
 
 **Layout**, in `sub_42B9A0`:
 
@@ -419,12 +421,13 @@ across the three languages, and `International Playboy` would still need a fallb
 - no MSDF and no mipmaps;
 - rounding remainders kept. This one is a port choice, below.
 
-**The edge fringe is left out, a port choice.** The port does not draw the pink glyph edges
-and purple shadow edges of "The edges" above. Godot's grey-level antialiasing blends each edge
-pixel into whatever lies under it, and there is no magenta key to miss. Reproducing the fringe
-would take a glyph atlas of the port's own, drawn on magenta and keyed as `sub_42B680`'s is,
-or a text shader that tints the partial-coverage pixels. It shows on every screen, so it is in
-the backlog rather than settled.
+**No edge fringe, and that is faithful.** This used to read as a port choice to be revisited,
+reproducing the pink glyph edges and purple shadow edges of "The edges". The running original
+has neither: its shadows are black and its glyphs are clean (observed in the game on
+2026-11-20), so the colour in the screenshots is capture chroma, not game output. Godot's
+grey-level antialiasing with the recovered dark shadow tints matches what the game draws, so
+there is nothing to add. A short-lived 2026-11-20 experiment that blended glyph edges toward
+magenta made the shadows pink and was reverted.
 
 **The sizes are the rounded ems.** Every recovered Arial N is drawn at
 `MulDiv(N, 2048, 2288)`. That is 20 for the menu's Arial 22, which is the theme's default
@@ -539,8 +542,9 @@ screenshot shows it, the two rooms, the kept and dropped blanks and the CR's pix
 ## Not recovered
 
 Arial's own hinted advance widths, which GDI draws with and Liberation Sans cannot
-reproduce (see "Fonts"). The em GDI picks for each cell height, and whether its antialiased
-edges survive the magenta key, are settled by the reference screenshots.
+reproduce (see "Fonts"). The em GDI picks for each cell height is settled by the reference
+screenshots. Whether the antialiased edges survive the magenta key does not matter: the game
+shows black shadows and clean glyphs (see "The edges"), so the port reproduces nothing there.
 
 Two questions this section used to hold are closed:
 
