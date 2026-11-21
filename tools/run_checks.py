@@ -30,6 +30,7 @@ REFERENCE_CHECKS = [
     ["tools/export_view_angles.py", "--check"],
     ["tools/export_menu_animation.py", "--check"],
     ["tools/export_gui_assets.py", "--check"],
+    ["tools/export_icon.py", "--check"],
     ["tools/export_sounds.py", "--check"],
     ["tools/export_object_state_assets.py", "--check"],
     ["tools/export_character_depth_maps.py", "--check"],
