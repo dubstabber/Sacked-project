@@ -136,8 +136,18 @@ so a finished transition steps forward by exactly seven into its matching damage
 The object factory fills one animation slot per state at `item + 128 + 4*state`, naming
 each clip `CO_OBJECTS_<family>_<sprite>_<state>_<angle>`, and leaves the slot null when
 the container has no such clip. **Most objects ship no `DESTROY_n` at all**: of the 80
-state clips level 1 can reach, 30 are single frames, only 8 are real transitions, and 43
-are absent. `sub_40FDA0` stores the requested state regardless but keeps the previous clip
+state clips level 1 can reach, 38 are single frames, 12 are real clips (ten one-shot
+transitions and two loops) and 30 are absent.
+
+The names keep the container's own spelling, `KÜHLSCHRANK`, `MÜLLEIMER01`, `POSTFÄCHER`,
+`MONITOR&TASTATUR#FRONTAL`, `SALZ&ZUCKER`, `TOIKABINE&EIMER`, and so do the sprites in
+them (`Spüle#Destroyed_1#000#`), while the extraction's folders are sanitised
+(`ogd_dump.sanitize_name`: `K_HLSCHRANK`). `tools/export_object_state_assets.py` resolves
+each object through the IDLE clip whose first frame is its own sprite, checks that the
+prefix ends in the item's sprite name as the factory's lookup does, and finds each frame
+through its sanitised folder. Until 2026-11-21 it cut the prefix from the folder name, so
+the fridge, the three bins, the four monitors, the pigeonholes, salt and sugar, the sink,
+the dishwasher and the toilet cubicle with its bucket showed none of their 84 states. `sub_40FDA0` stores the requested state regardless but keeps the previous clip
 when the slot is null, so those objects reach their damaged art without a transition. The
 port takes the same route explicitly, settling an unplayable `DESTROY_n` on its
 `DESTROYED_n`.
@@ -181,10 +191,10 @@ transition unplayable, so the compositor now repaints only the rectangles a chan
 125 ms a frame an 8 fps clip allows. The mechanism, its fallbacks to a full recomposite and
 the byte-identity guarantee are described in [map-rendering.md](map-rendering.md).
 
-Of the 80 state clips level 1 can reach, eight are real multi-frame transitions; all eight
-are one-shot `DESTROY_n`. Level 2 is the first map that reaches a **looping** one: the
-copier, the aquarium, the projector screen and the stove all hold a `DESTROYED_n` that never
-ends, and the copier enters state 9 the first time an NPC photocopies something, with no
+Of the 80 state clips level 1 can reach, ten are real multi-frame transitions, all one-shot
+`DESTROY_n`, and two loop: the monitor-and-keyboard sets' two-frame `DESTROYED_3`. On level 2
+the copier, the aquarium, the projector screen and the stove all hold a `DESTROYED_n` that
+never ends, and the copier enters state 9 the first time an NPC photocopies something, with no
 prank involved (only that first user raises it; see [npc-reference.md](npc-reference.md)). A clip that never ends cannot repaint a dirty rectangle forever, so a looping
 object leaves the static bake and is drawn as a depth-tested actor until its state changes.
 The measurements and the mechanism are in [map-rendering.md](map-rendering.md).

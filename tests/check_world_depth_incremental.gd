@@ -13,8 +13,11 @@ const LEVEL := preload("res://scenes/level_1.tscn")
 # both bounds at once.
 const MEDIAN_BUDGET_MS := 40.0
 
-# Every multi-frame clip level 1 can reach, with the object carrying it.
+# Every one-shot multi-frame clip level 1 can reach, with the object carrying it. The
+# monitors' two-frame DESTROYED_3 loops, so it leaves the bake and is drawn as an actor.
 const TRANSITIONS := [
+	["Object053Kuhlschrank", "aktiv-k-hlschrank-000", "DESTROY_1"],
+	["Object053Kuhlschrank", "aktiv-k-hlschrank-000", "DESTROY_2"],
 	["Object036Colamat", "aktiv-colamat-000", "DESTROY_2"],
 	["Object036Colamat", "aktiv-colamat-000", "DESTROY_6"],
 	["Object029Server", "aktiv-server-000", "DESTROY_2"],

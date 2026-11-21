@@ -2,5 +2,25 @@
   "angle": "000",
   "generated_by": "tools/export_object_state_assets.py",
   "sprite": "SPUELMASCHINE",
-  "states": {}
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            31,
+            61
+          ],
+          "size": [
+            83,
+            84
+          ],
+          "texture": "res://images/objects/states/aktiv-spuelmaschine-000/aktiv-spuelmaschine-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
 }

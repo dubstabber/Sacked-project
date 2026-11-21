@@ -2,5 +2,74 @@
   "angle": "180",
   "generated_by": "tools/export_object_state_assets.py",
   "sprite": "MONITOR&TASTATUR#FRONTAL",
-  "states": {}
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            26,
+            88
+          ],
+          "size": [
+            50,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-tastatur-frontal-180/aktiv-monitor-tastatur-frontal-180-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            26,
+            88
+          ],
+          "size": [
+            50,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-tastatur-frontal-180/aktiv-monitor-tastatur-frontal-180-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROYED_3": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            26,
+            88
+          ],
+          "size": [
+            50,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-tastatur-frontal-180/aktiv-monitor-tastatur-frontal-180-destroyed-3-000.png"
+        },
+        {
+          "pivot": [
+            26,
+            88
+          ],
+          "size": [
+            50,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-tastatur-frontal-180/aktiv-monitor-tastatur-frontal-180-destroyed-3-001.png"
+        }
+      ],
+      "loop": true,
+      "state": 11
+    }
+  }
 }

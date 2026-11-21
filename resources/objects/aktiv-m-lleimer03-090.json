@@ -2,5 +2,396 @@
   "angle": "090",
   "generated_by": "tools/export_object_state_assets.py",
   "sprite": "MÜLLEIMER03",
-  "states": {}
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            15,
+            39
+          ],
+          "size": [
+            33,
+            45
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROY_1": {
+      "advances_to": 9,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            15,
+            39
+          ],
+          "size": [
+            33,
+            45
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-000.png"
+        },
+        {
+          "pivot": [
+            15,
+            39
+          ],
+          "size": [
+            33,
+            45
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-001.png"
+        },
+        {
+          "pivot": [
+            15,
+            45
+          ],
+          "size": [
+            33,
+            51
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-002.png"
+        },
+        {
+          "pivot": [
+            15,
+            48
+          ],
+          "size": [
+            33,
+            54
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-003.png"
+        },
+        {
+          "pivot": [
+            17,
+            52
+          ],
+          "size": [
+            35,
+            58
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-004.png"
+        },
+        {
+          "pivot": [
+            18,
+            58
+          ],
+          "size": [
+            37,
+            64
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-005.png"
+        },
+        {
+          "pivot": [
+            20,
+            63
+          ],
+          "size": [
+            41,
+            69
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-006.png"
+        },
+        {
+          "pivot": [
+            20,
+            64
+          ],
+          "size": [
+            41,
+            70
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-007.png"
+        },
+        {
+          "pivot": [
+            19,
+            66
+          ],
+          "size": [
+            40,
+            72
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-008.png"
+        },
+        {
+          "pivot": [
+            18,
+            68
+          ],
+          "size": [
+            39,
+            74
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-009.png"
+        },
+        {
+          "pivot": [
+            18,
+            70
+          ],
+          "size": [
+            39,
+            76
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-010.png"
+        },
+        {
+          "pivot": [
+            19,
+            71
+          ],
+          "size": [
+            40,
+            77
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-011.png"
+        },
+        {
+          "pivot": [
+            19,
+            73
+          ],
+          "size": [
+            39,
+            79
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-012.png"
+        },
+        {
+          "pivot": [
+            19,
+            75
+          ],
+          "size": [
+            39,
+            81
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-013.png"
+        },
+        {
+          "pivot": [
+            19,
+            75
+          ],
+          "size": [
+            39,
+            81
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-014.png"
+        },
+        {
+          "pivot": [
+            18,
+            76
+          ],
+          "size": [
+            38,
+            82
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-015.png"
+        },
+        {
+          "pivot": [
+            20,
+            77
+          ],
+          "size": [
+            40,
+            83
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-016.png"
+        },
+        {
+          "pivot": [
+            20,
+            79
+          ],
+          "size": [
+            40,
+            85
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-017.png"
+        },
+        {
+          "pivot": [
+            18,
+            82
+          ],
+          "size": [
+            37,
+            88
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-018.png"
+        },
+        {
+          "pivot": [
+            18,
+            82
+          ],
+          "size": [
+            37,
+            88
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-019.png"
+        },
+        {
+          "pivot": [
+            18,
+            83
+          ],
+          "size": [
+            37,
+            89
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-020.png"
+        },
+        {
+          "pivot": [
+            19,
+            83
+          ],
+          "size": [
+            38,
+            89
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-021.png"
+        },
+        {
+          "pivot": [
+            19,
+            83
+          ],
+          "size": [
+            38,
+            89
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-022.png"
+        },
+        {
+          "pivot": [
+            18,
+            88
+          ],
+          "size": [
+            38,
+            94
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-023.png"
+        },
+        {
+          "pivot": [
+            18,
+            88
+          ],
+          "size": [
+            38,
+            94
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-024.png"
+        },
+        {
+          "pivot": [
+            18,
+            84
+          ],
+          "size": [
+            38,
+            90
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-025.png"
+        },
+        {
+          "pivot": [
+            18,
+            87
+          ],
+          "size": [
+            38,
+            93
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-026.png"
+        },
+        {
+          "pivot": [
+            18,
+            87
+          ],
+          "size": [
+            37,
+            93
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-027.png"
+        },
+        {
+          "pivot": [
+            18,
+            87
+          ],
+          "size": [
+            39,
+            93
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-028.png"
+        },
+        {
+          "pivot": [
+            16,
+            86
+          ],
+          "size": [
+            37,
+            92
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-029.png"
+        },
+        {
+          "pivot": [
+            16,
+            85
+          ],
+          "size": [
+            34,
+            91
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-030.png"
+        },
+        {
+          "pivot": [
+            16,
+            85
+          ],
+          "size": [
+            34,
+            91
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-031.png"
+        },
+        {
+          "pivot": [
+            15,
+            39
+          ],
+          "size": [
+            33,
+            45
+          ],
+          "texture": "res://images/objects/states/aktiv-m-lleimer03-090/aktiv-m-lleimer03-090-destroy-1-032.png"
+        }
+      ],
+      "loop": false,
+      "state": 2
+    }
+  }
 }

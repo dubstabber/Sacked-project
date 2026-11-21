@@ -2,5 +2,25 @@
   "angle": "090",
   "generated_by": "tools/export_object_state_assets.py",
   "sprite": "SALZ&ZUCKER",
-  "states": {}
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            7,
+            61
+          ],
+          "size": [
+            15,
+            19
+          ],
+          "texture": "res://images/objects/states/aktiv-salz-zucker-090/aktiv-salz-zucker-090-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
 }

@@ -109,11 +109,27 @@ def load_container(root: Path):
     sys.path.insert(0, str(root / EXTRACTION_TOOLS_REL))
     import animation_exporter
     import extract_animations
+    import ogd_dump
 
     data = (root / CONTAINER_REL).read_bytes()
     animations = {anim.name: anim for anim in extract_animations.parse_animations(str(root / CONTAINER_REL))}
     sprites = animation_exporter.collect_sprite_info(data)
-    return animations, sprites
+    return animations, sprites, ogd_dump.sanitize_name
+
+
+def idle_clips_by_folder(animations: dict, sprites: dict, folder_name) -> dict:
+    """Every IDLE clip, keyed by the extracted folder of its first frame.
+
+    A level manifest names an object by that folder, which the extraction sanitised
+    (ogd_dump.sanitize_name turns KÜHLSCHRANK into K_HLSCHRANK and MONITOR&KAFFEE into
+    MONITOR_KAFFEE). The container's clips keep the real name the item factory looks them
+    up by, so a prefix cut from the folder name finds no clip for those objects at all.
+    """
+    clips = {}
+    for anim in animations.values():
+        if "_IDLE_" in anim.name and anim.frames and anim.frames[0] in sprites:
+            clips[folder_name(sprites[anim.frames[0]].name)] = anim
+    return clips
 
 
 def slug(text: str) -> str:
@@ -166,24 +182,22 @@ def object_specs(root: Path) -> list:
             source = item["source_sprite"]
             if "_IDLE_" not in source:
                 continue
-            prefix, rest = source.rsplit("_IDLE_", 1)
-            angle = rest.split("_")[0]
             key = Path(item["texture"]).stem
-            specs.setdefault(key, {"prefix": prefix, "angle": angle, "states": [], "sprite": item["sprite_name"]})
+            specs.setdefault(key, {"source": source, "states": [], "sprite": item["sprite_name"]})
             for state in states:
                 if state not in specs[key]["states"]:
                     specs[key]["states"].append(state)
     return [(key, value) for key, value in sorted(specs.items())]
 
 
-def frame_paths(root: Path, sprites: dict, frame_ids: list) -> list:
+def frame_paths(root: Path, sprites: dict, frame_ids: list, folder_name) -> list:
     result = []
     for frame_id in frame_ids:
         info = sprites.get(frame_id)
         if info is None:
             return []
-        folder = root / TEXTURE_ROOT_REL / info.name
-        if not (folder / f"{info.name}.png").is_file():
+        folder = root / TEXTURE_ROOT_REL / folder_name(info.name)
+        if not (folder / f"{folder.name}.png").is_file():
             return []
         result.append((info, folder))
     return result
@@ -213,21 +227,34 @@ def keyed_frame_rgba(folder: Path, info):
 def export(root: Path, check: bool) -> int:
     actions = json.loads((root / ACTIONS_REL).read_text())
     state_names = actions["item_states"]
-    animations, sprites = load_container(root)
+    animations, sprites, folder_name = load_container(root)
+    idle_clips = idle_clips_by_folder(animations, sprites, folder_name)
 
     failures = []
     unresolved = []
     written = clips = 0
 
     for key, spec in object_specs(root):
+        idle = idle_clips.get(spec["source"])
+        if idle is None:
+            failures.append(f"{key}: no IDLE clip starts with {spec['source']}")
+            continue
+        # The clip prefix in the container's own spelling, and the view it is drawn from.
+        # sub_410550 names a slot from the item's own sprite name, so the prefix has to end
+        # in it or the port would find clips the original never does.
+        prefix, angle = idle.name.rsplit("_IDLE_", 1)
+        if not prefix.endswith(f"_{spec['sprite']}"):
+            failures.append(f"{key}: IDLE clip {idle.name} is not named after sprite {spec['sprite']}")
+            continue
+        spec["angle"] = angle
         states = {}
         for state in spec["states"]:
-            name = f"{spec['prefix']}_{state_names[state]}_{spec['angle']}"
+            name = f"{prefix}_{state_names[state]}_{angle}"
             anim = animations.get(name)
             if anim is None:
                 unresolved.append(f"{key} {state_names[state]} (no clip in the container)")
                 continue
-            frames = frame_paths(root, sprites, anim.frames)
+            frames = frame_paths(root, sprites, anim.frames, folder_name)
             if not frames:
                 unresolved.append(f"{key} {state_names[state]} (frames missing on disk)")
                 continue
@@ -237,7 +264,7 @@ def export(root: Path, check: bool) -> int:
                 stem = f"{key}-{slug(state_names[state])}-{index:03d}"
                 destination = root / STATE_IMAGE_DIR_REL / key / f"{stem}.png"
                 depth_destination = destination.with_name(f"{stem}-depth.png")
-                source = folder / f"{info.name}.png"
+                source = folder / f"{folder.name}.png"
                 written += 1
                 pivot = [signed16(info.pivot_x), signed16(info.pivot_y)]
                 if max(abs(pivot[0]), abs(pivot[1])) > PIVOT_SANITY_LIMIT:

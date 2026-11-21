@@ -2,5 +2,93 @@
   "angle": "000",
   "generated_by": "tools/export_object_state_assets.py",
   "sprite": "MONITOR&KAFFEE",
-  "states": {}
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            41,
+            85
+          ],
+          "size": [
+            70,
+            48
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-kaffee-000/aktiv-monitor-kaffee-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    },
+    "DESTROYED_2": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            41,
+            85
+          ],
+          "size": [
+            70,
+            48
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-kaffee-000/aktiv-monitor-kaffee-000-destroyed-2-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 10
+    },
+    "DESTROYED_3": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            41,
+            85
+          ],
+          "size": [
+            70,
+            48
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-kaffee-000/aktiv-monitor-kaffee-000-destroyed-3-000.png"
+        },
+        {
+          "pivot": [
+            41,
+            85
+          ],
+          "size": [
+            70,
+            48
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-kaffee-000/aktiv-monitor-kaffee-000-destroyed-3-001.png"
+        }
+      ],
+      "loop": true,
+      "state": 11
+    },
+    "DESTROYED_4": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            46,
+            86
+          ],
+          "size": [
+            75,
+            56
+          ],
+          "texture": "res://images/objects/states/aktiv-monitor-kaffee-000/aktiv-monitor-kaffee-000-destroyed-4-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 12
+    }
+  }
 }

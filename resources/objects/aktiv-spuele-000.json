@@ -2,5 +2,25 @@
   "angle": "000",
   "generated_by": "tools/export_object_state_assets.py",
   "sprite": "SPUELE",
-  "states": {}
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 16.0,
+      "frames": [
+        {
+          "pivot": [
+            34,
+            81
+          ],
+          "size": [
+            113,
+            97
+          ],
+          "texture": "res://images/objects/states/aktiv-spuele-000/aktiv-spuele-000-destroyed-1-000.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
 }
