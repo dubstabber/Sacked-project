@@ -25,6 +25,10 @@ const LEVEL_RUNTIME_SCENE := "res://scenes/level/level_runtime.tscn"
 
 var _object_prefabs: Dictionary = {}
 var _prefab_paths: Dictionary = {}
+var _interaction_overrides := 0
+# Object instances whose InteractionPoint the level places apart from the prefab's, which the
+# packed scene only keeps for an editable instance.
+var _editable_objects: Array[Node] = []
 
 
 func _init() -> void:
@@ -60,7 +64,7 @@ func _run() -> void:
 		quit(1)
 		return
 
-	print("Saved %s" % scene_path)
+	print("Saved %s (%d interaction points placed apart from their prefab's)" % [scene_path, _interaction_overrides])
 	root.free()
 	quit(0)
 
@@ -121,6 +125,8 @@ func _build_scene(manifest: Dictionary) -> Node:
 	root.add_child(_build_level_runtime(manifest))
 	root.add_child(_build_debug_overlay())
 	_assign_owner(root, root)
+	for object_node in _editable_objects:
+		root.set_editable_instance(object_node, true)
 	return root
 
 
@@ -211,7 +217,7 @@ func _build_objects(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
 	objects.name = "Objects"
 	objects.z_index = 0
 	for object_data in manifest.get("objects", []):
-		var prefab := _object_prefab(object_data)
+		var prefab := _object_prefab(object_data, floor_layer)
 		if prefab == null:
 			continue
 		var object_node := prefab.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE) as Node2D
@@ -226,38 +232,29 @@ func _build_objects(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
 		object_node.set_meta("original_height", float(object_data.get("height", 0.0)))
 		object_node.set_meta("original_instance_id", int(object_data.get("instance_id", 0)))
 		objects.add_child(object_node)
-		var interaction := Marker2D.new()
-		interaction.name = "InteractionPoint"
-		interaction.script = load(ACTIVITY_POINT_SCRIPT)
-		interaction.position = _tile_position_to_local(_vector2(object_data["interaction_tile_position"]), floor_layer) - object_node.position
-		var kind := String(object_data["kind"]).hex_to_int()
-		interaction.set("category", (kind >> 16) & 0xff)
-		interaction.set("group", (kind >> 24) & 0xff)
-		interaction.set("item_type", (kind >> 4) & 0xfff)
-		interaction.set("active", int(object_data["object_category"]) == 5)
-		# item+196, the object's quarter-turn index. sub_41B240's selector-5 branch reads it
-		# to pick which side the player steps onto. See docs/player-action-reference.md.
-		interaction.set("orientation", int(object_data.get("variant", 0)))
-		var action_ids := PackedInt32Array()
-		for action_id in object_data.get("action_ids", []):
-			action_ids.append(int(action_id))
-		interaction.set("action_ids", action_ids)
-		var tile := _vector2(object_data["tile_position"])
-		var collision: Dictionary = manifest["collision_grid"]
-		var cell := Vector2i(floori(tile.x + 0.5), floori(tile.y + 0.5))
-		if cell.x >= 0 and cell.y >= 0 and cell.x < int(collision["width"]) and cell.y < int(collision["height"]):
-			interaction.set("room_id", int(collision["room_ids"][cell.y * int(collision["width"]) + cell.x]))
-		object_node.add_child(interaction)
+		# The prefab carries the point; its room is read off the painted rooms at run time.
+		# Where float32 puts this one apart from the prefab's offset, the level keeps the exact
+		# place the point has always had: an NPC's route ends at floori(x + 0.5) of it, and
+		# 211 points sit on a half-cell boundary.
+		var interaction := object_node.get_node("InteractionPoint") as Node2D
+		var exact := _tile_position_to_local(_vector2(object_data["interaction_tile_position"]), floor_layer) - object_node.position
+		if interaction.position != exact:
+			interaction.position = exact
+			_interaction_overrides += 1
+			_editable_objects.append(object_node)
 	return objects
 
 
-func _object_prefab(object_data: Dictionary) -> PackedScene:
+# One prefab per sprite, pivot and kind: the object's look and the gameplay its record gives it,
+# so one dragged into a map is a working object. A texture two kinds share gets a prefab per
+# kind, named by the importer (assign_prefab_names in tools/import_original_level.py).
+func _object_prefab(object_data: Dictionary, floor_layer: TileMapLayer) -> PackedScene:
 	var texture_path := String(object_data.get("texture", ""))
 	var pivot := _vector2(object_data.get("pivot", [0, 0]))
-	var key := "%s|%s" % [texture_path, pivot]
+	var basename := String(object_data.get("prefab", texture_path.get_file().get_basename()))
+	var key := "%s|%s|%s" % [texture_path, pivot, basename]
 	if _object_prefabs.has(key):
 		return _object_prefabs[key]
-	var basename := texture_path.get_file().get_basename()
 	var prefab_path := "res://scenes/objects/%s.tscn" % basename
 	if _prefab_paths.has(prefab_path):
 		prefab_path = "res://scenes/objects/%s-pivot-%d-%d.tscn" % [basename, int(pivot.x), int(pivot.y)]
@@ -271,6 +268,18 @@ func _object_prefab(object_data: Dictionary) -> PackedScene:
 	if ResourceLoader.exists(depth_path):
 		object_node.set("depth_texture", load(depth_path))
 	object_node.set("pivot", pivot)
+	# What the object is, for the editor's palette; nothing at run time reads these.
+	object_node.set_meta("display_name", String(object_data.get("display_name", "")))
+	object_node.set_meta("object_category", int(object_data.get("object_category", -1)))
+	var interaction := _interaction_point(object_data)
+	# The kind's oriented DAT offset. Each level builds in a process of its own and saves the
+	# prefabs it places, so the offset has to come out the same whichever instance a level meets
+	# first: the manifests round each object's two tiles to six decimals, which leaves an
+	# offset of 0.7 as 0.699999 on some of them.
+	var offset := _vector2(object_data["interaction_tile_position"]) - _vector2(object_data["tile_position"])
+	interaction.position = _tile_offset_to_local(offset.snapped(Vector2(0.0001, 0.0001)), floor_layer)
+	object_node.add_child(interaction)
+	interaction.owner = object_node
 	var packed := PackedScene.new()
 	var pack_error := packed.pack(object_node)
 	object_node.free()
@@ -284,6 +293,27 @@ func _object_prefab(object_data: Dictionary) -> PackedScene:
 	var prefab := load(prefab_path) as PackedScene
 	_object_prefabs[key] = prefab
 	return prefab
+
+
+# The object's CO_OBJECTS.DAT record, as the NPCs and the pranks read it. Its room is left at
+# -1, to be read off the painted rooms wherever the object stands.
+func _interaction_point(object_data: Dictionary) -> Marker2D:
+	var interaction := Marker2D.new()
+	interaction.name = "InteractionPoint"
+	interaction.script = load(ACTIVITY_POINT_SCRIPT)
+	var kind := String(object_data["kind"]).hex_to_int()
+	interaction.set("category", (kind >> 16) & 0xff)
+	interaction.set("group", (kind >> 24) & 0xff)
+	interaction.set("item_type", (kind >> 4) & 0xfff)
+	interaction.set("active", int(object_data["object_category"]) == 5)
+	# item+196, the object's quarter-turn index. sub_41B240's selector-5 branch reads it
+	# to pick which side the player steps onto. See docs/player-action-reference.md.
+	interaction.set("orientation", int(object_data.get("variant", 0)))
+	var action_ids := PackedInt32Array()
+	for action_id in object_data.get("action_ids", []):
+		action_ids.append(int(action_id))
+	interaction.set("action_ids", action_ids)
+	return interaction
 
 
 func _build_player(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
@@ -338,6 +368,11 @@ func _tile_position_to_local(tile_position: Vector2, floor_layer: TileMapLayer) 
 	var x_axis := floor_layer.map_to_local(Vector2i(1, 0)) - origin
 	var y_axis := floor_layer.map_to_local(Vector2i(0, 1)) - origin
 	return origin + x_axis * tile_position.x + y_axis * tile_position.y
+
+
+func _tile_offset_to_local(offset: Vector2, floor_layer: TileMapLayer) -> Vector2:
+	var origin := floor_layer.map_to_local(Vector2i.ZERO)
+	return (floor_layer.map_to_local(Vector2i(1, 0)) - origin) * offset.x + (floor_layer.map_to_local(Vector2i(0, 1)) - origin) * offset.y
 
 
 func _build_debug_overlay() -> CanvasLayer:

@@ -289,7 +289,7 @@ func _check_activity_points(world: Node, manifest: Dictionary, floor_layer: Tile
 		# column as a cell on the row above.
 		var height := int(collision_grid.get("height", 0))
 		if cell.x >= 0 and cell.y >= 0 and cell.x < width and cell.y < height:
-			if int(point.get("room_id")) != int(rooms[cell.x + width * cell.y]):
+			if int(point.call("room")) != int(rooms[cell.x + width * cell.y]):
 				_fail("level %s %s room id mismatch" % [label, object_name])
 				return
 		var expected_actions := PackedInt32Array()

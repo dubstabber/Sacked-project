@@ -120,21 +120,20 @@
 [ext_resource type="Resource" path="res://scenes/npc/profiles/male-employee-2.tres" id="118"]
 [ext_resource type="Resource" path="res://scenes/npc/profiles/secretary.tres" id="119"]
 [ext_resource type="Script" path="res://scenes/debug/fps_counter.gd" id="120"]
-[ext_resource type="Script" path="res://scenes/npc/npc_activity_point.gd" id="121"]
-[ext_resource type="Script" path="res://scenes/npc/npc_brain.gd" id="122"]
-[ext_resource type="Script" path="res://scenes/npc/thought_bubble.gd" id="123"]
-[ext_resource type="Script" path="res://scenes/shared/character_depth_compositor.gd" id="124"]
-[ext_resource type="Script" path="res://scenes/shared/collision_map_layer.gd" id="125"]
-[ext_resource type="Script" path="res://scenes/shared/floor_tile_layer.gd" id="126"]
-[ext_resource type="Script" path="res://scenes/shared/map_tile_layer.gd" id="127"]
-[ext_resource type="Script" path="res://scenes/shared/overlay_map_layer.gd" id="128"]
-[ext_resource type="Script" path="res://scenes/shared/world_depth_compositor.gd" id="129"]
-[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-collision.tres" id="130"]
-[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-floor.tres" id="131"]
-[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-glass.tres" id="132"]
-[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-rooms.tres" id="133"]
-[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-sight.tres" id="134"]
-[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-walls.tres" id="135"]
+[ext_resource type="Script" path="res://scenes/npc/npc_brain.gd" id="121"]
+[ext_resource type="Script" path="res://scenes/npc/thought_bubble.gd" id="122"]
+[ext_resource type="Script" path="res://scenes/shared/character_depth_compositor.gd" id="123"]
+[ext_resource type="Script" path="res://scenes/shared/collision_map_layer.gd" id="124"]
+[ext_resource type="Script" path="res://scenes/shared/floor_tile_layer.gd" id="125"]
+[ext_resource type="Script" path="res://scenes/shared/map_tile_layer.gd" id="126"]
+[ext_resource type="Script" path="res://scenes/shared/overlay_map_layer.gd" id="127"]
+[ext_resource type="Script" path="res://scenes/shared/world_depth_compositor.gd" id="128"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-collision.tres" id="129"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-floor.tres" id="130"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-glass.tres" id="131"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-rooms.tres" id="132"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-sight.tres" id="133"]
+[ext_resource type="TileSet" path="res://resources/tilemaps/sacked-walls.tres" id="134"]
 
 [node name="Main" type="Node"]
 
@@ -143,18 +142,18 @@
 [node name="FloorTileMapLayer" type="TileMapLayer" parent="World"]
 z_index = -20
 tile_map_data = PackedByteArray("AAAAAAAAAwABAAAAAAABAAAAAwABAAAAAAACAAAAAwABAAAAAAADAAAAAwABAAAAAAAEAAAAAwABAAAAAAAFAAAAAwABAAAAAAAGAAAAAwABAAAAAAAHAAAAAwAHAAAAAAAIAAAAAwAHAAAAAAAJAAAAAwAHAAAAAAAKAAAAAwAHAAAAAAALAAAAAwAHAAAAAAAMAAAAAwAHAAAAAAANAAAAAwAHAAAAAAAOAAAAAwAHAAAAAAAPAAAAAwABAAAAAAAQAAAAAwABAAAAAAARAAAAAwABAAAAAAASAAAAAwABAAAAAAATAAAAAwABAAAAAAAUAAAAAwABAAAAAAAVAAAAAwABAAAAAAAAAAEAAwABAAAAAAABAAEAAwABAAAAAAACAAEAAwABAAAAAAADAAEAAwABAAAAAAAEAAEAAwABAAAAAAAFAAEAAwABAAAAAAAGAAEAAwABAAAAAAAHAAEAAwAHAAAAAAAIAAEAAwAHAAAAAAAJAAEAAwAHAAAAAAAKAAEAAwAHAAAAAAALAAEAAwAHAAAAAAAMAAEAAwAHAAAAAAANAAEAAwAHAAAAAAAOAAEAAwAHAAAAAAAPAAEAAwABAAAAAAAQAAEAAwABAAAAAAARAAEAAwABAAAAAAASAAEAAwABAAAAAAATAAEAAwABAAAAAAAUAAEAAwABAAAAAAAVAAEAAwABAAAAAAAAAAIAAwABAAAAAAABAAIAAwABAAAAAAACAAIAAwABAAAAAAADAAIAAwABAAAAAAAEAAIAAwABAAAAAAAFAAIAAwABAAAAAAAGAAIAAwABAAAAAAAHAAIAAwAHAAAAAAAIAAIAAwAHAAAAAAAJAAIAAwAHAAAAAAAKAAIAAwAHAAAAAAALAAIAAwAHAAAAAAAMAAIAAwAHAAAAAAANAAIAAwAHAAAAAAAOAAIAAwAHAAAAAAAPAAIAAwABAAAAAAAQAAIAAwABAAAAAAARAAIAAwABAAAAAAASAAIAAwABAAAAAAATAAIAAwABAAAAAAAUAAIAAwABAAAAAAAVAAIAAwABAAAAAAAAAAMAAwABAAAAAAABAAMAAwABAAAAAAACAAMAAwABAAAAAAADAAMAAwABAAAAAAAEAAMAAwABAAAAAAAFAAMAAwABAAAAAAAGAAMAAwABAAAAAAAHAAMAAwAHAAAAAAAIAAMAAwAHAAAAAAAJAAMAAwAHAAAAAAAKAAMAAwAHAAAAAAALAAMAAwAHAAAAAAAMAAMAAwAHAAAAAAANAAMAAwAHAAAAAAAOAAMAAwAHAAAAAAAPAAMAAwABAAAAAAAQAAMAAwABAAAAAAARAAMAAwABAAAAAAASAAMAAwABAAAAAAATAAMAAwABAAAAAAAUAAMAAwABAAAAAAAVAAMAAwABAAAAAAAAAAQAAwABAAAAAAABAAQAAwABAAAAAAACAAQAAwABAAAAAAADAAQAAwABAAAAAAAEAAQAAwABAAAAAAAFAAQAAwABAAAAAAAGAAQAAwABAAAAAAAHAAQAAwABAAIAAAAIAAQAAwAGAAEAAAAJAAQAAwAGAAEAAAAKAAQAAwAGAAEAAAALAAQAAwAGAAEAAAAMAAQAAwAGAAEAAAANAAQAAwAGAAEAAAAOAAQAAwABAAIAAAAPAAQAAwAFAAMAAAAQAAQAAwABAAAAAAARAAQAAwABAAAAAAASAAQAAwABAAAAAAATAAQAAwABAAAAAAAUAAQAAwABAAAAAAAVAAQAAwABAAAAAAAAAAUAAwABAAAAAAABAAUAAwABAAAAAAACAAUAAwABAAAAAAADAAUAAwABAAAAAAAEAAUAAwABAAAAAAAFAAUAAwABAAAAAAAGAAUAAwABAAAAAAAHAAUAAwABAAIAAAAIAAUAAwAGAAIAAAAJAAUAAwACAAMAAAAKAAUAAwACAAMAAAALAAUAAwACAAMAAAAMAAUAAwACAAMAAAANAAUAAwACAAMAAAAOAAUAAwAHAAIAAAAPAAUAAwAFAAMAAAAQAAUAAwABAAAAAAARAAUAAwABAAAAAAASAAUAAwABAAAAAAATAAUAAwABAAAAAAAUAAUAAwABAAAAAAAVAAUAAwABAAAAAAAAAAYAAwABAAAAAAABAAYAAwABAAAAAAACAAYAAwABAAAAAAADAAYAAwABAAAAAAAEAAYAAwABAAAAAAAFAAYAAwABAAAAAAAGAAYAAwABAAAAAAAHAAYAAwAHAAMAAAAIAAYAAwADAAMAAAAJAAYAAwACAAIAAAAKAAYAAwAAAAMAAAALAAYAAwAAAAMAAAAMAAYAAwAAAAMAAAANAAYAAwADAAIAAAAOAAYAAwADAAMAAAAPAAYAAwAFAAMAAAAQAAYAAwABAAAAAAARAAYAAwABAAAAAAASAAYAAwABAAAAAAATAAYAAwABAAAAAAAUAAYAAwABAAAAAAAVAAYAAwABAAAAAAAAAAcAAwABAAAAAAABAAcAAwABAAAAAAACAAcAAwABAAAAAAADAAcAAwABAAAAAAAEAAcAAwABAAAAAAAFAAcAAwABAAAAAAAGAAcAAwABAAAAAAAHAAcAAwAHAAMAAAAIAAcAAwADAAMAAAAJAAcAAwABAAMAAAAKAAcAAwABAAIAAAALAAcAAwACAAMAAAAMAAcAAwABAAIAAAANAAcAAwABAAMAAAAOAAcAAwADAAMAAAAPAAcAAwAFAAMAAAAQAAcAAwABAAAAAAARAAcAAwABAAAAAAASAAcAAwABAAAAAAATAAcAAwABAAAAAAAUAAcAAwABAAAAAAAVAAcAAwABAAAAAAAAAAgAAwABAAAAAAABAAgAAwABAAAAAAACAAgAAwABAAAAAAADAAgAAwABAAAAAAAEAAgAAwABAAAAAAAFAAgAAwABAAAAAAAGAAgAAwABAAAAAAAHAAgAAwAHAAMAAAAIAAgAAwADAAMAAAAJAAgAAwAFAAIAAAAKAAgAAwAAAAMAAAALAAgAAwAAAAMAAAAMAAgAAwAAAAMAAAANAAgAAwAEAAIAAAAOAAgAAwADAAMAAAAPAAgAAwAFAAMAAAAQAAgAAwABAAAAAAARAAgAAwABAAAAAAASAAgAAwABAAAAAAATAAgAAwABAAAAAAAUAAgAAwABAAAAAAAVAAgAAwABAAAAAAAAAAkAAwABAAAAAAABAAkAAwABAAAAAAACAAkAAwABAAAAAAADAAkAAwABAAAAAAAEAAkAAwABAAAAAAAFAAkAAwABAAAAAAAGAAkAAwABAAAAAAAHAAkAAwABAAIAAAAIAAkAAwAJAAIAAAAJAAkAAwACAAMAAAAKAAkAAwACAAMAAAALAAkAAwACAAMAAAAMAAkAAwACAAMAAAANAAkAAwACAAMAAAAOAAkAAwAIAAIAAAAPAAkAAwAFAAMAAAAQAAkAAwABAAAAAAARAAkAAwABAAAAAAASAAkAAwABAAAAAAATAAkAAwABAAAAAAAUAAkAAwABAAAAAAAVAAkAAwABAAAAAAAAAAoAAwABAAAAAAABAAoAAwABAAAAAAACAAoAAwABAAAAAAADAAoAAwABAAAAAAAEAAoAAwABAAAAAAAFAAoAAwABAAAAAAAGAAoAAwABAAAAAAAHAAoAAwABAAAAAAAIAAoAAwAGAAMAAAAJAAoAAwAGAAMAAAAKAAoAAwAGAAMAAAALAAoAAwABAAAAAAAMAAoAAwABAAAAAAANAAoAAwABAAAAAAAOAAoAAwABAAAAAAAPAAoAAwABAAAAAAAQAAoAAwABAAAAAAARAAoAAwABAAAAAAASAAoAAwABAAAAAAATAAoAAwABAAAAAAAUAAoAAwABAAAAAAAVAAoAAwABAAAAAAAAAAsAAwABAAAAAAABAAsAAwABAAAAAAACAAsAAwABAAAAAAADAAsAAwABAAAAAAAEAAsAAwABAAAAAAAFAAsAAwABAAAAAAAGAAsAAwABAAAAAAAHAAsAAwABAAAAAAAIAAsAAwABAAAAAAAJAAsAAwABAAAAAAAKAAsAAwABAAAAAAALAAsAAwABAAAAAAAMAAsAAwABAAAAAAANAAsAAwABAAAAAAAOAAsAAwABAAAAAAAPAAsAAwABAAAAAAAQAAsAAwABAAAAAAARAAsAAwABAAAAAAASAAsAAwABAAAAAAATAAsAAwABAAAAAAAUAAsAAwABAAAAAAAVAAsAAwABAAAAAAAAAAwAAwABAAAAAAABAAwAAwABAAAAAAACAAwAAwABAAAAAAADAAwAAwABAAAAAAAEAAwAAwABAAAAAAAFAAwAAwABAAAAAAAGAAwAAwABAAAAAAAHAAwAAwABAAAAAAAIAAwAAwABAAAAAAAJAAwAAwABAAAAAAAKAAwAAwABAAAAAAALAAwAAwABAAAAAAAMAAwAAwABAAAAAAANAAwAAwABAAAAAAAOAAwAAwABAAAAAAAPAAwAAwABAAAAAAAQAAwAAwABAAAAAAARAAwAAwABAAAAAAASAAwAAwABAAAAAAATAAwAAwABAAAAAAAUAAwAAwABAAAAAAAVAAwAAwABAAAAAAAAAA0AAwABAAAAAAABAA0AAwABAAAAAAACAA0AAwABAAAAAAADAA0AAwABAAAAAAAEAA0AAwABAAAAAAAFAA0AAwABAAAAAAAGAA0AAwABAAAAAAAHAA0AAwABAAAAAAAIAA0AAwABAAAAAAAJAA0AAwABAAAAAAAKAA0AAwABAAAAAAALAA0AAwABAAAAAAAMAA0AAwABAAAAAAANAA0AAwABAAAAAAAOAA0AAwABAAAAAAAPAA0AAwABAAAAAAAQAA0AAwABAAAAAAARAA0AAwABAAAAAAASAA0AAwABAAAAAAATAA0AAwABAAAAAAAUAA0AAwABAAAAAAAVAA0AAwABAAAAAAAAAA4AAwABAAAAAAABAA4AAwABAAAAAAACAA4AAwABAAAAAAADAA4AAwABAAAAAAAEAA4AAwABAAAAAAAFAA4AAwABAAAAAAAGAA4AAwABAAAAAAAHAA4AAwABAAAAAAAIAA4AAwABAAAAAAAJAA4AAwABAAAAAAAKAA4AAwABAAAAAAALAA4AAwABAAAAAAAMAA4AAwABAAAAAAANAA4AAwABAAAAAAAOAA4AAwABAAAAAAAPAA4AAwABAAAAAAAQAA4AAwABAAAAAAARAA4AAwABAAAAAAASAA4AAwABAAAAAAATAA4AAwABAAAAAAAUAA4AAwABAAAAAAAVAA4AAwABAAAAAAAAAA8AAwABAAAAAAABAA8AAwABAAAAAAACAA8AAwABAAAAAAADAA8AAwABAAAAAAAEAA8AAwABAAAAAAAFAA8AAwABAAAAAAAGAA8AAwABAAAAAAAHAA8AAwABAAAAAAAIAA8AAwABAAAAAAAJAA8AAwABAAAAAAAKAA8AAwABAAAAAAALAA8AAwABAAAAAAAMAA8AAwABAAAAAAANAA8AAwABAAAAAAAOAA8AAwABAAAAAAAPAA8AAwABAAAAAAAQAA8AAwABAAAAAAARAA8AAwABAAAAAAASAA8AAwABAAAAAAATAA8AAwABAAAAAAAUAA8AAwABAAAAAAAVAA8AAwABAAAAAAAAABAAAwABAAAAAAABABAAAwABAAAAAAACABAAAwABAAAAAAADABAAAwABAAAAAAAEABAAAwABAAAAAAAFABAAAwABAAAAAAAGABAAAwABAAAAAAAHABAAAwABAAAAAAAIABAAAwABAAAAAAAJABAAAwABAAAAAAAKABAAAwABAAAAAAALABAAAwABAAAAAAAMABAAAwABAAAAAAANABAAAwABAAAAAAAOABAAAwABAAAAAAAPABAAAwABAAAAAAAQABAAAwABAAAAAAARABAAAwABAAAAAAASABAAAwABAAAAAAATABAAAwABAAAAAAAUABAAAwABAAAAAAAVABAAAwABAAAAAAA=")
-tile_set = ExtResource("131")
-script = ExtResource("126")
+tile_set = ExtResource("130")
+script = ExtResource("125")
 
 [node name="WallTileMapLayer" type="TileMapLayer" parent="World"]
 z_index = -5
 tile_map_data = PackedByteArray("AAAAAAAAAwAHAAEAAAABAAAAAwAFAAEAAAACAAAAAwAFAAEAAAADAAAAAwAFAAEAAAAEAAAAAwAFAAEAAAAFAAAAAwAFAAEAAAAGAAAAAwAFAAEAAAAHAAAAAwAFAAIAAAAIAAAAAwAFAAEAAAAJAAAAAwAFAAEAAAAKAAAAAwAFAAEAAAALAAAAAwAFAAIAAAAMAAAAAwAFAAEAAAANAAAAAwAFAAEAAAAOAAAAAwAFAAEAAAAPAAAAAwAFAAIAAAAQAAAAAwAFAAEAAAARAAAAAwAFAAEAAAASAAAAAwAFAAEAAAATAAAAAwAFAAEAAAAUAAAAAwAFAAEAAAAVAAAAAwAAAAIAAAAAAAEAAwADAAEAAAAHAAEAAwAAAAAAAAALAAEAAwAAAAAAAAAPAAEAAwAAAAAAAAAVAAEAAwAEAAEAAAAAAAIAAwADAAEAAAAHAAIAAwAAAAAAAAALAAIAAwAAAAAAAAAPAAIAAwAAAAAAAAAVAAIAAwAEAAEAAAAAAAMAAwADAAEAAAAHAAMAAwAAAAAAAAALAAMAAwAAAAAAAAAPAAMAAwAAAAAAAAAVAAMAAwAEAAEAAAAAAAQAAwADAAEAAAAHAAQAAwAGAAAAAAAIAAQAAwABAAAAAAALAAQAAwABAAEAAAAOAAQAAwABAAAAAAAPAAQAAwAHAAAAAAAVAAQAAwAEAAEAAAAAAAUAAwADAAIAAAABAAUAAwABAAAAAAACAAUAAwABAAAAAAADAAUAAwABAAAAAAAGAAUAAwABAAAAAAAHAAUAAwAHAAAAAAAVAAUAAwAEAAEAAAAAAAYAAwADAAEAAAAHAAYAAwAAAAAAAAAVAAYAAwAEAAEAAAAAAAcAAwADAAEAAAAPAAcAAwAGAAAAAAAQAAcAAwABAAAAAAARAAcAAwABAAAAAAASAAcAAwABAAAAAAATAAcAAwABAAAAAAAUAAcAAwABAAAAAAAVAAcAAwAEAAIAAAAAAAgAAwADAAEAAAAVAAgAAwAEAAEAAAAAAAkAAwADAAEAAAAHAAkAAwAAAAAAAAAVAAkAAwAEAAEAAAAAAAoAAwADAAEAAAAHAAoAAwAGAAAAAAAIAAoAAwABAAAAAAALAAoAAwABAAAAAAAMAAoAAwABAAAAAAANAAoAAwAAAAEAAAAOAAoAAwABAAAAAAAPAAoAAwAFAAAAAAAVAAoAAwAEAAEAAAAAAAsAAwADAAIAAAABAAsAAwABAAAAAAACAAsAAwABAAAAAAADAAsAAwABAAAAAAAGAAsAAwABAAAAAAAHAAsAAwAHAAAAAAANAAsAAwAAAAAAAAAVAAsAAwAEAAEAAAAAAAwAAwADAAEAAAAHAAwAAwAAAAAAAAANAAwAAwAAAAAAAAAVAAwAAwAEAAEAAAAAAA0AAwADAAEAAAAHAA0AAwAAAAAAAAANAA0AAwAAAAAAAAAVAA0AAwAEAAEAAAAAAA4AAwADAAEAAAAHAA4AAwAAAAAAAAANAA4AAwAAAAAAAAAVAA4AAwAEAAEAAAAAAA8AAwADAAEAAAAHAA8AAwAAAAAAAAANAA8AAwAAAAAAAAAVAA8AAwAEAAEAAAAAABAAAwABAAIAAAABABAAAwAGAAEAAAACABAAAwAGAAEAAAADABAAAwAGAAEAAAAEABAAAwAGAAEAAAAFABAAAwAGAAEAAAAGABAAAwAGAAEAAAAHABAAAwAGAAIAAAAIABAAAwAGAAEAAAAJABAAAwAGAAEAAAAKABAAAwAGAAEAAAALABAAAwAGAAEAAAAMABAAAwAGAAEAAAANABAAAwAGAAIAAAAOABAAAwAGAAEAAAAPABAAAwAGAAEAAAAQABAAAwAGAAEAAAARABAAAwAGAAEAAAASABAAAwAGAAEAAAATABAAAwAGAAEAAAAUABAAAwAGAAEAAAAVABAAAwACAAIAAAA=")
-tile_set = ExtResource("135")
-script = ExtResource("127")
+tile_set = ExtResource("134")
+script = ExtResource("126")
 
 [node name="GlassTileMapLayer" type="TileMapLayer" parent="World"]
 z_index = -4
-tile_set = ExtResource("132")
+tile_set = ExtResource("131")
 
 [node name="Objects" type="Node2D" parent="World"]
 
@@ -169,14 +168,6 @@ metadata/original_tile_position = Vector2(6.020833, 15.0625)
 metadata/original_height = 0.0
 metadata/original_instance_id = 8
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object008Flipper01"]
-script = ExtResource("121")
-category = 9
-item_type = 228
-room_id = 3
-orientation = 3
-action_ids = PackedInt32Array()
-
 [node name="Object009Flipper02" parent="World/Objects" instance=ExtResource("74")]
 position = Vector2(-434, 505)
 metadata/original_kind = "0x00090e53"
@@ -187,14 +178,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AUFENTHALT_FLIPPER02_IDLE_270_Flip
 metadata/original_tile_position = Vector2(5, 15.041667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 9
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object009Flipper02"]
-script = ExtResource("121")
-category = 9
-item_type = 229
-room_id = 3
-orientation = 3
-action_ids = PackedInt32Array()
 
 [node name="Object010Spinde01" parent="World/Objects" instance=ExtResource("75")]
 position = Vector2(-408, 350)
@@ -207,14 +190,6 @@ metadata/original_tile_position = Vector2(2.041667, 11.541667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 10
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object010Spinde01"]
-script = ExtResource("121")
-item_type = 230
-group = 7
-room_id = 3
-orientation = 1
-action_ids = PackedInt32Array()
-
 [node name="Object011Tv" parent="World/Objects" instance=ExtResource("77")]
 position = Vector2(-471, 331)
 metadata/original_kind = "0x00000e81"
@@ -225,13 +200,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AUFENTHALT_TV_IDLE_090_TV#Idle#090
 metadata/original_tile_position = Vector2(0.989583, 11.802083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 11
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object011Tv"]
-script = ExtResource("121")
-item_type = 232
-room_id = 3
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object012Ybox" parent="World/Objects" instance=ExtResource("78")]
 position = Vector2(-506, 339)
@@ -244,14 +212,6 @@ metadata/original_tile_position = Vector2(0.791667, 12.333334)
 metadata/original_height = 0.0
 metadata/original_instance_id = 12
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object012Ybox"]
-script = ExtResource("121")
-category = 9
-item_type = 235
-room_id = 3
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object013Kuchentisch02" parent="World/Objects" instance=ExtResource("106")]
 position = Vector2(-482, 334)
 metadata/original_kind = "0x01000600"
@@ -262,13 +222,6 @@ metadata/original_source_sprite = "CO_OBJECTS_K_CHE_K_CHENTISCH02_IDLE_000_K_che
 metadata/original_tile_position = Vector2(0.9375, 11.979167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 13
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object013Kuchentisch02"]
-script = ExtResource("121")
-item_type = 96
-group = 1
-room_id = 3
-action_ids = PackedInt32Array()
 
 [node name="Object014Schreibtisch01" parent="World/Objects" instance=ExtResource("96")]
 position = Vector2(-97.000015, 240)
@@ -281,14 +234,6 @@ metadata/original_tile_position = Vector2(2.989583, 6.010417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 14
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object014Schreibtisch01"]
-script = ExtResource("121")
-item_type = 60
-group = 2
-room_id = 2
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object015Schreibtisch02" parent="World/Objects" instance=ExtResource("98")]
 position = Vector2(-393, 290)
 metadata/original_kind = "0x020003d3"
@@ -299,14 +244,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_270_Schre
 metadata/original_tile_position = Vector2(0.947917, 10.135417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 15
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object015Schreibtisch02"]
-script = ExtResource("121")
-item_type = 61
-group = 2
-room_id = 2
-orientation = 3
-action_ids = PackedInt32Array()
 
 [node name="Object016Drehstuhl01" parent="World/Objects" instance=ExtResource("80")]
 position = Vector2(-140, 214)
@@ -319,16 +256,6 @@ metadata/original_tile_position = Vector2(2, 5.916667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 16
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object016Drehstuhl01"]
-position = Vector2(-48, -24)
-script = ExtResource("121")
-category = 6
-item_type = 68
-group = 1
-room_id = 2
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object017Drehstuhl03" parent="World/Objects" instance=ExtResource("83")]
 position = Vector2(-297, 294)
 metadata/original_kind = "0x01060463"
@@ -339,16 +266,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL03_IDLE_270_DREHSTUH
 metadata/original_tile_position = Vector2(2.03125, 9.21875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 17
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object017Drehstuhl03"]
-position = Vector2(48, -24)
-script = ExtResource("121")
-category = 6
-item_type = 70
-group = 1
-room_id = 2
-orientation = 3
-action_ids = PackedInt32Array()
 
 [node name="Object018Sessel01" parent="World/Objects" instance=ExtResource("68")]
 position = Vector2(-482, 437)
@@ -361,16 +278,6 @@ metadata/original_tile_position = Vector2(3.083333, 14.125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 18
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object018Sessel01"]
-position = Vector2(-48, -24)
-script = ExtResource("121")
-category = 7
-item_type = 179
-group = 1
-room_id = 3
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object019Sofa01" parent="World/Objects" instance=ExtResource("69")]
 position = Vector2(-583, 436)
 metadata/original_kind = "0x01070b63"
@@ -381,16 +288,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SOFA01_IDLE_270_Sofa01#I
 metadata/original_tile_position = Vector2(2.010417, 15.15625)
 metadata/original_height = 0.0
 metadata/original_instance_id = 19
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object019Sofa01"]
-position = Vector2(48, -24)
-script = ExtResource("121")
-category = 7
-item_type = 182
-group = 1
-room_id = 3
-orientation = 3
-action_ids = PackedInt32Array()
 
 [node name="Object020Standascher02" parent="World/Objects" instance=ExtResource("76")]
 position = Vector2(-269, 458)
@@ -403,13 +300,8 @@ metadata/original_tile_position = Vector2(5.739583, 12.34375)
 metadata/original_height = 0.0
 metadata/original_instance_id = 20
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object020Standascher02"]
+[node name="InteractionPoint" parent="World/Objects/Object020Standascher02" index="1"]
 position = Vector2(28.800018, 14.400024)
-script = ExtResource("121")
-category = 1
-item_type = 234
-room_id = 3
-action_ids = PackedInt32Array()
 
 [node name="Object021Pflanzegross01" parent="World/Objects" instance=ExtResource("55")]
 position = Vector2(-235, 461)
@@ -422,14 +314,8 @@ metadata/original_tile_position = Vector2(6.15625, 12.052083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 21
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object021Pflanzegross01"]
+[node name="InteractionPoint" parent="World/Objects/Object021Pflanzegross01" index="1"]
 position = Vector2(0, 33.599976)
-script = ExtResource("121")
-category = 9
-item_type = 17
-group = 3
-room_id = 3
-action_ids = PackedInt32Array()
 
 [node name="Object022Pflanzegross01" parent="World/Objects" instance=ExtResource("56")]
 position = Vector2(48, 74.000015)
@@ -442,15 +328,8 @@ metadata/original_tile_position = Vector2(1.041667, 1.041667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 22
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object022Pflanzegross01"]
+[node name="InteractionPoint" parent="World/Objects/Object022Pflanzegross01" index="1"]
 position = Vector2(0, 33.600006)
-script = ExtResource("121")
-category = 9
-item_type = 17
-group = 3
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object023Pflanzegross01" parent="World/Objects" instance=ExtResource("56")]
 position = Vector2(-531, 455)
@@ -463,15 +342,8 @@ metadata/original_tile_position = Vector2(2.947917, 15.010417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 23
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object023Pflanzegross01"]
+[node name="InteractionPoint" parent="World/Objects/Object023Pflanzegross01" index="1"]
 position = Vector2(6.1035156e-05, 33.600006)
-script = ExtResource("121")
-category = 9
-item_type = 17
-group = 3
-room_id = 3
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object024Schrubber" parent="World/Objects" instance=ExtResource("112")]
 position = Vector2(375, 276)
@@ -484,12 +356,6 @@ metadata/original_tile_position = Vector2(8.65625, 1.84375)
 metadata/original_height = 0.0
 metadata/original_instance_id = 24
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object024Schrubber"]
-script = ExtResource("121")
-item_type = 107
-room_id = 7
-action_ids = PackedInt32Array()
-
 [node name="Object025Wcreiniger" parent="World/Objects" instance=ExtResource("113")]
 position = Vector2(425, 380)
 metadata/original_kind = "0x000006f0"
@@ -500,11 +366,6 @@ metadata/original_source_sprite = "CO_OBJECTS_WC_WCREINIGER_IDLE_000_WCReiniger#
 metadata/original_tile_position = Vector2(11.34375, 3.489583)
 metadata/original_height = 0.0
 metadata/original_instance_id = 25
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object025Wcreiniger"]
-script = ExtResource("121")
-item_type = 111
-action_ids = PackedInt32Array()
 
 [node name="Object026Toikabine" parent="World/Objects" instance=ExtResource("41")]
 position = Vector2(431, 309)
@@ -517,16 +378,6 @@ metadata/original_tile_position = Vector2(9.927083, 1.947917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 26
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object026Toikabine"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 8
-item_type = 173
-room_id = 7
-orientation = 1
-active = true
-action_ids = PackedInt32Array(43, 44, 109, 110, 112, 113)
-
 [node name="Object027Toikabine" parent="World/Objects" instance=ExtResource("41")]
 position = Vector2(518, 355)
 metadata/original_kind = "0x00080ad1"
@@ -537,16 +388,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TOIKABINE_IDLE_090_ToiKabine
 metadata/original_tile_position = Vector2(11.791667, 2)
 metadata/original_height = 0.0
 metadata/original_instance_id = 27
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object027Toikabine"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 8
-item_type = 173
-room_id = 7
-orientation = 1
-active = true
-action_ids = PackedInt32Array(43, 44, 109, 110, 112, 113)
 
 [node name="Object028Toikabine" parent="World/Objects" instance=ExtResource("41")]
 position = Vector2(624, 408)
@@ -559,16 +400,6 @@ metadata/original_tile_position = Vector2(14, 2)
 metadata/original_height = 0.0
 metadata/original_instance_id = 28
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object028Toikabine"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 8
-item_type = 173
-room_id = 7
-orientation = 1
-active = true
-action_ids = PackedInt32Array(43, 44, 109, 110, 112, 113)
-
 [node name="Object029Tafel" parent="World/Objects" instance=ExtResource("37")]
 position = Vector2(311.99997, 155.00002)
 metadata/original_kind = "0x05090fa1"
@@ -580,15 +411,8 @@ metadata/original_tile_position = Vector2(5.479167, -0.020833)
 metadata/original_height = 0.0
 metadata/original_instance_id = 29
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object029Tafel"]
+[node name="InteractionPoint" parent="World/Objects/Object029Tafel" index="1"]
 position = Vector2(-47.99997, 23.999985)
-script = ExtResource("121")
-category = 9
-item_type = 250
-group = 5
-orientation = 1
-active = true
-action_ids = PackedInt32Array(103)
 
 [node name="Object030Fenster05" parent="World/Objects" instance=ExtResource("14")]
 position = Vector2(-85.00003, 90)
@@ -601,14 +425,8 @@ metadata/original_tile_position = Vector2(-0.010417, 2.760417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 30
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object030Fenster05"]
+[node name="InteractionPoint" parent="World/Objects/Object030Fenster05" index="1"]
 position = Vector2(33.6, 16.800003)
-script = ExtResource("121")
-category = 9
-item_type = 268
-group = 5
-active = true
-action_ids = PackedInt32Array(120)
 
 [node name="Object031Fenster06" parent="World/Objects" instance=ExtResource("15")]
 position = Vector2(-357.00006, 226)
@@ -621,14 +439,8 @@ metadata/original_tile_position = Vector2(-0.010417, 8.427084)
 metadata/original_height = 0.0
 metadata/original_instance_id = 31
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object031Fenster06"]
+[node name="InteractionPoint" parent="World/Objects/Object031Fenster06" index="1"]
 position = Vector2(33.600006, 16.800003)
-script = ExtResource("121")
-category = 9
-item_type = 269
-group = 5
-active = true
-action_ids = PackedInt32Array(120)
 
 [node name="Object032Fenster04" parent="World/Objects" instance=ExtResource("13")]
 position = Vector2(-631, 363)
@@ -641,14 +453,8 @@ metadata/original_tile_position = Vector2(-0.010417, 14.135417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 32
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object032Fenster04"]
+[node name="InteractionPoint" parent="World/Objects/Object032Fenster04" index="1"]
 position = Vector2(33.599976, 16.799988)
-script = ExtResource("121")
-category = 9
-item_type = 267
-group = 5
-active = true
-action_ids = PackedInt32Array(120)
 
 [node name="Object033Wasserspender" parent="World/Objects" instance=ExtResource("44")]
 position = Vector2(341, 408)
@@ -661,16 +467,6 @@ metadata/original_tile_position = Vector2(11.052083, 4.947917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 33
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object033Wasserspender"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 5
-item_type = 263
-group = 8
-orientation = 1
-active = true
-action_ids = PackedInt32Array(139)
-
 [node name="Object034Poster05" parent="World/Objects" instance=ExtResource("32")]
 position = Vector2(-231.00002, 166)
 metadata/original_kind = "0x05090c70"
@@ -681,15 +477,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_POSTER05_IDLE_000_Poster5#Id
 metadata/original_tile_position = Vector2(0.052083, 5.864583)
 metadata/original_height = 0.0
 metadata/original_instance_id = 34
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object034Poster05"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 199
-group = 5
-active = true
-action_ids = PackedInt32Array(35)
 
 [node name="Object035Papierkorb02" parent="World/Objects" instance=ExtResource("27")]
 position = Vector2(283, 265)
@@ -702,13 +489,6 @@ metadata/original_tile_position = Vector2(7.46875, 2.572917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 35
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object035Papierkorb02"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 159
-active = true
-action_ids = PackedInt32Array(34)
-
 [node name="Object036Papierkorb02" parent="World/Objects" instance=ExtResource("27")]
 position = Vector2(465, 363)
 metadata/original_kind = "0x000009f0"
@@ -719,13 +499,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPIERKORB02_IDLE_000_Papier
 metadata/original_tile_position = Vector2(11.40625, 2.71875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 36
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object036Papierkorb02"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 159
-active = true
-action_ids = PackedInt32Array(34)
 
 [node name="Object037MonitorTastaturFrontal" parent="World/Objects" instance=ExtResource("22")]
 position = Vector2(-91.000015, 243)
@@ -738,16 +511,6 @@ metadata/original_tile_position = Vector2(3.114583, 6.010417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 37
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object037MonitorTastaturFrontal"]
-position = Vector2(-48, -24)
-script = ExtResource("121")
-category = 6
-item_type = 152
-room_id = 2
-orientation = 2
-active = true
-action_ids = PackedInt32Array(13, 14, 15, 58)
-
 [node name="Object038MonitorTastaturRechts" parent="World/Objects" instance=ExtResource("25")]
 position = Vector2(-350, 322)
 metadata/original_kind = "0x000609a3"
@@ -758,16 +521,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#RECHTS_IDLE
 metadata/original_tile_position = Vector2(2.0625, 10.354167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 38
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object038MonitorTastaturRechts"]
-position = Vector2(48, -24)
-script = ExtResource("121")
-category = 6
-item_type = 154
-room_id = 2
-orientation = 3
-active = true
-action_ids = PackedInt32Array(13, 14, 15, 58)
 
 [node name="Object039ToikabineEimer" parent="World/Objects" instance=ExtResource("42")]
 position = Vector2(334, 257)
@@ -780,16 +533,6 @@ metadata/original_tile_position = Vector2(7.833333, 1.875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 39
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object039ToikabineEimer"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 8
-item_type = 262
-room_id = 7
-orientation = 1
-active = true
-action_ids = PackedInt32Array(43, 44, 109, 110, 151, 112, 113, 153)
-
 [node name="Object040Putzwagen" parent="World/Objects" instance=ExtResource("111")]
 position = Vector2(565, 381)
 metadata/original_kind = "0x000006a0"
@@ -800,12 +543,6 @@ metadata/original_source_sprite = "CO_OBJECTS_WC_PUTZWAGEN_IDLE_000_Putzwagen#00
 metadata/original_tile_position = Vector2(12.822917, 2.052083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 40
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object040Putzwagen"]
-script = ExtResource("121")
-item_type = 106
-room_id = 7
-action_ids = PackedInt32Array()
 
 [node name="Object041Waschbecken" parent="World/Objects" instance=ExtResource("43")]
 position = Vector2(221, 277)
@@ -818,13 +555,6 @@ metadata/original_tile_position = Vector2(7.072917, 3.46875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 41
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object041Waschbecken"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 110
-active = true
-action_ids = PackedInt32Array(136)
-
 [node name="Object042Waschbecken" parent="World/Objects" instance=ExtResource("43")]
 position = Vector2(411, 374)
 metadata/original_kind = "0x000006e0"
@@ -835,13 +565,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_WASCHBECKEN_IDLE_000_Waschbe
 metadata/original_tile_position = Vector2(11.072917, 3.510417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 42
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object042Waschbecken"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 110
-active = true
-action_ids = PackedInt32Array(136)
 
 [node name="Object043Spiegel" parent="World/Objects" instance=ExtResource("34")]
 position = Vector2(406, 376)
@@ -854,15 +577,6 @@ metadata/original_tile_position = Vector2(11.0625, 3.604167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 43
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object043Spiegel"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 169
-group = 5
-active = true
-action_ids = PackedInt32Array(40)
-
 [node name="Object044Spiegel" parent="World/Objects" instance=ExtResource("34")]
 position = Vector2(218.00002, 275)
 metadata/original_kind = "0x05090a90"
@@ -874,14 +588,8 @@ metadata/original_tile_position = Vector2(7, 3.458333)
 metadata/original_height = 0.0
 metadata/original_instance_id = 44
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object044Spiegel"]
+[node name="InteractionPoint" parent="World/Objects/Object044Spiegel" index="1"]
 position = Vector2(47.999985, 24)
-script = ExtResource("121")
-category = 9
-item_type = 169
-group = 5
-active = true
-action_ids = PackedInt32Array(40)
 
 [node name="Object045Kopierer" parent="World/Objects" instance=ExtResource("19")]
 position = Vector2(153, 355)
@@ -894,14 +602,6 @@ metadata/original_tile_position = Vector2(7.989583, 5.802083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 45
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object045Kopierer"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 2
-item_type = 129
-active = true
-action_ids = PackedInt32Array(28, 29, 126, 82)
-
 [node name="Object046Konfitisch01" parent="World/Objects" instance=ExtResource("107")]
 position = Vector2(-56.000015, 152)
 metadata/original_kind = "0x00000df0"
@@ -912,12 +612,6 @@ metadata/original_source_sprite = "CO_OBJECTS_MEETING_KONFITISCH01_IDLE_000_Konf
 metadata/original_tile_position = Vector2(1.583333, 3.75)
 metadata/original_height = 0.0
 metadata/original_instance_id = 46
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object046Konfitisch01"]
-script = ExtResource("121")
-item_type = 223
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object047Zeigestock" parent="World/Objects" instance=ExtResource("110")]
 position = Vector2(-69, 153)
@@ -930,13 +624,6 @@ metadata/original_tile_position = Vector2(1.46875, 3.90625)
 metadata/original_height = 0.0
 metadata/original_instance_id = 47
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object047Zeigestock"]
-script = ExtResource("121")
-item_type = 227
-room_id = 2
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object048Leinwand" parent="World/Objects" instance=ExtResource("108")]
 position = Vector2(90.999985, 103.99999)
 metadata/original_kind = "0x00001091"
@@ -947,13 +634,6 @@ metadata/original_source_sprite = "CO_OBJECTS_MEETING_LEINWAND_IDLE_090_Leinwand
 metadata/original_tile_position = Vector2(2.114583, 1.21875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 48
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object048Leinwand"]
-script = ExtResource("121")
-item_type = 265
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object049Rednerpult" parent="World/Objects" instance=ExtResource("109")]
 position = Vector2(150, 171)
@@ -966,13 +646,6 @@ metadata/original_tile_position = Vector2(4.125, 2)
 metadata/original_height = 0.0
 metadata/original_instance_id = 49
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object049Rednerpult"]
-script = ExtResource("121")
-item_type = 226
-room_id = 2
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object050Beamer" parent="World/Objects" instance=ExtResource("5")]
 position = Vector2(-14.000015, 154)
 metadata/original_kind = "0x00001080"
@@ -983,13 +656,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_BEAMER_IDLE_000_Beamer#Idle#
 metadata/original_tile_position = Vector2(2.0625, 3.354167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 50
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object050Beamer"]
-script = ExtResource("121")
-item_type = 264
-room_id = 2
-active = true
-action_ids = PackedInt32Array(116)
 
 [node name="Object051Schredder" parent="World/Objects" instance=ExtResource("94")]
 position = Vector2(-292.00003, 350)
@@ -1002,14 +668,6 @@ metadata/original_tile_position = Vector2(3.25, 10.333334)
 metadata/original_height = 0.0
 metadata/original_instance_id = 51
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object051Schredder"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 2
-item_type = 59
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object052Stuhl02" parent="World/Objects" instance=ExtResource("103")]
 position = Vector2(-41.000015, 127.99999)
 metadata/original_kind = "0x01000491"
@@ -1020,15 +678,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_STUHL02_IDLE_090_STUHL02#090#
 metadata/original_tile_position = Vector2(1.239583, 3.09375)
 metadata/original_height = 0.0
 metadata/original_instance_id = 52
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object052Stuhl02"]
-position = Vector2(48, -24)
-script = ExtResource("121")
-item_type = 73
-group = 1
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object053Stuhl02" parent="World/Objects" instance=ExtResource("104")]
 position = Vector2(-0.99998474, 193)
@@ -1041,15 +690,6 @@ metadata/original_tile_position = Vector2(3.010417, 4.03125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 53
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object053Stuhl02"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 73
-group = 1
-room_id = 2
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object054Pappaufsteller01" parent="World/Objects" instance=ExtResource("28")]
 position = Vector2(-241.00002, 192)
 metadata/original_kind = "0x050900d0"
@@ -1060,15 +700,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPPAUFSTELLER01_IDLE_000_Pa
 metadata/original_tile_position = Vector2(0.489583, 6.510417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 54
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object054Pappaufsteller01"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 13
-group = 5
-active = true
-action_ids = PackedInt32Array(145)
 
 [node name="Object055Teddy" parent="World/Objects" instance=ExtResource("38")]
 position = Vector2(-341, 265)
@@ -1081,15 +712,6 @@ metadata/original_tile_position = Vector2(0.96875, 9.072917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 55
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object055Teddy"]
-script = ExtResource("121")
-category = 9
-item_type = 78
-group = 4
-room_id = 2
-active = true
-action_ids = PackedInt32Array(140)
-
 [node name="Object056Tischlampe2" parent="World/Objects" instance=ExtResource("40")]
 position = Vector2(-122.999985, 269)
 metadata/original_kind = "0x06000500"
@@ -1100,14 +722,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TISCHLAMPE2_IDLE_000_Tischla
 metadata/original_tile_position = Vector2(3.322917, 6.885417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 56
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object056Tischlampe2"]
-script = ExtResource("121")
-item_type = 80
-group = 6
-room_id = 2
-active = true
-action_ids = PackedInt32Array(108)
 
 [node name="Object057Schrank01" parent="World/Objects" instance=ExtResource("65")]
 position = Vector2(-118, 432)
@@ -1120,13 +734,6 @@ metadata/original_tile_position = Vector2(6.770833, 10.229167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 57
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object057Schrank01"]
-script = ExtResource("121")
-item_type = 28
-group = 7
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object058Schrank01" parent="World/Objects" instance=ExtResource("65")]
 position = Vector2(-60, 403)
 metadata/original_kind = "0x070001c2"
@@ -1137,13 +744,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SCHRANK01_IDLE_180_Schra
 metadata/original_tile_position = Vector2(6.770833, 9.020833)
 metadata/original_height = 0.0
 metadata/original_instance_id = 58
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object058Schrank01"]
-script = ExtResource("121")
-item_type = 28
-group = 7
-orientation = 2
-action_ids = PackedInt32Array()
 
 [node name="Object059VentiGrossAni" parent="World/Objects" instance=ExtResource("71")]
 position = Vector2(49, 313)
@@ -1156,13 +756,6 @@ metadata/original_tile_position = Vector2(6.03125, 6.010417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 59
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object059VentiGrossAni"]
-script = ExtResource("121")
-item_type = 201
-room_id = 2
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object060Schreibtisch02" parent="World/Objects" instance=ExtResource("97")]
 position = Vector2(195, 624)
 metadata/original_kind = "0x020003d0"
@@ -1173,13 +766,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_000_Schre
 metadata/original_tile_position = Vector2(14.03125, 10.96875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 60
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object060Schreibtisch02"]
-script = ExtResource("121")
-item_type = 61
-group = 2
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object061Schreibtisch03" parent="World/Objects" instance=ExtResource("99")]
 position = Vector2(287, 767)
@@ -1192,13 +778,6 @@ metadata/original_tile_position = Vector2(17.96875, 12.989584)
 metadata/original_height = 0.0
 metadata/original_instance_id = 61
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object061Schreibtisch03"]
-script = ExtResource("121")
-item_type = 62
-group = 2
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object062Drehstuhl01" parent="World/Objects" instance=ExtResource("79")]
 position = Vector2(180, 678)
 metadata/original_kind = "0x01060440"
@@ -1209,15 +788,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_DREHSTUHL01_IDLE_000_DREHSTUH
 metadata/original_tile_position = Vector2(15, 12.25)
 metadata/original_height = 0.0
 metadata/original_instance_id = 62
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object062Drehstuhl01"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 6
-item_type = 68
-group = 1
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object063Drehstuhl03" parent="World/Objects" instance=ExtResource("82")]
 position = Vector2(334, 791)
@@ -1230,15 +800,6 @@ metadata/original_tile_position = Vector2(18.958334, 13)
 metadata/original_height = 0.0
 metadata/original_instance_id = 63
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object063Drehstuhl03"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 6
-item_type = 70
-group = 1
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object064Schreibtisch04" parent="World/Objects" instance=ExtResource("101")]
 position = Vector2(-168, 540)
 metadata/original_kind = "0x020003f1"
@@ -1249,14 +810,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH04_IDLE_090_Schre
 metadata/original_tile_position = Vector2(8.5, 13)
 metadata/original_height = 0.0
 metadata/original_instance_id = 64
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object064Schreibtisch04"]
-script = ExtResource("121")
-item_type = 63
-group = 2
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object065Schreibtisch01" parent="World/Objects" instance=ExtResource("95")]
 position = Vector2(622, 501)
@@ -1269,13 +822,6 @@ metadata/original_tile_position = Vector2(15.916667, 3.958333)
 metadata/original_height = 0.0
 metadata/original_instance_id = 65
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object065Schreibtisch01"]
-script = ExtResource("121")
-item_type = 60
-group = 2
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object066Schreibtisch03" parent="World/Objects" instance=ExtResource("100")]
 position = Vector2(863, 483)
 metadata/original_kind = "0x020003e1"
@@ -1286,14 +832,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_SCHREIBTISCH03_IDLE_090_Schre
 metadata/original_tile_position = Vector2(18.052084, 1.072917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 66
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object066Schreibtisch03"]
-script = ExtResource("121")
-item_type = 62
-group = 2
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object067Drehstuhl01" parent="World/Objects" instance=ExtResource("79")]
 position = Vector2(666, 525)
@@ -1306,15 +844,6 @@ metadata/original_tile_position = Vector2(16.875, 4)
 metadata/original_height = 0.0
 metadata/original_instance_id = 67
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object067Drehstuhl01"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 6
-item_type = 68
-group = 1
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object068Stuhl01" parent="World/Objects" instance=ExtResource("102")]
 position = Vector2(873, 500)
 metadata/original_kind = "0x01000483"
@@ -1325,15 +854,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_STUHL01_IDLE_270_STUHL01#270#
 metadata/original_tile_position = Vector2(18.510416, 1.322917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 68
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object068Stuhl01"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-item_type = 72
-group = 1
-room_id = 2
-orientation = 3
-action_ids = PackedInt32Array()
 
 [node name="Object069Drehstuhl02" parent="World/Objects" instance=ExtResource("81")]
 position = Vector2(-188, 577)
@@ -1346,16 +866,6 @@ metadata/original_tile_position = Vector2(9.0625, 13.979167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 69
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object069Drehstuhl02"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 6
-item_type = 69
-group = 1
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
-
 [node name="Object070MonitorTastaturRechts" parent="World/Objects" instance=ExtResource("24")]
 position = Vector2(129, 650)
 metadata/original_kind = "0x000609a0"
@@ -1366,15 +876,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#RECHTS_IDLE
 metadata/original_tile_position = Vector2(13.885417, 12.197917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 70
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object070MonitorTastaturRechts"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 6
-item_type = 154
-room_id = 2
-active = true
-action_ids = PackedInt32Array(13, 14, 15, 58)
 
 [node name="Object071MonitorTastaturRechts" parent="World/Objects" instance=ExtResource("24")]
 position = Vector2(616, 497)
@@ -1387,14 +888,8 @@ metadata/original_tile_position = Vector2(15.770833, 3.9375)
 metadata/original_height = 0.0
 metadata/original_instance_id = 71
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object071MonitorTastaturRechts"]
+[node name="InteractionPoint" parent="World/Objects/Object071MonitorTastaturRechts" index="1"]
 position = Vector2(47.99994, 24)
-script = ExtResource("121")
-category = 6
-item_type = 154
-room_id = 2
-active = true
-action_ids = PackedInt32Array(13, 14, 15, 58)
 
 [node name="Object072MonitorTastaturFrontal" parent="World/Objects" instance=ExtResource("21")]
 position = Vector2(286, 766)
@@ -1407,15 +902,6 @@ metadata/original_tile_position = Vector2(17.9375, 12.979167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 72
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object072MonitorTastaturFrontal"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 6
-item_type = 152
-room_id = 2
-active = true
-action_ids = PackedInt32Array(13, 14, 15, 58)
-
 [node name="Object073MonitorTastaturLinks" parent="World/Objects" instance=ExtResource("23")]
 position = Vector2(-147, 555)
 metadata/original_kind = "0x00060991"
@@ -1426,16 +912,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#LINKS_IDLE_
 metadata/original_tile_position = Vector2(9.03125, 13.09375)
 metadata/original_height = 0.0
 metadata/original_instance_id = 73
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object073MonitorTastaturLinks"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 6
-item_type = 153
-room_id = 2
-orientation = 1
-active = true
-action_ids = PackedInt32Array(13, 14, 15, 58)
 
 [node name="Object074Koffer" parent="World/Objects" instance=ExtResource("18")]
 position = Vector2(-88, 585)
@@ -1448,15 +924,6 @@ metadata/original_tile_position = Vector2(10.270833, 13.104167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 74
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object074Koffer"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 133
-group = 7
-room_id = 2
-active = true
-action_ids = PackedInt32Array(2, 119, 53, 117)
-
 [node name="Object075Pflanzegross03" parent="World/Objects" instance=ExtResource("57")]
 position = Vector2(-213, 525)
 metadata/original_kind = "0x03090131"
@@ -1468,15 +935,8 @@ metadata/original_tile_position = Vector2(7.71875, 13.15625)
 metadata/original_height = 0.0
 metadata/original_instance_id = 75
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object075Pflanzegross03"]
+[node name="InteractionPoint" parent="World/Objects/Object075Pflanzegross03" index="1"]
 position = Vector2(0, 33.599976)
-script = ExtResource("121")
-category = 9
-item_type = 19
-group = 3
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object076Bild01" parent="World/Objects" instance=ExtResource("6")]
 position = Vector2(-301, 529)
@@ -1489,15 +949,6 @@ metadata/original_tile_position = Vector2(6.885417, 14.15625)
 metadata/original_height = 0.0
 metadata/original_instance_id = 76
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object076Bild01"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 126
-group = 5
-active = true
-action_ids = PackedInt32Array(8)
-
 [node name="Object077Bild02" parent="World/Objects" instance=ExtResource("7")]
 position = Vector2(-342, 557)
 metadata/original_kind = "0x050907f0"
@@ -1508,15 +959,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_BILD02_IDLE_000_Bild02#Idle#
 metadata/original_tile_position = Vector2(7.041667, 15.166667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 77
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object077Bild02"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 127
-group = 5
-active = true
-action_ids = PackedInt32Array(8)
 
 [node name="Object078Aktenablage" parent="World/Objects" instance=ExtResource("3")]
 position = Vector2(-102, 568)
@@ -1529,15 +971,6 @@ metadata/original_tile_position = Vector2(9.770833, 12.895833)
 metadata/original_height = 0.0
 metadata/original_instance_id = 78
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object078Aktenablage"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-item_type = 130
-room_id = 2
-orientation = 1
-active = true
-action_ids = PackedInt32Array(1)
-
 [node name="Object079Cdrom" parent="World/Objects" instance=ExtResource("9")]
 position = Vector2(241, 662)
 metadata/original_kind = "0x00000840"
@@ -1548,14 +981,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_CDROM_IDLE_000_CDROM#Idle#00
 metadata/original_tile_position = Vector2(15.302084, 11.28125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 79
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object079Cdrom"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 132
-room_id = 2
-active = true
-action_ids = PackedInt32Array(10)
 
 [node name="Object080Brief" parent="World/Objects" instance=ExtResource("8")]
 position = Vector2(908, 519)
@@ -1568,15 +993,6 @@ metadata/original_tile_position = Vector2(19.270834, 1.354167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 80
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object080Brief"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-item_type = 131
-room_id = 2
-orientation = 1
-active = true
-action_ids = PackedInt32Array(9)
-
 [node name="Object081Disketten" parent="World/Objects" instance=ExtResource("11")]
 position = Vector2(242, 648)
 metadata/original_kind = "0x000008e0"
@@ -1588,13 +1004,8 @@ metadata/original_tile_position = Vector2(15.020833, 10.979167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 81
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object081Disketten"]
+[node name="InteractionPoint" parent="World/Objects/Object081Disketten" index="1"]
 position = Vector2(47.99994, 24)
-script = ExtResource("121")
-item_type = 142
-room_id = 2
-active = true
-action_ids = PackedInt32Array(16)
 
 [node name="Object082Kaffeetasse02" parent="World/Objects" instance=ExtResource("17")]
 position = Vector2(328, 742)
@@ -1607,15 +1018,6 @@ metadata/original_tile_position = Vector2(17.875, 12.041667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 82
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object082Kaffeetasse02"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 147
-group = 8
-room_id = 2
-active = true
-action_ids = PackedInt32Array(26)
-
 [node name="Object083Papierkorb02" parent="World/Objects" instance=ExtResource("27")]
 position = Vector2(225, 666)
 metadata/original_kind = "0x000009f0"
@@ -1626,14 +1028,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_PAPIERKORB02_IDLE_000_Papier
 metadata/original_tile_position = Vector2(15.21875, 11.53125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 83
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object083Papierkorb02"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 159
-room_id = 2
-active = true
-action_ids = PackedInt32Array(34)
 
 [node name="Object084Poster01" parent="World/Objects" instance=ExtResource("30")]
 position = Vector2(-170, 467)
@@ -1646,15 +1040,6 @@ metadata/original_tile_position = Vector2(6.958333, 11.5)
 metadata/original_height = 0.0
 metadata/original_instance_id = 84
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object084Poster01"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 161
-group = 5
-active = true
-action_ids = PackedInt32Array(35)
-
 [node name="Object085Komode04" parent="World/Objects" instance=ExtResource("86")]
 position = Vector2(-129, 472)
 metadata/original_kind = "0x07000300"
@@ -1665,12 +1050,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_KOMODE04_IDLE_000_Komode04#00
 metadata/original_tile_position = Vector2(7.489583, 11.177083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 85
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object085Komode04"]
-script = ExtResource("121")
-item_type = 48
-group = 7
-action_ids = PackedInt32Array()
 
 [node name="Object086Komode02" parent="World/Objects" instance=ExtResource("85")]
 position = Vector2(-300, 559)
@@ -1683,13 +1062,6 @@ metadata/original_tile_position = Vector2(7.520833, 14.770833)
 metadata/original_height = 0.0
 metadata/original_instance_id = 86
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object086Komode02"]
-script = ExtResource("121")
-item_type = 46
-group = 7
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object087Fahrschublade01" parent="World/Objects" instance=ExtResource("84")]
 position = Vector2(90, 681)
 metadata/original_kind = "0x070002b0"
@@ -1700,13 +1072,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_FAHRSCHUBLADE01_IDLE_000_Fahr
 metadata/original_tile_position = Vector2(14.125, 13.25)
 metadata/original_height = 0.0
 metadata/original_instance_id = 87
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object087Fahrschublade01"]
-script = ExtResource("121")
-item_type = 43
-group = 7
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object088Pctower" parent="World/Objects" instance=ExtResource("89")]
 position = Vector2(129, 659)
@@ -1719,12 +1084,6 @@ metadata/original_tile_position = Vector2(14.072917, 12.385417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 88
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object088Pctower"]
-script = ExtResource("121")
-item_type = 134
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object089Pctower" parent="World/Objects" instance=ExtResource("89")]
 position = Vector2(269, 773)
 metadata/original_kind = "0x00000860"
@@ -1735,12 +1094,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_000_PCTower#Idle
 metadata/original_tile_position = Vector2(17.90625, 13.302083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 89
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object089Pctower"]
-script = ExtResource("121")
-item_type = 134
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object090Pctower" parent="World/Objects" instance=ExtResource("90")]
 position = Vector2(-167, 547)
@@ -1753,13 +1106,6 @@ metadata/original_tile_position = Vector2(8.65625, 13.135417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 90
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object090Pctower"]
-script = ExtResource("121")
-item_type = 134
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
-
 [node name="Object091Pctower" parent="World/Objects" instance=ExtResource("89")]
 position = Vector2(674, 480)
 metadata/original_kind = "0x00000860"
@@ -1770,12 +1116,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_PCTOWER_IDLE_000_PCTower#Idle
 metadata/original_tile_position = Vector2(16.020834, 2.979167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 91
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object091Pctower"]
-script = ExtResource("121")
-item_type = 134
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object092Pctower" parent="World/Objects" instance=ExtResource("91")]
 position = Vector2(-88.000015, 240)
@@ -1788,13 +1128,6 @@ metadata/original_tile_position = Vector2(3.083333, 5.916667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 92
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object092Pctower"]
-script = ExtResource("121")
-item_type = 134
-room_id = 2
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object093Trennwand02" parent="World/Objects" instance=ExtResource("105")]
 position = Vector2(348, 656)
 metadata/original_kind = "0x0b000521"
@@ -1805,14 +1138,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_TRENNWAND02_IDLE_090_Trennwan
 metadata/original_tile_position = Vector2(16.291666, 10.041667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 93
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object093Trennwand02"]
-script = ExtResource("121")
-item_type = 82
-group = 11
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object094Trennwand02" parent="World/Objects" instance=ExtResource("105")]
 position = Vector2(422, 690)
@@ -1825,14 +1150,6 @@ metadata/original_tile_position = Vector2(17.770834, 9.979167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 94
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object094Trennwand02"]
-script = ExtResource("121")
-item_type = 82
-group = 11
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
-
 [node name="Object095Coffeemat" parent="World/Objects" instance=ExtResource("10")]
 position = Vector2(587, 678)
 metadata/original_kind = "0x070508b1"
@@ -1843,17 +1160,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_COFFEEMAT_IDLE_090_Coffeemat
 metadata/original_tile_position = Vector2(19.239584, 8.010417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 95
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object095Coffeemat"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 5
-item_type = 139
-group = 7
-room_id = 2
-orientation = 1
-active = true
-action_ids = PackedInt32Array(11, 12, 57, 56)
 
 [node name="Object096Papier01" parent="World/Objects" instance=ExtResource("87")]
 position = Vector2(106, 662)
@@ -1866,14 +1172,6 @@ metadata/original_tile_position = Vector2(13.895833, 12.6875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 96
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object096Papier01"]
-script = ExtResource("121")
-item_type = 49
-group = 4
-room_id = 2
-orientation = 2
-action_ids = PackedInt32Array()
-
 [node name="Object097Stehlampe03" parent="World/Objects" instance=ExtResource("70")]
 position = Vector2(764, 413)
 metadata/original_kind = "0x06000280"
@@ -1884,13 +1182,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_STEHLAMPE03_IDLE_000_Ste
 metadata/original_tile_position = Vector2(15.5625, 0.645833)
 metadata/original_height = 0.0
 metadata/original_instance_id = 97
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object097Stehlampe03"]
-script = ExtResource("121")
-item_type = 40
-group = 6
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object098Schrank02" parent="World/Objects" instance=ExtResource("67")]
 position = Vector2(319, 653)
@@ -1903,14 +1194,6 @@ metadata/original_tile_position = Vector2(15.927083, 10.28125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 98
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object098Schrank02"]
-script = ExtResource("121")
-item_type = 30
-group = 7
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
-
 [node name="Object099Bucher01" parent="World/Objects" instance=ExtResource("46")]
 position = Vector2(-120, 468)
 metadata/original_kind = "0x00000010"
@@ -1921,12 +1204,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_B_CHER01_IDLE_000_B_cher
 metadata/original_tile_position = Vector2(7.5, 11)
 metadata/original_height = 0.0
 metadata/original_instance_id = 99
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object099Bucher01"]
-script = ExtResource("121")
-item_type = 1
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object100Bucher02" parent="World/Objects" instance=ExtResource("47")]
 position = Vector2(-123, 553)
@@ -1939,12 +1216,6 @@ metadata/original_tile_position = Vector2(9.239583, 12.802083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 100
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object100Bucher02"]
-script = ExtResource("121")
-item_type = 2
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object101Joghurt" parent="World/Objects" instance=ExtResource("50")]
 position = Vector2(-292, 559)
 metadata/original_kind = "0x00000070"
@@ -1955,12 +1226,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_JOGHURT_IDLE_000_Joghurt
 metadata/original_tile_position = Vector2(7.604167, 14.6875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 101
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object101Joghurt"]
-script = ExtResource("121")
-item_type = 7
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object102Obst" parent="World/Objects" instance=ExtResource("54")]
 position = Vector2(-166, 269)
@@ -1973,12 +1238,6 @@ metadata/original_tile_position = Vector2(2.875, 7.333333)
 metadata/original_height = 0.0
 metadata/original_instance_id = 102
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object102Obst"]
-script = ExtResource("121")
-item_type = 9
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object103Heizkorper" parent="World/Objects" instance=ExtResource("49")]
 position = Vector2(488, 580)
 metadata/original_kind = "0x090000a1"
@@ -1989,13 +1248,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_HEIZK_RPER_IDLE_090_Heiz
 metadata/original_tile_position = Vector2(16.166666, 7)
 metadata/original_height = 0.0
 metadata/original_instance_id = 103
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object103Heizkorper"]
-script = ExtResource("121")
-item_type = 10
-group = 9
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object104Heizkorper" parent="World/Objects" instance=ExtResource("49")]
 position = Vector2(131, 547)
@@ -2008,13 +1260,6 @@ metadata/original_tile_position = Vector2(11.760417, 10.03125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 104
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object104Heizkorper"]
-script = ExtResource("121")
-item_type = 10
-group = 9
-orientation = 1
-action_ids = PackedInt32Array()
-
 [node name="Object105Kleiderstaender02" parent="World/Objects" instance=ExtResource("51")]
 position = Vector2(396, 693)
 metadata/original_kind = "0x0a0000c0"
@@ -2025,13 +1270,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_KLEIDERSTAENDER02_IDLE_0
 metadata/original_tile_position = Vector2(17.5625, 10.3125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 105
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object105Kleiderstaender02"]
-script = ExtResource("121")
-item_type = 12
-group = 10
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object106Pflanzeklein04" parent="World/Objects" instance=ExtResource("59")]
 position = Vector2(189, 624)
@@ -2044,13 +1282,6 @@ metadata/original_tile_position = Vector2(13.96875, 11.03125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 106
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object106Pflanzeklein04"]
-script = ExtResource("121")
-item_type = 23
-group = 3
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object107Pflanzeklein03" parent="World/Objects" instance=ExtResource("58")]
 position = Vector2(-105, 165)
 metadata/original_kind = "0x03000161"
@@ -2061,13 +1292,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PFLANZEKLEIN03_IDLE_090_
 metadata/original_tile_position = Vector2(1.34375, 4.53125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 107
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object107Pflanzeklein03"]
-script = ExtResource("121")
-item_type = 22
-group = 3
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object108Pflanzeklein05" parent="World/Objects" instance=ExtResource("60")]
 position = Vector2(91, 685)
@@ -2080,13 +1304,6 @@ metadata/original_tile_position = Vector2(14.21875, 13.322917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 108
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object108Pflanzeklein05"]
-script = ExtResource("121")
-item_type = 24
-group = 3
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object109Photoaufsteller01" parent="World/Objects" instance=ExtResource("61")]
 position = Vector2(172, 635)
 metadata/original_kind = "0x04000190"
@@ -2097,13 +1314,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PHOTOAUFSTELLER01_IDLE_0
 metadata/original_tile_position = Vector2(14.020833, 11.4375)
 metadata/original_height = 0.0
 metadata/original_instance_id = 109
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object109Photoaufsteller01"]
-script = ExtResource("121")
-item_type = 25
-group = 4
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object110Photoaufsteller02" parent="World/Objects" instance=ExtResource("63")]
 position = Vector2(260, 774)
@@ -2116,13 +1326,6 @@ metadata/original_tile_position = Vector2(17.833334, 13.416667)
 metadata/original_height = 0.0
 metadata/original_instance_id = 110
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object110Photoaufsteller02"]
-script = ExtResource("121")
-item_type = 26
-group = 4
-room_id = 2
-action_ids = PackedInt32Array()
-
 [node name="Object111Photoaufsteller01" parent="World/Objects" instance=ExtResource("62")]
 position = Vector2(-181, 537)
 metadata/original_kind = "0x04000191"
@@ -2133,14 +1336,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_PHOTOAUFSTELLER01_IDLE_0
 metadata/original_tile_position = Vector2(8.302083, 13.072917)
 metadata/original_height = 0.0
 metadata/original_instance_id = 111
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object111Photoaufsteller01"]
-script = ExtResource("121")
-item_type = 25
-group = 4
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object112Schrank01" parent="World/Objects" instance=ExtResource("64")]
 position = Vector2(3, 693)
@@ -2153,12 +1348,6 @@ metadata/original_tile_position = Vector2(13.46875, 14.40625)
 metadata/original_height = 0.0
 metadata/original_instance_id = 112
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object112Schrank01"]
-script = ExtResource("121")
-item_type = 28
-group = 7
-action_ids = PackedInt32Array()
-
 [node name="Object113Schrank01Hoch" parent="World/Objects" instance=ExtResource("66")]
 position = Vector2(-56, 722)
 metadata/original_kind = "0x070001d0"
@@ -2169,12 +1358,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_SCHRANK01HOCH_IDLE_000_S
 metadata/original_tile_position = Vector2(13.458333, 15.625)
 metadata/original_height = 0.0
 metadata/original_instance_id = 113
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object113Schrank01Hoch"]
-script = ExtResource("121")
-item_type = 29
-group = 7
-action_ids = PackedInt32Array()
 
 [node name="Object114Lichtschalter" parent="World/Objects" instance=ExtResource("52")]
 position = Vector2(405, 563)
@@ -2187,11 +1370,6 @@ metadata/original_tile_position = Vector2(14.947917, 7.510417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 114
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object114Lichtschalter"]
-script = ExtResource("121")
-item_type = 36
-action_ids = PackedInt32Array()
-
 [node name="Object115Lichtschalter" parent="World/Objects" instance=ExtResource("53")]
 position = Vector2(89, 527)
 metadata/original_kind = "0x00000241"
@@ -2202,12 +1380,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_LICHTSCHALTER_IDLE_090_L
 metadata/original_tile_position = Vector2(10.90625, 10.052083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 115
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object115Lichtschalter"]
-script = ExtResource("121")
-item_type = 36
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object116Lichtschalter" parent="World/Objects" instance=ExtResource("52")]
 position = Vector2(549, 491)
@@ -2220,11 +1392,6 @@ metadata/original_tile_position = Vector2(14.947917, 4.510417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 116
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object116Lichtschalter"]
-script = ExtResource("121")
-item_type = 36
-action_ids = PackedInt32Array()
-
 [node name="Object117VentiTisch" parent="World/Objects" instance=ExtResource("72")]
 position = Vector2(666, 478)
 metadata/original_kind = "0x00000290"
@@ -2235,12 +1402,6 @@ metadata/original_source_sprite = "CO_OBJECTS_ALLGEMEIN_VENTI#TISCH_IDLE_000_Ven
 metadata/original_tile_position = Vector2(15.895833, 3.020833)
 metadata/original_height = 0.0
 metadata/original_instance_id = 117
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object117VentiTisch"]
-script = ExtResource("121")
-item_type = 41
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object118Pappaufsteller03" parent="World/Objects" instance=ExtResource("29")]
 position = Vector2(986, 520)
@@ -2253,17 +1414,6 @@ metadata/original_tile_position = Vector2(20.104166, 0.5625)
 metadata/original_height = 0.0
 metadata/original_instance_id = 118
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object118Pappaufsteller03"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 15
-group = 5
-room_id = 2
-orientation = 1
-active = true
-action_ids = PackedInt32Array(145)
-
 [node name="Object119Aushang" parent="World/Objects" instance=ExtResource("4")]
 position = Vector2(86, 343)
 metadata/original_kind = "0x000907d0"
@@ -2274,14 +1424,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_AUSHANG_IDLE_000_Aushang#Idl
 metadata/original_tile_position = Vector2(7.041667, 6.25)
 metadata/original_height = 0.0
 metadata/original_instance_id = 119
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object119Aushang"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 125
-active = true
-action_ids = PackedInt32Array(7)
 
 [node name="Object120Papierkorb01" parent="World/Objects" instance=ExtResource("26")]
 position = Vector2(267, 793)
@@ -2294,14 +1436,6 @@ metadata/original_tile_position = Vector2(18.302084, 13.739583)
 metadata/original_height = 0.0
 metadata/original_instance_id = 120
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object120Papierkorb01"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 128
-room_id = 2
-active = true
-action_ids = PackedInt32Array(34)
-
 [node name="Object121Pflanzegross01" parent="World/Objects" instance=ExtResource("55")]
 position = Vector2(235, 791)
 metadata/original_kind = "0x03090110"
@@ -2313,14 +1447,8 @@ metadata/original_tile_position = Vector2(17.927084, 14.03125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 121
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object121Pflanzegross01"]
+[node name="InteractionPoint" parent="World/Objects/Object121Pflanzegross01" index="1"]
 position = Vector2(0.00012207031, 33.600037)
-script = ExtResource("121")
-category = 9
-item_type = 17
-group = 3
-room_id = 2
-action_ids = PackedInt32Array()
 
 [node name="Object122Poster03" parent="World/Objects" instance=ExtResource("31")]
 position = Vector2(64, 641)
@@ -2333,15 +1461,6 @@ metadata/original_tile_position = Vector2(13.020833, 12.6875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 122
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object122Poster03"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-category = 9
-item_type = 163
-group = 5
-active = true
-action_ids = PackedInt32Array(35)
-
 [node name="Object123Postfacher" parent="World/Objects" instance=ExtResource("33")]
 position = Vector2(532, 638)
 metadata/original_kind = "0x07020a41"
@@ -2352,17 +1471,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_POSTF_CHER_IDLE_090_Postf_ch
 metadata/original_tile_position = Vector2(17.833334, 7.75)
 metadata/original_height = 0.0
 metadata/original_instance_id = 123
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object123Postfacher"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 2
-item_type = 164
-group = 7
-room_id = 2
-orientation = 1
-active = true
-action_ids = PackedInt32Array(36)
 
 [node name="Object124Stifthalter01" parent="World/Objects" instance=ExtResource("35")]
 position = Vector2(599, 506)
@@ -2375,14 +1483,6 @@ metadata/original_tile_position = Vector2(15.78125, 4.302083)
 metadata/original_height = 0.0
 metadata/original_instance_id = 124
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object124Stifthalter01"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 171
-room_id = 2
-active = true
-action_ids = PackedInt32Array(42)
-
 [node name="Object125Stifthalter02" parent="World/Objects" instance=ExtResource("36")]
 position = Vector2(-145, 263)
 metadata/original_kind = "0x00000ac0"
@@ -2393,14 +1493,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_STIFTHALTER02_IDLE_000_Stift
 metadata/original_tile_position = Vector2(2.96875, 6.989583)
 metadata/original_height = 0.0
 metadata/original_instance_id = 125
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object125Stifthalter02"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 172
-room_id = 2
-active = true
-action_ids = PackedInt32Array(42)
 
 [node name="Object126Feuerzeug" parent="World/Objects" instance=ExtResource("16")]
 position = Vector2(688, 481)
@@ -2413,14 +1505,6 @@ metadata/original_tile_position = Vector2(16.1875, 2.854167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 126
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object126Feuerzeug"]
-position = Vector2(48, 24)
-script = ExtResource("121")
-item_type = 145
-room_id = 2
-active = true
-action_ids = PackedInt32Array(19)
-
 [node name="Object127Telefon01" parent="World/Objects" instance=ExtResource("39")]
 position = Vector2(-331, 338)
 metadata/original_kind = "0x04020c33"
@@ -2431,17 +1515,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_TELEFON01_IDLE_270_Telefon01
 metadata/original_tile_position = Vector2(2.59375, 10.489583)
 metadata/original_height = 0.0
 metadata/original_instance_id = 127
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object127Telefon01"]
-position = Vector2(48, -24)
-script = ExtResource("121")
-category = 2
-item_type = 195
-group = 4
-room_id = 2
-orientation = 3
-active = true
-action_ids = PackedInt32Array(104, 105, 106, 133)
 
 [node name="Object128Fax" parent="World/Objects" instance=ExtResource("12")]
 position = Vector2(867, 480)
@@ -2454,17 +1527,6 @@ metadata/original_tile_position = Vector2(18.03125, 0.96875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 128
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object128Fax"]
-position = Vector2(-48, 24)
-script = ExtResource("121")
-category = 2
-item_type = 237
-group = 4
-room_id = 2
-orientation = 1
-active = true
-action_ids = PackedInt32Array(59, 60, 61, 62)
-
 [node name="Object129Matrixpille" parent="World/Objects" instance=ExtResource("20")]
 position = Vector2(-476, 349)
 metadata/original_kind = "0x00000f40"
@@ -2475,13 +1537,6 @@ metadata/original_source_sprite = "CO_OBJECTS_AKTIV_MATRIXPILLE_IDLE_000_Matrixp
 metadata/original_tile_position = Vector2(1.3125, 12.229167)
 metadata/original_height = 0.0
 metadata/original_instance_id = 129
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object129Matrixpille"]
-script = ExtResource("121")
-item_type = 244
-room_id = 3
-active = true
-action_ids = PackedInt32Array(85)
 
 [node name="Object130Cornflakes" parent="World/Objects" instance=ExtResource("48")]
 position = Vector2(901, 497)
@@ -2494,13 +1549,6 @@ metadata/original_tile_position = Vector2(18.739584, 0.96875)
 metadata/original_height = 0.0
 metadata/original_instance_id = 130
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object130Cornflakes"]
-script = ExtResource("121")
-item_type = 5
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
-
 [node name="Object131Papier03" parent="World/Objects" instance=ExtResource("88")]
 position = Vector2(878, 505)
 metadata/original_kind = "0x04000331"
@@ -2511,14 +1559,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_PAPIER03_IDLE_090_Papier03#09
 metadata/original_tile_position = Vector2(18.666666, 1.375)
 metadata/original_height = 0.0
 metadata/original_instance_id = 131
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object131Papier03"]
-script = ExtResource("121")
-item_type = 51
-group = 4
-room_id = 2
-orientation = 1
-action_ids = PackedInt32Array()
 
 [node name="Object132Regal03" parent="World/Objects" instance=ExtResource("93")]
 position = Vector2(735, 679)
@@ -2531,12 +1571,6 @@ metadata/original_tile_position = Vector2(20.802084, 6.489583)
 metadata/original_height = 0.0
 metadata/original_instance_id = 132
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object132Regal03"]
-script = ExtResource("121")
-item_type = 57
-group = 7
-action_ids = PackedInt32Array()
-
 [node name="Object133Regal01" parent="World/Objects" instance=ExtResource("92")]
 position = Vector2(804, 633)
 metadata/original_kind = "0x07000370"
@@ -2547,12 +1581,6 @@ metadata/original_source_sprite = "CO_OBJECTS_B_RO_REGAL01_IDLE_000_Regal01#000"
 metadata/original_tile_position = Vector2(20.5625, 4.8125)
 metadata/original_height = 0.0
 metadata/original_instance_id = 133
-
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object133Regal01"]
-script = ExtResource("121")
-item_type = 55
-group = 7
-action_ids = PackedInt32Array()
 
 [node name="Object134Zigaretten" parent="World/Objects" instance=ExtResource("45")]
 position = Vector2(-301, 330)
@@ -2565,35 +1593,30 @@ metadata/original_tile_position = Vector2(2.739583, 10.010417)
 metadata/original_height = 0.0
 metadata/original_instance_id = 134
 
-[node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object134Zigaretten"]
+[node name="InteractionPoint" parent="World/Objects/Object134Zigaretten" index="1"]
 position = Vector2(47.999985, 24)
-script = ExtResource("121")
-item_type = 176
-room_id = 2
-active = true
-action_ids = PackedInt32Array(48)
 
 [node name="CollisionTileMapLayer" type="TileMapLayer" parent="World"]
 z_index = 10
 tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAALAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAANAAAAAAAAAAAAAAAOAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAARAAAAAAAAAAAAAAASAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAVAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAABAAEAAAAAAAAAAAACAAEAAAAAAAAAAAAHAAEAAAAAAAAAAAAIAAEAAAAAAAAAAAAJAAEAAAAAAAAAAAAKAAEAAAAAAAAAAAALAAEAAAAAAAAAAAAMAAEAAAAAAAAAAAANAAEAAAAAAAAAAAAOAAEAAAAAAAAAAAAPAAEAAAAAAAAAAAASAAEAAAAAAAAAAAATAAEAAAAAAAAAAAAVAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAEAAIAAAAAAAAAAAAHAAIAAAAAAAAAAAAIAAIAAAAAAAAAAAAJAAIAAAAAAAAAAAAKAAIAAAAAAAAAAAALAAIAAAAAAAAAAAAMAAIAAAAAAAAAAAANAAIAAAAAAAAAAAAOAAIAAAAAAAAAAAAPAAIAAAAAAAAAAAAVAAIAAAAAAAAAAAAAAAMAAAAAAAAAAAABAAMAAAAAAAAAAAACAAMAAAAAAAAAAAAHAAMAAAAAAAAAAAALAAMAAAAAAAAAAAAPAAMAAAAAAAAAAAAQAAMAAAAAAAAAAAAVAAMAAAAAAAAAAAAAAAQAAAAAAAAAAAABAAQAAAAAAAAAAAACAAQAAAAAAAAAAAADAAQAAAAAAAAAAAAHAAQAAAAAAAAAAAAIAAQAAAAAAAAAAAALAAQAAAAAAAAAAAAOAAQAAAAAAAAAAAAPAAQAAAAAAAAAAAAQAAQAAAAAAAAAAAARAAQAAAAAAAAAAAAVAAQAAAAAAAAAAAAAAAUAAAAAAAAAAAABAAUAAAAAAAAAAAACAAUAAAAAAAAAAAADAAUAAAAAAAAAAAAGAAUAAAAAAAAAAAAHAAUAAAAAAAAAAAAIAAUAAAAAAAAAAAALAAUAAAAAAAAAAAAVAAUAAAAAAAAAAAAAAAYAAAAAAAAAAAACAAYAAAAAAAAAAAADAAYAAAAAAAAAAAAGAAYAAAAAAAAAAAAHAAYAAAAAAAAAAAAIAAYAAAAAAAAAAAAVAAYAAAAAAAAAAAAAAAcAAAAAAAAAAAADAAcAAAAAAAAAAAAPAAcAAAAAAAAAAAAQAAcAAAAAAAAAAAARAAcAAAAAAAAAAAASAAcAAAAAAAAAAAATAAcAAAAAAAAAAAAUAAcAAAAAAAAAAAAVAAcAAAAAAAAAAAAAAAgAAAAAAAAAAAATAAgAAAAAAAAAAAAUAAgAAAAAAAAAAAAVAAgAAAAAAAAAAAAWAAgAAAAAAAAAAAAAAAkAAAAAAAAAAAABAAkAAAAAAAAAAAACAAkAAAAAAAAAAAAHAAkAAAAAAAAAAAAVAAkAAAAAAAAAAAAWAAkAAAAAAAAAAAAAAAoAAAAAAAAAAAABAAoAAAAAAAAAAAACAAoAAAAAAAAAAAADAAoAAAAAAAAAAAAHAAoAAAAAAAAAAAAIAAoAAAAAAAAAAAALAAoAAAAAAAAAAAAMAAoAAAAAAAAAAAANAAoAAAAAAAAAAAAOAAoAAAAAAAAAAAAPAAoAAAAAAAAAAAAQAAoAAAAAAAAAAAARAAoAAAAAAAAAAAASAAoAAAAAAAAAAAAVAAoAAAAAAAAAAAAWAAoAAAAAAAAAAAAAAAsAAAAAAAAAAAABAAsAAAAAAAAAAAACAAsAAAAAAAAAAAADAAsAAAAAAAAAAAAGAAsAAAAAAAAAAAAHAAsAAAAAAAAAAAANAAsAAAAAAAAAAAAOAAsAAAAAAAAAAAAPAAsAAAAAAAAAAAAVAAsAAAAAAAAAAAAWAAsAAAAAAAAAAAAAAAwAAAAAAAAAAAABAAwAAAAAAAAAAAAGAAwAAAAAAAAAAAAHAAwAAAAAAAAAAAANAAwAAAAAAAAAAAAOAAwAAAAAAAAAAAAPAAwAAAAAAAAAAAASAAwAAAAAAAAAAAAVAAwAAAAAAAAAAAAAAA0AAAAAAAAAAAAHAA0AAAAAAAAAAAAIAA0AAAAAAAAAAAAJAA0AAAAAAAAAAAAKAA0AAAAAAAAAAAANAA0AAAAAAAAAAAAOAA0AAAAAAAAAAAASAA0AAAAAAAAAAAATAA0AAAAAAAAAAAAVAA0AAAAAAAAAAAAAAA4AAAAAAAAAAAADAA4AAAAAAAAAAAAHAA4AAAAAAAAAAAAJAA4AAAAAAAAAAAANAA4AAAAAAAAAAAASAA4AAAAAAAAAAAAVAA4AAAAAAAAAAAAAAA8AAAAAAAAAAAABAA8AAAAAAAAAAAACAA8AAAAAAAAAAAADAA8AAAAAAAAAAAAFAA8AAAAAAAAAAAAGAA8AAAAAAAAAAAAHAA8AAAAAAAAAAAANAA8AAAAAAAAAAAAVAA8AAAAAAAAAAAAAABAAAAAAAAAAAAABABAAAAAAAAAAAAACABAAAAAAAAAAAAADABAAAAAAAAAAAAAEABAAAAAAAAAAAAAFABAAAAAAAAAAAAAGABAAAAAAAAAAAAAHABAAAAAAAAAAAAAIABAAAAAAAAAAAAAJABAAAAAAAAAAAAAKABAAAAAAAAAAAAALABAAAAAAAAAAAAAMABAAAAAAAAAAAAANABAAAAAAAAAAAAAOABAAAAAAAAAAAAAPABAAAAAAAAAAAAAQABAAAAAAAAAAAAARABAAAAAAAAAAAAASABAAAAAAAAAAAAATABAAAAAAAAAAAAAUABAAAAAAAAAAAAAVABAAAAAAAAAAAAAFABEAAAAAAAAAAAAGABEAAAAAAAAAAAAHABEAAAAAAAAAAAAKABEAAAAAAAAAAAAMABEAAAAAAAAAAAA=")
-tile_set = ExtResource("130")
-script = ExtResource("125")
+tile_set = ExtResource("129")
+script = ExtResource("124")
 map_size = Vector2i(23, 18)
 metadata/_edit_lock_ = true
 
 [node name="RoomTileMapLayer" type="TileMapLayer" parent="World"]
 z_index = 9
 tile_map_data = PackedByteArray("AAABAAEAAAAAAAAAAgACAAEAAAAAAAAAAgADAAEAAAAAAAAAAgAEAAEAAAAAAAAAAgAFAAEAAAAAAAAAAgAGAAEAAAAAAAAAAgAIAAEAAAAAAAAABwAJAAEAAAAAAAAABwAKAAEAAAAAAAAABwAMAAEAAAAAAAAABwANAAEAAAAAAAAABwAOAAEAAAAAAAAABwAQAAEAAAAAAAAAAgARAAEAAAAAAAAAAgASAAEAAAAAAAAAAgATAAEAAAAAAAAAAgAUAAEAAAAAAAAAAgABAAIAAAAAAAAAAgACAAIAAAAAAAAAAgADAAIAAAAAAAAAAgAEAAIAAAAAAAAAAgAFAAIAAAAAAAAAAgAGAAIAAAAAAAAAAgAIAAIAAAAAAAAABwAJAAIAAAAAAAAABwAKAAIAAAAAAAAABwAMAAIAAAAAAAAABwANAAIAAAAAAAAABwAOAAIAAAAAAAAABwAQAAIAAAAAAAAAAgARAAIAAAAAAAAAAgASAAIAAAAAAAAAAgATAAIAAAAAAAAAAgAUAAIAAAAAAAAAAgABAAMAAAAAAAAAAgACAAMAAAAAAAAAAgADAAMAAAAAAAAAAgAEAAMAAAAAAAAAAgAFAAMAAAAAAAAAAgAGAAMAAAAAAAAAAgAIAAMAAAAAAAAABwAJAAMAAAAAAAAABwAKAAMAAAAAAAAABwAMAAMAAAAAAAAABwANAAMAAAAAAAAABwAOAAMAAAAAAAAABwAQAAMAAAAAAAAAAgARAAMAAAAAAAAAAgASAAMAAAAAAAAAAgATAAMAAAAAAAAAAgAUAAMAAAAAAAAAAgABAAQAAAAAAAAAAgACAAQAAAAAAAAAAgADAAQAAAAAAAAAAgAEAAQAAAAAAAAAAgAFAAQAAAAAAAAAAgAGAAQAAAAAAAAAAgAQAAQAAAAAAAAAAgARAAQAAAAAAAAAAgASAAQAAAAAAAAAAgATAAQAAAAAAAAAAgAUAAQAAAAAAAAAAgAEAAUAAAAAAAAAAgAFAAUAAAAAAAAAAgAQAAUAAAAAAAAAAgARAAUAAAAAAAAAAgASAAUAAAAAAAAAAgATAAUAAAAAAAAAAgAUAAUAAAAAAAAAAgABAAYAAAAAAAAAAgACAAYAAAAAAAAAAgADAAYAAAAAAAAAAgAEAAYAAAAAAAAAAgAFAAYAAAAAAAAAAgAGAAYAAAAAAAAAAgAQAAYAAAAAAAAAAgARAAYAAAAAAAAAAgASAAYAAAAAAAAAAgATAAYAAAAAAAAAAgAUAAYAAAAAAAAAAgABAAcAAAAAAAAAAgACAAcAAAAAAAAAAgADAAcAAAAAAAAAAgAEAAcAAAAAAAAAAgAFAAcAAAAAAAAAAgAGAAcAAAAAAAAAAgABAAgAAAAAAAAAAgACAAgAAAAAAAAAAgADAAgAAAAAAAAAAgAEAAgAAAAAAAAAAgAFAAgAAAAAAAAAAgAGAAgAAAAAAAAAAgAQAAgAAAAAAAAAAgARAAgAAAAAAAAAAgASAAgAAAAAAAAAAgATAAgAAAAAAAAAAgAUAAgAAAAAAAAAAgABAAkAAAAAAAAAAgACAAkAAAAAAAAAAgADAAkAAAAAAAAAAgAEAAkAAAAAAAAAAgAFAAkAAAAAAAAAAgAGAAkAAAAAAAAAAgAQAAkAAAAAAAAAAgARAAkAAAAAAAAAAgASAAkAAAAAAAAAAgATAAkAAAAAAAAAAgAUAAkAAAAAAAAAAgABAAoAAAAAAAAAAgACAAoAAAAAAAAAAgADAAoAAAAAAAAAAgAEAAoAAAAAAAAAAgAFAAoAAAAAAAAAAgAGAAoAAAAAAAAAAgAQAAoAAAAAAAAAAgARAAoAAAAAAAAAAgASAAoAAAAAAAAAAgATAAoAAAAAAAAAAgAUAAoAAAAAAAAAAgAIAAsAAAAAAAAAAgAJAAsAAAAAAAAAAgAKAAsAAAAAAAAAAgALAAsAAAAAAAAAAgAMAAsAAAAAAAAAAgAOAAsAAAAAAAAAAgAPAAsAAAAAAAAAAgAQAAsAAAAAAAAAAgARAAsAAAAAAAAAAgASAAsAAAAAAAAAAgATAAsAAAAAAAAAAgAUAAsAAAAAAAAAAgABAAwAAAAAAAAAAwACAAwAAAAAAAAAAwADAAwAAAAAAAAAAwAEAAwAAAAAAAAAAwAFAAwAAAAAAAAAAwAGAAwAAAAAAAAAAwAIAAwAAAAAAAAAAgAJAAwAAAAAAAAAAgAKAAwAAAAAAAAAAgALAAwAAAAAAAAAAgAMAAwAAAAAAAAAAgAOAAwAAAAAAAAAAgAPAAwAAAAAAAAAAgAQAAwAAAAAAAAAAgARAAwAAAAAAAAAAgASAAwAAAAAAAAAAgATAAwAAAAAAAAAAgAUAAwAAAAAAAAAAgABAA0AAAAAAAAAAwACAA0AAAAAAAAAAwADAA0AAAAAAAAAAwAEAA0AAAAAAAAAAwAFAA0AAAAAAAAAAwAGAA0AAAAAAAAAAwAIAA0AAAAAAAAAAgAJAA0AAAAAAAAAAgAKAA0AAAAAAAAAAgALAA0AAAAAAAAAAgAMAA0AAAAAAAAAAgAOAA0AAAAAAAAAAgAPAA0AAAAAAAAAAgAQAA0AAAAAAAAAAgARAA0AAAAAAAAAAgASAA0AAAAAAAAAAgATAA0AAAAAAAAAAgAUAA0AAAAAAAAAAgABAA4AAAAAAAAAAwACAA4AAAAAAAAAAwADAA4AAAAAAAAAAwAEAA4AAAAAAAAAAwAFAA4AAAAAAAAAAwAGAA4AAAAAAAAAAwAIAA4AAAAAAAAAAgAJAA4AAAAAAAAAAgAKAA4AAAAAAAAAAgALAA4AAAAAAAAAAgAMAA4AAAAAAAAAAgAOAA4AAAAAAAAAAgAPAA4AAAAAAAAAAgAQAA4AAAAAAAAAAgARAA4AAAAAAAAAAgASAA4AAAAAAAAAAgATAA4AAAAAAAAAAgAUAA4AAAAAAAAAAgABAA8AAAAAAAAAAwACAA8AAAAAAAAAAwADAA8AAAAAAAAAAwAEAA8AAAAAAAAAAwAFAA8AAAAAAAAAAwAGAA8AAAAAAAAAAwAIAA8AAAAAAAAAAgAJAA8AAAAAAAAAAgAKAA8AAAAAAAAAAgALAA8AAAAAAAAAAgAMAA8AAAAAAAAAAgAOAA8AAAAAAAAAAgAPAA8AAAAAAAAAAgAQAA8AAAAAAAAAAgARAA8AAAAAAAAAAgASAA8AAAAAAAAAAgATAA8AAAAAAAAAAgAUAA8AAAAAAAAAAgA=")
-tile_set = ExtResource("133")
-script = ExtResource("128")
+tile_set = ExtResource("132")
+script = ExtResource("127")
 label_cells = true
 metadata/_edit_lock_ = true
 
 [node name="SightTileMapLayer" type="TileMapLayer" parent="World"]
 z_index = 11
 tile_map_data = PackedByteArray("AAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAADAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAJAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAALAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAANAAAAAAAAAAAAAAAOAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAARAAAAAAAAAAAAAAASAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAAVAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAHAAEAAAAAAAAAAAAIAAEAAAAAAAAAAAAJAAEAAAAAAAAAAAAKAAEAAAAAAAAAAAALAAEAAAAAAAAAAAAMAAEAAAAAAAAAAAANAAEAAAAAAAAAAAAOAAEAAAAAAAAAAAAPAAEAAAAAAAAAAAAVAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAHAAIAAAAAAAAAAAAIAAIAAAAAAAAAAAAJAAIAAAAAAAAAAAAKAAIAAAAAAAAAAAALAAIAAAAAAAAAAAAMAAIAAAAAAAAAAAANAAIAAAAAAAAAAAAOAAIAAAAAAAAAAAAPAAIAAAAAAAAAAAAVAAIAAAAAAAAAAAAAAAMAAAAAAAAAAAAHAAMAAAAAAAAAAAALAAMAAAAAAAAAAAAPAAMAAAAAAAAAAAAVAAMAAAAAAAAAAAAAAAQAAAAAAAAAAAAHAAQAAAAAAAAAAAAIAAQAAAAAAAAAAAALAAQAAAAAAAAAAAAOAAQAAAAAAAAAAAAPAAQAAAAAAAAAAAAVAAQAAAAAAAAAAAAAAAUAAAAAAAAAAAABAAUAAAAAAAAAAAACAAUAAAAAAAAAAAADAAUAAAAAAAAAAAAGAAUAAAAAAAAAAAAHAAUAAAAAAAAAAAAVAAUAAAAAAAAAAAAAAAYAAAAAAAAAAAAHAAYAAAAAAAAAAAAVAAYAAAAAAAAAAAAAAAcAAAAAAAAAAAAPAAcAAAAAAAAAAAAQAAcAAAAAAAAAAAARAAcAAAAAAAAAAAASAAcAAAAAAAAAAAATAAcAAAAAAAAAAAAUAAcAAAAAAAAAAAAVAAcAAAAAAAAAAAAAAAgAAAAAAAAAAAAVAAgAAAAAAAAAAAAWAAgAAAAAAAAAAAAAAAkAAAAAAAAAAAAHAAkAAAAAAAAAAAAVAAkAAAAAAAAAAAAWAAkAAAAAAAAAAAAAAAoAAAAAAAAAAAAHAAoAAAAAAAAAAAAIAAoAAAAAAAAAAAALAAoAAAAAAAAAAAAMAAoAAAAAAAAAAAANAAoAAAAAAAAAAAAOAAoAAAAAAAAAAAAPAAoAAAAAAAAAAAAQAAoAAAAAAAAAAAARAAoAAAAAAAAAAAASAAoAAAAAAAAAAAAVAAoAAAAAAAAAAAAWAAoAAAAAAAAAAAAAAAsAAAAAAAAAAAABAAsAAAAAAAAAAAACAAsAAAAAAAAAAAADAAsAAAAAAAAAAAAGAAsAAAAAAAAAAAAHAAsAAAAAAAAAAAANAAsAAAAAAAAAAAAVAAsAAAAAAAAAAAAWAAsAAAAAAAAAAAAAAAwAAAAAAAAAAAAHAAwAAAAAAAAAAAANAAwAAAAAAAAAAAAVAAwAAAAAAAAAAAAAAA0AAAAAAAAAAAAHAA0AAAAAAAAAAAANAA0AAAAAAAAAAAAVAA0AAAAAAAAAAAAAAA4AAAAAAAAAAAAHAA4AAAAAAAAAAAANAA4AAAAAAAAAAAAVAA4AAAAAAAAAAAAAAA8AAAAAAAAAAAAHAA8AAAAAAAAAAAANAA8AAAAAAAAAAAAVAA8AAAAAAAAAAAAAABAAAAAAAAAAAAABABAAAAAAAAAAAAACABAAAAAAAAAAAAADABAAAAAAAAAAAAAEABAAAAAAAAAAAAAFABAAAAAAAAAAAAAGABAAAAAAAAAAAAAHABAAAAAAAAAAAAAIABAAAAAAAAAAAAAJABAAAAAAAAAAAAAKABAAAAAAAAAAAAALABAAAAAAAAAAAAAMABAAAAAAAAAAAAANABAAAAAAAAAAAAAOABAAAAAAAAAAAAAPABAAAAAAAAAAAAAQABAAAAAAAAAAAAARABAAAAAAAAAAAAASABAAAAAAAAAAAAATABAAAAAAAAAAAAAUABAAAAAAAAAAAAAVABAAAAAAAAAAAAAFABEAAAAAAAAAAAAGABEAAAAAAAAAAAAHABEAAAAAAAAAAAAKABEAAAAAAAAAAAAMABEAAAAAAAAAAAA=")
-tile_set = ExtResource("134")
-script = ExtResource("128")
+tile_set = ExtResource("133")
+script = ExtResource("127")
 metadata/_edit_lock_ = true
 
 [node name="Player" parent="World" instance=ExtResource("114")]
@@ -2608,12 +1631,12 @@ metadata/original_spawn_id = 2
 metadata/original_instance_id = 137
 
 [node name="Brain" type="Node" parent="World/Npc137Secretary"]
-script = ExtResource("122")
+script = ExtResource("121")
 assigned_workstation = NodePath("../../Objects/Object073MonitorTastaturLinks/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object069Drehstuhl02/InteractionPoint")
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc137Secretary"]
-script = ExtResource("123")
+script = ExtResource("122")
 
 [node name="Npc135MaleEmployee1" parent="World" instance=ExtResource("2")]
 position = Vector2(-192, 192)
@@ -2623,12 +1646,12 @@ metadata/original_spawn_id = 4
 metadata/original_instance_id = 135
 
 [node name="Brain" type="Node" parent="World/Npc135MaleEmployee1"]
-script = ExtResource("122")
+script = ExtResource("121")
 assigned_workstation = NodePath("../../Objects/Object037MonitorTastaturFrontal/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object016Drehstuhl01/InteractionPoint")
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc135MaleEmployee1"]
-script = ExtResource("123")
+script = ExtResource("122")
 
 [node name="Npc141MaleEmployee1" parent="World" instance=ExtResource("2")]
 position = Vector2(384, 816)
@@ -2638,12 +1661,12 @@ metadata/original_spawn_id = 4
 metadata/original_instance_id = 141
 
 [node name="Brain" type="Node" parent="World/Npc141MaleEmployee1"]
-script = ExtResource("122")
+script = ExtResource("121")
 assigned_workstation = NodePath("../../Objects/Object072MonitorTastaturFrontal/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object063Drehstuhl03/InteractionPoint")
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc141MaleEmployee1"]
-script = ExtResource("123")
+script = ExtResource("122")
 
 [node name="Npc138MaleEmployee2" parent="World" instance=ExtResource("2")]
 position = Vector2(-240, 264)
@@ -2653,12 +1676,12 @@ metadata/original_spawn_id = 5
 metadata/original_instance_id = 138
 
 [node name="Brain" type="Node" parent="World/Npc138MaleEmployee2"]
-script = ExtResource("122")
+script = ExtResource("121")
 assigned_workstation = NodePath("../../Objects/Object038MonitorTastaturRechts/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object017Drehstuhl03/InteractionPoint")
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc138MaleEmployee2"]
-script = ExtResource("123")
+script = ExtResource("122")
 
 [node name="Npc139FemaleEmployee1" parent="World" instance=ExtResource("2")]
 position = Vector2(240, 696)
@@ -2668,12 +1691,12 @@ metadata/original_spawn_id = 6
 metadata/original_instance_id = 139
 
 [node name="Brain" type="Node" parent="World/Npc139FemaleEmployee1"]
-script = ExtResource("122")
+script = ExtResource("121")
 assigned_workstation = NodePath("../../Objects/Object070MonitorTastaturRechts/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object062Drehstuhl01/InteractionPoint")
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc139FemaleEmployee1"]
-script = ExtResource("123")
+script = ExtResource("122")
 
 [node name="Npc140FemaleEmployee2" parent="World" instance=ExtResource("2")]
 position = Vector2(720, 552)
@@ -2683,18 +1706,18 @@ metadata/original_spawn_id = 7
 metadata/original_instance_id = 140
 
 [node name="Brain" type="Node" parent="World/Npc140FemaleEmployee2"]
-script = ExtResource("122")
+script = ExtResource("121")
 assigned_workstation = NodePath("../../Objects/Object071MonitorTastaturRechts/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object067Drehstuhl01/InteractionPoint")
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc140FemaleEmployee2"]
-script = ExtResource("123")
+script = ExtResource("122")
 
 [node name="WorldDepthCompositor" type="Node2D" parent="World"]
-script = ExtResource("129")
+script = ExtResource("128")
 
 [node name="CharacterDepthCompositor" type="Sprite2D" parent="World"]
-script = ExtResource("124")
+script = ExtResource("123")
 
 [node name="LevelRuntime" parent="." instance=ExtResource("1")]
 time_mode_limit_seconds = 360.0
@@ -2716,3 +1739,18 @@ theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 text = "FPS: --"
 script = ExtResource("120")
+
+[editable path="World/Objects/Object020Standascher02"]
+[editable path="World/Objects/Object021Pflanzegross01"]
+[editable path="World/Objects/Object022Pflanzegross01"]
+[editable path="World/Objects/Object023Pflanzegross01"]
+[editable path="World/Objects/Object029Tafel"]
+[editable path="World/Objects/Object030Fenster05"]
+[editable path="World/Objects/Object031Fenster06"]
+[editable path="World/Objects/Object032Fenster04"]
+[editable path="World/Objects/Object044Spiegel"]
+[editable path="World/Objects/Object071MonitorTastaturRechts"]
+[editable path="World/Objects/Object075Pflanzegross03"]
+[editable path="World/Objects/Object081Disketten"]
+[editable path="World/Objects/Object121Pflanzegross01"]
+[editable path="World/Objects/Object134Zigaretten"]

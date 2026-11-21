@@ -410,7 +410,9 @@ func _check_activity_points(world: Node, manifest: Dictionary, floor_layer: Tile
 			"active": int(object_data["object_category"]) == 5,
 		}
 		for field: String in expected:
-			_expect_equal(point.get(field), expected[field], "%s activity %s" % [object_name, field])
+			# The room is read off the painted rooms where the object stands, not stored on it.
+			var actual = point.call("room") if field == "room_id" else point.get(field)
+			_expect_equal(actual, expected[field], "%s activity %s" % [object_name, field])
 			if _failed:
 				return
 		_expect_equal(point.is_in_group("npc_activity_points"), true, "%s participates in NPC target discovery" % object_name)

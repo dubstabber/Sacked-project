@@ -111,7 +111,7 @@ The eight need-decay rates are the final eight floats of each speed-profile reco
 | Female employee 1 | 17 | 8 | 16 | 86 | 21 | 17 | 19 | 7 |
 | Female employee 2 | 6 | 19 | 10 | 85 | 11 | 10 | 10 | 17 |
 
-`sub_4187F0` builds candidate lists for each goal from its item category, filtered by the room identifier at the item's rounded anchor. Each goal has a bit mask at agent `+1864 + 4 * goal`; room `r` is allowed if `mask & (1 << r)` is nonzero. It retains at most 64 candidates per goal. Each archetype's initialiser (its `vtbl+28`) writes the masks as immediates between its calls to `sub_4184B0` and `sub_4187F0`:
+`sub_4187F0` builds candidate lists for each goal from its item category, filtered by the room identifier at the item's rounded anchor. The port's `NPCActivityPoint.room()` reads that room at run time from the level's painted `RoomTileMapLayer`, at `floori(tile + 0.5)` of the item's anchor. An imported item still standing where the importer put it uses its exact manifest tile, since recomputing the tile from float32 pixels can cross a half-cell boundary. So an item moved, or a prefab dropped into a map, files under whichever room it stands in. A room set on the point's `room_id` overrides this, and -1, the default, reads it from the map. Each goal has a bit mask at agent `+1864 + 4 * goal`; room `r` is allowed if `mask & (1 << r)` is nonzero. It retains at most 64 candidates per goal. Each archetype's initialiser (its `vtbl+28`) writes the masks as immediates between its calls to `sub_4184B0` and `sub_4187F0`:
 
 ```text
 Boss       sub_4196A0: 10, 266, 328, 256, 128,  76, 264, 72

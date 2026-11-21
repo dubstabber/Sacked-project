@@ -1,3 +1,4 @@
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -20,6 +21,8 @@ from tools.import_original_level import (
     parse_level_file,
     points_file_differences,
     remove_stale_object_prefabs,
+    assign_prefab_names,
+    expected_prefab_stems,
     remove_stale_object_textures,
     union_destinations,
 )
@@ -344,6 +347,41 @@ class TextureUnionTests(unittest.TestCase):
             check_texture_union({1: one, 2: forged})
 
 
+class PrefabNameTests(unittest.TestCase):
+    """A prefab carries its object's gameplay, so a texture two kinds share gets two prefabs."""
+
+    def entry(self, kind, name, actions=(1, 2)):
+        return {"texture": "res://images/objects/aktiv-koffer-090.png", "kind": kind, "display_name": name,
+                "action_ids": list(actions), "object_category": 5}
+
+    def test_the_lowest_kind_keeps_the_texture_name(self):
+        plain = self.entry("0x07000851", "Koffer")
+        double = self.entry("0x07000951", "Koffer (doppelt)")
+        builds = {1: LevelBuild(level_paths(1), {"objects": [double, plain]}, {}),
+                  2: LevelBuild(level_paths(2), {"objects": [dict(double)]}, {})}
+        assign_prefab_names(builds)
+        self.assertNotIn("prefab", plain)
+        self.assertEqual(double["prefab"], "aktiv-koffer-doppelt-090")
+        self.assertEqual(builds[2].manifest["objects"][0]["prefab"], "aktiv-koffer-doppelt-090")
+        self.assertIn("aktiv-koffer-doppelt-090", expected_prefab_stems(builds))
+
+    def test_one_kind_per_texture_needs_no_name(self):
+        only = self.entry("0x07000851", "Koffer")
+        assign_prefab_names({1: LevelBuild(level_paths(1), {"objects": [only, dict(only)]}, {})})
+        self.assertNotIn("prefab", only)
+
+    def test_the_campaign_splits_only_the_suitcase(self):
+        builds = {}
+        for path in sorted(Path("resources/levels").glob("level_*.json")):
+            manifest = json.loads(path.read_text())
+            for entry in manifest["objects"]:
+                entry.pop("prefab", None)
+            builds[len(builds) + 1] = LevelBuild(level_paths(1), manifest, {})
+        assign_prefab_names(builds)
+        names = {entry["prefab"] for build in builds.values() for entry in build.manifest["objects"] if "prefab" in entry}
+        self.assertEqual(names, {"aktiv-koffer-doppelt-090"})
+
+
 class PruningTests(unittest.TestCase):
     """Pruning runs against the union of every imported level, never one manifest alone."""
 
@@ -380,7 +418,7 @@ class PruningTests(unittest.TestCase):
         root = self.make_root()
         for name in ("desk", "gone"):
             (root / "scenes/objects" / (name + ".tscn")).write_text("x")
-        remove_stale_object_prefabs(root, self.union_of("desk"))
+        remove_stale_object_prefabs(root, {"desk"})
         self.assertTrue((root / "scenes/objects/desk.tscn").is_file())
         self.assertFalse((root / "scenes/objects/gone.tscn").is_file())
 

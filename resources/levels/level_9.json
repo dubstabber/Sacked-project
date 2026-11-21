@@ -8424,6 +8424,7 @@
         13,
         33
       ],
+      "prefab": "aktiv-koffer-doppelt-090",
       "record_name": "ITEM142",
       "source_sprite": "CO_OBJECTS_AKTIV_KOFFER_IDLE_090_Koffer#090#",
       "sprite_name": "KOFFER",

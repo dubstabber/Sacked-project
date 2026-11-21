@@ -489,7 +489,7 @@ func _scan_candidates(category: int, goal: int) -> Array[Node2D]:
 	var result: Array[Node2D] = []
 	var room_mask := int(_configuration["rooms"][goal])
 	for point in _activity_points():
-		var room := int(point.get("room_id"))
+		var room := int(point.call("room"))
 		if room < 0 or room >= 32 or room_mask & (1 << room) == 0:
 			continue
 		if int(point.get("category")) != category:

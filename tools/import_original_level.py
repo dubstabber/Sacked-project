@@ -1055,6 +1055,48 @@ def check_texture_union(builds: Dict[int, "LevelBuild"]) -> None:
         raise ValueError("object texture slugs disagree between levels:\n  " + "\n  ".join(sorted(set(conflicts))))
 
 
+def gameplay_signature(entry: Dict[str, object]) -> Tuple[int, Tuple[int, ...], int]:
+    return (int(str(entry["kind"]), 16), tuple(int(a) for a in entry["action_ids"]), int(entry["object_category"]))
+
+
+def assign_prefab_names(builds: Dict[int, "LevelBuild"]) -> None:
+    """Give each kind its own prefab, since a prefab carries its object's gameplay.
+
+    A prefab holds the object's InteractionPoint -- its type, actions and offset -- so that one
+    dragged into a map in the editor is a working object (docs/map-authoring.md). A texture
+    one kind places across the campaign is that kind's prefab under the texture's own name.
+    Where two kinds share a texture, the lowest kind keeps the name and every other kind gets
+    one built from its CO_OBJECTS.DAT name, which its objects carry as "prefab"; only
+    aktiv-koffer-090 does, Koffer and Koffer (doppelt).
+    """
+    signatures: Dict[str, Dict[Tuple[int, Tuple[int, ...], int], str]] = {}
+    for build in every_build(builds):
+        for entry in build.manifest["objects"]:
+            stem = Path(str(entry["texture"])).stem
+            signatures.setdefault(stem, {}).setdefault(gameplay_signature(entry), str(entry["display_name"]))
+    stems = set(signatures)
+    names: Dict[Tuple[str, Tuple[int, Tuple[int, ...], int]], str] = {}
+    for stem, kinds in signatures.items():
+        for signature in sorted(kinds)[1:]:
+            category, angle = stem.split("-")[0], stem.rsplit("-", 1)[1]
+            name = "%s-%s-%s" % (category, slugify(kinds[signature]), angle)
+            if name in stems or name in names.values():
+                raise ValueError(f"prefab name {name} for {stem} kind {signature[0]:#x} is already taken")
+            names[(stem, signature)] = name
+    for build in every_build(builds):
+        for entry in build.manifest["objects"]:
+            name = names.get((Path(str(entry["texture"])).stem, gameplay_signature(entry)))
+            if name is not None:
+                entry["prefab"] = name
+
+
+def expected_prefab_stems(builds: Dict[int, "LevelBuild"]) -> set:
+    stems = {dest_rel.stem for dest_rel in union_destinations(builds).values()}
+    for build in every_build(builds):
+        stems |= {str(entry["prefab"]) for entry in build.manifest["objects"] if "prefab" in entry}
+    return stems
+
+
 def write_outputs(root: Path, builds: Dict[int, "LevelBuild"], targets: Iterable[int]) -> None:
     union = union_destinations(builds)
     for number in sorted(targets):
@@ -1155,7 +1197,7 @@ def compare_outputs(root: Path, builds: Dict[int, "LevelBuild"]) -> int:
     # --check cannot run Godot, so the prefabs are verified as a file set only.
     prefab_dir = root / OBJECT_PREFAB_DIR_REL
     if prefab_dir.is_dir():
-        expected_prefabs = {dest_rel.stem for dest_rel in union.values()}
+        expected_prefabs = expected_prefab_stems(builds)
         actual_prefabs = {path.stem for path in prefab_dir.glob("*.tscn")}
         for stem in sorted(expected_prefabs - actual_prefabs):
             failures.append(f"missing {OBJECT_PREFAB_DIR_REL / (stem + '.tscn')}")
@@ -1202,18 +1244,17 @@ def run_godot_scene_builder(root: Path, godot_binary: str, builds: Dict[int, "Le
                 check=True,
             )
             normalize_scene_file(root / paths.scene_rel)
-    remove_stale_object_prefabs(root, union_destinations(builds))
+    remove_stale_object_prefabs(root, expected_prefab_stems(builds))
     # The builder re-saves every object prefab with a fresh random unique_id, so without
     # the same normalization each regeneration churns all of scenes/objects/.
     for prefab in sorted((root / OBJECT_PREFAB_DIR_REL).glob("*.tscn")):
         normalize_scene_file(prefab)
 
 
-def remove_stale_object_prefabs(root: Path, union: Dict[Path, Path]) -> None:
+def remove_stale_object_prefabs(root: Path, expected: set) -> None:
     prefab_dir = root / OBJECT_PREFAB_DIR_REL
     if not prefab_dir.is_dir():
         return
-    expected = {dest_rel.stem for dest_rel in union.values()}
     for path in prefab_dir.glob("*.tscn"):
         if path.stem not in expected:
             path.unlink()
@@ -1293,6 +1334,7 @@ def build_levels(root: Path, numbers: Iterable[int]) -> Dict[int, LevelBuild]:
     for number in sorted(set(numbers)):
         builds[number] = build_level(root, number, context)
     check_texture_union(builds)
+    assign_prefab_names(builds)
     return builds
 
 
