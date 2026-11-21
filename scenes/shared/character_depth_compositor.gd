@@ -42,8 +42,13 @@ var _environment_applied := -1
 var composed_scores := PackedFloat32Array()
 # The looping objects' own pixels of the last composite, or null when it held none.
 var composed_item_image: Image
+# The world's scores under the cluster being composed, and the rectangle they cover. Set only
+# for the length of one compose.
 var environment_scores := PackedFloat32Array()
 var environment_bounds := Rect2()
+# Where the world's score texture lies, for the shaders, and the compositor it comes from.
+var _world_bounds := Rect2()
+var _world_mask: Node
 var _environment_revision := -1
 var _environment_instance_id := 0
 
@@ -144,7 +149,13 @@ func _render_clusters(clusters: Array) -> void:
 		var signature := _composite_signature(cluster, bounds)
 		if not surface.visible or surface.texture == null or _surface_signatures[used] != signature:
 			PerfProbe.begin(&"chars.compose")
+			# Only the world's scores under this cluster, fetched for this compose alone.
+			var window := _world_window(bounds)
+			environment_scores = window["scores"]
+			environment_bounds = window["bounds"]
 			var composed_image := _compose_images(cluster, bounds)
+			environment_scores = PackedFloat32Array()
+			environment_bounds = Rect2()
 			PerfProbe.end(&"chars.compose")
 			_set_surface_image(used, composed_image)
 			_set_item_surface_image(used, composed_item_image, cluster)
@@ -230,17 +241,16 @@ func cluster_depth_for(sprite: Sprite2D) -> Dictionary:
 
 func _update_environment() -> void:
 	var world_mask := get_node_or_null("../WorldDepthCompositor")
+	_world_mask = world_mask
 	if world_mask == null:
 		if _environment_instance_id != 0:
 			_invalidate_surfaces()
-		environment_scores = PackedFloat32Array()
-		environment_bounds = Rect2()
+		_world_bounds = Rect2()
 		_environment_texture = null
 		_environment_revision = -1
 		_environment_instance_id = 0
 		return
-	environment_scores = world_mask.depth_scores
-	environment_bounds = world_mask.depth_bounds
+	_world_bounds = world_mask.depth_bounds
 	_environment_texture = world_mask.depth_texture
 	if _environment_revision != world_mask.revision or _environment_instance_id != world_mask.get_instance_id():
 		_environment_revision = world_mask.revision
@@ -252,6 +262,12 @@ func _update_environment() -> void:
 func _invalidate_surfaces() -> void:
 	for index in range(_surface_signatures.size()):
 		_surface_signatures[index] = ""
+
+
+func _world_window(bounds: Rect2) -> Dictionary:
+	if is_instance_valid(_world_mask) and _world_mask.has_method("score_window"):
+		return _world_mask.score_window(bounds)
+	return {"scores": PackedFloat32Array(), "bounds": Rect2()}
 
 
 # Sets the score window a compose tests its pixels against, as a cluster's own window would.
@@ -390,8 +406,8 @@ func _apply_actor_material(actor: Dictionary) -> void:
 	if _environment_applied != _environment_revision:
 		material.set_shader_parameter("world_depth", _environment_texture)
 		material.set_shader_parameter("world_depth_enabled", _environment_texture != null)
-		material.set_shader_parameter("world_depth_origin", environment_bounds.position)
-		material.set_shader_parameter("world_depth_size", environment_bounds.size)
+		material.set_shader_parameter("world_depth_origin", _world_bounds.position)
+		material.set_shader_parameter("world_depth_size", _world_bounds.size)
 
 	material.set_shader_parameter("base_y", float(actor["base_y"]))
 

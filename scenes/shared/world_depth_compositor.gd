@@ -4,7 +4,12 @@ extends Node2D
 
 const COMPOSITOR := preload("res://scenes/shared/character_depth_compositor.gd")
 
-var depth_scores := PackedFloat32Array()
+# The composed scores as one flat array, read back out of the score image when asked for. Only
+# the tests want all of it: copying it out on every repaint cost a frame on the larger maps, and
+# the character compositor reads just the window a cluster covers, through score_window().
+var depth_scores: PackedFloat32Array:
+	get:
+		return _score_image.get_data().to_float32_array() if _score_image != null else PackedFloat32Array()
 var depth_bounds := Rect2()
 var depth_texture: ImageTexture
 var revision := 0
@@ -64,7 +69,6 @@ func _exit_tree() -> void:
 		_image_compositor.free()
 	_image_compositor = null
 	_composite.texture = null
-	depth_scores = PackedFloat32Array()
 	depth_bounds = Rect2()
 	depth_texture = null
 	_color_image = null
@@ -122,7 +126,6 @@ func _rebuild_everything(actors: Array, sources: Array[CanvasItem], signature: S
 		_composite.texture = null
 		_color_image = null
 		_score_image = null
-		depth_scores = PackedFloat32Array()
 		depth_bounds = Rect2()
 		depth_texture = null
 		_snapshot.clear()
@@ -133,10 +136,9 @@ func _rebuild_everything(actors: Array, sources: Array[CanvasItem], signature: S
 		var result: Dictionary = _image_compositor.compose_region(actors, bounds)
 		PerfProbe.end(&"world.compose")
 		depth_bounds = bounds
-		depth_scores = result.scores
 		_color_image = result.image
 		PerfProbe.begin(&"world.publish")
-		_score_image = _score_image_for(bounds, depth_scores)
+		_score_image = _score_image_for(bounds, result.scores)
 		_composite.texture = ImageTexture.create_from_image(_color_image)
 		depth_texture = ImageTexture.create_from_image(_score_image) if _score_image != null else null
 		PerfProbe.end(&"world.publish")
@@ -182,7 +184,6 @@ func _rebuild_dirty_rects(actors: Array, sources: Array[CanvasItem], signature: 
 	PerfProbe.end(&"world.compose")
 	_signature = signature
 	PerfProbe.begin(&"world.publish")
-	depth_scores = _score_image.get_data().to_float32_array()
 	(_composite.texture as ImageTexture).update(_color_image)
 	depth_texture.update(_score_image)
 	PerfProbe.end(&"world.publish")
@@ -282,6 +283,16 @@ func _remember(actors: Array) -> void:
 			rect = _image_compositor.actor_buffer_rect(actor, origin)
 		_snapshot[id] = {"signature": signature, "rect": rect}
 		_order.append(id)
+
+
+# The scores under a world rectangle, clipped to the buffer, with the rectangle they cover.
+# Clipped rather than padded: get_region fills outside the image with 0.0, a real score.
+func score_window(rect: Rect2) -> Dictionary:
+	var window := rect.intersection(depth_bounds) if _score_image != null else Rect2()
+	if window.size.x <= 0 or window.size.y <= 0:
+		return {"scores": PackedFloat32Array(), "bounds": Rect2()}
+	var region := Rect2i(Vector2i(window.position - depth_bounds.position), Vector2i(window.size))
+	return {"scores": _score_image.get_region(region).get_data().to_float32_array(), "bounds": window}
 
 
 # Recomposes the whole buffer without touching anything, so a test can hold the incremental

@@ -126,6 +126,11 @@ func _check_partial_static_overlap_and_cache() -> void:
 	mask.rebuild()
 	_expect(mask.depth_bounds == Rect2(0, 0, 4, 1), "static mask uses sprite pivots for its bounds")
 	_expect(mask.depth_scores == PackedFloat32Array([5, 5, 5, 5]), "static scores use half anchor Y minus decoded depth")
+	# A cluster reads only the window it covers, clipped to the buffer rather than padded:
+	# padding would be 0.0, a real score.
+	var window: Dictionary = mask.score_window(Rect2(-2, -1, 4, 3))
+	_expect(window["bounds"] == Rect2(0, 0, 2, 1) and window["scores"] == PackedFloat32Array([5, 5]), "a score window is clipped to the buffer")
+	_expect((mask.score_window(Rect2(10, 10, 2, 2))["scores"] as PackedFloat32Array).is_empty(), "a window off the buffer holds no scores")
 	_expect_pixels(mask._composite.texture.get_image(), [Color.RED, Color.BLUE, Color.RED, Color.BLUE], "intersecting objects")
 	_expect(red.get_node("Sprite2D").visible and blue.get_node("Sprite2D").visible, "composing objects preserves authored Sprite2D visibility")
 	var revision: int = mask.revision
@@ -199,7 +204,10 @@ func _check_character_mask_tracks_object_changes() -> void:
 	mask.rebuild()
 	characters.update_composition()
 	await process_frame
-	_expect(characters.environment_scores == mask.depth_scores, "character compositor refreshes static depth data after a texture change")
+	_expect(
+		characters._environment_revision == mask.revision and characters._world_bounds == mask.depth_bounds,
+		"character compositor refreshes static depth data after a texture change"
+	)
 	if material != null:
 		_expect(material.get_shader_parameter("world_depth") == mask.depth_texture, "character shader follows the rebuilt world depth buffer")
 
