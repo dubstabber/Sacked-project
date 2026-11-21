@@ -54,6 +54,7 @@ func _run() -> void:
 	await _check_character_select_follows_its_five_buttons()
 	await _check_each_attempt_starts_the_duel_over()
 	await _check_only_a_win_plays_the_win_cue()
+	await _check_a_scene_run_on_its_own_records_nothing()
 
 	_manager.reset_player_setup()
 	_manager.selected_game_mode = &"time"
@@ -65,7 +66,7 @@ func _run() -> void:
 	settings.reload()
 	DirAccess.remove_absolute(SETTINGS_PATH)
 	if _failures == 0:
-		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count, the win cue, the stored profile and character select's five buttons passed")
+		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count, the win cue, the stored profile, character select's five buttons and the scene run on its own passed")
 	quit(1 if _failures else 0)
 
 
@@ -496,3 +497,39 @@ func _check_character_select_follows_its_five_buttons() -> void:
 	screen.free()
 	_manager.reset_player_setup()
 
+
+
+# A level scene run straight from the editor was never loaded by this autoload. Its result
+# still shows, but nothing is recorded, as selected_level names a level that was not played;
+# a retry replays the scene that was, and the tree's own start clears it again.
+func _check_a_scene_run_on_its_own_records_nothing() -> void:
+	var store := root.get_node("ProgressStore")
+	var restore_level: int = _manager.selected_level
+	store.clear()
+	_manager.selected_level = 1
+	_manager.start_level(1)
+	await process_frame
+	var own_scene := "res://scenes/level_3.tscn"
+	_manager.report_level_finished(true, 99999, 10.0, own_scene)
+	await process_frame
+	_expect(_manager.current == ScreenManagerScript.Screen.LEVEL_RESULT, "a scene run on its own still shows its result")
+	_expect(not store.is_cleared(1, &"time") and not store.is_cleared(3, &"time"), "and clears no level")
+	_expect(not store.has_best_time(1) and not store.has_best_time(3), "nor records a best time")
+	_expect(String(_manager.scene_path(ScreenManagerScript.Screen.LEVEL)) == own_scene, "a retry replays the scene that was played")
+	_manager.restart_level()
+	await process_frame
+	_manager.report_level_finished(true, 99999, 10.0, own_scene)
+	await process_frame
+	_expect(not store.is_cleared(1, &"time") and not store.is_cleared(3, &"time"), "nor does winning its retry")
+
+	_manager.start_level(1)
+	await process_frame
+	_expect(String(_manager.scene_path(ScreenManagerScript.Screen.LEVEL)) == String(_manager.level_scene_path(1)), "the tree's start goes back to the campaign level")
+	_manager.report_level_finished(true, 4321, 12.0, String(_manager.level_scene_path(1)))
+	await process_frame
+	_expect(store.is_cleared(1, &"time") and is_equal_approx(store.best_time_seconds(1), 12.0), "and a launched level records again")
+	store.clear()
+	_manager.last_level_won = false
+	_manager.selected_level = restore_level
+	_manager.change_to_main_menu()
+	await process_frame

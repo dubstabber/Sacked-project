@@ -62,6 +62,12 @@ var duels_fought := 0
 var selected_character: StringName = DEFAULT_CHARACTER
 var player_name: String = get_default_player_name(DEFAULT_CHARACTER)
 var _menu_music_player: AudioStreamPlayer
+# The level scene change_to(LEVEL) last loaded. A level that finishes under any other path was
+# not started from the tree -- run on its own from the editor -- and records nothing.
+var _launched_level_path := ""
+# A scene Screen.LEVEL resolves to instead of selected_level's, so a retry replays the scene
+# that was actually played. Cleared whenever the tree starts a level.
+var _level_override_path := ""
 
 
 func _input(event: InputEvent) -> void:
@@ -89,12 +95,15 @@ func change_to(screen: Screen) -> void:
 		# level without either, so the duel grows within one attempt and starts from two
 		# casts on the next.
 		duels_fought = 0
+		_launched_level_path = scene_path(screen)
 	_sync_menu_music()
 	get_tree().change_scene_to_file(scene_path(screen))
 
 
 func scene_path(screen: Screen) -> String:
 	if screen == Screen.LEVEL:
+		if _level_override_path != "":
+			return _level_override_path
 		return level_scene_path(selected_level)
 	return String(_SCENE_PATHS[screen])
 
@@ -143,6 +152,7 @@ func start_level(level: int) -> void:
 		push_warning("No imported level %d" % level)
 		return
 	selected_level = level
+	_level_override_path = ""
 	change_to(Screen.LEVEL)
 
 
@@ -195,15 +205,21 @@ func begin_duel() -> int:
 
 # A level reports its own outcome; sub_407370 sends both results to their own screen.
 # sub_406E70 records on the way past, and only for a win -- the loss path writes nothing.
-func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0.0) -> void:
+# level_path is the scene that finished. One this autoload did not load (a scene run on its own
+# from the editor) shows its result but records nothing, as it is no campaign level; the
+# original has no such run, so this is the port's.
+func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0.0, level_path := "") -> void:
 	last_level_won = won
 	if won:
 		play_effect(WIN_SOUND)
-	var progress := get_node_or_null("/root/ProgressStore")
-	if progress != null:
-		progress.call(
-			"record_result", selected_level, selected_game_mode, won, score, elapsed_seconds, player_name
-		)
+	if level_path != "" and level_path != _launched_level_path:
+		_level_override_path = level_path
+	elif _level_override_path == "":
+		var progress := get_node_or_null("/root/ProgressStore")
+		if progress != null:
+			progress.call(
+				"record_result", selected_level, selected_game_mode, won, score, elapsed_seconds, player_name
+			)
 	change_to(Screen.LEVEL_RESULT)
 
 

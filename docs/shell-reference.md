@@ -118,6 +118,14 @@ Three things worth keeping:
 The name is copied with `strncpy(..., 16)` into a 20-byte field after the field is zeroed,
 so it is NUL-terminated in practice but not guaranteed by the copy.
 
+**A scene run on its own records nothing (port rule).** The original can only enter a level
+from its tree. In the port, a level scene can also be started straight from the editor (F6),
+when `selected_level` still names whichever level was last picked. `LevelSession` therefore
+reports the scene it is instanced in, and `ScreenManager.report_level_finished` records only
+when that is the scene `change_to(LEVEL)` itself loaded. Any other scene still shows its result
+screen. Its retry replays that same scene, and starting a level from the tree goes back to the
+campaign. `tests/check_screen_flow.gd` covers it.
+
 **There is no ending.** `sub_406E70` has no last-level branch. Whatever level was won, it
 sets the mode's unlock bit (`game+20664` points, `+20660` time), writes the registry through
 `sub_426260`, updates that level's 52-byte record (points: best score `+19220` and name

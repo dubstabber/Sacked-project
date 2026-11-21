@@ -17,7 +17,7 @@ var _failures := 0
 class ReportSpy extends Node:
 	var calls: Array = []
 
-	func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0.0) -> void:
+	func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0.0, _level_path := "") -> void:
 		calls.append([won, score, elapsed_seconds])
 
 

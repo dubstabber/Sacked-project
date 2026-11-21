@@ -155,7 +155,9 @@ func _evaluate(seconds: float) -> void:
 # sub_406E70 records the run it is handed, so the score and the clock travel with the
 # outcome rather than being fetched back out of a level that is about to be freed.
 func _report_finished(result: bool) -> void:
-	_screen_manager.call("report_level_finished", result, score, elapsed)
+	# The level scene this session is instanced in; a session loaded on its own names none.
+	var level_path := owner.scene_file_path if owner != null else ""
+	_screen_manager.call("report_level_finished", result, score, elapsed, level_path)
 
 
 func _finish(result: bool) -> void:

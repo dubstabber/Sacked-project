@@ -11,7 +11,7 @@ var _failures := 0
 
 # The level reports its end here instead, so running its clock out does not change the scene.
 class ReportSink extends Node:
-	func report_level_finished(_won: bool, _score: int = 0, _elapsed_seconds: float = 0.0) -> void:
+	func report_level_finished(_won: bool, _score: int = 0, _elapsed_seconds: float = 0.0, _level_path := "") -> void:
 		pass
 
 
