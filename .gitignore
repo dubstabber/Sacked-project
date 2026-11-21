@@ -14,6 +14,9 @@
 # Export templates
 /export_templates/
 
+# Export presets name each developer's own output path
+export_presets.cfg
+
 # Android export
 /android/
 
