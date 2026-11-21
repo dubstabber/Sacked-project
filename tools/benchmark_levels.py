@@ -86,7 +86,8 @@ def spikes(results: list) -> str:
         for spike in result.get("spikes", [])[:5]:
             sections = sorted(spike["sections"].items(), key=lambda item: -item[1][0])[:5]
             named = ", ".join(f"{name} {value[0]} ms x{value[1]}" for name, value in sections)
-            lines.append(f"level {result['level']}: {spike['ms']} ms, {spike['resources']:+d} resources, process {spike['process_ms']} ms; {named or 'no section'}")
+            render = f", render cpu {spike.get('render_cpu_ms', '?')} / gpu {spike.get('render_gpu_ms', '?')} ms"
+            lines.append(f"level {result['level']}: {spike['ms']} ms, {spike['resources']:+d} resources, previous frame's process {spike['process_ms']} ms{render}; {named or 'no section'}")
     return "\n".join(lines)
 
 

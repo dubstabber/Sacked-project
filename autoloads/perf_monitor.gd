@@ -43,6 +43,8 @@ func _ready() -> void:
 	PerfProbe.enabled = true
 	_log = _args.has("perf-log")
 	RenderingServer.frame_post_draw.connect(_on_frame_post_draw)
+	# The render side of each frame, which the process times above leave out.
+	RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
 	_last_frame_usec = Time.get_ticks_usec()
 	_last_resources = int(Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT))
 	if _args.has("perf-bench"):
@@ -62,11 +64,15 @@ func _on_frame_post_draw() -> void:
 		_frames_ms.append(frame_ms)
 	if frame_ms < SPIKE_MS:
 		return
+	# Performance's TIME_PROCESS and TIME_PHYSICS_PROCESS report the frame before this one,
+	# so a spike's own cost is in its sections; they are kept for context only.
 	var spike := {
 		"ms": snappedf(frame_ms, 0.01),
 		"resources": loaded,
 		"process_ms": snappedf(Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0, 0.01),
 		"physics_ms": snappedf(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0, 0.01),
+		"render_cpu_ms": snappedf(RenderingServer.viewport_get_measured_render_time_cpu(get_viewport().get_viewport_rid()) + RenderingServer.get_frame_setup_time_cpu(), 0.01),
+		"render_gpu_ms": snappedf(RenderingServer.viewport_get_measured_render_time_gpu(get_viewport().get_viewport_rid()), 0.01),
 		"sections": _section_summary(sections),
 	}
 	if _recording:
