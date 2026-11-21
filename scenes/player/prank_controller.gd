@@ -789,9 +789,17 @@ func _front_under_cursor() -> Node2D:
 	return _front_at(cursor)
 
 
+# sub_42BF20 returns the first box hit while it walks the list sub_42BE60 fills as the frame
+# draws. sub_42BEF0 files each box in a bucket of its depth >> 4 and pushes it at that
+# bucket's head, and sub_42BE20 links the buckets front to back. So the frontmost bucket wins,
+# and inside one the box registered last: items in world order (sub_411E20, 0x411F88), then
+# the agents after every item (0x402B09). A soap on a sink shares the sink's depth and wins.
+# See docs/player-action-reference.md, "Which box answers".
 func _front_at(cursor: Vector2) -> Node2D:
+	# The camera is the player's ground anchor (sub_402590 copies it every tick).
+	var camera_y := _player.global_position.y if _player != null else 0.0
 	var best: Node2D = null
-	var best_depth := -INF
+	var best_bucket := 0x7FFFFFFF
 	for node in get_tree().get_nodes_in_group(MapObject.PICK_GROUP):
 		var object := node as Node2D
 		if object == null or not object.is_visible_in_tree():
@@ -802,9 +810,9 @@ func _front_at(cursor: Vector2) -> Node2D:
 		var sprite := object.get_node_or_null("Sprite2D") as Sprite2D
 		if not _box_has_point(sprite, cursor):
 			continue
-		var depth := _depth_base(object.global_position)
-		if depth > best_depth:
-			best_depth = depth
+		var bucket := pick_bucket(object.global_position.y - camera_y)
+		if bucket <= best_bucket:
+			best_bucket = bucket
 			best = object
 	# CAgent's constructor sets the box flag +88 (0x415F20); the player's never does.
 	for node in get_tree().get_nodes_in_group(AGENT_GROUP):
@@ -814,11 +822,19 @@ func _front_at(cursor: Vector2) -> Node2D:
 		var sprite := agent.get_node_or_null("Sprite2D") as Sprite2D
 		if not _box_has_point(sprite, cursor):
 			continue
-		var depth := _depth_base(sprite.global_position)
-		if depth > best_depth:
-			best_depth = depth
+		var bucket := pick_bucket(agent.global_position.y - camera_y)
+		if bucket <= best_bucket:
+			best_bucket = bucket
 			best = agent
 	return best
+
+
+# sub_41A2D0: an entity's depth is trunc(49152 - sy * 0.5), sy its truncated screen row
+# below the camera (0x41A343-0x41A365; 49152.0 at 0x46553C, 0.5 at 0x46B524), and the box
+# list files it under depth >> 4 (0x411F80). Lower is nearer.
+static func pick_bucket(rows_below_camera: float) -> int:
+	var sy := int(rows_below_camera)
+	return int(49152.0 - float(sy) * 0.5) >> 4
 
 
 func _box_has_point(sprite: Sprite2D, point: Vector2) -> bool:

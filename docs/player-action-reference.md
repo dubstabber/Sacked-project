@@ -118,6 +118,35 @@ like an idle one:
 Only marker 18's `item+232` hides an item, and with it the item's box, for as long as the
 action runs (see [prank-reference.md](prank-reference.md)).
 
+### Which box answers
+
+When several boxes hold the cursor, their **depth bucket** decides, not the sprites. The box
+list is a bucket array (`sub_42BDB0`). `sub_42BE20` resets it each frame, linking bucket *i*
+to bucket *i* + 1 and ending the chain with type `0xFFFF`. `sub_42BE60` takes the entity's
+depth (`entity+16`, which `sub_42B2D0` copies out) shifted right by 4 (`0x411F80`, and
+`0x402B09` for the agents), and `sub_42BEF0` pushes the box at the **head** of that bucket.
+`sub_42BF20` walks the chain from bucket 0 and returns the first box that holds the point.
+So:
+
+- the frontmost bucket wins, because a lower depth is nearer;
+- inside a bucket, the box registered **last** wins. Items register in world order as
+  `sub_411E20` draws them, and the agents register after every item, so a colleague wins a
+  tie with an item.
+
+The depth comes from the projection `sub_41A2D0`: `sy = trunc(24·((x − cx) + (z − cz)) −
+24·y)`, measured from the camera's ground position, and `depth = trunc(49152 − sy·0.5)`
+(`0x41A343`–`0x41A365`; 24.0 at `0x465534`, 0.5 at `0x46B524`, 49152.0 at `0x46553C`). A
+bucket is therefore 32 screen rows tall, with an edge at the camera's own row, and the camera
+is the player's ground anchor. Two items at the same `x + z` share a depth wherever the
+camera is. Level 8's soap (`ITEM46`, at 15.5, 13.0) lies on its sink (`ITEM40`, at 15.0,
+13.5), so the soap, registered later, answers anywhere inside its own box. Items that are
+merely close can fall into one bucket or two depending on where the camera stands.
+
+The port computes the same bucket in `PrankController.pick_bucket()` and keeps the last box
+in tree order on a tie (`_front_at`); `tests/check_pick_order.gd` covers it. Until
+2026-11-21 it compared an anchor depth with the first box winning a tie, so the sink took
+the soap's whole box.
+
 The port picks from `MapObject.PICK_GROUP`. Every placed object joins it, whether it is baked
 into the static composite or drawn as a depth actor while a clip loops. The pick tests the
 box of the object's current frame. It does not test the `Sprite2D`'s own visibility, because
