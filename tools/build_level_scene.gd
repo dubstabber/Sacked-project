@@ -49,9 +49,9 @@ func _run() -> void:
 		quit(1)
 		return
 
-	var root := _build_scene(manifest)
+	var scene_root := _build_scene(manifest)
 	var packed := PackedScene.new()
-	var pack_error := packed.pack(root)
+	var pack_error := packed.pack(scene_root)
 	if pack_error != OK:
 		push_error("Failed to pack level scene: %s" % error_string(pack_error))
 		quit(1)
@@ -60,12 +60,12 @@ func _run() -> void:
 	var save_error := ResourceSaver.save(packed, scene_path)
 	if save_error != OK:
 		push_error("Failed to save %s: %s" % [scene_path, error_string(save_error)])
-		root.free()
+		scene_root.free()
 		quit(1)
 		return
 
 	print("Saved %s (%d interaction points placed apart from their prefab's)" % [scene_path, _interaction_overrides])
-	root.free()
+	scene_root.free()
 	quit(0)
 
 
@@ -84,12 +84,12 @@ func _read_json(path: String) -> Dictionary:
 
 
 func _build_scene(manifest: Dictionary) -> Node:
-	var root := Node.new()
-	root.name = "Main"
+	var scene_root := Node.new()
+	scene_root.name = "Main"
 
 	var world := Node2D.new()
 	world.name = "World"
-	root.add_child(world)
+	scene_root.add_child(world)
 
 	var floor_layer: TileMapLayer = null
 	for layer_data in manifest.get("tile_layers", []):
@@ -100,7 +100,7 @@ func _build_scene(manifest: Dictionary) -> Node:
 
 	if floor_layer == null:
 		push_error("Level manifest did not create FloorTileMapLayer")
-		return root
+		return scene_root
 
 	var objects := _build_objects(manifest, floor_layer)
 	world.add_child(objects)
@@ -122,12 +122,12 @@ func _build_scene(manifest: Dictionary) -> Node:
 	compositor.script = load(DEPTH_COMPOSITOR_SCRIPT)
 	world.add_child(compositor)
 
-	root.add_child(_build_level_runtime(manifest))
-	root.add_child(_build_debug_overlay())
-	_assign_owner(root, root)
+	scene_root.add_child(_build_level_runtime(manifest))
+	scene_root.add_child(_build_debug_overlay())
+	_assign_owner(scene_root, scene_root)
 	for object_node in _editable_objects:
-		root.set_editable_instance(object_node, true)
-	return root
+		scene_root.set_editable_instance(object_node, true)
+	return scene_root
 
 
 # The session, and later the console, live in a hand-authored scene so the generated level
@@ -172,6 +172,7 @@ func _build_room_layer(manifest: Dictionary) -> TileMapLayer:
 		if room >= ROOM_LIMIT:
 			push_error("Room %d at cell %d is past the %d rooms the room diamond has" % [room, index, ROOM_LIMIT])
 		elif room != 0:
+			@warning_ignore("integer_division")
 			layer.set_cell(Vector2i(index % width, index / width), 0, Vector2i.ZERO, room)
 	return layer
 

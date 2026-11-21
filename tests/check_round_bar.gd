@@ -65,6 +65,7 @@ func _compare(fan: RoundBarFan, item: Dictionary, goldens: Dictionary, label: St
 	var drawn := {}
 	for index in range(texels.size()):
 		if texels[index] != RoundBarFan.NONE:
+			@warning_ignore("integer_division")
 			drawn[fan.origin + Vector2i(index % RoundBarFan.WINDOW, index / RoundBarFan.WINDOW)] = texels[index]
 	var wrong := 0
 	var first := ""

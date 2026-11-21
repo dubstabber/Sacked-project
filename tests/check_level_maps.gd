@@ -324,6 +324,7 @@ func _check_room_grid(world: Node, manifest: Dictionary, label: String) -> void:
 		_fail("level %s room ids differ from the manifest's collision_grid.room_ids" % label)
 		return
 	for index in range(expected.size()):
+		@warning_ignore("integer_division")
 		var tile := Vector2(index % width, index / width)
 		if int(layer.call("room_category", tile)) != expected[index]:
 			_fail("level %s room category at %s is not the manifest's %d" % [label, tile, expected[index]])
@@ -348,6 +349,7 @@ func _check_painted_overlays(world: Node, collision_grid: Dictionary, rooms: Pac
 	var width := int(collision_grid.get("width", 0))
 	var painted := 0
 	for index in range(rooms.size()):
+		@warning_ignore("integer_division")
 		var cell := Vector2i(index % width, index / width)
 		var room := int(rooms[index])
 		if room == 0:

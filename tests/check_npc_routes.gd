@@ -1,3 +1,4 @@
+@tool
 extends SceneTree
 
 
@@ -253,6 +254,7 @@ func _check_retries_do_not_search_again() -> void:
 	npc.global_position = _world_position(layer, Vector2(1.3, 1))
 	layer.lookups = 0
 	_expect(not npc.navigate_to(_world_position(layer, Vector2(5, 3))), "so does a start off it")
+	@warning_ignore("integer_division")
 	_expect(layer.lookups < centred * 3 / 2, "without a second flood from the cell's centre: %d lookups against %d" % [layer.lookups, centred])
 	stranger.free()
 	await process_frame

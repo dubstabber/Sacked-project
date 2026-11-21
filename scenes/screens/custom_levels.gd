@@ -125,6 +125,7 @@ func _best_time_text(scene: String) -> String:
 	var seconds := float(_progress.call("custom_best_time_seconds", scene))
 	if is_equal_approx(seconds, LevelProgress.NO_TIME):
 		return NO_TIME_TEXT
+	@warning_ignore("integer_division")
 	return TIME_FORMAT % [int(seconds) / 60, int(seconds) % 60]
 
 

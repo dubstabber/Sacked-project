@@ -396,10 +396,10 @@ func _collect_actors(sources: Array[CanvasItem]) -> Array:
 		var id := node.get_instance_id()
 		live[id] = true
 		var node_revision = node.get("depth_revision")
-		var transform: Transform2D = (node as Node2D).global_transform
+		var node_transform: Transform2D = (node as Node2D).global_transform
 		var cached: Array = _object_actors.get(id, [])
 		var actor: Dictionary
-		if node_revision != null and not cached.is_empty() and cached[0] == node_revision and cached[1] == transform:
+		if node_revision != null and not cached.is_empty() and cached[0] == node_revision and cached[1] == node_transform:
 			actor = cached[2]
 		else:
 			actor = node.get_depth_actor()
@@ -409,7 +409,7 @@ func _collect_actors(sources: Array[CanvasItem]) -> Array:
 			actor["signature"] = _signature_for(actor)
 			actors_prepared += 1
 			if node_revision != null:
-				_object_actors[id] = [node_revision, transform, actor]
+				_object_actors[id] = [node_revision, node_transform, actor]
 		actors.append(actor)
 		sources.append(actor.sprite)
 	if _object_actors.size() > live.size():
@@ -451,11 +451,11 @@ func _tile_actors(layer: TileMapLayer) -> Array:
 		var region := source.get_tile_texture_region(coords)
 		var color := _image(source.texture)
 		var depth_path := source.texture.resource_path.get_basename() + "-depth.png"
-		var depth_texture := _depth_texture(depth_path)
-		if depth_texture == null:
+		var depth_plane := _depth_texture(depth_path)
+		if depth_plane == null:
 			_warn_once(depth_path, "Missing tile depth mask: %s" % depth_path)
 			continue
-		var depth := _image(depth_texture)
+		var depth := _image(depth_plane)
 		if color == null or depth == null or color.get_size() != depth.get_size():
 			continue
 		var anchor := layer.to_global(layer.map_to_local(cell))
@@ -482,12 +482,12 @@ func _prepare_actor(actor: Dictionary) -> bool:
 	if actor.is_empty():
 		return false
 	var color_texture := actor.get("color") as Texture2D
-	var depth_texture := actor.get("depth") as Texture2D
-	if color_texture == null or depth_texture == null:
+	var depth_plane := actor.get("depth") as Texture2D
+	if color_texture == null or depth_plane == null:
 		_warn_once(str(actor.get("node")), "Map object needs both a color texture and a depth mask.")
 		return false
 	var color := _image(color_texture)
-	var depth := _image(depth_texture)
+	var depth := _image(depth_plane)
 	if color == null or depth == null or color.get_size() != depth.get_size():
 		_warn_once(color_texture.resource_path, "Map object color and depth mask dimensions must match: %s" % color_texture.resource_path)
 		return false
@@ -495,7 +495,7 @@ func _prepare_actor(actor: Dictionary) -> bool:
 	actor["depth"] = depth
 	actor["size"] = color.get_size()
 	actor["opaque_rect"] = _opaque_rect(color)
-	actor["key"] = "%s:%s" % [_texture_key(color_texture), _texture_key(depth_texture)]
+	actor["key"] = "%s:%s" % [_texture_key(color_texture), _texture_key(depth_plane)]
 	actor["id"] = (actor["node"] as Node).get_instance_id()
 	return true
 

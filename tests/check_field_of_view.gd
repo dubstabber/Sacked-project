@@ -109,6 +109,7 @@ func _check_every_golden() -> void:
 func _first_difference(got: PackedByteArray, expected: PackedByteArray) -> String:
 	for index in mini(got.size(), expected.size()):
 		if got[index] != expected[index]:
+			@warning_ignore("integer_division")
 			return "row %d, column %d (%d, expected %d)" % [index / MASK.SIDE, index % MASK.SIDE, got[index], expected[index]]
 	return "size %d, expected %d" % [got.size(), expected.size()]
 

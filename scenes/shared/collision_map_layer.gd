@@ -198,9 +198,9 @@ func room_category_at(global_point: Vector2) -> int:
 
 # Both ends are shifted to their cell centre and scaled to quarter cells, exactly as
 # Main_RenderUpdate does before calling sub_412E30.
-func has_line_of_sight(from_global: Vector2, to_global: Vector2) -> bool:
+func has_line_of_sight(from_global: Vector2, target_global: Vector2) -> bool:
 	var from_tile := (to_grid_position(from_global) + Vector2(0.5, 0.5)) * 4.0
-	var to_tile := (to_grid_position(to_global) + Vector2(0.5, 0.5)) * 4.0
+	var to_tile := (to_grid_position(target_global) + Vector2(0.5, 0.5)) * 4.0
 	return GRID_COLLISION.has_line_of_sight(Vector2i(from_tile), Vector2i(to_tile), is_sight_blocked)
 
 
@@ -214,10 +214,10 @@ static func of(node: Node) -> CollisionMapLayer:
 	return null
 
 
-static func line_of_sight_between(node: Node, from_global: Vector2, to_global: Vector2) -> bool:
+static func line_of_sight_between(node: Node, from_global: Vector2, target_global: Vector2) -> bool:
 	for layer in node.get_tree().get_nodes_in_group("collision_maps"):
 		if layer.get_parent().is_ancestor_of(node) and layer.has_method("has_line_of_sight"):
-			return layer.has_line_of_sight(from_global, to_global)
+			return layer.has_line_of_sight(from_global, target_global)
 	return true
 
 

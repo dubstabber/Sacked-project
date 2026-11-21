@@ -69,6 +69,7 @@ func _run() -> void:
 	_check_a_looping_clip_leaves_the_bake_alone(level, mask)
 
 	swaps.sort()
+	@warning_ignore("integer_division")
 	var median := swaps[swaps.size() / 2] if not swaps.is_empty() else 0.0
 	print(
 		"State swaps: median %.1f ms, worst %.1f ms (%s); a full recomposite is about 600 ms"

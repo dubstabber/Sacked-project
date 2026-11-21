@@ -25,7 +25,7 @@ class SoundLog extends Node:
 		return null
 
 	func named(sound_id: String) -> Array:
-		return calls.filter(func(call): return call[0] == sound_id)
+		return calls.filter(func(entry): return entry[0] == sound_id)
 
 
 func _init() -> void:
@@ -38,7 +38,7 @@ func _run() -> void:
 	_check_the_portraits()
 	await _check_a_round_the_player_gets_right()
 	await _check_a_round_the_player_gets_wrong()
-	await _check_the_duel_lengthens_each_time()
+	_check_the_duel_lengthens_each_time()
 	await _check_the_duel_sounds()
 	await _check_the_answer_clock()
 	await _check_the_countdown_starts_at_the_first_digit()
@@ -63,9 +63,9 @@ func _i18n() -> Node:
 func _check_the_button_row() -> void:
 	for difficulty in [4, 7]:
 		var slots := Art.button_slots(difficulty)
-		var sequence := slots.filter(func(s): return not s["answer"])
+		var sequence_slots := slots.filter(func(s): return not s["answer"])
 		var answers := slots.filter(func(s): return s["answer"])
-		_expect(sequence.size() == difficulty, "difficulty %d shows that many sequence slots" % difficulty)
+		_expect(sequence_slots.size() == difficulty, "difficulty %d shows that many sequence slots" % difficulty)
 		_expect(answers.size() == 7, "the answer row is always seven buttons, got %d" % answers.size())
 		for slot in answers:
 			_expect(int(slot["x"]) >= Art.ANSWER_MIN_X, "an answer button never sits left of 430")

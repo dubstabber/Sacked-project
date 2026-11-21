@@ -31,6 +31,7 @@ func _run() -> void:
 
 # Row k of the table: (46, 2), (44, 6) ... (0, 94), (0, 94) ... (46, 2).
 static func _span(row: int) -> Vector2i:
+	@warning_ignore("integer_division")
 	var k := row if row < TileSize.y / 2 else TileSize.y - 1 - row
 	return Vector2i(46 - 2 * k, 2 + 4 * k)
 
@@ -87,6 +88,7 @@ func _check_layer(layer: TileMapLayer, expected_cells: Array, label: String) -> 
 	var low := Vector2i(1 << 30, 1 << 30)
 	var high := -low
 	for cell in cells:
+		@warning_ignore("integer_division")
 		var top_left := Vector2i(layer.map_to_local(cell)) - TileSize / 2
 		low = low.min(top_left)
 		high = high.max(top_left + TileSize)
@@ -119,6 +121,7 @@ func _check_layer(layer: TileMapLayer, expected_cells: Array, label: String) -> 
 				_fail("level %s floor tile %s alpha is not the span table at 0x471C34" % [label, layer.get_cell_atlas_coords(cell)])
 				return
 			atlas["checked"][region.position] = true
+		@warning_ignore("integer_division")
 		var top_left := Vector2i(layer.map_to_local(cell)) - TileSize / 2 - low
 		var atlas_width: int = (atlas["image"] as Image).get_width()
 		for row in TileSize.y:

@@ -96,12 +96,12 @@ static func _load_manifest() -> void:
 		return
 	for entry in parsed.get("effects", []):
 		_effects[String(entry["id"])] = String(entry["stream"])
-	for name in parsed.get("music", {}):
-		_music[String(name)] = String(parsed["music"][name])
+	for track in parsed.get("music", {}):
+		_music[String(track)] = String(parsed["music"][track])
 
 
-func play_theme(name: String) -> void:
-	var path := String(_music.get(name, ""))
+func play_theme(track: String) -> void:
+	var path := String(_music.get(track, ""))
 	if path == "" or not ResourceLoader.exists(path):
 		return
 	var stream := load(path) as AudioStream

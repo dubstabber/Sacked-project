@@ -45,14 +45,14 @@ func _build_nodes() -> void:
 	if _screens != null:
 		mode = StringName(_screens.get("selected_game_mode"))
 	var states := _progress.states(mode)
-	var size := _progress.node_size()
+	var node_size := _progress.node_size()
 	for number in range(1, _progress.level_count() + 1):
 		var entry := _progress.level(number)
 		var state: LevelProgress.State = states[number - 1]
 		var button := TextureButton.new()
 		button.name = "Level%d" % number
 		button.position = Vector2(entry["node_position"][0], entry["node_position"][1])
-		button.size = size
+		button.size = node_size
 		var faces: Array = NODE_TEXTURES[state]
 		button.texture_normal = faces[0]
 		button.texture_pressed = faces[1]

@@ -37,6 +37,7 @@ func _init(p_centre: Vector2i, p_radius: float, p_step: int, p_start_angle: floa
 	start_angle = p_start_angle
 	source_width = p_source_width
 	source_rgba = p_source_rgba
+	@warning_ignore("integer_division")
 	origin = centre - Vector2i(WINDOW / 2, WINDOW / 2)
 	_reset()
 
@@ -161,6 +162,7 @@ func _edge(from: Array, to: Array) -> Dictionary:
 	}
 	if dy == 0:
 		return edge
+	@warning_ignore("integer_division")
 	var q := dx / dy
 	if dx < 0 and dx % dy != 0:
 		q -= 1
@@ -196,7 +198,9 @@ func _span(row: int, left: Dictionary, right: Dictionary, texels: PackedInt32Arr
 	var du := 0
 	var dv := 0
 	if x_right - x_left != -1:
+		@warning_ignore("integer_division")
 		du = (int(right.u) - int(left.u)) / count
+		@warning_ignore("integer_division")
 		dv = (int(right.v) - int(left.v)) / count
 	var u: int = left.u
 	var v: int = left.v

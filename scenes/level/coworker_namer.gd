@@ -37,8 +37,8 @@ static func name_agents(agents: Array, store: Node) -> PackedStringArray:
 	for entry: Array in ordered:
 		var type: int = entry[0]
 		if not dealt.has(type):
-			var pool: PackedStringArray = store.names_for_type(type) if store != null else CoworkerNames.defaults_for(type)
-			dealt[type] = {"pool": pool, "next": 0}
+			var fresh_pool: PackedStringArray = store.names_for_type(type) if store != null else CoworkerNames.defaults_for(type)
+			dealt[type] = {"pool": fresh_pool, "next": 0}
 		var state: Dictionary = dealt[type]
 		var pool: PackedStringArray = state["pool"]
 		var next: int = state["next"]

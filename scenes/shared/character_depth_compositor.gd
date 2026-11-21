@@ -260,11 +260,11 @@ func cluster_depth_for(sprite: Sprite2D) -> Dictionary:
 		var image := Image.create_from_data(
 			int(bounds.size.x), int(bounds.size.y), false, Image.FORMAT_RF, _surface_scores[index].to_byte_array()
 		)
-		var texture := _surface_score_textures[index]
-		if texture == null or texture.get_width() != image.get_width() or texture.get_height() != image.get_height():
+		var score_texture := _surface_score_textures[index]
+		if score_texture == null or score_texture.get_width() != image.get_width() or score_texture.get_height() != image.get_height():
 			_surface_score_textures[index] = ImageTexture.create_from_image(image)
 		else:
-			texture.update(image)
+			score_texture.update(image)
 	return {"texture": _surface_score_textures[index], "bounds": bounds}
 
 
@@ -412,12 +412,12 @@ func _make_actor(node: Node2D, sprite: Sprite2D, actor_index: int) -> Dictionary
 func _apply_actor_material(actor: Dictionary) -> void:
 	var sprite := actor["sprite"] as Sprite2D
 	var key := sprite.get_instance_id()
-	var material := _materials.get(key) as ShaderMaterial
-	if material == null or sprite.material != material:
-		material = ShaderMaterial.new()
-		material.shader = DEPTH_SHADER
-		sprite.material = material
-		_materials[key] = material
+	var actor_material := _materials.get(key) as ShaderMaterial
+	if actor_material == null or sprite.material != actor_material:
+		actor_material = ShaderMaterial.new()
+		actor_material.shader = DEPTH_SHADER
+		sprite.material = actor_material
+		_materials[key] = actor_material
 		_material_depth_paths[key] = ""
 
 	# The world composite is a single sprite drawn after the characters, so a shaded
@@ -425,21 +425,21 @@ func _apply_actor_material(actor: Dictionary) -> void:
 	sprite.z_index = z_index
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var actor_position := actor["position"] as Vector2
-	material.set_shader_parameter("pixel_snap", actor_position.round() - actor_position)
+	actor_material.set_shader_parameter("pixel_snap", actor_position.round() - actor_position)
 	var depth_path := String(actor["depth_path"])
 	if String(_material_depth_paths.get(key, "")) != depth_path:
 		_material_depth_paths[key] = depth_path
 		var depth_texture := _depth_texture(depth_path)
-		material.set_shader_parameter("depth_map", depth_texture)
-		material.set_shader_parameter("depth_map_enabled", depth_texture != null)
+		actor_material.set_shader_parameter("depth_map", depth_texture)
+		actor_material.set_shader_parameter("depth_map_enabled", depth_texture != null)
 
 	if _environment_applied != _environment_revision:
-		material.set_shader_parameter("world_depth", _environment_texture)
-		material.set_shader_parameter("world_depth_enabled", _environment_texture != null)
-		material.set_shader_parameter("world_depth_origin", _world_bounds.position)
-		material.set_shader_parameter("world_depth_size", _world_bounds.size)
+		actor_material.set_shader_parameter("world_depth", _environment_texture)
+		actor_material.set_shader_parameter("world_depth_enabled", _environment_texture != null)
+		actor_material.set_shader_parameter("world_depth_origin", _world_bounds.position)
+		actor_material.set_shader_parameter("world_depth_size", _world_bounds.size)
 
-	material.set_shader_parameter("base_y", float(actor["base_y"]))
+	actor_material.set_shader_parameter("base_y", float(actor["base_y"]))
 
 
 # The depth plane of the frame a character is showing, for a pass drawn over it.
@@ -454,11 +454,11 @@ func _depth_texture(path: String) -> Texture2D:
 	if not _depth_textures.has(path):
 		PerfProbe.begin(&"chars.depth_load")
 		_warm_requested.erase(path)
-		var texture := ThreadedLoads.take(path) as Texture2D
+		var plane := ThreadedLoads.take(path) as Texture2D
 		PerfProbe.end(&"chars.depth_load")
-		if texture == null:
+		if plane == null:
 			_warn_once(path, "Missing character depth map: %s" % path)
-		_depth_textures[path] = texture
+		_depth_textures[path] = plane
 	return _depth_textures[path] as Texture2D
 
 
@@ -485,10 +485,10 @@ func _warm_clip_depth_planes(node: Node) -> void:
 		return
 	var showing := node.get_node_or_null("Sprite2D") as Sprite2D
 	for index in range(animation.track_get_key_count(track)):
-		var texture := animation.track_get_key_value(track, index) as Texture2D
-		if texture == null or (showing != null and texture == showing.texture):
+		var frame_texture := animation.track_get_key_value(track, index) as Texture2D
+		if frame_texture == null or (showing != null and frame_texture == showing.texture):
 			continue
-		var path := _depth_path_for_texture(texture.resource_path)
+		var path := _depth_path_for_texture(frame_texture.resource_path)
 		if path == "" or _depth_textures.has(path) or _warm_requested.has(path):
 			continue
 		ThreadedLoads.request(path)
@@ -831,13 +831,13 @@ func _set_item_surface_image(index: int, image: Image, cluster: Array) -> void:
 		if item_surface.get_parent() != null:
 			item_surface.get_parent().remove_child(item_surface)
 		parent.add_child(item_surface, false, Node.INTERNAL_MODE_BACK)
-	var texture := _item_surface_textures[index] as ImageTexture
-	if texture == null or texture.get_width() != image.get_width() or texture.get_height() != image.get_height():
-		texture = ImageTexture.create_from_image(image)
-		_item_surface_textures[index] = texture
+	var surface_texture := _item_surface_textures[index] as ImageTexture
+	if surface_texture == null or surface_texture.get_width() != image.get_width() or surface_texture.get_height() != image.get_height():
+		surface_texture = ImageTexture.create_from_image(image)
+		_item_surface_textures[index] = surface_texture
 	else:
-		texture.update(image)
-	item_surface.texture = texture
+		surface_texture.update(image)
+	item_surface.texture = surface_texture
 	item_surface.visible = true
 
 

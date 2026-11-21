@@ -39,8 +39,8 @@ func _ready() -> void:
 	z_index = DEPTH_INDEX
 	visible = false
 	var offsets: Dictionary = OriginalData.load_original(OFFSETS_PATH).get("offsets", {})
-	for name in BUBBLES:
-		var path := "res://images/effects/bubbles/%s.png" % name
+	for bubble in BUBBLES:
+		var path := "res://images/effects/bubbles/%s.png" % bubble
 		_textures.append(load(path) as Texture2D if ResourceLoader.exists(path) else null)
 		var pivot: Array = offsets.get(path, [0, 0])
 		_offsets.append(Vector2(float(pivot[0]), float(pivot[1])))

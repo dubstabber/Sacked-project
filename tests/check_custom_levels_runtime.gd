@@ -71,7 +71,6 @@ func _check_level(info: CustomLevelInfo) -> void:
 		_expect(profile != null and NPCBrain.profiles().has(StringName(profile.get("id"))), "%s %s has a profile the brains know" % [label, node.name])
 
 	root.add_child(level)
-	var started := Time.get_ticks_msec()
 	var frames := 0
 	# Run with --fixed-fps 10 (run_checks.py does), so twenty simulated seconds pass quickly.
 	while frames < int(PLAY_SECONDS * 10.0):

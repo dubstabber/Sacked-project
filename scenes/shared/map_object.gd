@@ -320,7 +320,8 @@ func _get_property_list() -> Array[Dictionary]:
 func _get(property: StringName) -> Variant:
 	if property == &"tile_position":
 		var axes := _tile_axes()
-		return axes.affine_inverse() * position if axes != Transform2D() else null
+		if axes != Transform2D():
+			return axes.affine_inverse() * position
 	return null
 
 

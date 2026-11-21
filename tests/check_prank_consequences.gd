@@ -338,8 +338,8 @@ func _check_the_turn_toward_the_item() -> void:
 		[Vector2(-0.4, 0.3), "right", "a short diagonal takes the 045 sector"],
 	]
 	# The screen-space snap the port used to take lands the second case on 090 instead.
-	var snapped := IsoDirection.snap_to_8_directions(IsoDirection.ground_to_screen(Vector2(1.0, 0.45)))
-	_expect(snapped.is_equal_approx(Vector2(48.0, 24.0).normalized()), "the second case is one a screen-space snap gets wrong")
+	var screen_snap := IsoDirection.snap_to_8_directions(IsoDirection.ground_to_screen(Vector2(1.0, 0.45)))
+	_expect(screen_snap.is_equal_approx(Vector2(48.0, 24.0).normalized()), "the second case is one a screen-space snap gets wrong")
 	for case in cases:
 		var fixture := _player_fixture()
 		var player: Node2D = fixture["player"]

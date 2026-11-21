@@ -271,6 +271,7 @@ func _on_time_changed(seconds: int) -> void:
 	if seconds > CLOCK_OVERFLOW_SECONDS:
 		_clock.text = "XX:XX"
 	else:
+		@warning_ignore("integer_division")
 		_clock.text = "%02d:%02d" % [seconds / 60, seconds % 60]
 
 

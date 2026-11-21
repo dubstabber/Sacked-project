@@ -91,6 +91,7 @@ func _cell_in_other_room(layer: CollisionMapLayer, room: int) -> Vector2i:
 	var size := layer.room_grid_size
 	for index in range(size.x * size.y):
 		if int(layer.room_ids[index]) != room and int(layer.room_ids[index]) != 0:
+			@warning_ignore("integer_division")
 			return Vector2i(index % size.x, index / size.x)
 	return Vector2i(-1, -1)
 

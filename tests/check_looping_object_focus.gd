@@ -223,7 +223,7 @@ func _check_copier_after_asscopy() -> void:
 	_expect(_ids(_controller.entries) == [28, 29, ASSCOPY], "the idle copier offers 28, 29 and ASSCOPY, got %s" % [_ids(_controller.entries)])
 	_expect_lit_over(copier, "idle copier")
 
-	await _run_action(copier, ASSCOPY)
+	_run_action(copier, ASSCOPY)
 	# The copier ships no DESTROY_1, so it plays its IDLE clip once before DESTROYED_1.
 	copier._process(0.125)
 	_expect(copier.state == 9, "ASSCOPY leaves the copier on DESTROYED_1, got %d" % copier.state)
@@ -317,7 +317,7 @@ func _check_nothing_left_still_tints_red(object: MapObject, action_id: int, behi
 	if stands.is_empty():
 		return
 	await _place_player(stands[0])
-	await _run_action(object, action_id)
+	_run_action(object, action_id)
 	# A DESTROY_n plays out before its loop starts.
 	for step in range(64):
 		if object.state >= MapObject.FIRST_TRANSITION_STATE + MapObject.DESTROYED_OFFSET:

@@ -236,10 +236,10 @@ func _emit() -> void:
 	particles[p + POS_Y] = emitter.y
 	particles[p + POS_Z] = emitter.z
 	# Slot 11 (0x4272E0).
-	var scale := float(params()["velocity_scale"])
-	particles[p + VEL_X] = scale * emitter_velocity.x
+	var speed_scale := float(params()["velocity_scale"])
+	particles[p + VEL_X] = speed_scale * emitter_velocity.x
 	particles[p + VEL_Y] = emitter_velocity.y
-	particles[p + VEL_Z] = scale * emitter_velocity.z
+	particles[p + VEL_Z] = speed_scale * emitter_velocity.z
 
 
 func _birth(ramp: String) -> float:
@@ -273,8 +273,8 @@ func _publish() -> void:
 		var size := particles[p + SIZE]
 		var screen_x := ground.x
 		var screen_y := ground.y - height_pixels * particles[p + POS_Y]
-		var scale := maxi(1, int(size * scale_units))
-		var width := float(((scale * 63) >> 8) + 1)
+		var scaled_size := maxi(1, int(size * scale_units))
+		var width := float(((scaled_size * 63) >> 8) + 1)
 		var shift := _pivot - _pivot * size
 		var left := floorf(screen_x + shift.x) - _pivot.x
 		var top := floorf(screen_y + shift.y) - _pivot.y
@@ -293,7 +293,7 @@ func _publish() -> void:
 		instance_buffer[b + 11] = 1.0
 		instance_buffer[b + 12] = float(frame_of(particles[p + AGE]))
 		instance_buffer[b + 13] = CharacterDepthCompositor.base_score(screen_y) - height_pixels
-		instance_buffer[b + 14] = float(scale)
+		instance_buffer[b + 14] = float(scaled_size)
 		instance_buffer[b + 15] = width
 		var quad := Rect2(left, top, width, width)
 		drawn_bounds = quad if first else drawn_bounds.merge(quad)
@@ -330,8 +330,8 @@ static func _load_strings() -> void:
 		elif frame_pivot != pivot:
 			push_error("Smoke: frame %s has pivot %s, the first has %s" % [frame["texture"], frame_pivot, pivot])
 			return
-		var texture := load(String(frame["texture"])) as Texture2D
-		var image := texture.get_image() if texture != null else null
+		var frame_texture := load(String(frame["texture"])) as Texture2D
+		var image := frame_texture.get_image() if frame_texture != null else null
 		if image == null:
 			push_error("Smoke: frame %s is missing" % frame["texture"])
 			return

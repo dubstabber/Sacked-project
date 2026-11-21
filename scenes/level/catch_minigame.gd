@@ -9,7 +9,6 @@ extends CanvasLayer
 
 signal finished(won: bool)
 
-const MinigameArt := preload("res://scenes/level/catch_minigame_art.gd")
 const CatchCountdown := preload("res://scenes/level/catch_countdown.gd")
 
 # sub_414870's constants, in the order its state machine uses them.
@@ -36,7 +35,6 @@ const LOSE_SOUND := "S1001"
 
 enum State { IDLE, GET_READY, BUILD, CASTING, YOUR_TURN, ANSWERING, ROUND_LOST, ROUND_WON, WON, LOST }
 
-@onready var _frame: Control = $SafeFrame
 @onready var _enemy_portrait: Sprite2D = $SafeFrame/EnemyPortrait
 @onready var _player_portrait: Sprite2D = $SafeFrame/PlayerPortrait
 @onready var _cast_spell: Sprite2D = $SafeFrame/CastSpell

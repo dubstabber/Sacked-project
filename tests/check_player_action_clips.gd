@@ -134,8 +134,8 @@ func _check_every_slot_has_exactly_its_recovered_views(spec: Dictionary) -> void
 				if FileAccess.file_exists("%sCO_CHARS_CO_CHARS_%s_%s_godot.json" % [SOURCE_DIR, source, angle]):
 					recovered.append(angle)
 			_expect(not recovered.is_empty(), "slot %s (%s) has extracted views" % [slot, source])
-			var rows: Array = spec["clips"].filter(func(row: Dictionary) -> bool:
-				return String(row["character"]) == character and String(row["source"]) == source)
+			var rows: Array = spec["clips"].filter(func(clip: Dictionary) -> bool:
+				return String(clip["character"]) == character and String(clip["source"]) == source)
 			_expect(rows.size() == 1, "%s has one spec row for slot %s (%s), found %d" % [character, slot, source, rows.size()])
 			if rows.size() != 1:
 				continue
@@ -162,7 +162,7 @@ func _check_every_slot_has_exactly_its_recovered_views(spec: Dictionary) -> void
 				_expect(slot_sources.has(String(row["source"])), "%s's %s row is a slot of the player's table" % [character, row["source"]])
 
 
-func _check_every_reachable_selector_has_a_clip(spec: Dictionary) -> void:
+func _check_every_reachable_selector_has_a_clip(_unused_spec: Dictionary) -> void:
 	var actions = JSON.parse_string(FileAccess.get_file_as_string("res://resources/original/actions.json"))
 	var placed := {}
 	var dir := DirAccess.open("res://resources/levels")
@@ -221,10 +221,10 @@ func _check_the_two_view_clip_is_asked_for_a_view_it_has() -> void:
 		# Every other facing must land on one of those two rather than on a missing clip.
 		for angle in range(8):
 			var arbitrary := Vector2.RIGHT.rotated(float(angle) * PI / 4.0)
-			var snapped: Vector2 = CONTROLLER.new()._nearest_asscopy_facing(arbitrary)
+			var facing: Vector2 = CONTROLLER.new()._nearest_asscopy_facing(arbitrary)
 			_expect(
-				controller_facings.has(snapped),
-				"an arbitrary facing snaps onto a view the clip has, got %s" % snapped
+				controller_facings.has(facing),
+				"an arbitrary facing snaps onto a view the clip has, got %s" % facing
 			)
 		root.remove_child(player)
 		player.free()

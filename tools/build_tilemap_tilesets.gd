@@ -83,6 +83,7 @@ func _save_tileset(atlas_name: String, atlas: Dictionary) -> bool:
 			return false
 		var pivot := _vector2i(tile.get("pivot", [0, 0]))
 		var paste_offset := _vector2i(tile.get("paste_offset", [0, 0]))
+		@warning_ignore("integer_division")
 		tile_data.texture_origin = pivot + paste_offset - source.texture_region_size / 2
 		tile_data.set_custom_data("depth_base_offset", -36.0 if atlas_name == "walls" else 0.0)
 

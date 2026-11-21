@@ -941,7 +941,7 @@ func _check_looking_around() -> void:
 	# back, and roll nothing on it (0x419E12, 0x41E451); the next frame rolls for IDLE#2 before
 	# it looks around. sub_419740 and sub_41A8D0 roll the look-around straight away.
 	var no_fidget := func(rng: RandomNumberGenerator) -> bool: return (rng.randi() & 0xFFF) <= 0xFF8
-	var looks := func(rng: RandomNumberGenerator, back: bool) -> bool: return (rng.randi() & 0xFFF) > 4000 and ((rng.randi() & 0xFF) <= 0x80) == back
+	var looks := func(rng: RandomNumberGenerator, backward: bool) -> bool: return (rng.randi() & 0xFFF) > 4000 and ((rng.randi() & 0xFF) <= 0x80) == backward
 	var seeds := {
 		true: [_seed_where(func(rng): return no_fidget.call(rng) and looks.call(rng, true)), _seed_where(func(rng): return no_fidget.call(rng) and looks.call(rng, false))],
 		false: [_seed_where(func(rng): return looks.call(rng, true)), _seed_where(func(rng): return looks.call(rng, false))],
@@ -1044,10 +1044,10 @@ func _settle(profile_id: StringName, kind: String) -> Dictionary:
 		"after the copier's first user": [2, 129, 0, true, 3],
 	}
 	if not specs.has(kind):
-		var fixture := _fixture(profile_id)
+		var plain := _fixture(profile_id)
 		if kind == "walking":
-			fixture["brain"]._state = BRAIN.State.NAVIGATING
-		return fixture
+			plain["brain"]._state = BRAIN.State.NAVIGATING
+		return plain
 	var spec: Array = specs[kind]
 	var fixture := _point_fixture(spec[0], spec[1], spec[2], spec[3], profile_id)
 	var brain: Node = fixture["brain"]

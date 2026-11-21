@@ -91,6 +91,7 @@ func _best_time_text() -> String:
 	if not _progress.has_best_time(_level):
 		return NO_TIME_TEXT
 	var seconds := int(_progress.best_time_seconds(_level))
+	@warning_ignore("integer_division")
 	return TIME_FORMAT % [seconds / 60, seconds % 60]
 
 

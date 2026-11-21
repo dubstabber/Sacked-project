@@ -206,6 +206,7 @@ func _check_the_stopwatch_sweeps_the_dial(console: Node) -> void:
 	_expect(console.CLOCK_BAR_RADIUS == 38.0, "the fan keeps the original radius, got %f" % console.CLOCK_BAR_RADIUS)
 	_expect(console.CLOCK_BAR_STEP == 15, "the fan keeps the original step, got %d" % console.CLOCK_BAR_STEP)
 	_expect(console.CLOCK_BAR_START_ANGLE == 0.5, "the sweep starts at the original angle")
+	@warning_ignore("integer_division")
 	var half := RoundBarFan.WINDOW / 2
 	_expect(bar.position == Vector2(662, 536), "the stopwatch element sits at its centre, got %s" % bar.position)
 	_expect(bar.offset == Vector2(-half, -half), "the window hangs half its size up and left, got %s" % bar.offset)
@@ -220,7 +221,9 @@ func _check_the_stopwatch_sweeps_the_dial(console: Node) -> void:
 		if texels[index] == RoundBarFan.NONE:
 			continue
 		var texel := texels[index]
+		@warning_ignore("integer_division")
 		var expected := dial.get_pixel(texel % dial.get_width(), texel / dial.get_width())
+		@warning_ignore("integer_division")
 		var shown := image.get_pixel(index % RoundBarFan.WINDOW, index / RoundBarFan.WINDOW)
 		if not shown.is_equal_approx(Color(expected.r, expected.g, expected.b, 1.0)):
 			wrong += 1

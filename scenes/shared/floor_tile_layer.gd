@@ -38,6 +38,7 @@ func _bake() -> void:
 			atlases[source_id] = atlas
 		var region := source.get_tile_texture_region(get_cell_atlas_coords(cell))
 		# Where TileSetAtlasSource draws the tile's quad, which the 96 x 48 grid puts on whole pixels.
+		@warning_ignore("integer_division")
 		var top_left := Vector2i(map_to_local(cell)) - region.size / 2 - get_cell_tile_data(cell).texture_origin
 		blits.append([atlases[source_id], region, top_left])
 		low = low.min(top_left)

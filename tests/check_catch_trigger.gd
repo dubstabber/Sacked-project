@@ -42,7 +42,7 @@ func _run() -> void:
 
 	_check_constants(brain)
 	await _check_notice_geometry(agent, brain, player, layer)
-	await _check_only_mid_prank(world, player)
+	_check_only_mid_prank(world, player)
 	_check_a_catch_cuts_the_start_sound(world, player)
 	_check_the_duel_gets_the_pointer(world, player)
 	_check_the_duel_holds_only_the_theme()
@@ -153,7 +153,7 @@ func _from_tiles(agent: Node2D, layer: Node, tile: Vector2) -> Vector2:
 	return agent.global_position + _to_screen(tile - origin)
 
 
-func _check_only_mid_prank(world: Node, player: Node2D) -> void:
+func _check_only_mid_prank(_world: Node, _player: Node2D) -> void:
 	var watch := _level.get_node_or_null("LevelRuntime/CatchWatch")
 	var prank = get_first_node_in_group("player_actions")
 	if watch == null or prank == null:

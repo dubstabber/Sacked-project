@@ -494,8 +494,8 @@ func _stamp_block(near: int, far: int, first: int, last: int) -> void:
 	for k in range(near - 1, far - 1):
 		# Row k + 1 is the farthest to reach row k, and row k is its first.
 		@warning_ignore("integer_division")
-		var low := _sample_start[(k + 1) * k / 2 + first]
-		_shadow_rows[k] |= _span_bits[high] - _span_bits[low]
+		var row_low := _sample_start[(k + 1) * k / 2 + first]
+		_shadow_rows[k] |= _span_bits[high] - _span_bits[row_low]
 		high += 2
 	@warning_ignore("integer_division")
 	var low := _sample_start[far * (far - 1) / 2 + first]

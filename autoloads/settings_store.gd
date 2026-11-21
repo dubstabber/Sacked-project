@@ -241,8 +241,8 @@ func _names_key(type: int) -> String:
 
 
 # Every copy in or out of a record is strncpy(..., 16); the original keeps spaces as typed.
-func _clean_name(name: String) -> String:
-	return name.substr(0, CoworkerNames.max_length())
+func _clean_name(text: String) -> String:
+	return text.substr(0, CoworkerNames.max_length())
 
 
 # --- launches --------------------------------------------------------------------------

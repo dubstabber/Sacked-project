@@ -29,8 +29,8 @@ func _run() -> void:
 	_controller = get_first_node_in_group("player_actions")
 	_player = _controller.get("_player") as Node2D
 	_controller.set_process(false)
-	await _check_the_soap_beats_its_sink()
-	await _check_a_nearer_bucket_beats_a_later_box()
+	_check_the_soap_beats_its_sink()
+	_check_a_nearer_bucket_beats_a_later_box()
 	root.remove_child(_level)
 	_level.free()
 	if _failures == 0:
@@ -74,7 +74,7 @@ func _check_the_soap_beats_its_sink() -> void:
 	for offset in [Vector2.ZERO, Vector2(37, 11), Vector2(-90, 140), Vector2(200, -75), Vector2(-13, -260)]:
 		_player.global_position = soap.global_position + offset
 		var front: Node2D = _controller._front_at(centre)
-		_expect(front == soap, "with the camera at %s the soap answers, got %s" % [offset, front.name if front != null else "nothing"])
+		_expect(front == soap, "with the camera at %s the soap answers, got %s" % [offset, String(front.name) if front != null else "nothing"])
 
 
 # Two boxes a whole bucket apart: the nearer one answers even though it registered first.
@@ -87,6 +87,6 @@ func _check_a_nearer_bucket_beats_a_later_box() -> void:
 	sink.get_node("Sprite2D").global_position -= Vector2(0, 40)
 	_player.global_position = soap.global_position
 	var front: Node2D = _controller._front_at(centre)
-	_expect(front == sink, "a sink 40 rows nearer answers before the later soap, got %s" % [front.name if front != null else "nothing"])
+	_expect(front == sink, "a sink 40 rows nearer answers before the later soap, got %s" % [String(front.name) if front != null else "nothing"])
 	sink.get_node("Sprite2D").global_position += Vector2(0, 40)
 	sink.global_position = home
