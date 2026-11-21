@@ -10,11 +10,17 @@ signal composed
 const GROUP_NAME := "depth_composited_characters"
 const DEPTH_SUFFIX := "-depth.png"
 const EMPTY_SCORE := -1.0e30
+# An RGBA8 pixel read as one little-endian int32 holds R in bits 0-7, G in 8-15 and A in 24-31,
+# so a depth plane's 16-bit depth is its low half. The int is sign-extended, which this mask
+# ignores.
+const ALPHA_BITS := 0xFF000000
+const DEPTH_BITS := 0xFFFF
 const DEPTH_SHADER := preload("res://scenes/shared/character_depth.gdshader")
 
 var _color_images: Dictionary = {}
 var _depth_images: Dictionary = {}
-var _image_bytes: Dictionary = {}
+# Image instance id -> its RGBA8 pixels as one int32 each.
+var _image_words: Dictionary = {}
 var _opaque_rects: Dictionary = {}
 var _warned_paths: Dictionary = {}
 var _hidden_sprites: Array[Sprite2D] = []
@@ -315,7 +321,7 @@ func overlapping_actors_for_test(actors: Array) -> Array:
 func clear_image_caches() -> void:
 	_color_images.clear()
 	_depth_images.clear()
-	_image_bytes.clear()
+	_image_words.clear()
 	_opaque_rects.clear()
 
 
@@ -532,17 +538,17 @@ func _load_image(path: String, cache: Dictionary):
 	return image
 
 
-func _rgba8_bytes(image: Image) -> PackedByteArray:
+func _rgba8_words(image: Image) -> PackedInt32Array:
 	var key := image.get_instance_id()
-	if _image_bytes.has(key):
-		return _image_bytes[key]
+	if _image_words.has(key):
+		return _image_words[key]
 	var source := image
 	if source.get_format() != Image.FORMAT_RGBA8:
 		source = Image.new()
 		source.copy_from(image)
 		source.convert(Image.FORMAT_RGBA8)
-	_image_bytes[key] = source.get_data()
-	return _image_bytes[key]
+	_image_words[key] = source.get_data().to_int32_array()
+	return _image_words[key]
 
 
 func _depth_path_for_texture(texture_path: String) -> String:
@@ -628,14 +634,17 @@ func _calculate_union_bounds(actors: Array) -> Rect2:
 func _compose_images(actors: Array, bounds: Rect2) -> Image:
 	var width := int(bounds.size.x)
 	var height := int(bounds.size.y)
-	var pixels := PackedByteArray()
-	pixels.resize(width * height * 4)
+	# One int32 per RGBA8 pixel: a pixel is read and written whole instead of byte by byte.
+	var pixels := PackedInt32Array()
+	pixels.resize(width * height)
+	pixels.fill(0)
 	# The objects' pixels go to a buffer of their own; a pixel is in whichever buffer the actor
 	# that won it last writes, and cleared from the other.
-	var item_pixels := PackedByteArray()
+	var item_pixels := PackedInt32Array()
 	for actor in actors:
 		if actor.get("item", false):
-			item_pixels.resize(width * height * 4)
+			item_pixels.resize(width * height)
+			item_pixels.fill(0)
 			break
 
 	var scores := PackedFloat32Array()
@@ -651,16 +660,16 @@ func _compose_images(actors: Array, bounds: Rect2) -> Image:
 	composed_scores = scores
 	composed_item_image = null
 	if not item_pixels.is_empty():
-		composed_item_image = Image.create_from_data(width, height, false, Image.FORMAT_RGBA8, item_pixels)
-	return Image.create_from_data(width, height, false, Image.FORMAT_RGBA8, pixels)
+		composed_item_image = Image.create_from_data(width, height, false, Image.FORMAT_RGBA8, item_pixels.to_byte_array())
+	return Image.create_from_data(width, height, false, Image.FORMAT_RGBA8, pixels.to_byte_array())
 
 
-func _compose_actor(pixels: PackedByteArray, others: PackedByteArray, scores: PackedFloat32Array, bounds_position: Vector2, width: int, height: int, actor: Dictionary) -> void:
+func _compose_actor(pixels: PackedInt32Array, others: PackedInt32Array, scores: PackedFloat32Array, bounds_position: Vector2, width: int, height: int, actor: Dictionary) -> void:
 	var color_image := actor["color"] as Image
 	var depth_image := actor["depth"] as Image
-	var color_bytes := _rgba8_bytes(color_image)
-	var depth_bytes := _rgba8_bytes(depth_image) if depth_image != null else PackedByteArray()
-	var depth_tested := not depth_bytes.is_empty()
+	var color_words := _rgba8_words(color_image)
+	var depth_words := _rgba8_words(depth_image) if depth_image != null else PackedInt32Array()
+	var depth_tested := not depth_words.is_empty()
 	var source_width := color_image.get_width()
 	var actor_position := actor["position"] as Vector2
 	var source_rect := _actor_source_rect(actor)
@@ -671,14 +680,7 @@ func _compose_actor(pixels: PackedByteArray, others: PackedByteArray, scores: Pa
 		int(round(actor_position.x - bounds_position.x)),
 		int(round(actor_position.y - bounds_position.y))
 	)
-	var bounds_x := int(bounds_position.x)
-	var bounds_y := int(bounds_position.y)
 	var clears_others := not others.is_empty()
-	var has_environment := not environment_scores.is_empty()
-	var environment_width := int(environment_bounds.size.x)
-	var environment_height := int(environment_bounds.size.y)
-	var environment_x := int(environment_bounds.position.x)
-	var environment_y := int(environment_bounds.position.y)
 
 	# Clamped once instead of per pixel: composing into a small window then costs only the
 	# pixels that land inside it.
@@ -687,53 +689,54 @@ func _compose_actor(pixels: PackedByteArray, others: PackedByteArray, scores: Pa
 	var x_start := maxi(source_min.x, -dst_origin.x)
 	var x_end := mini(source_max.x, width - dst_origin.x)
 
+	# The environment window, in source columns: a pixel outside it is not tested, exactly as
+	# a pixel outside the world's buffer was not.
+	var has_environment := not environment_scores.is_empty()
+	var environment_width := int(environment_bounds.size.x)
+	var environment_height := int(environment_bounds.size.y)
+	var environment_column_offset := int(bounds_position.x) + dst_origin.x - int(environment_bounds.position.x)
+	var environment_row_offset := int(bounds_position.y) + dst_origin.y - int(environment_bounds.position.y)
+	var environment_x_start := -environment_column_offset
+	var environment_x_end := environment_width - environment_column_offset
+
+	if not depth_tested:
+		for source_y in range(y_start, y_end):
+			var source_row := source_y * source_width
+			var dst_shift := (dst_origin.y + source_y) * width + dst_origin.x
+			for source_x in range(x_start, x_end):
+				var color := color_words[source_row + source_x]
+				if color & ALPHA_BITS == 0:
+					continue
+				pixels[dst_shift + source_x] = color
+				if clears_others:
+					others[dst_shift + source_x] = 0
+		return
+
 	for source_y in range(y_start, y_end):
-		var dst_y := dst_origin.y + source_y
 		var source_row := source_y * source_width
-		var dst_row := dst_y * width
+		var dst_shift := (dst_origin.y + source_y) * width + dst_origin.x
+		var environment_row := environment_row_offset + source_y
+		var row_tested := has_environment and environment_row >= 0 and environment_row < environment_height
+		var environment_shift := environment_row * environment_width + environment_column_offset
 
 		for source_x in range(x_start, x_end):
-			var dst_x := dst_origin.x + source_x
-
-			var source_index := (source_row + source_x) * 4
-			if color_bytes[source_index + 3] == 0:
+			var source_index := source_row + source_x
+			var color := color_words[source_index]
+			if color & ALPHA_BITS == 0:
 				continue
-			var dst_index := dst_row + dst_x
-			if not depth_tested:
-				var untested_index := dst_index * 4
-				pixels[untested_index] = color_bytes[source_index]
-				pixels[untested_index + 1] = color_bytes[source_index + 1]
-				pixels[untested_index + 2] = color_bytes[source_index + 2]
-				pixels[untested_index + 3] = color_bytes[source_index + 3]
-				if clears_others:
-					others[untested_index] = 0
-					others[untested_index + 1] = 0
-					others[untested_index + 2] = 0
-					others[untested_index + 3] = 0
+			var depth := depth_words[source_index]
+			if depth & ALPHA_BITS == 0:
 				continue
-			if depth_bytes[source_index + 3] == 0:
-				continue
-
-			var score := base_y - float(depth_bytes[source_index] | (depth_bytes[source_index + 1] << 8))
-			if has_environment:
-				var environment_column := bounds_x + dst_x - environment_x
-				var environment_row := bounds_y + dst_y - environment_y
-				if environment_column >= 0 and environment_row >= 0 and environment_column < environment_width and environment_row < environment_height:
-					if score < environment_scores[environment_row * environment_width + environment_column]:
-						continue
-
+			var score := base_y - float(depth & DEPTH_BITS)
+			if row_tested and source_x >= environment_x_start and source_x < environment_x_end:
+				if score < environment_scores[environment_shift + source_x]:
+					continue
+			var dst_index := dst_shift + source_x
 			if score >= scores[dst_index]:
 				scores[dst_index] = score
-				var output_index := dst_index * 4
-				pixels[output_index] = color_bytes[source_index]
-				pixels[output_index + 1] = color_bytes[source_index + 1]
-				pixels[output_index + 2] = color_bytes[source_index + 2]
-				pixels[output_index + 3] = color_bytes[source_index + 3]
+				pixels[dst_index] = color
 				if clears_others:
-					others[output_index] = 0
-					others[output_index + 1] = 0
-					others[output_index + 2] = 0
-					others[output_index + 3] = 0
+					others[dst_index] = 0
 
 
 func _set_surface_image(index: int, image: Image) -> void:
