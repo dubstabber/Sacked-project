@@ -57,6 +57,10 @@ var _world_bounds := Rect2()
 var _world_mask: Node
 var _environment_revision := -1
 var _environment_instance_id := 0
+# The clip each character was last seen in, and the depth planes requested from
+# ThreadedLoads for clips that started since but have not been shown yet.
+var _seen_clips: Dictionary = {}
+var _warm_requested: Dictionary = {}
 
 
 # sub_41A2D0's base score for an entity anchored at `anchor_y`: trunc(49152 - projected_y / 2),
@@ -73,11 +77,30 @@ func _ready() -> void:
 	centered = false
 	visible = false
 	z_index = 1
+	_attach_bake_cache()
+
+
+# A retry reloads the level from zero; the BakeCache autoload keeps what this compositor has
+# loaded and read back, so the new one does not do it all again.
+func _attach_bake_cache() -> void:
+	if owner == null:
+		return
+	var cache := get_node_or_null("/root/BakeCache")
+	if cache == null or not cache.call("attach", owner.scene_file_path):
+		return
+	_depth_textures = cache.get("character_depth_textures")
+	_color_images = cache.get("character_color_images")
+	_depth_images = cache.get("character_depth_images")
+	_opaque_rects = cache.get("character_opaque_rects")
 
 
 func _exit_tree() -> void:
 	_restore_actor_sprites()
 	_clear_actor_materials()
+	for path in _warm_requested:
+		ThreadedLoads.release(path)
+	_warm_requested.clear()
+	_seen_clips.clear()
 	for index in range(1, _surfaces.size()):
 		if is_instance_valid(_surfaces[index]):
 			_surfaces[index].queue_free()
@@ -341,6 +364,7 @@ func _collect_actors() -> Array:
 		if not sprite.visible and not _hidden_sprites.has(sprite):
 			continue
 
+		_warm_clip_depth_planes(node)
 		var actor := _make_actor(node, sprite, actor_index)
 		if actor.is_empty():
 			_clear_actor_material(sprite)
@@ -428,15 +452,47 @@ func depth_texture_for(sprite: Sprite2D) -> Texture2D:
 
 func _depth_texture(path: String) -> Texture2D:
 	if not _depth_textures.has(path):
-		var texture: Texture2D = null
 		PerfProbe.begin(&"chars.depth_load")
-		if ResourceLoader.exists(path):
-			texture = load(path) as Texture2D
+		_warm_requested.erase(path)
+		var texture := ThreadedLoads.take(path) as Texture2D
 		PerfProbe.end(&"chars.depth_load")
 		if texture == null:
 			_warn_once(path, "Missing character depth map: %s" % path)
 		_depth_textures[path] = texture
 	return _depth_textures[path] as Texture2D
+
+
+# A character's depth planes used to load as each frame first showed, five to seven of them
+# in one frame costing 25-33 ms. When a character starts a clip, every later frame's plane
+# is asked of ThreadedLoads, so only the clip's first frame loads on the spot.
+func _warm_clip_depth_planes(node: Node) -> void:
+	if not ThreadedLoads.available():
+		return
+	var controller := node.get_node_or_null("AnimationController")
+	if controller == null:
+		return
+	var clip := String(controller.get("current_animation"))
+	var key := node.get_instance_id()
+	if clip == "" or _seen_clips.get(key, "") == clip:
+		return
+	_seen_clips[key] = clip
+	var player := controller.get("animation_player") as AnimationPlayer
+	if player == null or not player.has_animation(clip):
+		return
+	var animation := player.get_animation(clip)
+	var track := animation.find_track(NodePath("Sprite2D:texture"), Animation.TYPE_VALUE)
+	if track < 0:
+		return
+	var showing := node.get_node_or_null("Sprite2D") as Sprite2D
+	for index in range(animation.track_get_key_count(track)):
+		var texture := animation.track_get_key_value(track, index) as Texture2D
+		if texture == null or (showing != null and texture == showing.texture):
+			continue
+		var path := _depth_path_for_texture(texture.resource_path)
+		if path == "" or _depth_textures.has(path) or _warm_requested.has(path):
+			continue
+		ThreadedLoads.request(path)
+		_warm_requested[path] = true
 
 
 func _clear_actor_material(sprite: Sprite2D) -> void:

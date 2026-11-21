@@ -148,11 +148,30 @@ Each change below kept the sha256 goldens. All figures use the benchmark above.
   - Headless, the dummy renderer cannot create textures off the main thread, so the checks
     load the scene synchronously.
 
+- **A clip's later frames load on worker threads.** `scenes/shared/threaded_loads.gd`
+  (`ThreadedLoads`) serves both cases:
+  - when a state changes, `MapObject` requests every frame of the new clip but the first;
+  - when a character starts a clip, the character compositor requests every later frame's
+    depth plane.
+
+  Only a clip's first frame loads on the spot, and the next one is at least a clip frame
+  away. Requests a clip never takes are released, and `ScreenManager` collects them. Headless
+  there are no worker-thread textures, so everything loads on the spot, as before.
+  `tests/check_threaded_loads_windowed.gd` runs in a window (`run_checks.py` skips it without a
+  display) and holds every frame served that way to the frame its clip names.
+- **Sound effects stay loaded** in `LevelAudio` once played.
+
+With the clip loads off the main thread, an idle office has no long frames left beyond the
+first frame after the load. Level 8 had seven such frames and a worst of 52 ms; now it has
+none, with a worst of 23 ms. `object.set_state` dropped from 20–25 ms to about 2 ms. What is
+left in a storm is the dirty-rectangle compose itself: a one-shot clip repaints its rectangle
+on every one of its frames.
+
 | Level | Load, no preload | Load, after 2 s / 5 s on the description screen | Retry | Storm p99 / max |
 | --- | --- | --- | --- | --- |
 | 1 | 1.70 s → 1.50 s | 0.62 s / — | 0.71 s → 0.07 s | 29 / 43 ms → 21 / 34 ms |
-| 8 | 3.21 s → 2.72 s | 1.81 s / 1.36 s | 1.57 s → 0.12 s | 54 / 78 ms → 39 / 72 ms |
-| 19 | 3.80 s → 3.07 s | 2.07 s / 1.77 s | 2.10 s → 0.18 s | 86 / 132 ms → 53 / 72 ms |
+| 8 | 3.21 s → 2.72 s | 1.81 s / 1.36 s | 1.57 s → 0.12 s | 54 / 78 ms → 36 / 51 ms |
+| 19 | 3.80 s → 3.07 s | 2.07 s / 1.77 s | 2.10 s → 0.18 s | 86 / 132 ms → 48 / 72 ms |
 
 ### Clips that never stop
 

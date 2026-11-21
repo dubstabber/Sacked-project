@@ -20,6 +20,9 @@ const WARNING_SOUND := "S1012"
 const QUIET_SCALE := 0.1
 
 static var _effects: Dictionary = {}
+# Each effect once loaded, so playing it again reads nothing off disk: a stream is freed with
+# the last player that held it. The script stays loaded with ScreenManager, which preloads it.
+static var _streams: Dictionary = {}
 static var _music: Dictionary = {}
 
 var _theme: AudioStreamPlayer
@@ -72,9 +75,13 @@ func _process(_delta: float) -> void:
 static func effect_stream(sound_id: String) -> AudioStream:
 	_load_manifest()
 	var path := String(_effects.get(sound_id, ""))
+	if _streams.has(path):
+		return _streams[path]
 	PerfProbe.begin(&"audio.load")
 	var stream := load(path) as AudioStream if path != "" and ResourceLoader.exists(path) else null
 	PerfProbe.end(&"audio.load")
+	if stream != null:
+		_streams[path] = stream
 	return stream
 
 

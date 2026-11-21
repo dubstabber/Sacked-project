@@ -2,6 +2,7 @@
 """Run every headless GDScript check, the Python unit tests and each exporter's --check."""
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -97,6 +98,35 @@ def run(label: str, command: list, verbose: bool, script_check: bool = False) ->
     return ok, elapsed
 
 
+def has_display(environ=os.environ) -> bool:
+    return bool(environ.get("DISPLAY") or environ.get("WAYLAND_DISPLAY"))
+
+
+def script_steps(godot: str, scripts: list, display: bool) -> tuple:
+    """The Godot check steps, and the windowed ones skipped for want of a display.
+
+    A check named check_*_windowed.gd needs a real renderer -- the headless dummy one cannot
+    load a texture off the main thread, for one -- so it runs in a window, and only where
+    there is a display to open one on.
+    """
+    steps, skipped = [], []
+    for name in scripts:
+        windowed = name.endswith("_windowed.gd")
+        if windowed and not display:
+            skipped.append(name)
+            continue
+        command = [godot] if windowed else [godot, "--headless"]
+        # A check that simulates an office advances on the wall clock, so two simulated
+        # minutes cost two real ones. A fixed 10 fps frame still runs six 1/60 physics
+        # ticks, under max_physics_steps_per_frame, so every decision is unchanged while
+        # the run takes seconds. Verified identical on check_npc_level_2_runtime.gd, down
+        # to the secretary's 292 and the janitor's 1143 navigation retries.
+        if "runtime" in name:
+            command += ["--fixed-fps", "10"]
+        steps.append((name, command + ["--script", f"tests/{name}"], True))
+    return steps, skipped
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--skip-import", action="store_true", help="Do not reimport Godot assets first")
@@ -116,16 +146,11 @@ def main() -> int:
     if not args.skip_import:
         steps.append(("godot --import", [godot, "--headless", "--path", ".", "--import"], False))
 
-    for script in sorted((ROOT / "tests").glob("check_*.gd")):
-        command = [godot, "--headless"]
-        # A check that simulates an office advances on the wall clock, so two simulated
-        # minutes cost two real ones. A fixed 10 fps frame still runs six 1/60 physics
-        # ticks, under max_physics_steps_per_frame, so every decision is unchanged while
-        # the run takes seconds. Verified identical on check_npc_level_2_runtime.gd, down
-        # to the secretary's 292 and the janitor's 1143 navigation retries.
-        if "runtime" in script.name:
-            command += ["--fixed-fps", "10"]
-        steps.append((script.name, command + ["--script", f"tests/{script.name}"], True))
+    scripts = [script.name for script in sorted((ROOT / "tests").glob("check_*.gd"))]
+    script_check_steps, skipped = script_steps(godot, scripts, has_display())
+    steps += script_check_steps
+    for name in skipped:
+        print(f"SKIP  {name} (no display to open a window on)")
 
     # Discovery roots at tests/ because it is not a package; cwd still puts tools/ on sys.path.
     steps.append(("python unittest", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "tests"], False))

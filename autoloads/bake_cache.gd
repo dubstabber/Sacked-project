@@ -21,6 +21,12 @@ var _bounds := Rect2()
 var images: Dictionary = {}
 var regions: Dictionary = {}
 var opaque_rects: Dictionary = {}
+# The character compositor's own: depth planes by path, the images it read back for clusters,
+# and their opaque rectangles.
+var character_depth_textures: Dictionary = {}
+var character_color_images: Dictionary = {}
+var character_depth_images: Dictionary = {}
+var character_opaque_rects: Dictionary = {}
 var hits := 0
 
 
@@ -60,3 +66,7 @@ func clear() -> void:
 	images.clear()
 	regions.clear()
 	opaque_rects.clear()
+	character_depth_textures.clear()
+	character_color_images.clear()
+	character_depth_images.clear()
+	character_opaque_rects.clear()

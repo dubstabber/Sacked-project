@@ -56,7 +56,10 @@ var _idle_pivot := Vector2.ZERO
 # The IDLE clip's fps and frame count, which an empty DESTROY_n plays once.
 var _idle_clip: Dictionary = {}
 var _clip: Array = []
-var _clip_textures: Array = []
+# Path -> texture, held for the length of the clip.
+var _clip_textures: Dictionary = {}
+# The clip's later frames, asked of ThreadedLoads when the clip started and not taken yet.
+var _clip_requested: Dictionary = {}
 var _clip_fps := 0.0
 var _clip_elapsed := 0.0
 var _clip_frame := -1
@@ -77,6 +80,11 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	_refresh_sprite()
+
+
+# An object freed in the middle of a clip lets go of the frames it asked the worker threads for.
+func _exit_tree() -> void:
+	_release_clip_textures()
 
 
 func _notification(what: int) -> void:
@@ -194,18 +202,41 @@ func _clip_for(target: int) -> Dictionary:
 	return {"frames": frames, "fps": float(_idle_clip.get("fps", 0.0))}
 
 
-# Frames are loaded by path as they are shown. Holding them for the length of the clip
-# keeps a disk read, and a second decode, out of the middle of a transition.
+# Frames are loaded by path as they are shown, and held for the length of the clip. The first
+# is loaded on the spot; the rest load on worker threads while it shows, which used to cost
+# 20-25 ms in the frame the state changed. Without worker threads (headless) they are all
+# loaded now, as before.
 func _warm_clip_textures(frames: Array) -> void:
-	_clip_textures.clear()
+	_release_clip_textures()
 	if frames.size() < 2:
 		return
-	for frame in frames:
-		var path := String(frame["texture"])
-		_clip_textures.append(load(path))
-		var depth_path := path.get_basename() + "-depth.png"
-		if ResourceLoader.exists(depth_path):
-			_clip_textures.append(load(depth_path))
+	for index in range(frames.size()):
+		var path := String(frames[index]["texture"])
+		for each in [path, path.get_basename() + "-depth.png"]:
+			if _clip_textures.has(each) or _clip_requested.has(each):
+				continue
+			if index > 0 and ThreadedLoads.available():
+				ThreadedLoads.request(each)
+				_clip_requested[each] = true
+			elif ResourceLoader.exists(each):
+				_clip_textures[each] = load(each)
+
+
+func _clip_texture(path: String) -> Texture2D:
+	if _clip_textures.has(path):
+		return _clip_textures[path]
+	_clip_requested.erase(path)
+	var texture := ThreadedLoads.take(path) as Texture2D
+	if texture != null and not _clip.is_empty():
+		_clip_textures[path] = texture
+	return texture
+
+
+func _release_clip_textures() -> void:
+	for path in _clip_requested:
+		ThreadedLoads.release(path)
+	_clip_requested.clear()
+	_clip_textures.clear()
 
 
 func _show_frame(index: int) -> void:
@@ -213,7 +244,7 @@ func _show_frame(index: int) -> void:
 		return
 	_clip_frame = index
 	var frame: Dictionary = _clip[index]
-	var texture := load(String(frame["texture"])) as Texture2D
+	var texture := _clip_texture(String(frame["texture"]))
 	var frame_pivot := Vector2(float(frame["pivot"][0]), float(frame["pivot"][1]))
 	_apply_texture(texture, frame_pivot)
 
@@ -222,7 +253,7 @@ func _apply_texture(texture: Texture2D, frame_pivot: Vector2) -> void:
 	if texture == null:
 		return
 	var depth_path := texture.resource_path.get_basename() + "-depth.png"
-	depth_texture = load(depth_path) as Texture2D if ResourceLoader.exists(depth_path) else null
+	depth_texture = _clip_texture(depth_path) if ResourceLoader.exists(depth_path) else null
 	pivot = frame_pivot
 	color_texture = texture
 
@@ -230,7 +261,7 @@ func _apply_texture(texture: Texture2D, frame_pivot: Vector2) -> void:
 func _stop_clip() -> void:
 	set_process(false)
 	_clip = []
-	_clip_textures.clear()
+	_release_clip_textures()
 	_clip_frame = -1
 	_clip_loops = false
 	_clip_finished = false
@@ -251,7 +282,7 @@ func _process(delta: float) -> void:
 		return
 	_show_frame(_clip.size() - 1)
 	_clip_finished = true
-	_clip_textures.clear()
+	_release_clip_textures()
 	set_process(false)
 	# sub_410290 (0x4102BC): a DESTROY_n whose clip has finished steps forward by seven.
 	if FIRST_TRANSITION_STATE <= state and state <= LAST_TRANSITION_STATE:

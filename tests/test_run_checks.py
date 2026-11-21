@@ -159,3 +159,31 @@ class RunTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ScriptStepsTest(unittest.TestCase):
+    """Which Godot checks run, and how."""
+
+    SCRIPTS = ["check_a.gd", "check_npc_level_runtime.gd", "check_textures_windowed.gd"]
+
+    def test_headless_checks_run_headless(self):
+        steps, _skipped = run_checks.script_steps("godot", self.SCRIPTS, display=True)
+        commands = {label: command for label, command, _ in steps}
+        self.assertEqual(commands["check_a.gd"], ["godot", "--headless", "--script", "tests/check_a.gd"])
+        self.assertIn("--fixed-fps", commands["check_npc_level_runtime.gd"])
+
+    def test_a_windowed_check_opens_a_window(self):
+        steps, skipped = run_checks.script_steps("godot", self.SCRIPTS, display=True)
+        commands = {label: command for label, command, _ in steps}
+        self.assertEqual(commands["check_textures_windowed.gd"], ["godot", "--script", "tests/check_textures_windowed.gd"])
+        self.assertEqual(skipped, [])
+
+    def test_a_windowed_check_is_skipped_without_a_display(self):
+        steps, skipped = run_checks.script_steps("godot", self.SCRIPTS, display=False)
+        self.assertEqual([label for label, _, _ in steps], ["check_a.gd", "check_npc_level_runtime.gd"])
+        self.assertEqual(skipped, ["check_textures_windowed.gd"])
+
+    def test_either_display_variable_counts(self):
+        self.assertTrue(run_checks.has_display({"DISPLAY": ":0"}))
+        self.assertTrue(run_checks.has_display({"WAYLAND_DISPLAY": "wayland-0"}))
+        self.assertFalse(run_checks.has_display({}))

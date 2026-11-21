@@ -95,7 +95,6 @@ func _ready() -> void:
 	_menu_music_player.bus = &"Music"
 	_menu_music_player.finished.connect(_on_menu_music_finished)
 	add_child(_menu_music_player)
-	set_process(false)
 
 
 func change_to(screen: Screen) -> void:
@@ -162,17 +161,17 @@ func _abandon_preload() -> void:
 		_preloaded_scene = null
 	else:
 		_abandoned_preloads.append(_preload_path)
-		set_process(true)
 	_preload_path = ""
 
 
+# Collects the threaded loads nobody is waiting for any more: a preload the player backed out
+# of, and the clip frames ThreadedLoads was asked for but never had taken.
 func _process(_delta: float) -> void:
+	ThreadedLoads.collect_released()
 	for path in _abandoned_preloads.duplicate():
 		if ResourceLoader.load_threaded_get_status(path) != ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 			ResourceLoader.load_threaded_get(path)
 			_abandoned_preloads.erase(path)
-	if _abandoned_preloads.is_empty():
-		set_process(false)
 
 
 func scene_path(screen: Screen) -> String:
