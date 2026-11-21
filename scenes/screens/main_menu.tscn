@@ -166,14 +166,35 @@ vertical_alignment = 1
 [node name="Button6" type="TextureButton" parent="SafeFrame/Buttons" unique_id=2014388984]
 layout_mode = 0
 offset_left = 380.0
-offset_top = 452.0
+offset_top = 436.0
 offset_right = 620.0
-offset_bottom = 500.0
+offset_bottom = 484.0
 texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
 [node name="Label" type="Label" parent="SafeFrame/Buttons/Button6" unique_id=119335352]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"MenuButtonCaption"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button7" type="TextureButton" parent="SafeFrame/Buttons"]
+layout_mode = 0
+offset_left = 380.0
+offset_top = 516.0
+offset_right = 620.0
+offset_bottom = 564.0
+texture_normal = ExtResource("4_btn_passive")
+texture_pressed = ExtResource("5_btn_active")
+texture_hover = ExtResource("5_btn_active")
+
+[node name="Label" type="Label" parent="SafeFrame/Buttons/Button7"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

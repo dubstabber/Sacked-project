@@ -157,6 +157,14 @@ PORT_STRINGS = {
     "language.pl": ("Polski", "the language row names each language in its own words"),
     "language.en": ("English", "the language row names each language in its own words"),
     "language.de": ("Deutsch", "the language row names each language in its own words"),
+    # The port's Custom levels screen and the main-menu button that opens it. The original has
+    # no custom levels, so neither build has wording for any of them.
+    "menu.custom_levels": ("Własne poziomy", "the port's third main-menu button, which opens its Custom levels screen"),
+    "custom.title": ("Własne poziomy", "the port's Custom levels screen title"),
+    "custom.empty": (
+        "Nie ma jeszcze własnych poziomów.\n\nZapisz mapę zrobioną z szablonu w katalogu custom_levels razem z opisem CustomLevelInfo, a pojawi się tutaj.",
+        "the port's Custom levels screen when no level is listed",
+    ),
 }
 
 # Godot's % formatting is positional, so a translation has to repeat these in order. The

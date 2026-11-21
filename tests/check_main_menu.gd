@@ -38,8 +38,17 @@ func _run() -> void:
 	var character := menu.get_node("SafeFrame/Char") as Sprite2D
 	var frame := menu.get_node("SafeFrame") as Control
 	var buttons: Array = []
-	for i in range(6):
+	for i in range(7):
 		buttons.append(menu.get_node("SafeFrame/Buttons/Button%d" % (i + 1)) as Control)
+	# The port's Custom levels button is third, after the two games; the original's other four
+	# follow it a row down each, Quit last after the original's wider gap, inside the frame.
+	var keys := ["menu.time_game", "menu.points_game", "menu.custom_levels", "menu.highscores", "menu.names", "menu.sound", "menu.quit"]
+	for i in range(7):
+		_expect(String((buttons[i] as Control).get_node("Label").text) == keys[i], "button %d is %s" % [i, keys[i]])
+	for i in range(1, 6):
+		_expect(is_equal_approx(buttons[i].position.y, buttons[i - 1].position.y + 64.0), "button %d sits one row below the one before" % i)
+	_expect(is_equal_approx(buttons[6].position.y, buttons[5].position.y + 80.0), "Quit keeps the original's wider gap")
+	_expect(buttons[6].position.y + buttons[6].size.y <= 600.0, "inside the frame")
 
 	# The structure the rotating swirl needs: a centred sprite, scaled to cover, in a frame that
 	# clips the overhang off the black margin, exactly as the duel's swirl is set up.
@@ -65,7 +74,7 @@ func _run() -> void:
 		"the swirl turned by the step every frame, got %f after %d" % [background.rotation, steps])
 	_expect(background.rotation > 0.0, "so the swirl is actually turning")
 
-	for i in range(6):
+	for i in range(7):
 		var expected_x := sin(float(i) * phase_step + phase) * amplitude + base_x
 		_expect(is_equal_approx(buttons[i].position.x, expected_x),
 			"button %d sways to x %f, got %f" % [i, expected_x, buttons[i].position.x])

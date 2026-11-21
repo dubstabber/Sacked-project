@@ -38,8 +38,9 @@ func _on_back_pressed() -> void:
 func _on_forward_pressed() -> void:
 	if _screens == null:
 		return
-	# A win returns to the tree; a loss reloads the same level from zero.
+	# A win returns to the tree, or a custom level's to its list; a loss reloads the same
+	# level from zero.
 	if _won:
-		_screens.call("change_to_level_tree")
+		_screens.call("continue_after_win")
 	else:
 		_screens.call("restart_level")

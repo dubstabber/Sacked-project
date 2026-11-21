@@ -1881,6 +1881,21 @@
       "pl": "Deutsch",
       "origin": "port",
       "reason": "the language row names each language in its own words"
+    },
+    "menu.custom_levels": {
+      "pl": "Własne poziomy",
+      "origin": "port",
+      "reason": "the port's third main-menu button, which opens its Custom levels screen"
+    },
+    "custom.title": {
+      "pl": "Własne poziomy",
+      "origin": "port",
+      "reason": "the port's Custom levels screen title"
+    },
+    "custom.empty": {
+      "pl": "Nie ma jeszcze własnych poziomów.\n\nZapisz mapę zrobioną z szablonu w katalogu custom_levels razem z opisem CustomLevelInfo, a pojawi się tutaj.",
+      "origin": "port",
+      "reason": "the port's Custom levels screen when no level is listed"
     }
   }
 }

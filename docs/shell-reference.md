@@ -707,6 +707,49 @@ Two divergences worth naming:
 The description screen's `%s` splicing is shared with the pause panel through
 `scenes/shared/goal_text.gd`, since both show the same recovered sentence.
 
+## The Custom levels screen (the port's own)
+
+The original has no custom levels. The port adds a screen for the maps designers build from
+its art (see [map-authoring.md](map-authoring.md)): `scenes/screens/custom_levels.tscn`,
+`Screen.CUSTOM_LEVELS`.
+
+- **The button.** A main-menu button, `menu.custom_levels`, opens it. It is **third**, after
+  the two games, as the user asked. The original's Highscores, Names and Sound each move down
+  one 64 px row, and Quit keeps the 80 px gap the original leaves above it, ending at y 564
+  inside the 600 px frame. All seven sway by the original's formula with their own index, so
+  the four that moved sway one phase step later than in the original.
+- **Music.** Menu1 keeps playing on the screen, as on the other menu screens.
+- **What it lists.** Each `CustomLevelInfo` `.tres` in `res://custom_levels/`, read with
+  `ResourceLoader.list_directory` so an exported build lists them too. One whose scene is
+  missing is skipped. The port ships one, `sample_office.tres`, which points at the template.
+- **Layout.** Inside the usual `SafeFrame` over a black `Margin`, on the description screen's
+  backdrop and panel art:
+  - a list of every level, one row each, with its title, its author, and its best time and
+    best score in the description screen's formats. Those two columns sit under the
+    description screen's own headings. It scrolls past nine rows;
+  - beneath it, a strip showing the chosen level's description, three lines at most.
+
+  A click chooses a row.
+- **Buttons.**
+  - Back (`common.main_menu`) returns to the main menu.
+  - Two start buttons carry the main menu's own captions. The main menu's game buttons are
+    not on this route, so the mode is chosen here.
+
+`ScreenManager.start_custom_level(info, mode)` plays the level's scene:
+
+- The scene goes in as the level override, so a retry replays it, as for a scene run on its
+  own.
+- The run is recorded only as the custom level's own best, by
+  `ProgressStore.record_custom_result`, in a `custom <scene path>` section. It uses the same
+  win-only, per-mode, inclusive policy as the campaign, and never touches a campaign level's
+  mask or record.
+- After a win, the result screen's second button goes back to this screen
+  (`ScreenManager.continue_after_win`), where a campaign level goes to the tree.
+- Starting a campaign level from the tree clears the custom selection.
+
+`tests/check_custom_levels_screen.gd` covers the screen and the route, and
+`tests/check_main_menu.gd` covers the button and the order of the seven.
+
 ## The 9-slice window frame is never drawn
 
 The archive ships nine `CO_GUI_WINDOWS_WINDOW_*_CAPTION` sprites, and the image carries the

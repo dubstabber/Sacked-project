@@ -147,8 +147,9 @@ text table. See [names-reference.md](names-reference.md).
 
 ## Keys the original has no wording for
 
-Ten, each declared in `PORT_STRINGS` with its reason — the two console labels, the boot
-screen's title and the seven sound-setup keys below:
+Thirteen, each declared in `PORT_STRINGS` with its reason: the two console labels, the boot
+screen's title, the seven sound-setup keys and the three of the port's Custom levels screen,
+listed below.
 
 | Key | Polish | Why |
 | --- | --- | --- |
@@ -160,6 +161,21 @@ screen's title and the seven sound-setup keys below:
 | `sound.windowed` | `W oknie` | the display row's windowed value |
 | `sound.fullscreen` | `Pełny ekran` | the display row's full-screen value |
 | `language.pl`, `.en`, `.de` | `Polski`, `English`, `Deutsch` | each language named in its own words |
+| `menu.custom_levels` | `Własne poziomy` | the port's third main-menu button; the original has no custom levels |
+| `custom.title` | `Własne poziomy` | the Custom levels screen's title |
+| `custom.empty` | `Nie ma jeszcze własnych poziomów. …` | the Custom levels screen with nothing to list |
+
+The Custom levels screen also uses the original's own wording wherever there is any:
+- `common.main_menu` for its back button;
+- the main menu's `menu.time_game` and `menu.points_game` for its two start buttons;
+- the description screen's `description.best_time` and `description.best_score` as its list's
+  column headings.
+
+**A custom level's title, description and author are the designer's, not the port's.** They
+come from the level's `CustomLevelInfo` (`scenes/level/custom_level_info.gd`) and are shown
+exactly as written in every language: their Labels set `auto_translate_mode` to disabled, and
+none of them is a key. That is the one exception to the rule below. It covers user content,
+never text of the port's own.
 
 The three language names are endonyms, identical in every language, and the exporter holds
 them to that the way it holds the two player names.

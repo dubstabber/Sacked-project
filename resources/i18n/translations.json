@@ -791,5 +791,17 @@
   "language.de": {
     "en": "Deutsch",
     "de": "Deutsch"
+  },
+  "menu.custom_levels": {
+    "en": "Custom levels",
+    "de": "Eigene Level"
+  },
+  "custom.title": {
+    "en": "Custom levels",
+    "de": "Eigene Level"
+  },
+  "custom.empty": {
+    "en": "There are no custom levels yet.\n\nSave a map made from the template in the custom_levels folder, with a CustomLevelInfo beside it, and it will appear here.",
+    "de": "Es gibt noch keine eigenen Level.\n\nSpeichere eine aus der Vorlage gebaute Karte im Ordner custom_levels, zusammen mit einer CustomLevelInfo, dann erscheint sie hier."
   }
 }

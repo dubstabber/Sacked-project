@@ -11,6 +11,8 @@ enum Screen {
 	HIGHSCORES,
 	SOUND_SETUP,
 	COWORKER_NAMES,
+	# The port's own: the levels designers have made (scenes/screens/custom_levels.tscn).
+	CUSTOM_LEVELS,
 }
 
 # Screen.LEVEL resolves through selected_level instead, so it has no entry here.
@@ -24,6 +26,7 @@ const _SCENE_PATHS := {
 	Screen.HIGHSCORES: "res://scenes/screens/highscores.tscn",
 	Screen.SOUND_SETUP: "res://scenes/screens/sound_setup.tscn",
 	Screen.COWORKER_NAMES: "res://scenes/screens/coworker_names.tscn",
+	Screen.CUSTOM_LEVELS: "res://scenes/screens/custom_levels.tscn",
 }
 
 # The original's level tree offers buttons 1 to 21; sub_408D00 turns button n into the
@@ -68,6 +71,9 @@ var _launched_level_path := ""
 # A scene Screen.LEVEL resolves to instead of selected_level's, so a retry replays the scene
 # that was actually played. Cleared whenever the tree starts a level.
 var _level_override_path := ""
+# The CustomLevelInfo the Custom levels screen started, while one is being played. Its scene
+# is the override above, and its results go to its own record rather than the campaign's.
+var selected_custom_level: CustomLevelInfo
 # The level scene being played, held from the moment it starts until the player leaves the
 # level and its result screen, so a retry instances it again without reading it back off disk.
 var _level_scene: PackedScene
@@ -227,7 +233,34 @@ func start_level(level: int) -> void:
 		return
 	selected_level = level
 	_level_override_path = ""
+	selected_custom_level = null
 	change_to(Screen.LEVEL)
+
+
+# The Custom levels screen's start: the port's own route into a level, outside the campaign.
+# The mode is the screen's choice, since the main menu's two game buttons are not on the way.
+func start_custom_level(info: CustomLevelInfo, game_mode: StringName) -> void:
+	if info == null or not ResourceLoader.exists(info.scene):
+		push_warning("No custom level scene %s" % (info.scene if info != null else ""))
+		return
+	selected_custom_level = info
+	selected_game_mode = game_mode
+	_level_override_path = info.scene
+	change_to(Screen.LEVEL)
+
+
+func change_to_custom_levels() -> void:
+	change_to(Screen.CUSTOM_LEVELS)
+
+
+# The result screen's second button after a win: back to where the level was chosen from.
+# A campaign level goes to the tree (sub_407370 case 7's caption notwithstanding; see
+# level_result.gd), a custom one to the Custom levels screen.
+func continue_after_win() -> void:
+	if selected_custom_level != null:
+		change_to(Screen.CUSTOM_LEVELS)
+	else:
+		change_to(Screen.LEVEL_TREE)
 
 
 # sub_405430 reads the stored profile just before it opens screen 2, and case 2 starts Menu1
@@ -288,6 +321,13 @@ func report_level_finished(won: bool, score: int = 0, elapsed_seconds: float = 0
 		play_effect(WIN_SOUND)
 	if level_path != "" and level_path != _launched_level_path:
 		_level_override_path = level_path
+		selected_custom_level = null
+	elif selected_custom_level != null:
+		var custom_progress := get_node_or_null("/root/ProgressStore")
+		if custom_progress != null:
+			custom_progress.call(
+				"record_custom_result", selected_custom_level.scene, selected_game_mode, won, score, elapsed_seconds, player_name
+			)
 	elif _level_override_path == "":
 		var progress := get_node_or_null("/root/ProgressStore")
 		if progress != null:
@@ -403,6 +443,7 @@ func _is_menu_screen(screen: Screen) -> bool:
 		or screen == Screen.LEVEL_TREE
 		or screen == Screen.LEVEL_DESCRIPTION
 		or screen == Screen.SOUND_SETUP
+		or screen == Screen.CUSTOM_LEVELS
 	)
 
 

@@ -1,10 +1,13 @@
 extends Control
 
-# The six entries sub_407370's screen 3 builds, in its own order. A Label translates its
-# own text, so the key goes in as-is and follows the language live.
+# The six entries sub_407370's screen 3 builds, in its own order, with the port's own Custom
+# levels screen third, after the two games. The original's four below it each move down a
+# row, and Quit keeps the larger gap the original leaves above it. A Label translates its own
+# text, so the key goes in as-is and follows the language live.
 const _BUTTON_KEYS := [
 	"menu.time_game",
 	"menu.points_game",
+	"menu.custom_levels",
 	"menu.highscores",
 	"menu.names",
 	"menu.sound",
@@ -90,10 +93,12 @@ func _on_button_pressed(index: int) -> void:
 		1:
 			get_node("/root/ScreenManager").call("start_game_setup", &"points")
 		2:
-			get_node("/root/ScreenManager").call("change_to_highscores")
+			get_node("/root/ScreenManager").call("change_to_custom_levels")
 		3:
-			get_node("/root/ScreenManager").call("change_to_coworker_names")
+			get_node("/root/ScreenManager").call("change_to_highscores")
 		4:
-			get_node("/root/ScreenManager").call("change_to_sound_setup")
+			get_node("/root/ScreenManager").call("change_to_coworker_names")
 		5:
+			get_node("/root/ScreenManager").call("change_to_sound_setup")
+		6:
 			get_tree().quit()
