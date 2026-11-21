@@ -404,6 +404,7 @@ func _check_activity_points(world: Node, manifest: Dictionary, floor_layer: Tile
 		var cell := Vector2i(floori(tile_position.x + 0.5), floori(tile_position.y + 0.5))
 		var expected := {
 			"category": (kind >> 16) & 0xFF,
+			"group": (kind >> 24) & 0xFF,
 			"item_type": (kind >> 4) & 0xFFF,
 			"room_id": int(rooms[cell.x + width * cell.y]),
 			"active": int(object_data["object_category"]) == 5,

@@ -24,10 +24,12 @@ const CONSEQUENCE_LOCK_IN := [110, 112]
 const CONSEQUENCE_PROJECTOR := 116
 const CONSEQUENCE_HEATING := 118
 const CONSEQUENCE_STATE := 9
-# 79 blacks out every type-253 item; 116 looks for a type-265 one.
+# 79 blacks out every type-253 item; 116 looks for a type-265 one. 118 heats every item whose
+# kind's top byte (item+194) is 9, which is every radiator and nothing else; the agents'
+# category (item+192) is a different byte.
 const BLACKOUT_ITEM_TYPE := 253
 const PROJECTOR_ITEM_TYPE := 265
-const HEATING_CATEGORY := 9
+const HEATING_GROUP := 9
 # The search is a box on each axis, with strict bounds, not a radius -- a nearer candidate
 # later in the world's own order loses to a farther one earlier in it.
 const PROJECTOR_REACH_TILES := 5.0
@@ -886,7 +888,7 @@ func _apply_global_consequence(action_id: int, point: Node) -> void:
 			node.call("set_state", CONSEQUENCE_STATE)
 		blackout_remaining = BLACKOUT_TIMER
 	elif action_id == CONSEQUENCE_HEATING:
-		for node in _objects_of_category(HEATING_CATEGORY):
+		for node in _objects_of_group(HEATING_GROUP):
 			node.call("set_state", CONSEQUENCE_STATE)
 	elif action_id == CONSEQUENCE_PROJECTOR:
 		var target := _first_object_in_reach(PROJECTOR_ITEM_TYPE, point)
@@ -926,10 +928,11 @@ func _objects_of_type(item_type: int) -> Array:
 	return result
 
 
-func _objects_of_category(category: int) -> Array:
+# sub_411000 walks the world's items comparing sub_40FE80's item+194.
+func _objects_of_group(group: int) -> Array:
 	var result := []
 	for point in _activity_points():
-		if int(point.get("category")) != category:
+		if int(point.get("group")) != group:
 			continue
 		var object := _object_of(point)
 		if object != null and object.has_method("set_state"):

@@ -271,6 +271,10 @@ func _check_activity_points(world: Node, manifest: Dictionary, floor_layer: Tile
 		if int(point.get("item_type")) != ((kind >> 4) & 0xFFF):
 			_fail("level %s %s item type mismatch" % [label, object_name])
 			return
+		# item+194, the kind's top byte, which action 118 selects by.
+		if int(point.get("group")) != ((kind >> 24) & 0xFF):
+			_fail("level %s %s group mismatch" % [label, object_name])
+			return
 		if bool(point.get("active")) != (int(object_data.get("object_category", -1)) == 5):
 			_fail("level %s %s active flag mismatch" % [label, object_name])
 			return

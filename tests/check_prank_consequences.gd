@@ -25,7 +25,7 @@ func _init() -> void:
 func _run() -> void:
 	_check_the_blackout_and_its_countdown()
 	_check_the_projector_takes_the_first_in_its_box()
-	_check_the_heating_reaches_a_whole_category()
+	_check_the_heating_reaches_a_whole_group()
 	_check_the_cubicle_rule()
 	_check_locking_someone_in()
 	_check_the_reposition_picks_its_side()
@@ -135,18 +135,24 @@ func _check_the_projector_takes_the_first_in_its_box() -> void:
 	_drop(fixture)
 
 
-func _check_the_heating_reaches_a_whole_category() -> void:
+# 118 selects by item+194, the kind's top byte, not by the agents' category in item+192.
+# Level 8's aquarium, pictures and plants are agents' category 9, and used to be heated.
+func _check_the_heating_reaches_a_whole_group() -> void:
 	var fixture := _fixture()
 	var world: Node2D = fixture["world"]
 	var radiators := [
-		_point(world, "Rad1", Vector2(1, 1), 10, CONTROLLER.HEATING_CATEGORY),
-		_point(world, "Rad2", Vector2(30, 30), 11, CONTROLLER.HEATING_CATEGORY),
+		_point(world, "Rad1", Vector2(1, 1), 10),
+		_point(world, "Rad2", Vector2(30, 30), 10),
 	]
+	for radiator in radiators:
+		radiator.group = CONTROLLER.HEATING_GROUP
 	var desk := _point(world, "Desk", Vector2(2, 2), 12, 6)
+	var aquarium := _point(world, "Aquarium", Vector2(3, 3), 13, 9)
 	fixture["controller"]._apply_global_consequence(CONTROLLER.CONSEQUENCE_HEATING, radiators[0])
 	for radiator in radiators:
-		_expect(int(radiator.get_parent().state) == 9, "the heating reaches every category-9 item")
-	_expect(int(desk.get_parent().state) == 0, "and nothing outside that category")
+		_expect(int(radiator.get_parent().state) == 9, "the heating reaches every item of group 9")
+	_expect(int(desk.get_parent().state) == 0, "and nothing outside that group")
+	_expect(int(aquarium.get_parent().state) == 0, "not even what the agents count as category 9")
 	_drop(fixture)
 
 

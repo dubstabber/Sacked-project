@@ -200,6 +200,7 @@ func _build_objects(manifest: Dictionary, floor_layer: TileMapLayer) -> Node2D:
 		interaction.position = _tile_position_to_local(_vector2(object_data["interaction_tile_position"]), floor_layer) - object_node.position
 		var kind := String(object_data["kind"]).hex_to_int()
 		interaction.set("category", (kind >> 16) & 0xff)
+		interaction.set("group", (kind >> 24) & 0xff)
 		interaction.set("item_type", (kind >> 4) & 0xfff)
 		interaction.set("active", int(object_data["object_category"]) == 5)
 		# item+196, the object's quarter-turn index. sub_41B240's selector-5 branch reads it

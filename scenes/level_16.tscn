@@ -320,6 +320,7 @@ position = Vector2(-6.1035156e-05, 33.600037)
 script = ExtResource("230")
 category = 9
 item_type = 17
+group = 3
 room_id = 3
 action_ids = PackedInt32Array()
 
@@ -354,6 +355,7 @@ metadata/original_instance_id = 12
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object012Kuchenschrank01"]
 script = ExtResource("230")
 item_type = 90
+group = 7
 room_id = 1
 orientation = 3
 action_ids = PackedInt32Array()
@@ -372,6 +374,7 @@ metadata/original_instance_id = 13
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object013Kuchenschrankecke"]
 script = ExtResource("230")
 item_type = 193
+group = 7
 room_id = 1
 orientation = 3
 action_ids = PackedInt32Array()
@@ -390,6 +393,7 @@ metadata/original_instance_id = 14
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object014Kuchenschrankecke"]
 script = ExtResource("230")
 item_type = 193
+group = 7
 room_id = 1
 action_ids = PackedInt32Array()
 
@@ -447,6 +451,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 5
 item_type = 139
+group = 7
 active = true
 action_ids = PackedInt32Array(11, 12, 57, 56)
 
@@ -466,6 +471,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 4
 item_type = 141
+group = 8
 room_id = 1
 orientation = 1
 active = true
@@ -487,6 +493,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 4
 item_type = 150
+group = 8
 room_id = 1
 active = true
 action_ids = PackedInt32Array(30, 31, 84, 128, 83)
@@ -507,6 +514,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 4
 item_type = 151
+group = 8
 room_id = 1
 orientation = 1
 active = true
@@ -528,6 +536,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 169
+group = 5
 orientation = 1
 active = true
 action_ids = PackedInt32Array(40)
@@ -548,6 +557,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 169
+group = 5
 orientation = 1
 active = true
 action_ids = PackedInt32Array(40)
@@ -568,6 +578,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 4
 item_type = 197
+group = 7
 room_id = 1
 active = true
 action_ids = PackedInt32Array(135)
@@ -706,6 +717,7 @@ metadata/original_instance_id = 31
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object031Kuchenschrankecke"]
 script = ExtResource("230")
 item_type = 193
+group = 7
 room_id = 1
 orientation = 1
 action_ids = PackedInt32Array()
@@ -724,6 +736,7 @@ metadata/original_instance_id = 32
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object032Kuchentisch02"]
 script = ExtResource("230")
 item_type = 96
+group = 1
 room_id = 1
 action_ids = PackedInt32Array()
 
@@ -741,6 +754,7 @@ metadata/original_instance_id = 33
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object033Kuchenschrank01"]
 script = ExtResource("230")
 item_type = 90
+group = 7
 room_id = 1
 orientation = 3
 action_ids = PackedInt32Array()
@@ -759,6 +773,7 @@ metadata/original_instance_id = 34
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object034Kuchenstuhl02"]
 script = ExtResource("230")
 item_type = 94
+group = 1
 room_id = 1
 action_ids = PackedInt32Array()
 
@@ -776,6 +791,7 @@ metadata/original_instance_id = 35
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object035Kuchenstuhl02"]
 script = ExtResource("230")
 item_type = 94
+group = 1
 room_id = 1
 orientation = 3
 action_ids = PackedInt32Array()
@@ -811,6 +827,7 @@ metadata/original_instance_id = 37
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object037Trennwand02"]
 script = ExtResource("230")
 item_type = 82
+group = 11
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -828,6 +845,7 @@ metadata/original_instance_id = 38
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object038Trennwand02"]
 script = ExtResource("230")
 item_type = 82
+group = 11
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -845,6 +863,7 @@ metadata/original_instance_id = 39
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object039Trennwand02"]
 script = ExtResource("230")
 item_type = 82
+group = 11
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -862,6 +881,7 @@ metadata/original_instance_id = 40
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object040Schreibtisch05"]
 script = ExtResource("230")
 item_type = 64
+group = 2
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -880,6 +900,7 @@ metadata/original_instance_id = 41
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object041Schreibtisch05"]
 script = ExtResource("230")
 item_type = 64
+group = 2
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -898,6 +919,7 @@ metadata/original_instance_id = 42
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object042Schreibtisch05"]
 script = ExtResource("230")
 item_type = 64
+group = 2
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -915,6 +937,7 @@ metadata/original_instance_id = 43
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object043Schreibtisch05"]
 script = ExtResource("230")
 item_type = 64
+group = 2
 room_id = 2
 orientation = 2
 action_ids = PackedInt32Array()
@@ -934,6 +957,7 @@ metadata/original_instance_id = 44
 position = Vector2(48, -24)
 script = ExtResource("230")
 item_type = 72
+group = 1
 room_id = 3
 orientation = 1
 action_ids = PackedInt32Array()
@@ -953,6 +977,7 @@ metadata/original_instance_id = 45
 position = Vector2(48, -24)
 script = ExtResource("230")
 item_type = 72
+group = 1
 room_id = 3
 orientation = 1
 action_ids = PackedInt32Array()
@@ -972,6 +997,7 @@ metadata/original_instance_id = 46
 position = Vector2(-48, -24)
 script = ExtResource("230")
 item_type = 72
+group = 1
 room_id = 3
 action_ids = PackedInt32Array()
 
@@ -989,6 +1015,7 @@ metadata/original_instance_id = 47
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object047Schreibtisch04"]
 script = ExtResource("230")
 item_type = 63
+group = 2
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1007,6 +1034,7 @@ metadata/original_instance_id = 48
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object048Schreibtisch04"]
 script = ExtResource("230")
 item_type = 63
+group = 2
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -1025,6 +1053,7 @@ metadata/original_instance_id = 49
 position = Vector2(-48, -24)
 script = ExtResource("230")
 item_type = 73
+group = 1
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -1043,6 +1072,7 @@ metadata/original_instance_id = 50
 position = Vector2(-48, -24)
 script = ExtResource("230")
 item_type = 73
+group = 1
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -1060,6 +1090,7 @@ metadata/original_instance_id = 51
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object051Schreibtisch05"]
 script = ExtResource("230")
 item_type = 64
+group = 2
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1078,6 +1109,7 @@ metadata/original_instance_id = 52
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object052Schreibtisch05"]
 script = ExtResource("230")
 item_type = 64
+group = 2
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -1098,6 +1130,7 @@ position = Vector2(-48.000015, 24)
 script = ExtResource("230")
 category = 6
 item_type = 68
+group = 1
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1118,6 +1151,7 @@ position = Vector2(-48, -24)
 script = ExtResource("230")
 category = 6
 item_type = 68
+group = 1
 room_id = 2
 orientation = 2
 action_ids = PackedInt32Array()
@@ -1138,6 +1172,7 @@ position = Vector2(48, -24)
 script = ExtResource("230")
 category = 6
 item_type = 68
+group = 1
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -1158,6 +1193,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 6
 item_type = 69
+group = 1
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -1177,6 +1213,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 6
 item_type = 69
+group = 1
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1197,6 +1234,7 @@ position = Vector2(47.999985, -24)
 script = ExtResource("230")
 category = 6
 item_type = 70
+group = 1
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -1217,6 +1255,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 6
 item_type = 121
+group = 1
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1235,6 +1274,7 @@ metadata/original_instance_id = 60
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object060Schreibtisch02"]
 script = ExtResource("230")
 item_type = 120
+group = 7
 room_id = 8
 action_ids = PackedInt32Array()
 
@@ -1254,6 +1294,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 6
 item_type = 122
+group = 1
 room_id = 8
 action_ids = PackedInt32Array()
 
@@ -1271,6 +1312,7 @@ metadata/original_instance_id = 62
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object062Schreibtisch05"]
 script = ExtResource("230")
 item_type = 64
+group = 2
 room_id = 4
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1291,6 +1333,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 6
 item_type = 69
+group = 1
 room_id = 4
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1311,6 +1354,7 @@ position = Vector2(33.599976, 16.799988)
 script = ExtResource("230")
 category = 9
 item_type = 190
+group = 5
 active = true
 action_ids = PackedInt32Array(120)
 
@@ -1330,6 +1374,7 @@ position = Vector2(33.600037, 16.799988)
 script = ExtResource("230")
 category = 9
 item_type = 192
+group = 5
 active = true
 action_ids = PackedInt32Array(120)
 
@@ -1349,6 +1394,7 @@ position = Vector2(33.599976, 16.799988)
 script = ExtResource("230")
 category = 9
 item_type = 190
+group = 5
 active = true
 action_ids = PackedInt32Array(120)
 
@@ -1368,6 +1414,7 @@ position = Vector2(33.600006, 16.800003)
 script = ExtResource("230")
 category = 9
 item_type = 191
+group = 5
 active = true
 action_ids = PackedInt32Array(120)
 
@@ -1387,6 +1434,7 @@ position = Vector2(33.6, 16.799995)
 script = ExtResource("230")
 category = 9
 item_type = 192
+group = 5
 active = true
 action_ids = PackedInt32Array(120)
 
@@ -1406,6 +1454,7 @@ position = Vector2(-33.599976, 16.799988)
 script = ExtResource("230")
 category = 9
 item_type = 191
+group = 5
 orientation = 1
 active = true
 action_ids = PackedInt32Array(120)
@@ -1426,6 +1475,7 @@ position = Vector2(-33.599976, 16.799988)
 script = ExtResource("230")
 category = 9
 item_type = 192
+group = 5
 orientation = 1
 active = true
 action_ids = PackedInt32Array(120)
@@ -1632,6 +1682,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 2
 item_type = 164
+group = 7
 orientation = 1
 active = true
 action_ids = PackedInt32Array(36)
@@ -1688,6 +1739,7 @@ metadata/original_instance_id = 83
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object083Schreibtisch01"]
 script = ExtResource("230")
 item_type = 60
+group = 2
 room_id = 4
 orientation = 2
 action_ids = PackedInt32Array()
@@ -1706,6 +1758,7 @@ metadata/original_instance_id = 84
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object084Komode01"]
 script = ExtResource("230")
 item_type = 45
+group = 7
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -1723,6 +1776,7 @@ metadata/original_instance_id = 85
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object085Komode01"]
 script = ExtResource("230")
 item_type = 45
+group = 7
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -1740,6 +1794,7 @@ metadata/original_instance_id = 86
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object086Schrank02"]
 script = ExtResource("230")
 item_type = 30
+group = 7
 orientation = 3
 action_ids = PackedInt32Array()
 
@@ -1757,6 +1812,7 @@ metadata/original_instance_id = 87
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object087Schrank02"]
 script = ExtResource("230")
 item_type = 30
+group = 7
 orientation = 3
 action_ids = PackedInt32Array()
 
@@ -1774,6 +1830,7 @@ metadata/original_instance_id = 88
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object088Schrank02"]
 script = ExtResource("230")
 item_type = 30
+group = 7
 orientation = 2
 action_ids = PackedInt32Array()
 
@@ -1791,6 +1848,7 @@ metadata/original_instance_id = 89
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object089Schrank02"]
 script = ExtResource("230")
 item_type = 30
+group = 7
 orientation = 2
 action_ids = PackedInt32Array()
 
@@ -1808,6 +1866,7 @@ metadata/original_instance_id = 90
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object090Stehlampe02"]
 script = ExtResource("230")
 item_type = 39
+group = 6
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -1825,6 +1884,7 @@ metadata/original_instance_id = 91
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object091Stehlampe03"]
 script = ExtResource("230")
 item_type = 40
+group = 6
 action_ids = PackedInt32Array()
 
 [node name="Object092Stehlampe03" parent="World/Objects" instance=ExtResource("146")]
@@ -1841,6 +1901,7 @@ metadata/original_instance_id = 92
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object092Stehlampe03"]
 script = ExtResource("230")
 item_type = 40
+group = 6
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1859,6 +1920,7 @@ metadata/original_instance_id = 93
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object093Kleiderstaender01"]
 script = ExtResource("230")
 item_type = 11
+group = 10
 room_id = 2
 orientation = 2
 action_ids = PackedInt32Array()
@@ -1879,6 +1941,7 @@ position = Vector2(-48, -24)
 script = ExtResource("230")
 category = 7
 item_type = 180
+group = 1
 room_id = 8
 orientation = 2
 action_ids = PackedInt32Array()
@@ -1899,6 +1962,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 7
 item_type = 183
+group = 1
 room_id = 8
 orientation = 1
 action_ids = PackedInt32Array()
@@ -1917,6 +1981,7 @@ metadata/original_instance_id = 96
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object096Stehlampe03"]
 script = ExtResource("230")
 item_type = 40
+group = 6
 room_id = 8
 action_ids = PackedInt32Array()
 
@@ -1954,6 +2019,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 2
 item_type = 237
+group = 4
 room_id = 4
 orientation = 1
 active = true
@@ -1993,6 +2059,7 @@ metadata/original_instance_id = 100
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object100Komode02"]
 script = ExtResource("230")
 item_type = 46
+group = 7
 orientation = 3
 action_ids = PackedInt32Array()
 
@@ -2010,6 +2077,7 @@ metadata/original_instance_id = 101
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object101Komode02"]
 script = ExtResource("230")
 item_type = 46
+group = 7
 orientation = 3
 action_ids = PackedInt32Array()
 
@@ -2029,6 +2097,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 2
 item_type = 240
+group = 5
 room_id = 4
 orientation = 1
 active = true
@@ -2050,6 +2119,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 250
+group = 5
 orientation = 1
 active = true
 action_ids = PackedInt32Array(103)
@@ -2070,6 +2140,7 @@ position = Vector2(0, 33.59999)
 script = ExtResource("230")
 category = 9
 item_type = 19
+group = 3
 room_id = 3
 action_ids = PackedInt32Array()
 
@@ -2110,6 +2181,7 @@ position = Vector2(-48, -24)
 script = ExtResource("230")
 category = 6
 item_type = 121
+group = 1
 room_id = 6
 orientation = 2
 action_ids = PackedInt32Array()
@@ -2128,6 +2200,7 @@ metadata/original_instance_id = 107
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object107Heizkorper"]
 script = ExtResource("230")
 item_type = 10
+group = 9
 action_ids = PackedInt32Array()
 
 [node name="Object108Heizkorper" parent="World/Objects" instance=ExtResource("110")]
@@ -2144,6 +2217,7 @@ metadata/original_instance_id = 108
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object108Heizkorper"]
 script = ExtResource("230")
 item_type = 10
+group = 9
 action_ids = PackedInt32Array()
 
 [node name="Object109Heizkorper" parent="World/Objects" instance=ExtResource("110")]
@@ -2160,6 +2234,7 @@ metadata/original_instance_id = 109
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object109Heizkorper"]
 script = ExtResource("230")
 item_type = 10
+group = 9
 action_ids = PackedInt32Array()
 
 [node name="Object110Heizkorper" parent="World/Objects" instance=ExtResource("111")]
@@ -2176,6 +2251,7 @@ metadata/original_instance_id = 110
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object110Heizkorper"]
 script = ExtResource("230")
 item_type = 10
+group = 9
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -2193,6 +2269,7 @@ metadata/original_instance_id = 111
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object111Heizkorper"]
 script = ExtResource("230")
 item_type = 10
+group = 9
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -2210,6 +2287,7 @@ metadata/original_instance_id = 112
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object112Heizkorper"]
 script = ExtResource("230")
 item_type = 10
+group = 9
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -2227,6 +2305,7 @@ metadata/original_instance_id = 113
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object113Heizkorper"]
 script = ExtResource("230")
 item_type = 10
+group = 9
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -2286,6 +2365,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 13
+group = 5
 active = true
 action_ids = PackedInt32Array(145)
 
@@ -2468,6 +2548,7 @@ metadata/original_instance_id = 126
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object126Ersatzteil01"]
 script = ExtResource("230")
 item_type = 203
+group = 4
 room_id = 4
 action_ids = PackedInt32Array()
 
@@ -2487,6 +2568,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 174
+group = 7
 room_id = 8
 orientation = 1
 active = true
@@ -2506,6 +2588,7 @@ metadata/original_instance_id = 128
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object128Schreibtischunterlage02"]
 script = ExtResource("230")
 item_type = 66
+group = 4
 room_id = 8
 action_ids = PackedInt32Array()
 
@@ -2523,6 +2606,7 @@ metadata/original_instance_id = 129
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object129Schreibtischunterlage01"]
 script = ExtResource("230")
 item_type = 65
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -2541,6 +2625,7 @@ metadata/original_instance_id = 130
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object130Schreibtischunterlage03"]
 script = ExtResource("230")
 item_type = 67
+group = 4
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -2575,6 +2660,7 @@ metadata/original_instance_id = 132
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object132Fahrschublade01"]
 script = ExtResource("230")
 item_type = 43
+group = 7
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -2593,6 +2679,7 @@ metadata/original_instance_id = 133
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object133Schrank02"]
 script = ExtResource("230")
 item_type = 30
+group = 7
 orientation = 3
 action_ids = PackedInt32Array()
 
@@ -2610,6 +2697,7 @@ metadata/original_instance_id = 134
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object134Schrank02"]
 script = ExtResource("230")
 item_type = 30
+group = 7
 orientation = 3
 action_ids = PackedInt32Array()
 
@@ -2627,6 +2715,7 @@ metadata/original_instance_id = 135
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object135Schrank02"]
 script = ExtResource("230")
 item_type = 30
+group = 7
 orientation = 3
 action_ids = PackedInt32Array()
 
@@ -2646,6 +2735,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 7
 item_type = 184
+group = 1
 room_id = 3
 action_ids = PackedInt32Array()
 
@@ -2702,6 +2792,7 @@ position = Vector2(0, 33.599976)
 script = ExtResource("230")
 category = 9
 item_type = 18
+group = 3
 room_id = 6
 action_ids = PackedInt32Array()
 
@@ -2721,6 +2812,7 @@ position = Vector2(0, 33.599976)
 script = ExtResource("230")
 category = 9
 item_type = 18
+group = 3
 room_id = 6
 orientation = 1
 action_ids = PackedInt32Array()
@@ -2739,6 +2831,7 @@ metadata/original_instance_id = 141
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object141Schrank02Hoch"]
 script = ExtResource("230")
 item_type = 31
+group = 7
 action_ids = PackedInt32Array()
 
 [node name="Object142Schrank02Hoch" parent="World/Objects" instance=ExtResource("137")]
@@ -2755,6 +2848,7 @@ metadata/original_instance_id = 142
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object142Schrank02Hoch"]
 script = ExtResource("230")
 item_type = 31
+group = 7
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -2772,6 +2866,7 @@ metadata/original_instance_id = 143
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object143Fahrschublade01"]
 script = ExtResource("230")
 item_type = 43
+group = 7
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -2789,6 +2884,7 @@ metadata/original_instance_id = 144
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object144Fahrschublade01"]
 script = ExtResource("230")
 item_type = 43
+group = 7
 action_ids = PackedInt32Array()
 
 [node name="Object145Regal02" parent="World/Objects" instance=ExtResource("171")]
@@ -2805,6 +2901,7 @@ metadata/original_instance_id = 145
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object145Regal02"]
 script = ExtResource("230")
 item_type = 56
+group = 7
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -2822,6 +2919,7 @@ metadata/original_instance_id = 146
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object146Komode01"]
 script = ExtResource("230")
 item_type = 45
+group = 7
 action_ids = PackedInt32Array()
 
 [node name="Object147Flasche" parent="World/Objects" instance=ExtResource("34")]
@@ -2858,6 +2956,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 14
+group = 5
 room_id = 3
 active = true
 action_ids = PackedInt32Array(145)
@@ -2878,6 +2977,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 16
+group = 5
 room_id = 3
 orientation = 1
 active = true
@@ -2899,6 +2999,7 @@ position = Vector2(48, -24)
 script = ExtResource("230")
 category = 9
 item_type = 13
+group = 5
 orientation = 3
 active = true
 action_ids = PackedInt32Array(145)
@@ -2918,6 +3019,7 @@ metadata/original_instance_id = 151
 script = ExtResource("230")
 category = 9
 item_type = 78
+group = 4
 room_id = 2
 orientation = 1
 active = true
@@ -2937,6 +3039,7 @@ metadata/original_instance_id = 152
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object152Tischlampe1"]
 script = ExtResource("230")
 item_type = 79
+group = 6
 room_id = 2
 orientation = 1
 active = true
@@ -2956,6 +3059,7 @@ metadata/original_instance_id = 153
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object153Tischlampe1"]
 script = ExtResource("230")
 item_type = 79
+group = 6
 room_id = 2
 orientation = 2
 active = true
@@ -2975,6 +3079,7 @@ metadata/original_instance_id = 154
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object154Tischlampe1"]
 script = ExtResource("230")
 item_type = 79
+group = 6
 room_id = 8
 orientation = 3
 active = true
@@ -2994,6 +3099,7 @@ metadata/original_instance_id = 155
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object155Tischlampe2"]
 script = ExtResource("230")
 item_type = 80
+group = 6
 room_id = 2
 active = true
 action_ids = PackedInt32Array(108)
@@ -3109,6 +3215,7 @@ metadata/original_instance_id = 161
 position = Vector2(-48, 24)
 script = ExtResource("230")
 item_type = 133
+group = 7
 room_id = 2
 orientation = 1
 active = true
@@ -3246,6 +3353,7 @@ metadata/original_instance_id = 168
 position = Vector2(48, 24)
 script = ExtResource("230")
 item_type = 146
+group = 8
 room_id = 8
 active = true
 action_ids = PackedInt32Array(26)
@@ -3265,6 +3373,7 @@ metadata/original_instance_id = 169
 position = Vector2(48, 24)
 script = ExtResource("230")
 item_type = 147
+group = 8
 room_id = 6
 active = true
 action_ids = PackedInt32Array(26)
@@ -3303,6 +3412,7 @@ metadata/original_instance_id = 171
 position = Vector2(48, 24)
 script = ExtResource("230")
 item_type = 166
+group = 4
 active = true
 action_ids = PackedInt32Array(38)
 
@@ -3421,6 +3531,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 2
 item_type = 195
+group = 4
 room_id = 2
 active = true
 action_ids = PackedInt32Array(104, 105, 106, 133)
@@ -3441,6 +3552,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 2
 item_type = 195
+group = 4
 room_id = 6
 orientation = 1
 active = true
@@ -3462,6 +3574,7 @@ position = Vector2(48, -24)
 script = ExtResource("230")
 category = 2
 item_type = 195
+group = 4
 room_id = 4
 orientation = 3
 active = true
@@ -3483,6 +3596,7 @@ position = Vector2(48, -24)
 script = ExtResource("230")
 category = 2
 item_type = 195
+group = 4
 room_id = 2
 orientation = 3
 active = true
@@ -3523,6 +3637,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 2
 item_type = 241
+group = 4
 room_id = 2
 active = true
 action_ids = PackedInt32Array(66, 67, 68)
@@ -3543,6 +3658,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 2
 item_type = 241
+group = 4
 room_id = 2
 active = true
 action_ids = PackedInt32Array(66, 67, 68)
@@ -3599,6 +3715,7 @@ position = Vector2(33.600037, 16.800018)
 script = ExtResource("230")
 category = 9
 item_type = 247
+group = 5
 active = true
 action_ids = PackedInt32Array(93, 94, 95)
 
@@ -3616,6 +3733,7 @@ metadata/original_instance_id = 187
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object187Tesafilm"]
 script = ExtResource("230")
 item_type = 251
+group = 4
 room_id = 4
 active = true
 action_ids = PackedInt32Array(107)
@@ -3634,6 +3752,7 @@ metadata/original_instance_id = 188
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object188Tesafilm"]
 script = ExtResource("230")
 item_type = 251
+group = 4
 room_id = 2
 orientation = 1
 active = true
@@ -3653,6 +3772,7 @@ metadata/original_instance_id = 189
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object189Tesafilm"]
 script = ExtResource("230")
 item_type = 251
+group = 4
 room_id = 2
 orientation = 2
 active = true
@@ -3731,6 +3851,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 126
+group = 5
 active = true
 action_ids = PackedInt32Array(8)
 
@@ -3750,6 +3871,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 127
+group = 5
 active = true
 action_ids = PackedInt32Array(8)
 
@@ -3769,6 +3891,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 161
+group = 5
 room_id = 2
 active = true
 action_ids = PackedInt32Array(35)
@@ -3789,6 +3912,7 @@ position = Vector2(-47.99997, 23.999985)
 script = ExtResource("230")
 category = 9
 item_type = 162
+group = 5
 orientation = 1
 active = true
 action_ids = PackedInt32Array(35)
@@ -3809,6 +3933,7 @@ position = Vector2(-48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 177
+group = 5
 orientation = 1
 active = true
 action_ids = PackedInt32Array(8)
@@ -3829,6 +3954,7 @@ position = Vector2(48.000015, 24)
 script = ExtResource("230")
 category = 9
 item_type = 198
+group = 5
 active = true
 action_ids = PackedInt32Array(35)
 
@@ -3848,6 +3974,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 199
+group = 5
 active = true
 action_ids = PackedInt32Array(35)
 
@@ -3887,6 +4014,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 135
+group = 5
 active = true
 action_ids = PackedInt32Array(8)
 
@@ -3906,6 +4034,7 @@ position = Vector2(48, 23.999992)
 script = ExtResource("230")
 category = 9
 item_type = 136
+group = 5
 active = true
 action_ids = PackedInt32Array(8)
 
@@ -3925,6 +4054,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 9
 item_type = 137
+group = 5
 active = true
 action_ids = PackedInt32Array(8)
 
@@ -4151,6 +4281,7 @@ metadata/original_instance_id = 216
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object216Pflanzeklein01"]
 script = ExtResource("230")
 item_type = 20
+group = 3
 action_ids = PackedInt32Array()
 
 [node name="Object217Pflanzeklein03" parent="World/Objects" instance=ExtResource("124")]
@@ -4167,6 +4298,7 @@ metadata/original_instance_id = 217
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object217Pflanzeklein03"]
 script = ExtResource("230")
 item_type = 22
+group = 3
 room_id = 3
 action_ids = PackedInt32Array()
 
@@ -4184,6 +4316,7 @@ metadata/original_instance_id = 218
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object218Pflanzeklein04"]
 script = ExtResource("230")
 item_type = 23
+group = 3
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4202,6 +4335,7 @@ metadata/original_instance_id = 219
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object219Pflanzeklein05"]
 script = ExtResource("230")
 item_type = 24
+group = 3
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -4219,6 +4353,7 @@ metadata/original_instance_id = 220
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object220Photoaufsteller01"]
 script = ExtResource("230")
 item_type = 25
+group = 4
 room_id = 8
 action_ids = PackedInt32Array()
 
@@ -4236,6 +4371,7 @@ metadata/original_instance_id = 221
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object221Photoaufsteller01"]
 script = ExtResource("230")
 item_type = 25
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4254,6 +4390,7 @@ metadata/original_instance_id = 222
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object222Photoaufsteller01"]
 script = ExtResource("230")
 item_type = 25
+group = 4
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -4272,6 +4409,7 @@ metadata/original_instance_id = 223
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object223Photoaufsteller02"]
 script = ExtResource("230")
 item_type = 26
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4290,6 +4428,7 @@ metadata/original_instance_id = 224
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object224Photoaufsteller03"]
 script = ExtResource("230")
 item_type = 27
+group = 4
 room_id = 8
 action_ids = PackedInt32Array()
 
@@ -4307,6 +4446,7 @@ metadata/original_instance_id = 225
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object225Photoaufsteller03"]
 script = ExtResource("230")
 item_type = 27
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4325,6 +4465,7 @@ metadata/original_instance_id = 226
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object226Photoaufsteller03"]
 script = ExtResource("230")
 item_type = 27
+group = 4
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -4409,6 +4550,7 @@ metadata/original_instance_id = 231
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object231Stehlampe01"]
 script = ExtResource("230")
 item_type = 38
+group = 6
 action_ids = PackedInt32Array()
 
 [node name="Object232VentiTischAni" parent="World/Objects" instance=ExtResource("147")]
@@ -4443,6 +4585,7 @@ metadata/original_instance_id = 233
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object233Papier01"]
 script = ExtResource("230")
 item_type = 49
+group = 4
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -4460,6 +4603,7 @@ metadata/original_instance_id = 234
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object234Papier01"]
 script = ExtResource("230")
 item_type = 49
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4478,6 +4622,7 @@ metadata/original_instance_id = 235
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object235Papier01"]
 script = ExtResource("230")
 item_type = 49
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4496,6 +4641,7 @@ metadata/original_instance_id = 236
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object236Papier01"]
 script = ExtResource("230")
 item_type = 49
+group = 4
 room_id = 2
 orientation = 2
 action_ids = PackedInt32Array()
@@ -4514,6 +4660,7 @@ metadata/original_instance_id = 237
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object237Papier01"]
 script = ExtResource("230")
 item_type = 49
+group = 4
 room_id = 2
 orientation = 2
 action_ids = PackedInt32Array()
@@ -4532,6 +4679,7 @@ metadata/original_instance_id = 238
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object238Papier02"]
 script = ExtResource("230")
 item_type = 50
+group = 4
 room_id = 2
 action_ids = PackedInt32Array()
 
@@ -4549,6 +4697,7 @@ metadata/original_instance_id = 239
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object239Papier02"]
 script = ExtResource("230")
 item_type = 50
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4567,6 +4716,7 @@ metadata/original_instance_id = 240
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object240Papier02"]
 script = ExtResource("230")
 item_type = 50
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4585,6 +4735,7 @@ metadata/original_instance_id = 241
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object241Papier02"]
 script = ExtResource("230")
 item_type = 50
+group = 4
 room_id = 2
 orientation = 2
 action_ids = PackedInt32Array()
@@ -4603,6 +4754,7 @@ metadata/original_instance_id = 242
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object242Papier02"]
 script = ExtResource("230")
 item_type = 50
+group = 4
 room_id = 6
 orientation = 2
 action_ids = PackedInt32Array()
@@ -4621,6 +4773,7 @@ metadata/original_instance_id = 243
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object243Papier03"]
 script = ExtResource("230")
 item_type = 51
+group = 4
 room_id = 4
 action_ids = PackedInt32Array()
 
@@ -4638,6 +4791,7 @@ metadata/original_instance_id = 244
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object244Papier03"]
 script = ExtResource("230")
 item_type = 51
+group = 4
 room_id = 8
 orientation = 2
 action_ids = PackedInt32Array()
@@ -4656,6 +4810,7 @@ metadata/original_instance_id = 245
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object245Papier05"]
 script = ExtResource("230")
 item_type = 53
+group = 4
 room_id = 2
 orientation = 1
 action_ids = PackedInt32Array()
@@ -4674,6 +4829,7 @@ metadata/original_instance_id = 246
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object246Papier05"]
 script = ExtResource("230")
 item_type = 53
+group = 4
 room_id = 2
 orientation = 2
 action_ids = PackedInt32Array()
@@ -4692,6 +4848,7 @@ metadata/original_instance_id = 247
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object247Papier06"]
 script = ExtResource("230")
 item_type = 54
+group = 4
 orientation = 2
 action_ids = PackedInt32Array()
 
@@ -4709,6 +4866,7 @@ metadata/original_instance_id = 248
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object248TischdekoCat"]
 script = ExtResource("230")
 item_type = 76
+group = 4
 room_id = 2
 orientation = 3
 action_ids = PackedInt32Array()
@@ -4727,6 +4885,7 @@ metadata/original_instance_id = 249
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object249TischdekoKugel"]
 script = ExtResource("230")
 item_type = 77
+group = 4
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -4764,6 +4923,7 @@ metadata/original_instance_id = 251
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object251Empfang02"]
 script = ExtResource("230")
 item_type = 222
+group = 2
 room_id = 6
 action_ids = PackedInt32Array()
 
@@ -4916,6 +5076,7 @@ metadata/original_instance_id = 260
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object260Pizzakarton"]
 script = ExtResource("230")
 item_type = 97
+group = 8
 room_id = 1
 orientation = 2
 action_ids = PackedInt32Array()
@@ -4934,6 +5095,7 @@ metadata/original_instance_id = 261
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object261Toast"]
 script = ExtResource("230")
 item_type = 98
+group = 8
 action_ids = PackedInt32Array()
 
 [node name="Object262Toast" parent="World/Objects" instance=ExtResource("215")]
@@ -4950,6 +5112,7 @@ metadata/original_instance_id = 262
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object262Toast"]
 script = ExtResource("230")
 item_type = 98
+group = 8
 orientation = 1
 action_ids = PackedInt32Array()
 
@@ -4967,6 +5130,7 @@ metadata/original_instance_id = 263
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object263Wurfelzucker"]
 script = ExtResource("230")
 item_type = 99
+group = 8
 room_id = 1
 orientation = 1
 action_ids = PackedInt32Array()
@@ -5063,6 +5227,7 @@ position = Vector2(48, 24)
 script = ExtResource("230")
 category = 5
 item_type = 257
+group = 8
 room_id = 8
 active = true
 action_ids = PackedInt32Array(130)
@@ -5081,6 +5246,7 @@ metadata/original_instance_id = 269
 [node name="InteractionPoint" type="Marker2D" parent="World/Objects/Object269Pflanzeklein02"]
 script = ExtResource("230")
 item_type = 21
+group = 3
 orientation = 1
 action_ids = PackedInt32Array()
 

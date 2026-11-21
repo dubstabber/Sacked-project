@@ -1,0 +1,107 @@
+{
+  "angle": "000",
+  "generated_by": "tools/export_object_state_assets.py",
+  "idle": {
+    "fps": 16.0,
+    "frame_count": 1
+  },
+  "sprite": "HEIZKÖRPER",
+  "states": {
+    "DESTROYED_1": {
+      "advances_to": null,
+      "fps": 8.0,
+      "frames": [
+        {
+          "pivot": [
+            6,
+            58
+          ],
+          "size": [
+            86,
+            65
+          ],
+          "texture": "res://images/objects/states/allgemein-heizk-rper-000/allgemein-heizk-rper-000-destroyed-1-000.png"
+        },
+        {
+          "pivot": [
+            6,
+            58
+          ],
+          "size": [
+            85,
+            65
+          ],
+          "texture": "res://images/objects/states/allgemein-heizk-rper-000/allgemein-heizk-rper-000-destroyed-1-001.png"
+        },
+        {
+          "pivot": [
+            6,
+            58
+          ],
+          "size": [
+            85,
+            65
+          ],
+          "texture": "res://images/objects/states/allgemein-heizk-rper-000/allgemein-heizk-rper-000-destroyed-1-002.png"
+        },
+        {
+          "pivot": [
+            6,
+            58
+          ],
+          "size": [
+            81,
+            65
+          ],
+          "texture": "res://images/objects/states/allgemein-heizk-rper-000/allgemein-heizk-rper-000-destroyed-1-003.png"
+        },
+        {
+          "pivot": [
+            6,
+            58
+          ],
+          "size": [
+            84,
+            65
+          ],
+          "texture": "res://images/objects/states/allgemein-heizk-rper-000/allgemein-heizk-rper-000-destroyed-1-004.png"
+        },
+        {
+          "pivot": [
+            6,
+            58
+          ],
+          "size": [
+            85,
+            65
+          ],
+          "texture": "res://images/objects/states/allgemein-heizk-rper-000/allgemein-heizk-rper-000-destroyed-1-005.png"
+        },
+        {
+          "pivot": [
+            6,
+            58
+          ],
+          "size": [
+            85,
+            65
+          ],
+          "texture": "res://images/objects/states/allgemein-heizk-rper-000/allgemein-heizk-rper-000-destroyed-1-006.png"
+        },
+        {
+          "pivot": [
+            6,
+            58
+          ],
+          "size": [
+            85,
+            65
+          ],
+          "texture": "res://images/objects/states/allgemein-heizk-rper-000/allgemein-heizk-rper-000-destroyed-1-007.png"
+        }
+      ],
+      "loop": true,
+      "state": 9
+    }
+  }
+}

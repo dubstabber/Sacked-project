@@ -5,6 +5,9 @@ extends Marker2D
 
 @export var category: int = 0
 @export var item_type: int = 0
+# item+194, the top byte of the item's kind (sub_40FEA0, 0x40FEA9). Only action 118's search
+# reads it (sub_411000), and it is 9 on exactly the radiators. See docs/prank-reference.md.
+@export var group: int = 0
 @export var room_id: int = 0
 # item+196: the object's quarter-turn index, which decides which side an action that
 # repositions the player puts them on. See docs/player-action-reference.md.

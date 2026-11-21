@@ -15,6 +15,7 @@ for DESTROY_n, because the runtime forces those to play once regardless.
 
 import argparse
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -58,7 +59,7 @@ CONSEQUENCE_STATE = 9  # DESTROYED_1
 GLOBAL_CONSEQUENCE_TARGETS = {
     79: {"item_type": 253},   # every air conditioner
     116: {"item_type": 265},  # the nearest projector screen within +/-5 tiles
-    118: {"category": 9},     # every meeting-room item
+    118: {"group": 9},        # every radiator: item+194, the kind's top byte (sub_411000)
 }
 # No sprite in the container is anywhere near this far from its own frame, so a pivot past
 # it means the field was read unsigned again; an off-frame sprite drags the world's static
@@ -160,12 +161,16 @@ def item_type(entry: dict) -> int:
     return (int(entry["kind"], 16) >> 4) & 0xFFF
 
 
+def item_group(entry: dict) -> int:
+    return (int(entry["kind"], 16) >> 24) & 0xFF
+
+
 def consequence_states(manifest: dict, entry: dict) -> list:
     """DESTROYED_1, when some action placed on this level reaches this object from another."""
     for action_id, target in GLOBAL_CONSEQUENCE_TARGETS.items():
         if not any(action_id in other["action_ids"] for other in manifest["objects"]):
             continue
-        if target.get("item_type") == item_type(entry) or target.get("category") == entry["object_category"]:
+        if target.get("item_type") == item_type(entry) or target.get("group") == item_group(entry):
             return [CONSEQUENCE_STATE]
     return []
 
@@ -234,7 +239,9 @@ def export(root: Path, check: bool) -> int:
     unresolved = []
     written = clips = 0
 
-    for key, spec in object_specs(root):
+    specs = object_specs(root)
+    wanted = {key for key, _ in specs}
+    for key, spec in specs:
         idle = idle_clips.get(spec["source"])
         if idle is None:
             failures.append(f"{key}: no IDLE clip starts with {spec['source']}")
@@ -321,6 +328,24 @@ def export(root: Path, check: bool) -> int:
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text)
+
+    # A manifest or frame folder no level asks for any more would linger, and MapObject still
+    # loads a manifest by its texture's name.
+    image_dir = root / STATE_IMAGE_DIR_REL
+    orphans = [
+        path
+        for path in sorted((root / STATE_MANIFEST_DIR_REL).glob("*.json"))
+        if path != root / MISSING_STATES_REL and path.stem not in wanted
+    ]
+    if image_dir.is_dir():
+        orphans += [path for path in sorted(image_dir.iterdir()) if path.is_dir() and path.name not in wanted]
+    for path in orphans:
+        if check:
+            failures.append(f"{path.relative_to(root)} is no longer wanted by any level")
+        elif path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
 
     if failures:
         print("Object state assets out of date:\n" + "\n".join(f"  {line}" for line in failures[:20]))

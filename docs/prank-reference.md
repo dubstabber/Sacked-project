@@ -274,7 +274,20 @@ nothing.
 | **79** | every item of type 253 to state 9, then `player+1068 = 400.0` |
 | **110**, **112** | only if the cubicle's `item+216` is 1, i.e. someone is in it: set `item+224` to lock them in |
 | **116** | the **first** item of type 265 inside a box around the focused item, to state 9 |
-| **118** | every item of category 9 to state 9 |
+| **118** | every item of group 9 (`item+194`, below) to state 9: the radiators |
+
+**118 selects by the kind's top byte, not by the agents' category.** `sub_411000` walks the
+item list comparing `sub_40FE80`, the word at `item+194`, which `sub_40FEA0` fills from the
+byte at `item+111` (`0x40FEA9`), the top byte of the kind at `item+108`. The agents' goal
+category is `item+192`, the kind's third byte (`sub_40FE60`, filled from `item+110`), and
+nothing but 118 reads `item+194`. Across the campaign the top byte is 9 on exactly the 88
+radiators (`HEIZKÖRPER`), and 118 is "Ustaw ogrzewanie na maksimum" on the heating control,
+so it heats every radiator on the map; level 17 places it with no radiator at all. Each
+`NPCActivityPoint` carries the byte as `group`. Until 2026-11-21 the port matched the agents'
+category 9 instead, goal 2's decoration and recreation (see
+[npc-reference.md](npc-reference.md)), so on level 8 the heating broke
+the aquarium, the whiteboard, the pictures, the windows, the plants, the mirrors and the safe,
+and left the radiators cold.
 
 Two details the earlier note had wrong or missing:
 
