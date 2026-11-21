@@ -44,6 +44,21 @@ const _PROFILES := {
 const _MENU1: AudioStream = preload("res://audio/music/menu1.ogg")
 const _MENU2: AudioStream = preload("res://audio/music/menu2.ogg")
 
+# Every TileSet a level is drawn with, held for the whole run so the loader builds each one once.
+# Two level loads overlapping on worker threads (a preload the player backed out of, and the
+# next level) can each build a TileSet from the same file. Godot 4.7 hands both copies the one
+# cached TileSetAtlasSource, and TileSet.add_source takes it from the copy that had it first
+# (tile_set.cpp, add_source), which can be the copy left in the cache: the next level then
+# finds no tile source. A TileSet already cached is never built again.
+const LEVEL_TILE_SETS: Array[TileSet] = [
+	preload("res://resources/tilemaps/sacked-floor.tres"),
+	preload("res://resources/tilemaps/sacked-walls.tres"),
+	preload("res://resources/tilemaps/sacked-glass.tres"),
+	preload("res://resources/tilemaps/sacked-collision.tres"),
+	preload("res://resources/tilemaps/sacked-rooms.tres"),
+	preload("res://resources/tilemaps/sacked-sight.tres"),
+]
+
 const LevelAudioScript := preload("res://scenes/level/level_audio.gd")
 # sub_407370 case 7 plays this on its way to the win screen (0x407601); case 8 plays nothing.
 const WIN_SOUND := "S1100"

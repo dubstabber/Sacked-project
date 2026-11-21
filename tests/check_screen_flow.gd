@@ -56,6 +56,7 @@ func _run() -> void:
 	await _check_only_a_win_plays_the_win_cue()
 	await _check_a_scene_run_on_its_own_records_nothing()
 	await _check_a_preloaded_level_is_the_one_played_and_retried()
+	_check_every_level_tile_set_is_held()
 
 	_manager.reset_player_setup()
 	_manager.selected_game_mode = &"time"
@@ -67,7 +68,7 @@ func _run() -> void:
 	settings.reload()
 	DirAccess.remove_absolute(SETTINGS_PATH)
 	if _failures == 0:
-		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count, the win cue, the stored profile, character select's five buttons, the scene run on its own and the preloaded level passed")
+		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count, the win cue, the stored profile, character select's five buttons, the scene run on its own, the preloaded level and the held TileSets passed")
 	quit(1 if _failures else 0)
 
 
@@ -574,3 +575,28 @@ func _check_a_preloaded_level_is_the_one_played_and_retried() -> void:
 	_manager.selected_level = restore_level
 	_manager.change_to_main_menu()
 	await process_frame
+
+
+# A level load that builds a TileSet the cache does not hold yet can leave another level's copy
+# with no sources when two loads overlap (see LEVEL_TILE_SETS), so every TileSet a campaign or
+# custom level scene names has to be one ScreenManager holds. The race itself needs worker-thread
+# texture loads, which headless runs do not have.
+func _check_every_level_tile_set_is_held() -> void:
+	var held := {}
+	for tile_set: TileSet in ScreenManagerScript.LEVEL_TILE_SETS:
+		held[tile_set.resource_path] = true
+		_expect(tile_set.get_source_count() > 0, "%s is held with its sources" % tile_set.resource_path)
+	var scenes: Array[String] = ["res://scenes/custom_level_template.tscn"]
+	for file in DirAccess.get_files_at("res://scenes"):
+		if file.begins_with("level_") and file.ends_with(".tscn"):
+			scenes.append("res://scenes/" + file)
+	for file in DirAccess.get_files_at("res://custom_levels"):
+		if file.ends_with(".tscn"):
+			scenes.append("res://custom_levels/" + file)
+	var reference := RegEx.create_from_string("\\[ext_resource type=\"TileSet\"[^\\]]*path=\"([^\"]+)\"")
+	var named := 0
+	for scene in scenes:
+		for found in reference.search_all(FileAccess.get_file_as_string(scene)):
+			named += 1
+			_expect(held.has(found.get_string(1)), "%s names %s, which ScreenManager holds" % [scene.get_file(), found.get_string(1)])
+	_expect(scenes.size() >= 28 and named >= scenes.size() * 6, "every level scene was read for its TileSets (%d scenes, %d references)" % [scenes.size(), named])
