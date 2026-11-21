@@ -192,6 +192,9 @@ func _overlay_layer(layer_name: String, tileset_path: String, z: int) -> TileMap
 	layer.tile_set = load(tileset_path) as TileSet
 	layer.z_index = z
 	layer.set_meta("_edit_lock_", true)
+	# Saved hidden, so the editor opens on the art and the movement cells as before; the eye
+	# beside the layer shows it for painting.
+	layer.visible = false
 	return layer
 
 

@@ -3,9 +3,9 @@ class_name OverlayMapLayer
 extends TileMapLayer
 
 # A layer of INFODATA a level paints but never shows: the rooms (bits 16-23) and the cells
-# that block sight (bit 1). Like the movement cells it is drawn in the editor and hidden in
-# play unless show_in_game is set; CollisionMapLayer reads its cells. See
-# docs/map-authoring.md and docs/collision-reference.md.
+# that block sight (bit 1). Hidden in play unless show_in_game is set, and saved hidden in the
+# editor too until the eye beside it shows it for painting; CollisionMapLayer reads its cells
+# either way. See docs/map-authoring.md and docs/collision-reference.md.
 
 # Draw each painted cell's alternative tile, the room id, on it in the editor.
 @export var label_cells := false:

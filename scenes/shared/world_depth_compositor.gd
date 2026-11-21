@@ -109,7 +109,9 @@ func rebuild() -> void:
 
 
 func _rebuild() -> void:
-	if not is_instance_valid(_composite):
+	# A rebuild deferred from _ready can come due after the compositor has left the tree, as the
+	# editor closes a scene; it rebuilds again when it is back.
+	if not is_instance_valid(_composite) or not is_inside_tree():
 		return
 	_dirty = false
 	var sources: Array[CanvasItem] = []
@@ -331,6 +333,31 @@ func _attach_bake_cache() -> void:
 	_images = cache.get("images")
 	_regions = cache.get("regions")
 	_opaque_rects = cache.get("opaque_rects")
+
+
+# The editor's warnings for a map as a whole, shown on this node because every map has one:
+# what a level needs beside the art, and the archetypes the original creates once each.
+# See docs/map-authoring.md.
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	var world := get_parent()
+	if world == null:
+		return warnings
+	for required in ["FloorTileMapLayer", "Objects", "CollisionTileMapLayer", "RoomTileMapLayer", "SightTileMapLayer", "Player", "CharacterDepthCompositor"]:
+		if world.get_node_or_null(required) == null:
+			warnings.append("This map has no %s beside the compositor." % required)
+	if world.get_parent() == null or world.get_parent().get_node_or_null("LevelRuntime") == null:
+		warnings.append("This map has no LevelRuntime beside World: nothing keeps its clock, score or goal.")
+	var counts := {}
+	for node in world.get_children():
+		var profile = node.get("profile") if node.get_node_or_null("Brain") != null else null
+		if profile != null:
+			var id := String(profile.get("id"))
+			counts[id] = int(counts.get(id, 0)) + 1
+	for id in ["boss", "secretary", "janitor"]:
+		if int(counts.get(id, 0)) > 1:
+			warnings.append("%d coworkers have the %s profile: the original creates one, and the others get no desk." % [counts[id], id])
+	return warnings
 
 
 func _hide_sources(sources: Array[CanvasItem]) -> void:

@@ -35,6 +35,8 @@ const PICK_GROUP := &"map_objects"
 	set(value):
 		color_texture = value
 		_refresh_sprite()
+		if Engine.is_editor_hint():
+			update_configuration_warnings()
 @export var depth_texture: Texture2D:
 	set(value):
 		depth_texture = value
@@ -42,6 +44,8 @@ const PICK_GROUP := &"map_objects"
 		# the bake, so its depth plane is nothing the world composite has to hear about.
 		if not _drawn_as_actor:
 			_announce_change()
+		if Engine.is_editor_hint():
+			update_configuration_warnings()
 @export var pivot := Vector2.ZERO:
 	set(value):
 		pivot = value
@@ -287,6 +291,57 @@ func _process(delta: float) -> void:
 	# sub_410290 (0x4102BC): a DESTROY_n whose clip has finished steps forward by seven.
 	if FIRST_TRANSITION_STATE <= state and state <= LAST_TRANSITION_STATE:
 		set_state(state + DESTROYED_OFFSET)
+
+
+# The editor's warnings for an object in a map: what would make it draw wrongly or do nothing.
+# See docs/map-authoring.md.
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	if color_texture == null:
+		warnings.append("No Color Texture: the object draws nothing.")
+	elif depth_texture == null:
+		warnings.append("No Depth Texture (the -depth.png beside the image): the world compositor leaves the object out.")
+	if not is_equal_approx(rotation, 0.0) or not scale.is_equal_approx(Vector2.ONE):
+		warnings.append("Rotated or scaled: the depth masks support neither. For another direction, use the prefab with the other angle in its name.")
+	if get_node_or_null("InteractionPoint") == null:
+		warnings.append("No InteractionPoint: a decoration, with no pranks and no use by colleagues. Drag the object's prefab from scenes/objects/ to get one.")
+	return warnings
+
+
+# The object's anchor in tiles, offered in the editor beside its pixel position: the grid the
+# original places items on. Not stored; it reads and moves the position through the level's
+# own tile axes, and is absent where the object stands in no map.
+func _get_property_list() -> Array[Dictionary]:
+	if not Engine.is_editor_hint() or _tile_axes() == Transform2D():
+		return []
+	return [{"name": "tile_position", "type": TYPE_VECTOR2, "usage": PROPERTY_USAGE_EDITOR}]
+
+
+func _get(property: StringName) -> Variant:
+	if property == &"tile_position":
+		var axes := _tile_axes()
+		return axes.affine_inverse() * position if axes != Transform2D() else null
+	return null
+
+
+func _set(property: StringName, value: Variant) -> bool:
+	if property == &"tile_position" and value is Vector2:
+		var axes := _tile_axes()
+		if axes != Transform2D():
+			position = axes * (value as Vector2)
+			return true
+	return false
+
+
+func _tile_axes() -> Transform2D:
+	var node: Node = get_parent()
+	while node != null:
+		var layer := node.get_node_or_null("CollisionTileMapLayer") as TileMapLayer
+		if layer != null:
+			var origin := layer.map_to_local(Vector2i.ZERO)
+			return Transform2D(layer.map_to_local(Vector2i(1, 0)) - origin, layer.map_to_local(Vector2i(0, 1)) - origin, origin)
+		node = node.get_parent()
+	return Transform2D()
 
 
 func get_depth_actor() -> Dictionary:

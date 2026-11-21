@@ -58,8 +58,32 @@ func _enter_tree() -> void:
 	add_to_group("npc_activity_points")
 
 
+# The categories some goal's candidate list takes (NPCBrain.GOAL_CATEGORIES and the alternate
+# work category 2); an object of any other is no colleague's.
+const NPC_CATEGORIES := [1, 2, 4, 5, 6, 7, 8, 9]
+# The editor marks each point: orange where the player can prank, green where only colleagues
+# go, grey for a decoration neither uses.
+const PRANK_COLOR := Color(1.0, 0.55, 0.1)
+const NPC_COLOR := Color(0.3, 0.9, 0.4)
+const DECORATION_COLOR := Color(0.6, 0.6, 0.6)
+
+
 func _ready() -> void:
 	reset_actions()
+	if Engine.is_editor_hint():
+		queue_redraw()
+
+
+func _draw() -> void:
+	if not Engine.is_editor_hint():
+		return
+	var color := DECORATION_COLOR
+	if not action_ids.is_empty():
+		color = PRANK_COLOR
+	elif category in NPC_CATEGORIES:
+		color = NPC_COLOR
+	draw_circle(Vector2.ZERO, 7.0, Color.BLACK)
+	draw_circle(Vector2.ZERO, 5.0, color)
 
 
 func reset_actions() -> void:

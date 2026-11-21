@@ -36,6 +36,10 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 mouse_cursor/custom_image="res://images/gui/cursors/pointer.png"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/sacked_map_tools/plugin.cfg")
+
 [gui]
 
 theme/custom="res://resources/ui_theme.tres"
