@@ -12,6 +12,11 @@ const MAP_OBJECT_SCENE := "res://scenes/shared/map_object.tscn"
 const FPS_COUNTER_SCRIPT := "res://scenes/debug/fps_counter.gd"
 const COLLISION_MAP_SCRIPT := "res://scenes/shared/collision_map_layer.gd"
 const COLLISION_TILESET := "res://resources/tilemaps/sacked-collision.tres"
+const OVERLAY_MAP_SCRIPT := "res://scenes/shared/overlay_map_layer.gd"
+const ROOM_TILESET := "res://resources/tilemaps/sacked-rooms.tres"
+const SIGHT_TILESET := "res://resources/tilemaps/sacked-sight.tres"
+# The room diamond's alternatives are rooms 0-31, the rooms a goal mask can name.
+const ROOM_LIMIT := 32
 const NPC_SCENE := "res://scenes/npc/npc.tscn"
 const NPC_BRAIN_SCRIPT := "res://scenes/npc/npc_brain.gd"
 const THOUGHT_BUBBLE_SCRIPT := "res://scenes/npc/thought_bubble.gd"
@@ -96,6 +101,8 @@ func _build_scene(manifest: Dictionary) -> Node:
 	var objects := _build_objects(manifest, floor_layer)
 	world.add_child(objects)
 	world.add_child(_build_collision_layer(manifest))
+	world.add_child(_build_room_layer(manifest))
+	world.add_child(_build_sight_layer(manifest))
 
 	var player := _build_player(manifest, floor_layer)
 	world.add_child(player)
@@ -142,18 +149,43 @@ func _build_collision_layer(manifest: Dictionary) -> TileMapLayer:
 	var collision_grid: Dictionary = manifest.get("collision_grid", {})
 	for cell in collision_grid.get("blocked_cells", []):
 		layer.set_cell(_vector2i(cell), 0, Vector2i.ZERO)
-	# Sight blockers are carried as data rather than painted: they overlap the movement
-	# cells almost everywhere and only the interaction ray reads them.
-	var sight := PackedVector2Array()
-	for cell in collision_grid.get("sight_blocked_cells", []):
-		sight.append(Vector2(_vector2i(cell)))
-	layer.set("sight_blocked_cells", sight)
-	# The room ids as well, which the lamps' abilities read at the player's cell.
-	var rooms := PackedByteArray()
-	for room in collision_grid.get("room_ids", []):
-		rooms.append(int(room))
-	layer.set("room_ids", rooms)
-	layer.set("room_grid_size", Vector2i(int(collision_grid.get("width", 0)), int(collision_grid.get("height", 0))))
+	layer.set("map_size", Vector2i(int(collision_grid.get("width", 0)), int(collision_grid.get("height", 0))))
+	return layer
+
+
+# INFODATA bits 16-23, painted: each cell of a room other than 0 carries the room diamond's
+# alternative tile of that number. An unpainted cell is room 0.
+func _build_room_layer(manifest: Dictionary) -> TileMapLayer:
+	var layer := _overlay_layer("RoomTileMapLayer", ROOM_TILESET, 9)
+	layer.set("label_cells", true)
+	var collision_grid: Dictionary = manifest.get("collision_grid", {})
+	var width := int(collision_grid.get("width", 0))
+	var rooms: Array = collision_grid.get("room_ids", [])
+	for index in range(rooms.size()):
+		var room := int(rooms[index])
+		if room >= ROOM_LIMIT:
+			push_error("Room %d at cell %d is past the %d rooms the room diamond has" % [room, index, ROOM_LIMIT])
+		elif room != 0:
+			layer.set_cell(Vector2i(index % width, index / width), 0, Vector2i.ZERO, room)
+	return layer
+
+
+# INFODATA bit 1. Painted apart from the movement cells: they overlap almost everywhere, but a
+# few cells block one and not the other.
+func _build_sight_layer(manifest: Dictionary) -> TileMapLayer:
+	var layer := _overlay_layer("SightTileMapLayer", SIGHT_TILESET, 11)
+	for cell in manifest.get("collision_grid", {}).get("sight_blocked_cells", []):
+		layer.set_cell(_vector2i(cell), 0, Vector2i.ZERO)
+	return layer
+
+
+func _overlay_layer(layer_name: String, tileset_path: String, z: int) -> TileMapLayer:
+	var layer := TileMapLayer.new()
+	layer.name = layer_name
+	layer.script = load(OVERLAY_MAP_SCRIPT)
+	layer.tile_set = load(tileset_path) as TileSet
+	layer.z_index = z
+	layer.set_meta("_edit_lock_", true)
 	return layer
 
 

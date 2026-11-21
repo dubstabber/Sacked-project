@@ -15,7 +15,7 @@ The `INFODATA` record in each original level contains one little-endian 32-bit v
 
 Out-of-bounds queries return zero. The original relies on authored blocking cells around the playable area; this accessor does not manufacture an impassable boundary.
 
-Mode 4 is also asked at run time: the lamps' abilities read the room at `(int(x + 0.5), int(z + 0.5))` to pick their record. The port's `CollisionMapLayer` carries each level's whole room grid, emitted from the manifest's `collision_grid.room_ids`, and `room_category()` answers it, truncating toward zero and returning 0 off the grid; see [player-ability-reference.md](player-ability-reference.md).
+Mode 4 is also asked at run time: the lamps' abilities read the room at `(int(x + 0.5), int(z + 0.5))` to pick their record. The port paints each level's whole room grid, from the manifest's `collision_grid.room_ids`, on a `RoomTileMapLayer` beside the movement cells, and the sight flag (bit 1) on a `SightTileMapLayer` (see [map-rendering.md](map-rendering.md), "The room grid"); `CollisionMapLayer.room_category()` answers the rooms, truncating toward zero and returning 0 off the grid; see [player-ability-reference.md](player-ability-reference.md).
 
 This is a logical occupancy grid. A wall or piece of furniture does not collide according to its PNG rectangle or its per-pixel rendering depth mask. Small items can sit on furniture without introducing a second collision obstacle. Runtime movement reads the saved occupancy grid; the object factory at `sub_410550` does not derive collision geometry from sprite dimensions.
 

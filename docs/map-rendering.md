@@ -244,13 +244,36 @@ See [player-ability-reference.md](player-ability-reference.md).
 
 ### The room grid
 
-Besides the movement cells and the sight blockers, each level's `CollisionTileMapLayer` carries
-the manifest's `collision_grid.room_ids` as `room_ids`, with `room_grid_size` beside them.
-They are `INFODATA` bits 16–23, flat and indexed `x + width * z`, and
-`CollisionMapLayer.room_category()` answers them for the lamps' abilities.
-`tools/build_level_scene.gd` emits them. Adding them changed each generated scene by exactly
-those two lines. `tests/check_level_maps.gd` asserts them against every manifest, the `s`
-variants included.
+Besides the movement cells, `INFODATA` gives each cell a room, bits 16–23, and a sight flag,
+bit 1. Both are painted on layers of their own beside `CollisionTileMapLayer`, so they can be
+seen and edited like the movement cells. Each uses `scenes/shared/overlay_map_layer.gd`
+(`OverlayMapLayer`), which draws in the editor and hides in play unless `show_in_game` is set:
+
+- **`RoomTileMapLayer`** paints the rooms with one diamond (`resources/tilemaps/sacked-rooms.tres`).
+  Its alternative tile *n* is room *n*, for 0–31, the rooms a goal mask can name. Each is
+  tinted its own colour, and the editor writes the number on every painted cell. An
+  unpainted cell is room 0. The TileSet's `room_name` custom data names the three rooms the
+  smoke establishes: 3 waiting room, 4 server room, 8 boss office
+  (see [player-ability-reference.md](player-ability-reference.md)).
+- **`SightTileMapLayer`** paints the cells that block sight
+  (`resources/tilemaps/sacked-sight.tres`). They cannot be painted on `CollisionTileMapLayer`,
+  where any tile blocks movement, because a few cells block one and not the other.
+
+`tools/build_editor_tilesets.gd` writes both TileSets.
+
+`CollisionMapLayer` still answers `room_ids`, `room_grid_size`, `sight_blocked_cells`,
+`sight_grid()`, `is_sight_blocked()` and `room_category()`, but it now reads them from those
+layers:
+
+- The room grid is cached and rebuilt when the room layer changes.
+- `map_size` bounds both grids, as `INFODATA` covers the whole map. A cell off it is room 0
+  and blocks no sight. `tools/build_level_scene.gd` sets `map_size` to the manifest's size; a
+  map that leaves it at zero takes the floor's painted extent.
+- Assigning `room_ids`, `room_grid_size` or `sight_blocked_cells` directly overrides the
+  painted data, as a test's hand-built map does.
+
+`tests/check_level_maps.gd` holds every manifest, the `s` variants included, to the painted
+cells, the read-back grids and each room category.
 
 ### The floor is one opaque mosaic
 

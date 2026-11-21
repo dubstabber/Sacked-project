@@ -328,6 +328,48 @@ func _check_room_grid(world: Node, manifest: Dictionary, label: String) -> void:
 		if int(layer.call("room_category", tile)) != expected[index]:
 			_fail("level %s room category at %s is not the manifest's %d" % [label, tile, expected[index]])
 			return
+	_check_painted_overlays(world, collision_grid, expected, label)
+
+
+# Rooms and sight blockers are painted, so a designer can see and edit them: each cell of a
+# room other than 0 is the room diamond with that room's alternative, and the sight layer holds
+# exactly the manifest's sight cells. Both are hidden in play, and the collision layer reads
+# them rather than carrying the arrays itself.
+func _check_painted_overlays(world: Node, collision_grid: Dictionary, rooms: PackedByteArray, label: String) -> void:
+	var collision := world.get_node("CollisionTileMapLayer")
+	for property in ["room_ids", "sight_blocked_cells"]:
+		if bool(collision.get("_rooms_overridden" if property == "room_ids" else "_sight_overridden")):
+			_fail("level %s carries %s as data instead of reading its painted layer" % [label, property])
+	var room_layer := world.get_node_or_null("RoomTileMapLayer") as TileMapLayer
+	var sight_layer := world.get_node_or_null("SightTileMapLayer") as TileMapLayer
+	if room_layer == null or sight_layer == null:
+		_fail("level %s paints its rooms and sight blockers on their own layers" % label)
+		return
+	var width := int(collision_grid.get("width", 0))
+	var painted := 0
+	for index in range(rooms.size()):
+		var cell := Vector2i(index % width, index / width)
+		var room := int(rooms[index])
+		if room == 0:
+			if room_layer.get_cell_source_id(cell) != -1:
+				_fail("level %s paints room-0 cell %s" % [label, cell])
+				return
+			continue
+		painted += 1
+		if room_layer.get_cell_alternative_tile(cell) != room:
+			_fail("level %s paints cell %s as room %d, the manifest's is %d" % [label, cell, room_layer.get_cell_alternative_tile(cell), room])
+			return
+	if room_layer.get_used_cells().size() != painted:
+		_fail("level %s paints %d room cells, the manifest has %d outside room 0" % [label, room_layer.get_used_cells().size(), painted])
+	var sight := {}
+	for cell in collision_grid.get("sight_blocked_cells", []):
+		sight[Vector2i(int(cell[0]), int(cell[1]))] = true
+	var sight_cells := sight_layer.get_used_cells()
+	if sight_cells.size() != sight.size() or sight_cells.any(func(cell): return not sight.has(cell)):
+		_fail("level %s paints sight cells other than the manifest's %d" % [label, sight.size()])
+	for layer in [room_layer, sight_layer]:
+		if bool(layer.get("show_in_game")):
+			_fail("level %s shows %s in play" % [label, layer.name])
 
 
 func _check_player(world: Node, manifest: Dictionary, floor_layer: TileMapLayer, label: String) -> void:

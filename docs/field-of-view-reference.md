@@ -683,8 +683,9 @@ Its inputs are rounded to the float32 the original keeps:
   widened by the band, the boss's unwidened;
 - **the heading**: `npc.gd`'s `notice_heading`, which already eases `agent+1848` once per
   original frame (see [npc-reference.md](npc-reference.md));
-- **the sight cells**: `CollisionMapLayer.sight_grid()`, `sight_blocked_cells` laid out over
-  the map's own width and height (`room_grid_size`, the manifest's). That is INFODATA bit 1,
+- **the sight cells**: `CollisionMapLayer.sight_grid()`, the cells painted on the level's
+  `SightTileMapLayer`, laid out over the map's own width and height (`room_grid_size`, the
+  manifest's). That is INFODATA bit 1,
   the same cells the port's sight ray reads. Every other cell, on or off the map, is clear.
 
 The port sums the band in doubles before rounding. In four of the 25 radius combinations that

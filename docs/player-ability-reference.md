@@ -1775,9 +1775,11 @@ abort state through `AbilityController.catch()`. The pill is never caught.
 
 ### The room grid
 
-`tools/build_level_scene.gd` emits each manifest's `collision_grid.room_ids`, flat and
-indexed `x + width * z`, into the level's `CollisionTileMapLayer` as `room_ids`, with
-`room_grid_size` beside them. `CollisionMapLayer.room_category(tile)` answers
+`tools/build_level_scene.gd` paints each manifest's `collision_grid.room_ids` onto the
+level's `RoomTileMapLayer`, room *n* as the room diamond's alternative tile *n* (see
+[map-rendering.md](map-rendering.md), "The room grid"). The `CollisionTileMapLayer` beside it
+reads them back as `room_ids`, flat and indexed `x + width * z`, over `room_grid_size`, the
+manifest's size. `CollisionMapLayer.room_category(tile)` answers
 `sub_412AE0(int(x + 0.5), int(z + 0.5), 4)`. `int()` truncates toward zero as `ftol` does, so
 x = −0.9 still reads column 0, and a cell off the grid answers 0.
 
