@@ -37,6 +37,7 @@ REFERENCE_CHECKS = [
     ["tools/export_world_depth_maps.py", "--check"],
     ["tools/build_tilemap_atlases.py", "--check"],
     ["tools/import_original_level.py", "--check"],
+    ["tools/build_custom_template.py", "--check"],
 ]
 
 # A GDScript runtime or compile error, or a signal or deferred call Godot could not dispatch,

@@ -205,3 +205,44 @@ func record_result(
 
 	save()
 	progress_changed.emit()
+
+
+# ---------------------------------------------------------------------------- custom levels
+
+# A custom level's best runs (the port's own; the original has no custom levels), kept under
+# the level's scene path so they never touch a campaign level's mask or record. The same win
+# policy as record_result: only a win writes, the points game its score and the time game its
+# time, inclusively. See docs/shell-reference.md.
+func _custom_section(scene_path: String) -> String:
+	return "custom %s" % scene_path
+
+
+func record_custom_result(scene_path: String, game_mode: StringName, won: bool, score: int, elapsed_seconds: float, player_name: String) -> void:
+	if not won or scene_path == "":
+		return
+	var section := _custom_section(scene_path)
+	if game_mode == &"points":
+		if score >= custom_best_score(scene_path):
+			_config.set_value(section, "best_score", score)
+			_config.set_value(section, "best_score_name", player_name)
+	elif elapsed_seconds <= custom_best_time_seconds(scene_path):
+		_config.set_value(section, "best_time_seconds", elapsed_seconds)
+		_config.set_value(section, "best_time_name", player_name)
+	save()
+	progress_changed.emit()
+
+
+func custom_best_score(scene_path: String) -> int:
+	return int(_config.get_value(_custom_section(scene_path), "best_score", NO_SCORE))
+
+
+func custom_best_score_name(scene_path: String) -> String:
+	return String(_config.get_value(_custom_section(scene_path), "best_score_name", NO_NAME))
+
+
+func custom_best_time_seconds(scene_path: String) -> float:
+	return float(_config.get_value(_custom_section(scene_path), "best_time_seconds", NO_TIME))
+
+
+func custom_best_time_name(scene_path: String) -> String:
+	return String(_config.get_value(_custom_section(scene_path), "best_time_name", NO_NAME))

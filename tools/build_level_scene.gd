@@ -344,8 +344,9 @@ func _build_npcs(manifest: Dictionary, floor_layer: TileMapLayer, world: Node2D)
 		brain.name = "Brain"
 		brain.script = load(NPC_BRAIN_SCRIPT)
 		# The importer ran the level start's desk search (build_npcs); NPCStartup runs it at
-		# run time only for an agent that has not had it.
-		brain.set_meta("startup_assigned", true)
+		# run time only for an agent that has not had it, as for the template's coworker.
+		if not bool(npc_data.get("runtime_desk", false)):
+			brain.set_meta("startup_assigned", true)
 		for field in ["assigned_workstation", "assigned_chair"]:
 			var instance_id = npc_data.get(field + "_instance_id")
 			if instance_id != null:

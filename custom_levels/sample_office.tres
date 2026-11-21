@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CustomLevelInfo" format=3]
+
+[ext_resource type="Script" path="res://scenes/level/custom_level_info.gd" id="1_info"]
+
+[resource]
+script = ExtResource("1_info")
+title = "Sample office"
+description = "Level 1's office with one desk, a cola machine and a colleague who finds his own desk. Open scenes/custom_level_template.tscn and save it as a scene of your own to start a map; docs/map-authoring.md says how."
+scene = "res://scenes/custom_level_template.tscn"
+author = "Sacked port"

@@ -1,0 +1,5328 @@
+{
+  "collision_grid": {
+    "blocked_cells": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        9,
+        0
+      ],
+      [
+        10,
+        0
+      ],
+      [
+        11,
+        0
+      ],
+      [
+        12,
+        0
+      ],
+      [
+        13,
+        0
+      ],
+      [
+        14,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        9,
+        1
+      ],
+      [
+        10,
+        1
+      ],
+      [
+        11,
+        1
+      ],
+      [
+        14,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        9,
+        2
+      ],
+      [
+        14,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        9,
+        3
+      ],
+      [
+        14,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        9,
+        4
+      ],
+      [
+        12,
+        4
+      ],
+      [
+        13,
+        4
+      ],
+      [
+        14,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        12,
+        5
+      ],
+      [
+        13,
+        5
+      ],
+      [
+        14,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        13,
+        6
+      ],
+      [
+        14,
+        6
+      ],
+      [
+        15,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        9,
+        7
+      ],
+      [
+        10,
+        7
+      ],
+      [
+        13,
+        7
+      ],
+      [
+        14,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        6,
+        8
+      ],
+      [
+        10,
+        8
+      ],
+      [
+        14,
+        8
+      ],
+      [
+        15,
+        8
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        6,
+        9
+      ],
+      [
+        7,
+        9
+      ],
+      [
+        10,
+        9
+      ],
+      [
+        11,
+        9
+      ],
+      [
+        14,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        2,
+        10
+      ],
+      [
+        3,
+        10
+      ],
+      [
+        6,
+        10
+      ],
+      [
+        7,
+        10
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        11,
+        10
+      ],
+      [
+        14,
+        10
+      ],
+      [
+        0,
+        11
+      ],
+      [
+        3,
+        11
+      ],
+      [
+        6,
+        11
+      ],
+      [
+        7,
+        11
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        11
+      ],
+      [
+        14,
+        11
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        6,
+        12
+      ],
+      [
+        7,
+        12
+      ],
+      [
+        10,
+        12
+      ],
+      [
+        11,
+        12
+      ],
+      [
+        14,
+        12
+      ],
+      [
+        0,
+        13
+      ],
+      [
+        6,
+        13
+      ],
+      [
+        7,
+        13
+      ],
+      [
+        10,
+        13
+      ],
+      [
+        11,
+        13
+      ],
+      [
+        14,
+        13
+      ],
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        14
+      ],
+      [
+        2,
+        14
+      ],
+      [
+        3,
+        14
+      ],
+      [
+        4,
+        14
+      ],
+      [
+        5,
+        14
+      ],
+      [
+        6,
+        14
+      ],
+      [
+        7,
+        14
+      ],
+      [
+        8,
+        14
+      ],
+      [
+        9,
+        14
+      ],
+      [
+        10,
+        14
+      ],
+      [
+        11,
+        14
+      ],
+      [
+        12,
+        14
+      ],
+      [
+        13,
+        14
+      ],
+      [
+        14,
+        14
+      ]
+    ],
+    "height": 16,
+    "room_ids": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      7,
+      7,
+      7,
+      7,
+      0,
+      0,
+      0,
+      0,
+      2,
+      2,
+      2,
+      2,
+      0,
+      2,
+      2,
+      2,
+      7,
+      7,
+      7,
+      7,
+      7,
+      0,
+      0,
+      0,
+      2,
+      2,
+      2,
+      2,
+      0,
+      2,
+      2,
+      2,
+      7,
+      7,
+      7,
+      7,
+      7,
+      0,
+      0,
+      0,
+      2,
+      2,
+      2,
+      2,
+      0,
+      2,
+      2,
+      2,
+      7,
+      7,
+      7,
+      7,
+      7,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      3,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      3,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      3,
+      3,
+      3,
+      0,
+      0,
+      8,
+      8,
+      8,
+      8,
+      8,
+      0,
+      1,
+      1,
+      1,
+      0,
+      3,
+      3,
+      3,
+      0,
+      0,
+      0,
+      8,
+      0,
+      8,
+      8,
+      8,
+      0,
+      1,
+      1,
+      1,
+      0,
+      3,
+      3,
+      3,
+      0,
+      0,
+      0,
+      8,
+      8,
+      8,
+      8,
+      8,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      8,
+      8,
+      8,
+      8,
+      8,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      8,
+      8,
+      8,
+      8,
+      8,
+      0,
+      1,
+      1,
+      1,
+      0,
+      4,
+      4,
+      4,
+      0,
+      0,
+      0,
+      8,
+      8,
+      8,
+      8,
+      8,
+      0,
+      1,
+      1,
+      1,
+      0,
+      4,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      8,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "sight_blocked_cells": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        9,
+        0
+      ],
+      [
+        10,
+        0
+      ],
+      [
+        11,
+        0
+      ],
+      [
+        12,
+        0
+      ],
+      [
+        13,
+        0
+      ],
+      [
+        14,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        9,
+        1
+      ],
+      [
+        14,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        9,
+        2
+      ],
+      [
+        14,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        14,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        9,
+        4
+      ],
+      [
+        12,
+        4
+      ],
+      [
+        13,
+        4
+      ],
+      [
+        14,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        14,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        14,
+        6
+      ],
+      [
+        15,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        9,
+        7
+      ],
+      [
+        10,
+        7
+      ],
+      [
+        14,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        6,
+        8
+      ],
+      [
+        10,
+        8
+      ],
+      [
+        14,
+        8
+      ],
+      [
+        15,
+        8
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        6,
+        9
+      ],
+      [
+        10,
+        9
+      ],
+      [
+        14,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        6,
+        10
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        14,
+        10
+      ],
+      [
+        0,
+        11
+      ],
+      [
+        6,
+        11
+      ],
+      [
+        10,
+        11
+      ],
+      [
+        11,
+        11
+      ],
+      [
+        14,
+        11
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        6,
+        12
+      ],
+      [
+        10,
+        12
+      ],
+      [
+        14,
+        12
+      ],
+      [
+        0,
+        13
+      ],
+      [
+        6,
+        13
+      ],
+      [
+        10,
+        13
+      ],
+      [
+        14,
+        13
+      ],
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        14
+      ],
+      [
+        2,
+        14
+      ],
+      [
+        3,
+        14
+      ],
+      [
+        4,
+        14
+      ],
+      [
+        5,
+        14
+      ],
+      [
+        6,
+        14
+      ],
+      [
+        7,
+        14
+      ],
+      [
+        8,
+        14
+      ],
+      [
+        9,
+        14
+      ],
+      [
+        10,
+        14
+      ],
+      [
+        11,
+        14
+      ],
+      [
+        12,
+        14
+      ],
+      [
+        13,
+        14
+      ],
+      [
+        14,
+        14
+      ]
+    ],
+    "source_chunk": "INFODATA",
+    "width": 16
+  },
+  "conditions": {
+    "points": {
+      "score_target": 3000,
+      "time_limit_seconds": 300.0
+    },
+    "time": {
+      "score_target": 4000,
+      "time_limit_seconds": 360.0
+    }
+  },
+  "generated_by": "tools/build_custom_template.py",
+  "ignored_layers": {
+    "LAYER2": "matches LAYER1 for LEVEL_00.col and is not rendered twice"
+  },
+  "map": {
+    "height": 16,
+    "layer_count": 3,
+    "visible_height": 15,
+    "visible_width": 15,
+    "width": 16
+  },
+  "npcs": [
+    {
+      "assigned_chair_instance_id": null,
+      "assigned_workstation_instance_id": null,
+      "height": 0.0,
+      "initial_direction_index": 0,
+      "instance_id": 79,
+      "node_name": "Npc079MaleEmployee1",
+      "profile": "res://scenes/npc/profiles/male-employee-1.tres",
+      "profile_id": "male-employee-1",
+      "runtime_desk": true,
+      "spawn_id": 4,
+      "tile_position": [
+        3.0,
+        2.0
+      ]
+    }
+  ],
+  "object_database": "extract-sacked-assets/sacked/CO_OBJECTS.DAT",
+  "objects": [
+    {
+      "action_ids": [],
+      "display_name": "Schreibtisch  (L) Holz",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 8,
+      "interaction_tile_position": [
+        1.0,
+        1.0
+      ],
+      "kind": "0x020003d0",
+      "node_name": "Object008Schreibtisch02",
+      "object_category": 1,
+      "object_id": "0x020003d0",
+      "pivot": [
+        118,
+        69
+      ],
+      "record_name": "ITEM0",
+      "source_sprite": "CO_OBJECTS_B_RO_SCHREIBTISCH02_IDLE_000_Schreibtisch02#000",
+      "sprite_name": "SCHREIBTISCH02",
+      "texture": "res://images/objects/b-ro-schreibtisch02-000.png",
+      "texture_size": [
+        217,
+        119
+      ],
+      "tile_position": [
+        1.0,
+        1.0
+      ],
+      "variant": 0
+    },
+    {
+      "action_ids": [],
+      "display_name": "Drehstuhl blau",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 9,
+      "interaction_tile_position": [
+        3.0,
+        2.0
+      ],
+      "kind": "0x01060440",
+      "node_name": "Object009Drehstuhl01",
+      "object_category": 1,
+      "object_id": "0x01060440",
+      "pivot": [
+        25,
+        70
+      ],
+      "record_name": "ITEM1",
+      "source_sprite": "CO_OBJECTS_B_RO_DREHSTUHL01_IDLE_000_DREHSTUHL01#000#",
+      "sprite_name": "DREHSTUHL01",
+      "texture": "res://images/objects/b-ro-drehstuhl01-000.png",
+      "texture_size": [
+        58,
+        83
+      ],
+      "tile_position": [
+        2.0,
+        2.0
+      ],
+      "variant": 0
+    },
+    {
+      "action_ids": [
+        13,
+        14,
+        15,
+        58
+      ],
+      "display_name": "Tastatur frontal",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 10,
+      "interaction_tile_position": [
+        1.927083,
+        2.114583
+      ],
+      "kind": "0x00060980",
+      "node_name": "Object010MonitorTastaturFrontal",
+      "object_category": 5,
+      "object_id": "0x00060980",
+      "pivot": [
+        21,
+        89
+      ],
+      "record_name": "ITEM2",
+      "source_sprite": "CO_OBJECTS_AKTIV_MONITOR_TASTATUR#FRONTAL_IDLE_000_MonitorFrontal#Idle#000#",
+      "sprite_name": "MONITOR&TASTATUR#FRONTAL",
+      "texture": "res://images/objects/aktiv-monitor-tastatur-frontal-000.png",
+      "texture_size": [
+        50,
+        52
+      ],
+      "tile_position": [
+        0.927083,
+        2.114583
+      ],
+      "variant": 0
+    },
+    {
+      "action_ids": [],
+      "display_name": "PC-Tower",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 11,
+      "interaction_tile_position": [
+        1.0,
+        3.0
+      ],
+      "kind": "0x00000860",
+      "node_name": "Object011Pctower",
+      "object_category": 1,
+      "object_id": "0x00000860",
+      "pivot": [
+        14,
+        44
+      ],
+      "record_name": "ITEM3",
+      "source_sprite": "CO_OBJECTS_B_RO_PCTOWER_IDLE_000_PCTower#Idle#000#",
+      "sprite_name": "PCTOWER",
+      "texture": "res://images/objects/b-ro-pctower-000.png",
+      "texture_size": [
+        30,
+        51
+      ],
+      "tile_position": [
+        1.0,
+        3.0
+      ],
+      "variant": 0
+    },
+    {
+      "action_ids": [
+        120
+      ],
+      "display_name": "Fenster 1a",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 21,
+      "interaction_tile_position": [
+        0.647917,
+        5.885417
+      ],
+      "kind": "0x05090be0",
+      "node_name": "Object021Fenster01",
+      "object_category": 5,
+      "object_id": "0x05090be0",
+      "pivot": [
+        31,
+        150
+      ],
+      "record_name": "ITEM13",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER01_IDLE_000_Fenster01#Idle#000#",
+      "sprite_name": "FENSTER01",
+      "texture": "res://images/objects/aktiv-fenster01-000.png",
+      "texture_size": [
+        116,
+        136
+      ],
+      "tile_position": [
+        -0.052083,
+        5.885417
+      ],
+      "variant": 0
+    },
+    {
+      "action_ids": [
+        120
+      ],
+      "display_name": "Fenster 1a",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 22,
+      "interaction_tile_position": [
+        0.679167,
+        2.395833
+      ],
+      "kind": "0x05090be0",
+      "node_name": "Object022Fenster01",
+      "object_category": 5,
+      "object_id": "0x05090be0",
+      "pivot": [
+        31,
+        150
+      ],
+      "record_name": "ITEM14",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER01_IDLE_000_Fenster01#Idle#000#",
+      "sprite_name": "FENSTER01",
+      "texture": "res://images/objects/aktiv-fenster01-000.png",
+      "texture_size": [
+        116,
+        136
+      ],
+      "tile_position": [
+        -0.020833,
+        2.395833
+      ],
+      "variant": 0
+    },
+    {
+      "action_ids": [
+        120
+      ],
+      "display_name": "Fenster 1b",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 23,
+      "interaction_tile_position": [
+        0.679167,
+        8.895833
+      ],
+      "kind": "0x05090bf0",
+      "node_name": "Object023Fenster02",
+      "object_category": 5,
+      "object_id": "0x05090bf0",
+      "pivot": [
+        31,
+        150
+      ],
+      "record_name": "ITEM15",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER02_IDLE_000_Fenster02#Idle#000#",
+      "sprite_name": "FENSTER02",
+      "texture": "res://images/objects/aktiv-fenster02-000.png",
+      "texture_size": [
+        116,
+        136
+      ],
+      "tile_position": [
+        -0.020833,
+        8.895833
+      ],
+      "variant": 0
+    },
+    {
+      "action_ids": [
+        120
+      ],
+      "display_name": "Fenster 1b",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 24,
+      "interaction_tile_position": [
+        0.679167,
+        12.770833
+      ],
+      "kind": "0x05090bf0",
+      "node_name": "Object024Fenster02",
+      "object_category": 5,
+      "object_id": "0x05090bf0",
+      "pivot": [
+        31,
+        150
+      ],
+      "record_name": "ITEM16",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER02_IDLE_000_Fenster02#Idle#000#",
+      "sprite_name": "FENSTER02",
+      "texture": "res://images/objects/aktiv-fenster02-000.png",
+      "texture_size": [
+        116,
+        136
+      ],
+      "tile_position": [
+        -0.020833,
+        12.770833
+      ],
+      "variant": 0
+    },
+    {
+      "action_ids": [
+        120
+      ],
+      "display_name": "Fenster 1c",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 25,
+      "interaction_tile_position": [
+        2.375,
+        0.7
+      ],
+      "kind": "0x05090c01",
+      "node_name": "Object025Fenster03",
+      "object_category": 5,
+      "object_id": "0x05090c00",
+      "pivot": [
+        82,
+        151
+      ],
+      "record_name": "ITEM17",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER03_IDLE_090_Fenster03#Idle#090#",
+      "sprite_name": "FENSTER03",
+      "texture": "res://images/objects/aktiv-fenster03-090.png",
+      "texture_size": [
+        116,
+        137
+      ],
+      "tile_position": [
+        2.375,
+        -0.0
+      ],
+      "variant": 1
+    },
+    {
+      "action_ids": [
+        120
+      ],
+      "display_name": "Fenster 1c",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 26,
+      "interaction_tile_position": [
+        7.302083,
+        0.689583
+      ],
+      "kind": "0x05090c01",
+      "node_name": "Object026Fenster03",
+      "object_category": 5,
+      "object_id": "0x05090c00",
+      "pivot": [
+        82,
+        151
+      ],
+      "record_name": "ITEM18",
+      "source_sprite": "CO_OBJECTS_AKTIV_FENSTER03_IDLE_090_Fenster03#Idle#090#",
+      "sprite_name": "FENSTER03",
+      "texture": "res://images/objects/aktiv-fenster03-090.png",
+      "texture_size": [
+        116,
+        137
+      ],
+      "tile_position": [
+        7.302083,
+        -0.010417
+      ],
+      "variant": 1
+    },
+    {
+      "action_ids": [
+        11,
+        12,
+        57,
+        56
+      ],
+      "display_name": "Colaautomat",
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 36,
+      "interaction_tile_position": [
+        12.072917,
+        10.260417
+      ],
+      "kind": "0x070508c0",
+      "node_name": "Object036Colamat",
+      "object_category": 5,
+      "object_id": "0x070508c0",
+      "pivot": [
+        35,
+        112
+      ],
+      "record_name": "ITEM28",
+      "source_sprite": "CO_OBJECTS_AKTIV_COLAMAT_IDLE_000_Colamat#Idle#000#",
+      "sprite_name": "COLAMAT",
+      "texture": "res://images/objects/aktiv-colamat-000.png",
+      "texture_size": [
+        72,
+        130
+      ],
+      "tile_position": [
+        11.072917,
+        10.260417
+      ],
+      "variant": 0
+    }
+  ],
+  "original_level_index": 0,
+  "original_level_text": "extract-sacked-assets/sacked/Levels/Level_00.txt",
+  "playable_level_number": 1,
+  "player_spawn_id": 0,
+  "source": "resources/levels/level_1.json",
+  "source_id": 3,
+  "spawns": [
+    {
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 79,
+      "spawn_id": 4,
+      "tile_position": [
+        3.0,
+        2.0
+      ]
+    },
+    {
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 80,
+      "spawn_id": 1,
+      "tile_position": [
+        1.0,
+        12.0
+      ]
+    },
+    {
+      "flags": 1,
+      "height": 0.0,
+      "instance_id": 81,
+      "spawn_id": 6,
+      "tile_position": [
+        6.0,
+        1.0
+      ]
+    },
+    {
+      "flags": 3599,
+      "height": 0.0,
+      "instance_id": 82,
+      "spawn_id": 0,
+      "tile_position": [
+        12.0,
+        9.0
+      ]
+    }
+  ],
+  "tile_atlas_manifest": "resources/tilemaps/sacked-tile-atlases.json",
+  "tile_layers": [
+    {
+      "cells": [
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            7,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            8,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            9,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            10,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            11,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            12,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            13,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            1,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            3,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            4,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            6,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            7,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            8,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            9,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            10,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            11,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            12,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            13,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            4,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            6,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            7,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            8,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            9,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            10,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            11,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            12,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            13,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            1,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            3,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            4,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            6,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            7,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            8,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            9,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            10,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            11,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            12,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            7,
+            0
+          ],
+          "cell": [
+            13,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            3,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            4,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            6,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            7,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            8,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            9,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 16
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            10,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 16
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            11,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 16
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            13,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            1,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            3,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            4,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            5,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            6,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            7,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            8,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            9,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            10,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            11,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            12,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            13,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            1,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            3,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            4,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            5,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            6,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            7,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            8,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            9,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            10,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            11,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            3,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            4,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            6,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            7,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            8,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            9,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            11,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            1,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            3,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            4,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            5,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            6,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            11,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            5,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            11,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            5,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            11,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            7,
+            2
+          ],
+          "cell": [
+            12,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 27
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            5,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            11,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            12,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            1,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            5,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            11,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 26
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            12,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            3,
+            3
+          ],
+          "cell": [
+            13,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 33
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            1,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            2,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            3,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            4,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            5,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            7,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            8,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            9,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 6
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            9,
+            2
+          ],
+          "cell": [
+            11,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 29
+        },
+        {
+          "atlas_coords": [
+            2,
+            3
+          ],
+          "cell": [
+            12,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 32
+        },
+        {
+          "atlas_coords": [
+            8,
+            2
+          ],
+          "cell": [
+            13,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 28
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            1,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            2,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            3,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            4,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            5,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            6,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            7,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            8,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            9,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            10,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            11,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            12,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            13,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            14,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        }
+      ],
+      "name": "FloorTileMapLayer",
+      "tileset": "res://resources/tilemaps/sacked-floor.tres",
+      "z_index": -20
+    },
+    {
+      "cells": [
+        {
+          "atlas_coords": [
+            7,
+            1
+          ],
+          "cell": [
+            0,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 16
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            1,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            2,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            3,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            4,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            2
+          ],
+          "cell": [
+            5,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 22
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            6,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            7,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            8,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            2
+          ],
+          "cell": [
+            9,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 22
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            10,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            11,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            12,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            5,
+            1
+          ],
+          "cell": [
+            13,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 14
+        },
+        {
+          "atlas_coords": [
+            0,
+            2
+          ],
+          "cell": [
+            14,
+            0
+          ],
+          "source_id": 3,
+          "tile_id": 17
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            5,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            9,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            1
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            5,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            9,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            2
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            5,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            9,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            3
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            2
+          ],
+          "cell": [
+            0,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 20
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            1,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            2,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            1
+          ],
+          "cell": [
+            5,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 10
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            8,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            1
+          ],
+          "cell": [
+            9,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 10
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            12,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            13,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            4,
+            2
+          ],
+          "cell": [
+            14,
+            4
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            5
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            6
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            2
+          ],
+          "cell": [
+            0,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 20
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            1,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            2,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            5,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            0,
+            1
+          ],
+          "cell": [
+            6,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 9
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            9,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            3,
+            0
+          ],
+          "cell": [
+            10,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 4
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            7
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            8
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            9
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            10
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            6,
+            0
+          ],
+          "cell": [
+            10,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 7
+        },
+        {
+          "atlas_coords": [
+            1,
+            0
+          ],
+          "cell": [
+            11,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 2
+        },
+        {
+          "atlas_coords": [
+            4,
+            2
+          ],
+          "cell": [
+            14,
+            11
+          ],
+          "source_id": 3,
+          "tile_id": 21
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            12
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            3,
+            1
+          ],
+          "cell": [
+            0,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 12
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            6,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            0,
+            0
+          ],
+          "cell": [
+            10,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 1
+        },
+        {
+          "atlas_coords": [
+            4,
+            1
+          ],
+          "cell": [
+            14,
+            13
+          ],
+          "source_id": 3,
+          "tile_id": 13
+        },
+        {
+          "atlas_coords": [
+            1,
+            2
+          ],
+          "cell": [
+            0,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 18
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            1,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            2,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            3,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            4,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            5,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            6,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 23
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            7,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            8,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            9,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            2
+          ],
+          "cell": [
+            10,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 23
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            11,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            12,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            6,
+            1
+          ],
+          "cell": [
+            13,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 15
+        },
+        {
+          "atlas_coords": [
+            2,
+            2
+          ],
+          "cell": [
+            14,
+            14
+          ],
+          "source_id": 3,
+          "tile_id": 19
+        }
+      ],
+      "name": "WallTileMapLayer",
+      "tileset": "res://resources/tilemaps/sacked-walls.tres",
+      "z_index": -5
+    },
+    {
+      "cells": [],
+      "name": "GlassTileMapLayer",
+      "tileset": "res://resources/tilemaps/sacked-glass.tres",
+      "z_index": -4
+    }
+  ],
+  "tile_size": [
+    96,
+    48
+  ]
+}
