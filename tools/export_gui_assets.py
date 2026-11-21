@@ -19,6 +19,7 @@ Run with --check to verify the exported files without writing.
 import argparse
 import json
 import re
+import struct
 from pathlib import Path
 
 from PIL import Image
@@ -132,6 +133,11 @@ STRINGS_PREFIX = "CO_EFFECT_Strings_"
 # CO_EFFECT.OGD. The extraction is not shipped, so the port reads the copy written below.
 STRINGS_ANIMATION = "extract-sacked-assets/extracted/animations_godot/CO_EFFECT_CO_EFFECT_Strings_godot.json"
 STRINGS_TIMING = "resources/effects/strings.json"
+# Each thought bubble's draw offset. sub_417460 hands sub_42D780 the point 135 pixels above the
+# agent (0x417544), and sub_42D780 subtracts the sprite's own pivot from it (0x42D802).
+BUBBLE_OFFSETS = "resources/effects/bubbles.json"
+# The SPRITE header's pivot, two signed shorts after the 512-byte name and the u32 id.
+SPRITE_PIVOT_OFFSET = 0x204
 
 # Sprites with words painted into them, which therefore differ per release: these six are
 # the only sprites whose bytes differ between the two builds' archives. The port ships both
@@ -255,6 +261,22 @@ def strings_destination(sprite: str) -> str:
     return f"images/effects/strings/{slug(name.removesuffix('_alpha'))}.png"
 
 
+def bubble_destination(sprite: str) -> str:
+    return f"images/effects/bubbles/{slug(sprite[len(BUBBLE_PREFIX):])}.png"
+
+
+def bubble_offsets(root: Path) -> str:
+    """Each bubble's Sprite2D offset with centered = false: minus its SPRITE header's pivot."""
+    source = SpriteSource(root, EFFECT)
+    offsets = {}
+    for sprite in source.names(BUBBLE_PREFIX):
+        header = (source.directory / sprite / "SPRITEHDR.bin").read_bytes()
+        pivot_x, pivot_y = struct.unpack_from("<hh", header, SPRITE_PIVOT_OFFSET)
+        offsets["res://" + bubble_destination(sprite)] = [-pivot_x, -pivot_y]
+    table = {"generated_by": "tools/export_gui_assets.py", "offsets": offsets}
+    return json.dumps(table, indent=2, sort_keys=True) + "\n"
+
+
 def strings_timing(root: Path) -> str:
     """The Strings ANIM record as the port plays it, serialised byte-deterministically.
 
@@ -306,7 +328,7 @@ def specs(root: Path) -> list:
         result.append((GUI, sprite, acticon_destination(sprite), None))
 
     for sprite in SpriteSource(root, EFFECT).names(BUBBLE_PREFIX):
-        result.append((EFFECT, sprite, f"images/effects/bubbles/{slug(sprite[len(BUBBLE_PREFIX):])}.png", None))
+        result.append((EFFECT, sprite, bubble_destination(sprite), None))
 
     for sprite in SpriteSource(root, GUI).names(MINIGAME_PREFIX):
         result.append((GUI, sprite, f"images/gui/minigame/{slug(sprite[len(MINIGAME_PREFIX):])}.png", None))
@@ -351,21 +373,21 @@ def export(root: Path, check: bool) -> int:
             path.parent.mkdir(parents=True, exist_ok=True)
             image.save(path, optimize=True)
 
-    timing = strings_timing(root)
-    path = root / STRINGS_TIMING
-    if check:
-        if not path.is_file():
-            failures.append(f"{STRINGS_TIMING} is missing")
-        elif path.read_bytes() != timing.encode():
-            failures.append(f"{STRINGS_TIMING} is stale")
-    else:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(timing.encode())
+    for table_rel, table in ((STRINGS_TIMING, strings_timing(root)), (BUBBLE_OFFSETS, bubble_offsets(root))):
+        path = root / table_rel
+        if check:
+            if not path.is_file():
+                failures.append(f"{table_rel} is missing")
+            elif path.read_bytes() != table.encode():
+                failures.append(f"{table_rel} is stale")
+        else:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(table.encode())
 
     if failures:
         print("GUI asset check failed:\n" + "\n".join(f"  {line}" for line in failures))
         return 1
-    print(f"{'Verified' if check else 'Exported'} {count} GUI and effect sprites and {STRINGS_TIMING}.")
+    print(f"{'Verified' if check else 'Exported'} {count} GUI and effect sprites, {STRINGS_TIMING} and {BUBBLE_OFFSETS}.")
     return 0
 
 
@@ -387,6 +409,7 @@ def main() -> int:
                 suffix = ""
             print(f"{archive:10} {sprite:44} -> {destination}{suffix}")
         print(f"{'':10} {'CO_EFFECT_Strings (ANIM)':44} -> {STRINGS_TIMING}")
+        print(f"{'':10} {'CO_EFFECT_Bubbles_* pivots':44} -> {BUBBLE_OFFSETS}")
         return 0
     return export(root, args.check)
 

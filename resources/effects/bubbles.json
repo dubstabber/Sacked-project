@@ -1,0 +1,45 @@
+{
+  "generated_by": "tools/export_gui_assets.py",
+  "offsets": {
+    "res://images/effects/bubbles/angry.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/back-to-work.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/cigarette.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/coffee.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/food.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/happy.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/relax.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/repair.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/social.png": [
+      -25,
+      -65
+    ],
+    "res://images/effects/bubbles/toilett.png": [
+      -25,
+      -65
+    ]
+  }
+}

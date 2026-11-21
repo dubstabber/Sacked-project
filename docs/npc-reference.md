@@ -329,6 +329,14 @@ it holds before queueing the next one into `+1082`. `sub_417460` draws
 `bubbleNames[agent+1080]` from the table at `0x46E7A8`, **135 pixels above** the agent at
 alpha 180, so a bubble is up for exactly as long as its goal is.
 
+That point is where the bubble's **pivot** goes, not its centre: `sub_417460` passes
+`(agent+8, agent+12 − 135)` to `sub_42D780` (`0x417544`), which subtracts the sprite's own
+pivot (`+556`/`+558`, `0x42D802`). Every bubble is 62 × 69 with its pivot at (25, 65), near
+the bottom of the little trail, so its top left sits 25 pixels left of the agent and 200
+above it. `tools/export_gui_assets.py` reads the pivots out of the sprite headers into
+`resources/effects/bubbles.json`. Until 2026-11-21 the port centred the bubble on the point
+instead, which drew it 30.5 pixels too low and 6 too far left, close over the head.
+
 The bubble is **not depth tested**. `sub_417460` sets the blitter's mode field (`+24` on the
 object at `agent+68`, which `sub_42CCF0` masks to 6 bits to index a 64-entry blitter table)
 to 7 for the agent itself and to **20** for the bubble, restoring it afterwards. Mode 20 is

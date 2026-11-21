@@ -67,6 +67,10 @@ func _check_bubbles_follow_goals() -> void:
 			bubble.texture != null and bubble.texture.resource_path.get_file() == "%s.png" % BUBBLE.BUBBLES[goal],
 			"goal %d shows %s" % [goal, BUBBLE.BUBBLES[goal]]
 		)
+		# sub_42D780 subtracts the sprite's pivot, (25, 65) on every bubble, from the point
+		# 135 px above the agent: the bubble's top left is 25 left and 200 up.
+		var top_left := bubble.position + bubble.offset
+		_expect(not bubble.centered and top_left == Vector2(-25, -200), "goal %d's bubble hangs from its pivot, top left %s" % [goal, top_left])
 	bubble.show_goal(-1)
 	_expect(not bubble.visible, "an agent with no goal thinks about nothing")
 

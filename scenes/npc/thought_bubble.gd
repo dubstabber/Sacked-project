@@ -2,10 +2,14 @@ extends Sprite2D
 
 # What an agent is thinking about. agent+1080 is its current goal and the bubble is that
 # goal's own entry in the table at 0x46E7A8, so it shows for exactly as long as the goal
-# lasts. sub_417460 draws it 135 pixels above the agent at alpha 180.
+# lasts. sub_417460 draws it 135 pixels above the agent at alpha 180, and sub_42D780 places
+# the sprite by its own pivot there, (25, 65) on every bubble, not by its centre.
 # See docs/npc-reference.md.
 
+const OriginalData := preload("res://scenes/shared/original_data.gd")
 const HEAD_OFFSET := Vector2(0.0, -135.0)
+# Each bubble's offset, minus its SPRITE pivot, written by tools/export_gui_assets.py.
+const OFFSETS_PATH := "res://resources/effects/bubbles.json"
 const ALPHA := 180.0 / 255.0
 # While the colleague is hovered, sub_417460 draws over its bubble a second time (the agent's
 # draw is called again for the hovered one, 0x402A24), and mode 20 blends without a key, so the
@@ -25,17 +29,21 @@ const BUBBLES := [
 ]
 
 var _textures: Array[Texture2D] = []
+var _offsets: Array[Vector2] = []
 
 
 func _ready() -> void:
-	centered = true
+	centered = false
 	position = HEAD_OFFSET
 	modulate.a = ALPHA
 	z_index = DEPTH_INDEX
 	visible = false
+	var offsets: Dictionary = OriginalData.load_original(OFFSETS_PATH).get("offsets", {})
 	for name in BUBBLES:
 		var path := "res://images/effects/bubbles/%s.png" % name
 		_textures.append(load(path) as Texture2D if ResourceLoader.exists(path) else null)
+		var pivot: Array = offsets.get(path, [0, 0])
+		_offsets.append(Vector2(float(pivot[0]), float(pivot[1])))
 
 	var brain := get_parent().get_node_or_null("Brain")
 	if brain != null and brain.has_signal("goal_changed"):
@@ -48,6 +56,7 @@ func show_goal(goal: int) -> void:
 		visible = false
 		return
 	texture = _textures[goal]
+	offset = _offsets[goal]
 	visible = true
 
 
