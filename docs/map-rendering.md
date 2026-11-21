@@ -122,6 +122,38 @@ brains running and 8 s per level.
   spot. The frame takes longer still than its process time, which points at the whole-texture
   uploads on the render side.
 
+### What the measurements changed
+
+Each change below kept the sha256 goldens. All figures use the benchmark above.
+
+- **A looping object leaves the bake alone.** Its new depth plane no longer marks the world
+  composite dirty. The world compositor also reuses each object's prepared actor, until the
+  object announces a change (`MapObject.depth_revision`) or moves.
+- **No full score copy.** A cluster reads only the window of world scores it covers, through
+  `WorldDepthCompositor.score_window()`. The window is clipped, not padded, because padding
+  would be 0.0, a real score.
+- **One int32 per pixel.** `_compose_actor` reads and writes each RGBA8 pixel whole. That is
+  about 1.75 times faster: level 19's bake fell from 1.87 s to 1.13 s.
+- **A retry composes nothing.** The `BakeCache` autoload keeps the last level's first bake,
+  and the images it was composed from, across the scene change a retry makes. A retry
+  reloads the same scene from zero, so its signature matches and the new compositor adopts
+  copies of the buffers. The cache serves one level scene at a time, empties on the main
+  menu, and is never used in the editor, where a reimported texture keeps its path.
+  `tests/check_bake_cache.gd` covers it.
+- **The level loads while the description screen shows.**
+  - The screen asks `ScreenManager.preload_level()` for its level, which loads on worker
+    threads.
+  - `Dalej` plays that `PackedScene`, and a retry instances it again.
+  - Backing out leaves the request to be collected once it finishes.
+  - Headless, the dummy renderer cannot create textures off the main thread, so the checks
+    load the scene synchronously.
+
+| Level | Load, no preload | Load, after 2 s / 5 s on the description screen | Retry | Storm p99 / max |
+| --- | --- | --- | --- | --- |
+| 1 | 1.70 s → 1.50 s | 0.62 s / — | 0.71 s → 0.07 s | 29 / 43 ms → 21 / 34 ms |
+| 8 | 3.21 s → 2.72 s | 1.81 s / 1.36 s | 1.57 s → 0.12 s | 54 / 78 ms → 39 / 72 ms |
+| 19 | 3.80 s → 3.07 s | 2.07 s / 1.77 s | 2.10 s → 0.18 s | 86 / 132 ms → 53 / 72 ms |
+
 ### Clips that never stop
 
 Level 2 is the first map with **looping** object states. Four of them ship real frames — the copier's `DESTROYED_1` (25 frames at 16 fps), the aquarium's `DESTROYED_2` (25 at 16), the projector screen's `DESTROYED_1` (17 at 16) and the stove's `DESTROYED_1` (9 at 8) — and every `DESTROYED_n` in the container carries a loop flag where no `DESTROY_n` does. The copier matters most: `sub_417B00` puts it into state 9 the first time an NPC photocopies something (only that first user ever raises it), so it loops in ordinary play with no prank involved.

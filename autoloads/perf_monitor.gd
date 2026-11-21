@@ -8,6 +8,8 @@ extends Node
 #   --perf-storm          during the bench, swap one object's state every STORM_INTERVAL s
 #   --perf-restart        after the bench, restart the level once and time that load too
 #   --perf-mode=points    bench the points game instead of the time game
+#   --perf-preload=S      ask ScreenManager to preload the level S seconds before starting
+#                         it, as the description screen does while the player reads it
 #
 # tools/benchmark_levels.py drives the bench. Frames are timed between consecutive
 # frame_post_draw signals, so a frame's time includes everything the engine did for it.
@@ -98,6 +100,10 @@ func _run_bench() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	screens.set("selected_game_mode", StringName(result["mode"]))
+	if _args.has("perf-preload"):
+		result["preload_seconds"] = float(_args["perf-preload"])
+		screens.call("preload_level", screens.call("level_scene_path", level))
+		await get_tree().create_timer(float(_args["perf-preload"])).timeout
 	result["load"] = await _timed_load(func() -> void: screens.call("start_level", level))
 	if result["load"].is_empty():
 		get_tree().quit(1)

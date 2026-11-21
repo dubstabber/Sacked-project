@@ -35,6 +35,8 @@ def run_level(binary: str, level: int, args) -> dict:
         command.append("--perf-storm")
     if args.restart:
         command.append("--perf-restart")
+    if args.preload:
+        command.append(f"--perf-preload={args.preload}")
     completed = subprocess.run(command, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, timeout=600)
     for line in completed.stdout.splitlines():
         if line.startswith("PERF_RESULT "):
@@ -95,6 +97,7 @@ def main() -> int:
     parser.add_argument("--mode", choices=("time", "points"), default="time")
     parser.add_argument("--storm", action="store_true", help="swap one object's state a second")
     parser.add_argument("--restart", action="store_true", help="also time one restart_level()")
+    parser.add_argument("--preload", type=float, default=0.0, help="preload the level this many seconds before starting it, as the description screen does")
     parser.add_argument("--runs", type=int, default=1, help="repeat each level and keep every run")
     parser.add_argument("--out", type=Path, help="write the raw results as JSON")
     parser.add_argument("--compare", type=Path, help="show a previous --out file's numbers in brackets")

@@ -55,6 +55,7 @@ func _run() -> void:
 	await _check_each_attempt_starts_the_duel_over()
 	await _check_only_a_win_plays_the_win_cue()
 	await _check_a_scene_run_on_its_own_records_nothing()
+	await _check_a_preloaded_level_is_the_one_played_and_retried()
 
 	_manager.reset_player_setup()
 	_manager.selected_game_mode = &"time"
@@ -66,7 +67,7 @@ func _run() -> void:
 	settings.reload()
 	DirAccess.remove_absolute(SETTINGS_PATH)
 	if _failures == 0:
-		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count, the win cue, the stored profile, character select's five buttons and the scene run on its own passed")
+		print("Screen flow: scene paths, level selection, mode selection, name rules, result routing, the name caption, the retry round trip, the duel count, the win cue, the stored profile, character select's five buttons, the scene run on its own and the preloaded level passed")
 	quit(1 if _failures else 0)
 
 
@@ -530,6 +531,46 @@ func _check_a_scene_run_on_its_own_records_nothing() -> void:
 	_expect(store.is_cleared(1, &"time") and is_equal_approx(store.best_time_seconds(1), 12.0), "and a launched level records again")
 	store.clear()
 	_manager.last_level_won = false
+	_manager.selected_level = restore_level
+	_manager.change_to_main_menu()
+	await process_frame
+
+
+# The description screen has the level load on worker threads while it shows. Dalej then plays
+# that very PackedScene, a retry instances it again rather than reading it back, and leaving
+# the level drops it. A request nobody collects is collected once it finishes.
+func _check_a_preloaded_level_is_the_one_played_and_retried() -> void:
+	var restore_level: int = _manager.selected_level
+	var path := String(_manager.level_scene_path(2))
+	_manager.preload_level(path)
+	_expect(_manager._preload_path == path, "the description screen's request is taken")
+	_manager.start_level(2)
+	await process_frame
+	var played: PackedScene = _manager._level_scene
+	_expect(played != null and played.resource_path == path, "Dalej plays the preloaded scene")
+	_expect(current_scene != null and current_scene.scene_file_path == path, "and the level on show is that scene")
+	_manager.restart_level()
+	await process_frame
+	_expect(_manager._level_scene == played, "a retry instances the same PackedScene again")
+	_manager.change_to_main_menu()
+	await process_frame
+	_expect(_manager._level_scene == null, "leaving the level drops it")
+	var bake_cache := root.get_node_or_null("BakeCache")
+	_expect(bake_cache != null and bake_cache.scene_path == "", "and the main menu empties the bake cache")
+
+	# Headless, the dummy renderer cannot load textures on worker threads, so the request is a
+	# plain load there and backing out simply drops it; tools/benchmark_levels.py --preload
+	# measures the threaded path in a window.
+	var abandoned := String(_manager.level_scene_path(3))
+	_manager.preload_level(abandoned)
+	_expect(_manager._preload_path == abandoned, "a second level can be asked for")
+	_manager.change_to_level_tree()
+	_expect(_manager._preload_path == "" and _manager._preloaded_scene == null, "backing out lets go of it")
+	for frame in range(600):
+		if _manager._abandoned_preloads.is_empty():
+			break
+		await process_frame
+	_expect(_manager._abandoned_preloads.is_empty(), "and it is collected once it finishes")
 	_manager.selected_level = restore_level
 	_manager.change_to_main_menu()
 	await process_frame

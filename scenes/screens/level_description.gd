@@ -40,6 +40,11 @@ func _ready() -> void:
 	start.disabled = _screens != null and not bool(_screens.call("is_level_available", _level))
 	($SafeFrame/Continue/Label as Label).modulate.a = 0.5 if start.disabled else 1.0
 	_fill()
+	# The level loads on worker threads while the player reads this screen, so Dalej does not
+	# wait for it. Only when this is the screen on show: a check that instances it on its own
+	# should not leave a load running behind it.
+	if _screens != null and not start.disabled and get_tree().current_scene == self:
+		_screens.call("preload_level", _screens.call("level_scene_path", _level))
 
 
 # Everything here is either formatted or looked up by a key that varies with the level, so

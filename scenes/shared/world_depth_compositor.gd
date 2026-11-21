@@ -15,6 +15,9 @@ var depth_texture: ImageTexture
 var revision := 0
 var partial_rebuilds := 0
 var full_rebuilds := 0
+# Full rebuilds that adopted the BakeCache autoload's copy of this scene's bake instead of
+# composing it.
+var cache_hits := 0
 # How many object actors were prepared from their node rather than reused unchanged.
 var actors_prepared := 0
 
@@ -42,6 +45,7 @@ var _tile_actors_cache: Dictionary = {}
 # opaque rectangle and signature included. The transform is compared as well because a move
 # only reaches NOTIFICATION_TRANSFORM_CHANGED at the tree's next transform flush.
 var _object_actors: Dictionary = {}
+var _bake_cache: Node
 
 
 func _ready() -> void:
@@ -51,6 +55,7 @@ func _ready() -> void:
 		_composite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		add_child(_composite, false, Node.INTERNAL_MODE_BACK)
 	_image_compositor = COMPOSITOR.new()
+	_attach_bake_cache()
 	if not Engine.is_editor_hint():
 		get_tree().node_added.connect(_on_tree_changed)
 		get_tree().node_removed.connect(_on_tree_changed)
@@ -132,13 +137,23 @@ func _rebuild_everything(actors: Array, sources: Array[CanvasItem], signature: S
 		_order.clear()
 	else:
 		var bounds: Rect2 = _image_compositor.union_bounds(actors)
-		PerfProbe.begin(&"world.compose")
-		var result: Dictionary = _image_compositor.compose_region(actors, bounds)
-		PerfProbe.end(&"world.compose")
+		# A retry rebuilds the same scene from zero, so its first bake is the one the last
+		# attempt started from; only a level's first bake is stored or looked for.
+		var cached: Dictionary = _bake_cache.take(signature) if _bake_cache != null and full_rebuilds == 0 else {}
 		depth_bounds = bounds
-		_color_image = result.image
+		if not cached.is_empty() and cached["bounds"] == bounds:
+			cache_hits += 1
+			_color_image = cached["color"]
+			_score_image = cached["scores"]
+		else:
+			PerfProbe.begin(&"world.compose")
+			var result: Dictionary = _image_compositor.compose_region(actors, bounds)
+			PerfProbe.end(&"world.compose")
+			_color_image = result.image
+			_score_image = _score_image_for(bounds, result.scores)
+			if _bake_cache != null and full_rebuilds == 0 and _score_image != null:
+				_bake_cache.store(signature, _color_image, _score_image, bounds)
 		PerfProbe.begin(&"world.publish")
-		_score_image = _score_image_for(bounds, result.scores)
 		_composite.texture = ImageTexture.create_from_image(_color_image)
 		depth_texture = ImageTexture.create_from_image(_score_image) if _score_image != null else null
 		PerfProbe.end(&"world.publish")
@@ -300,6 +315,22 @@ func score_window(rect: Rect2) -> Dictionary:
 func compose_reference_for_test() -> Dictionary:
 	var sources: Array[CanvasItem] = []
 	return _image_compositor.compose_region(_collect_actors(sources), depth_bounds)
+
+
+# Shares the BakeCache autoload's image caches when this compositor belongs to a level scene,
+# so a retry neither reads its images back from the GPU nor composes them again. Never in the
+# editor, where a reimported texture keeps its path and so its key.
+func _attach_bake_cache() -> void:
+	_bake_cache = null
+	if Engine.is_editor_hint() or not is_inside_tree() or owner == null:
+		return
+	var cache := get_node_or_null("/root/BakeCache")
+	if cache == null or not cache.call("attach", owner.scene_file_path):
+		return
+	_bake_cache = cache
+	_images = cache.get("images")
+	_regions = cache.get("regions")
+	_opaque_rects = cache.get("opaque_rects")
 
 
 func _hide_sources(sources: Array[CanvasItem]) -> void:

@@ -68,6 +68,16 @@ var _launched_level_path := ""
 # A scene Screen.LEVEL resolves to instead of selected_level's, so a retry replays the scene
 # that was actually played. Cleared whenever the tree starts a level.
 var _level_override_path := ""
+# The level scene being played, held from the moment it starts until the player leaves the
+# level and its result screen, so a retry instances it again without reading it back off disk.
+var _level_scene: PackedScene
+# A level scene the description screen asked for ahead of time, loading on worker threads.
+var _preload_path := ""
+# The same, already loaded, where worker threads cannot load it (see preload_level).
+var _preloaded_scene: PackedScene
+# Requests nobody is waiting for any more. A threaded load has to be collected once it is done,
+# and collecting it early would block, so they are polled until they finish.
+var _abandoned_preloads: Array[String] = []
 
 
 func _input(event: InputEvent) -> void:
@@ -85,6 +95,7 @@ func _ready() -> void:
 	_menu_music_player.bus = &"Music"
 	_menu_music_player.finished.connect(_on_menu_music_finished)
 	add_child(_menu_music_player)
+	set_process(false)
 
 
 func change_to(screen: Screen) -> void:
@@ -96,10 +107,72 @@ func change_to(screen: Screen) -> void:
 		# casts on the next.
 		duels_fought = 0
 		_launched_level_path = scene_path(screen)
+	elif screen != Screen.LEVEL_RESULT:
+		_level_scene = null
+	if screen == Screen.MAIN_MENU:
+		var bake_cache := get_node_or_null("/root/BakeCache")
+		if bake_cache != null:
+			bake_cache.call("clear")
 	_sync_menu_music()
 	PerfProbe.begin(&"scene.change")
-	get_tree().change_scene_to_file(scene_path(screen))
+	if screen == Screen.LEVEL:
+		get_tree().change_scene_to_packed(_level_packed_scene(scene_path(screen)))
+	else:
+		_abandon_preload()
+		get_tree().change_scene_to_file(scene_path(screen))
 	PerfProbe.end(&"scene.change")
+
+
+# Starts loading a level scene on worker threads while a screen before it is showing, the way
+# the description screen does, so starting the level does not wait for it. The port's own: the
+# original loads a level's .col in a moment.
+func preload_level(path: String) -> void:
+	if path == _preload_path or (_level_scene != null and _level_scene.resource_path == path):
+		return
+	_abandon_preload()
+	# The headless checks' dummy renderer cannot create a texture off the main thread, so
+	# there the scene is simply loaded now.
+	if DisplayServer.get_name() == "headless":
+		_preloaded_scene = load(path) as PackedScene
+		_preload_path = path if _preloaded_scene != null else ""
+	elif ResourceLoader.load_threaded_request(path, "PackedScene", true) == OK:
+		_preload_path = path
+
+
+func _level_packed_scene(path: String) -> PackedScene:
+	if _level_scene != null and _level_scene.resource_path == path:
+		return _level_scene
+	var scene: PackedScene
+	if path == _preload_path:
+		# Waits for the worker threads only if they have not finished yet.
+		scene = _preloaded_scene if _preloaded_scene != null else ResourceLoader.load_threaded_get(path) as PackedScene
+		_preload_path = ""
+		_preloaded_scene = null
+	if scene == null:
+		_abandon_preload()
+		scene = load(path) as PackedScene
+	_level_scene = scene
+	return scene
+
+
+func _abandon_preload() -> void:
+	if _preload_path == "":
+		return
+	if _preloaded_scene != null:
+		_preloaded_scene = null
+	else:
+		_abandoned_preloads.append(_preload_path)
+		set_process(true)
+	_preload_path = ""
+
+
+func _process(_delta: float) -> void:
+	for path in _abandoned_preloads.duplicate():
+		if ResourceLoader.load_threaded_get_status(path) != ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+			ResourceLoader.load_threaded_get(path)
+			_abandoned_preloads.erase(path)
+	if _abandoned_preloads.is_empty():
+		set_process(false)
 
 
 func scene_path(screen: Screen) -> String:
