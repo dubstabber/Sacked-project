@@ -423,7 +423,9 @@ Three details the port had to add rather than reuse:
 - **Cubicle blindness.** `_inside_cubicle` mirrors `agent+1824`, raised when the brain claims
   a cubicle and cleared when it releases the seat.
 - **An abort.** `PrankController.abort_action()` is the mode's abort state: it drops the
-  action without scoring it, clears an `in_use` mark and undoes a start-time result state.
+  action without scoring it, clears an `in_use` mark and undoes a start-time result state by
+  putting back the state the object had before (`player+1040`, see
+  [player-action-reference.md](player-action-reference.md)).
 
 **The abilities are caught the same way.** `CatchWatch` also treats the ability states
 `{11, 12}` and `{21, 22}` as mid-prank, through `AbilityController.is_catchable()`. It uses the

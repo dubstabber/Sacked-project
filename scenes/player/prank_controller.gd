@@ -127,6 +127,9 @@ var blackout_remaining := 0.0
 var _return_position := Vector2.INF
 var _acting_point: Node
 var _acting_entry: Dictionary = {}
+# player+1040: the object's state before a start-time result state, which an abort restores.
+# -1 when the committed action changed no state as it started.
+var _saved_state := -1
 # +992 and +1000 while an action runs, kept as every timed player state keeps them.
 var _timer := PlayerTimer.new()
 # sub_41B0C0, the first mode-0 tick after an ability, writes "..." back to player+1128.
@@ -279,9 +282,15 @@ func confirm() -> void:
 	_play_action_animation(action)
 
 	var object := _object_of(_acting_point)
-	if int(action.get("result_state", 0)) == STATE_IN_USE:
+	_saved_state = -1
+	var result := int(action.get("result_state", 0))
+	if result == STATE_IN_USE:
 		_acting_point.set("in_use", true)
 	elif bool(action.get("state_at_start", false)):
+		# State 2 saves the item's state in +1040 before it applies the start-time one
+		# (0x41B64B-0x41B661), under the same test as the change itself.
+		if result != STATE_KEEP and object != null and object.has_method("set_state"):
+			_saved_state = int(object.get("state"))
 		_apply_result_state(object, action, int(entry["action_id"]))
 	_hold(object, action, true)
 	action_started.emit(action, _acting_point)
@@ -827,9 +836,9 @@ func _object_under_cursor() -> Node2D:
 
 # sub_402470 pushes the player to its mode's abort state rather than letting the action
 # finish, so a prank interrupted by being caught pays nothing and leaves the object alone.
-# The one thing already applied is a start-time result state, which state 5 restores. State
-# 5 also stops a start-time sound (0x41BB61), which LevelAudio holds and cuts on
-# action_aborted.
+# The one thing already applied is a start-time result state, which state 5 undoes by
+# putting back the state saved in +1040 (0x41BB83-0x41BBA8). State 5 also stops a
+# start-time sound (0x41BB61), which LevelAudio holds and cuts on action_aborted.
 func abort_action() -> void:
 	if state != State.ACTING:
 		return
@@ -842,10 +851,11 @@ func abort_action() -> void:
 		_hold(_object_of(point), action, false)
 		if int(action.get("result_state", 0)) == STATE_IN_USE:
 			point.set("in_use", false)
-		elif bool(action.get("state_at_start", false)):
+		elif _saved_state >= 0:
 			var object := _object_of(point)
 			if object != null and object.has_method("set_state"):
-				object.set_state(0)
+				object.set_state(_saved_state)
+	_saved_state = -1
 	clear_selection()
 	state = State.FREE
 	_set_acting(false)

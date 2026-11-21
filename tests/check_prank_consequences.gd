@@ -34,8 +34,9 @@ func _run() -> void:
 	_check_the_start_state_actions_level_2_places()
 	_check_marker_18_hides_its_object()
 	_check_flip_clips_hide_their_object()
+	_check_an_abort_restores_the_saved_state()
 	if _failures == 0:
-		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift, the turn toward the item, the start-state actions, marker 18's hide and the flip clips' hide passed")
+		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift, the turn toward the item, the start-state actions, marker 18's hide, the flip clips' hide and the abort's saved state passed")
 	quit(1 if _failures else 0)
 
 
@@ -447,6 +448,37 @@ func _check_flip_clips_hide_their_object() -> void:
 	_expect(not bag.visible, "a second run hides it again")
 	controller.abort_action()
 	_expect(bag.visible, "an aborted action brings it back")
+	_drop(fixture)
+
+
+# State 2 saves the object's state in +1040 before a start-time result state, and state 5
+# puts that back (0x41B655, 0x41BBA8) -- not IDLE. An action that changes nothing as it starts
+# leaves the object's state alone when aborted.
+func _check_an_abort_restores_the_saved_state() -> void:
+	var fixture := _player_fixture()
+	var world: Node2D = fixture["world"]
+	var controller: Node = fixture["controller"]
+	var point := _item(world, Vector2(1, 1), Vector2(1, 2), 0, [51])
+	var object := point.get_parent() as Node2D
+
+	object.state = 9
+	_open_and_commit(controller, point, 51)
+	_expect(int(object.state) == 2, "action 51 applies its DESTROY_1 as it starts")
+	controller.abort_action()
+	_expect(int(object.state) == 9, "the abort puts back the state it had, got %d" % int(object.state))
+
+	point.reset_actions()
+	object.state = 0
+	_open_and_commit(controller, point, 51)
+	controller.abort_action()
+	_expect(int(object.state) == 0, "from IDLE it goes back to IDLE, got %d" % int(object.state))
+
+	var later := _item(world, Vector2(3, 3), Vector2(3, 4), 0, [20])
+	var bag := later.get_parent() as Node2D
+	bag.state = 10
+	_open_and_commit(controller, later, 20)
+	controller.abort_action()
+	_expect(int(bag.state) == 10, "an end-time action's abort leaves the state alone, got %d" % int(bag.state))
 	_drop(fixture)
 
 

@@ -597,6 +597,14 @@ in [prank-reference.md](prank-reference.md). Corrections and additions found her
   on the 420th step, where the sum of doubles the port used to keep took a 421st.
 - State 4 also sets `item+228 = 1` on the object, clears the slot's enabled flag before
   applying the unlock and disable lists, and calls `sub_41DE60(score)` last.
+- **An abort puts back the object's own earlier state, not IDLE.** When the record sets its
+  state as it starts (`+0x42`, and `+0x40` neither 17 nor 18), state 2 copies `item+124`
+  into `+1040` before calling `sub_40FDA0` (`0x41B64B`–`0x41B661`). State 5 tests the same
+  condition and calls `sub_40FDA0(item, +1040)` (`0x41BB83`–`0x41BBA8`). So an aborted
+  start-time prank on an object that was already damaged leaves it damaged. The port keeps
+  `+1040` as `_saved_state` in `PrankController`. Until 2026-11-21 it reset the object to
+  state 0 instead, which differed only for an object that was not in IDLE. The eight
+  start-time records are 2, 3, 51, 88, 89, 90, 126 and 127, all `DESTROY_1`.
 
 ## Input
 
