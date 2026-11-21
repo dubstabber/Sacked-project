@@ -86,7 +86,9 @@ func _exit_tree() -> void:
 
 
 func _process(_delta: float) -> void:
+	PerfProbe.begin(&"chars.update")
 	update_composition()
+	PerfProbe.end(&"chars.update")
 
 
 func update_composition() -> void:
@@ -141,7 +143,10 @@ func _render_clusters(clusters: Array) -> void:
 		var surface := _surface(used)
 		var signature := _composite_signature(cluster, bounds)
 		if not surface.visible or surface.texture == null or _surface_signatures[used] != signature:
-			_set_surface_image(used, _compose_images(cluster, bounds))
+			PerfProbe.begin(&"chars.compose")
+			var composed_image := _compose_images(cluster, bounds)
+			PerfProbe.end(&"chars.compose")
+			_set_surface_image(used, composed_image)
 			_set_item_surface_image(used, composed_item_image, cluster)
 			_surface_signatures[used] = signature
 			_surface_scores[used] = composed_scores
@@ -247,6 +252,12 @@ func _update_environment() -> void:
 func _invalidate_surfaces() -> void:
 	for index in range(_surface_signatures.size()):
 		_surface_signatures[index] = ""
+
+
+# Sets the score window a compose tests its pixels against, as a cluster's own window would.
+func set_environment_for_test(scores: PackedFloat32Array, bounds: Rect2) -> void:
+	environment_scores = scores
+	environment_bounds = bounds
 
 
 func compose_images_for_test(actors: Array) -> Dictionary:
@@ -396,8 +407,10 @@ func depth_texture_for(sprite: Sprite2D) -> Texture2D:
 func _depth_texture(path: String) -> Texture2D:
 	if not _depth_textures.has(path):
 		var texture: Texture2D = null
+		PerfProbe.begin(&"chars.depth_load")
 		if ResourceLoader.exists(path):
 			texture = load(path) as Texture2D
+		PerfProbe.end(&"chars.depth_load")
 		if texture == null:
 			_warn_once(path, "Missing character depth map: %s" % path)
 		_depth_textures[path] = texture
@@ -480,12 +493,14 @@ func _load_image(path: String, cache: Dictionary):
 		return cache[path]
 
 	var image_texture: Texture2D
+	PerfProbe.begin(&"chars.load_image")
 	if ResourceLoader.exists(path):
 		image_texture = load(path) as Texture2D
 	var image: Image
 	if image_texture != null:
 		image = image_texture.get_image()
-	else:
+	PerfProbe.end(&"chars.load_image")
+	if image_texture == null:
 		image = Image.new()
 		if image.load(path) != OK:
 			_warn_once(path, "Failed to load image: %s" % path)

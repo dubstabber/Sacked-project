@@ -168,7 +168,9 @@ func _process(delta: float) -> void:
 	if _idle_hover_pending:
 		_idle_hover_pending = false
 		highlight_changed.emit({})
+	PerfProbe.begin(&"prank.hover")
 	_update_hover()
+	PerfProbe.end(&"prank.hover")
 
 
 # sub_403FB0 ends every frame (0x404502) by aborting an open ring while movement bit 0x80 --

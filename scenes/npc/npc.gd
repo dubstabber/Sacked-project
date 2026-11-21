@@ -287,6 +287,13 @@ func _advance_target() -> void:
 
 
 func navigate_to(target_global: Vector2) -> bool:
+	PerfProbe.begin(&"npc.navigate")
+	var found := _navigate_to(target_global)
+	PerfProbe.end(&"npc.navigate")
+	return found
+
+
+func _navigate_to(target_global: Vector2) -> bool:
 	var path := PackedVector2Array()
 	var standing := _command == Command.NONE and _activity_return == Vector2.INF
 	if standing:

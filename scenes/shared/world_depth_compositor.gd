@@ -86,12 +86,20 @@ func _mark_dirty() -> void:
 
 
 func rebuild() -> void:
+	PerfProbe.begin(&"world.rebuild")
+	_rebuild()
+	PerfProbe.end(&"world.rebuild")
+
+
+func _rebuild() -> void:
 	if not is_instance_valid(_composite):
 		return
 	_dirty = false
 	var sources: Array[CanvasItem] = []
+	PerfProbe.begin(&"world.collect")
 	var actors := _collect_actors(sources)
 	var signature := _actor_signature(actors)
+	PerfProbe.end(&"world.collect")
 	if signature == _signature:
 		return
 	if _rebuild_dirty_rects(actors, sources, signature):
@@ -113,13 +121,17 @@ func _rebuild_everything(actors: Array, sources: Array[CanvasItem], signature: S
 		_order.clear()
 	else:
 		var bounds: Rect2 = _image_compositor.union_bounds(actors)
+		PerfProbe.begin(&"world.compose")
 		var result: Dictionary = _image_compositor.compose_region(actors, bounds)
+		PerfProbe.end(&"world.compose")
 		depth_bounds = bounds
 		depth_scores = result.scores
 		_color_image = result.image
+		PerfProbe.begin(&"world.publish")
 		_score_image = _score_image_for(bounds, depth_scores)
 		_composite.texture = ImageTexture.create_from_image(_color_image)
 		depth_texture = ImageTexture.create_from_image(_score_image) if _score_image != null else null
+		PerfProbe.end(&"world.publish")
 		_composite.global_position = depth_bounds.position
 		# The buffer may have moved, so no remembered rectangle survives a full recomposite.
 		_snapshot.clear()
@@ -156,12 +168,16 @@ func _rebuild_dirty_rects(actors: Array, sources: Array[CanvasItem], signature: 
 	if dirty_area * 2 > int(depth_bounds.size.x) * int(depth_bounds.size.y):
 		return false
 
+	PerfProbe.begin(&"world.compose")
 	for rect in rects:
 		_recompose_rect(rect, actors)
+	PerfProbe.end(&"world.compose")
 	_signature = signature
+	PerfProbe.begin(&"world.publish")
 	depth_scores = _score_image.get_data().to_float32_array()
 	(_composite.texture as ImageTexture).update(_color_image)
 	depth_texture.update(_score_image)
+	PerfProbe.end(&"world.publish")
 	_restore_sources()
 	_hide_sources(sources)
 	_remember(actors)
@@ -398,9 +414,11 @@ func _image(texture: Texture2D) -> Image:
 	if not _images.has(key):
 		if not texture.changed.is_connected(_invalidate_images):
 			texture.changed.connect(_invalidate_images)
+		PerfProbe.begin(&"world.image")
 		var image := texture.get_image()
 		if image != null and image.is_compressed():
 			image.decompress()
+		PerfProbe.end(&"world.image")
 		_images[key] = image
 	return _images[key]
 

@@ -14,6 +14,12 @@ const BAKE_NAME := "FloorBake"
 
 
 func _ready() -> void:
+	PerfProbe.begin(&"floor.bake")
+	_bake()
+	PerfProbe.end(&"floor.bake")
+
+
+func _bake() -> void:
 	var cells := get_used_cells()
 	if cells.is_empty():
 		return

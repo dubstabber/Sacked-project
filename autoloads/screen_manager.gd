@@ -97,7 +97,9 @@ func change_to(screen: Screen) -> void:
 		duels_fought = 0
 		_launched_level_path = scene_path(screen)
 	_sync_menu_music()
+	PerfProbe.begin(&"scene.change")
 	get_tree().change_scene_to_file(scene_path(screen))
+	PerfProbe.end(&"scene.change")
 
 
 func scene_path(screen: Screen) -> String:

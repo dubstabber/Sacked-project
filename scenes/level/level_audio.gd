@@ -72,7 +72,10 @@ func _process(_delta: float) -> void:
 static func effect_stream(sound_id: String) -> AudioStream:
 	_load_manifest()
 	var path := String(_effects.get(sound_id, ""))
-	return load(path) as AudioStream if path != "" and ResourceLoader.exists(path) else null
+	PerfProbe.begin(&"audio.load")
+	var stream := load(path) as AudioStream if path != "" and ResourceLoader.exists(path) else null
+	PerfProbe.end(&"audio.load")
+	return stream
 
 
 static func _load_manifest() -> void:

@@ -127,6 +127,12 @@ func has_state(target: int) -> bool:
 
 
 func set_state(target: int) -> void:
+	PerfProbe.begin(&"object.set_state")
+	_set_state(target)
+	PerfProbe.end(&"object.set_state")
+
+
+func _set_state(target: int) -> void:
 	_load_states()
 	target = clampi(target, 0, STATE_NAMES.size() - 1)
 	state = target

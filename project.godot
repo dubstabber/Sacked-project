@@ -25,6 +25,7 @@ SettingsStore="*res://autoloads/settings_store.gd"
 I18n="*res://autoloads/i18n.gd"
 ProgressStore="*res://autoloads/progress_store.gd"
 ScreenManager="*res://autoloads/screen_manager.gd"
+PerfMonitor="*res://autoloads/perf_monitor.gd"
 
 [display]
 

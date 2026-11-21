@@ -67,9 +67,60 @@ measurably exceeds it.
 
 Every map also throws occasional long frames, between 10 and 47 ms, and **they are not a
 property of the map**: the same level measures 10 ms on one run and 43 ms on the next, and
-level 1 does it too. They are not confined to start-up either. They are sporadic, they do
-not accumulate, and nothing here has tied them to the depth pipeline, so they are recorded
-rather than explained.
+level 1 does it too. They are not confined to start-up either. They are sporadic and they do
+not accumulate. The table above was measured with the display's 120 fps cap, which hid
+them; "Measured cost" below times them with vsync off and names what runs in each.
+
+### Measured cost
+
+The port's own profiler is `scenes/debug/perf_probe.gd` (`PerfProbe`). It holds named
+sections around the expensive calls:
+
+- `scene.change`, `floor.bake` and `world.rebuild`, with `world.rebuild` broken into
+  `world.collect`, `world.compose`, `world.image` and `world.publish`;
+- `chars.update` and its `chars.compose`, `chars.load_image` and `chars.depth_load`;
+- `object.set_state`, `npc.navigate`, `fov.build`, `prank.hover` and `audio.load`.
+
+The sections cost one branch until `autoloads/perf_monitor.gd` turns them on. It does that only
+when the command line asks for it after `--`, and the editor's debugger then shows each
+section as a `sacked/<section>_ms` custom monitor:
+
+- `--perf-log` prints every frame over 20 ms, with its sections and its change in loaded
+  resources.
+- `--perf-bench=N` loads level N through `ScreenManager`, times the load to the first frame
+  drawn after the bake, runs the level, prints one `PERF_RESULT` line and quits.
+- `tools/benchmark_levels.py` runs that per level in a 1067 × 600 window with vsync off and
+  no frame cap. `--storm` swaps one object's state each second, starting with each object's
+  first multi-frame one-shot clip in tree order. `--restart` also times `restart_level()`.
+
+`tests/check_world_depth_goldens.gd` holds the bake to fixed sha256 hashes, so an
+optimisation cannot change it unnoticed. The hashes cover levels 1 and 19, one clip repainted
+in place on each, and a composed cluster.
+
+The baseline was measured on 2026-11-21 on a Ryzen 5 3550H with Vega 8 graphics, with the
+brains running and 8 s per level.
+
+| Level | Load | of it `scene.change` | world bake | Restart | Frame p50 / p99 / max, idle | Frames ≥ 20 ms, idle | Swap frames, storm |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 1.70 s | 1.01 s | 0.62 s | 0.71 s | 3.3 / 4.4 / 10.0 ms | 0 | 36–43 ms |
+| 8 | 3.21 s | 1.72 s | 1.38 s | 1.57 s | 3.4 / 16.4 / 52.2 ms | 7 | 58–78 ms |
+| 19 | 3.80 s | 1.83 s | 1.82 s | 2.10 s | 3.4 / 12.9 / 25.4 ms | 1 | 87–132 ms |
+
+- **A load is half scene and half bake.** `scene.change`, the synchronous load and
+  instantiation of the level scene and everything it references, costs as much as the depth
+  bake. Of the bake, `world.compose` is more than 90 %. A restart skips most of the load,
+  because the resources are still cached, but it bakes again in full.
+- **The sporadic long frames are three things.**
+  - `chars.depth_load`: a character frame's depth texture is loaded the first time the frame
+    is shown, 25–33 ms for five to seven of them in one frame.
+  - `chars.compose`: two overlapping characters are composed on the CPU, 13–20 ms per pair
+    each time either one changes frame.
+  - `npc.navigate`: a burst of pathfinding, 9–14 ms.
+- **A swap costs more on larger maps.** On level 19, `world.rebuild` takes 47–75 ms:
+  `world.compose` 16–49 ms, `world.collect` 10–16 ms over every actor, and `world.publish`
+  5–14 ms. `object.set_state` adds 20–30 ms, loading every frame of the new clip on the
+  spot. The frame takes longer still than its process time, which points at the whole-texture
+  uploads on the render side.
 
 ### Clips that never stop
 

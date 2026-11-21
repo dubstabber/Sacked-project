@@ -98,9 +98,11 @@ func _process(_delta: float) -> void:
 	var inputs := [at.x, at.y, brain.notice_radius_tiles(), float(selected.get("notice_heading")), brain.notice_cone_degrees(), _sight]
 	if inputs != _inputs:
 		_inputs = inputs
+		PerfProbe.begin(&"fov.build")
 		mask.build(at.x, at.y, inputs[2], inputs[3], inputs[4], _sight, _sight_width, _sight_height)
 		_texel_image.set_data(MASK.SIDE, MASK.SIDE, false, Image.FORMAT_R8, mask.texels)
 		texture.update(_texel_image)
+		PerfProbe.end(&"fov.build")
 		builds += 1
 	# The diamond's 7.0 (0x4667B8), which tools/export_fov_tables.py writes beside the tables.
 	var reach := MASK.REACH_TILES

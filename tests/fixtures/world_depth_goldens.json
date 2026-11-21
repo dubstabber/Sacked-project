@@ -1,0 +1,34 @@
+{
+	"cluster": {
+		"bounds": "0,0,107,163",
+		"color": "c954733bae62b222546b409571b703699410ba7067256140d2410765653c29c4",
+		"items": "65a121363bb288451209481366cf568d35fc79a740b1bce0f49d43d98bd95f60",
+		"scores": "a9b17002359ee57dcfc3721c0821d8c63981385cc606825c69ec80d114697397"
+	},
+	"res://scenes/level_1.tscn": {
+		"bake": {
+			"bounds": "-672,-118,1440,838",
+			"color": "42bfaaf0ac50077c73664a76d54dd75c9b26c288ab42cc48a77fe56bb7789ef8",
+			"scores": "9b1c9fbad5ba12c8f9c80db34f6208e26a0676b8643fe224a69c10a7cd2155ea"
+		},
+		"swap": {
+			"bounds": "-672,-118,1440,838",
+			"color": "4252b0749192fc21cdd3672a88384df97d8a3fb3a3369200e17a9984be5586ab",
+			"scores": "c6c394b9ec6e406e788f8e12603678d9c0dfddf8aee9adbb56726863867a6b70"
+		},
+		"swap_object": "Object027Wasserspender:2"
+	},
+	"res://scenes/level_19.tscn": {
+		"bake": {
+			"bounds": "-1344,-118,2784,1510",
+			"color": "2d4e9dbd4957dc7b56953033e24e43f1954768b53f35067bddebd3445d216445",
+			"scores": "6ec3debac31bc0b44416ee95495d93b62f1d75b0640e33325ef7b2818902c985"
+		},
+		"swap": {
+			"bounds": "-1344,-118,2784,1510",
+			"color": "8019737b55566ac6a4f5dd5ec4cfdbfea34d189c87aae31dd1a83b6cb0c57afd",
+			"scores": "6de8121a5a857d97fc9c1b83d347916da6c06225fdec647dbe2335244ae195be"
+		},
+		"swap_object": "Object019Kuhlschrank:2"
+	}
+}
