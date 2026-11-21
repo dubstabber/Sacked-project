@@ -153,6 +153,9 @@ def main() -> int:
     for name in skipped:
         print(f"SKIP  {name} (no display to open a window on)")
 
+    # Every script compiles without a warning, as the editor's debugger would list them.
+    steps.append(("script warnings", [sys.executable, "tools/check_script_warnings.py"], False))
+
     # Discovery roots at tests/ because it is not a package; cwd still puts tools/ on sys.path.
     steps.append(("python unittest", [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "tests"], False))
 

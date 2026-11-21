@@ -5,6 +5,7 @@ from contextlib import redirect_stdout
 from unittest import mock
 
 from tools import run_checks
+from tools.check_script_warnings import warnings_in
 from tools.run_checks import FAILURE_LINE, run
 
 
@@ -187,3 +188,24 @@ class ScriptStepsTest(unittest.TestCase):
         self.assertTrue(run_checks.has_display({"DISPLAY": ":0"}))
         self.assertTrue(run_checks.has_display({"WAYLAND_DISPLAY": "wayland-0"}))
         self.assertFalse(run_checks.has_display({}))
+
+
+class ScriptWarningsTest(unittest.TestCase):
+    """What check_script_warnings.py reads as a compile warning in a --debug run."""
+
+    def test_a_warning_and_its_location(self):
+        output = (
+            "Godot Engine v4.7.2.stable.official\n"
+            "WARNING: Integer division. Decimal part will be discarded.\n"
+            "     at: GDScript::reload (res://scenes/hud/console.gd:274)\n"
+            "Loaded 154 scripts\n"
+        )
+        self.assertEqual(warnings_in(output), [("res://scenes/hud/console.gd", 274, "Integer division. Decimal part will be discarded.")])
+
+    def test_other_warnings_are_not_compile_warnings(self):
+        output = (
+            "WARNING: 10 ObjectDB instances were leaked at exit (run with --verbose for details).\n"
+            "     at: cleanup (core/object/object.cpp:2536)\n"
+            "Loaded 154 scripts\n"
+        )
+        self.assertEqual(warnings_in(output), [])
