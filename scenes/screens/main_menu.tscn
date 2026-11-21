@@ -183,7 +183,7 @@ theme_type_variation = &"MenuButtonCaption"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button7" type="TextureButton" parent="SafeFrame/Buttons"]
+[node name="Button7" type="TextureButton" parent="SafeFrame/Buttons" unique_id=1168105613]
 layout_mode = 0
 offset_left = 380.0
 offset_top = 516.0
@@ -193,7 +193,7 @@ texture_normal = ExtResource("4_btn_passive")
 texture_pressed = ExtResource("5_btn_active")
 texture_hover = ExtResource("5_btn_active")
 
-[node name="Label" type="Label" parent="SafeFrame/Buttons/Button7"]
+[node name="Label" type="Label" parent="SafeFrame/Buttons/Button7" unique_id=860746206]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
