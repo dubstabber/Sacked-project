@@ -93,6 +93,13 @@ section as a `sacked/<section>_ms` custom monitor:
   no frame cap. `--storm` swaps one object's state each second, starting with each object's
   first multi-frame one-shot clip in tree order. `--restart` also times `restart_level()`.
 
+Every level also carries a frame-rate label in its top-left corner, `DebugOverlay/FPSCounter`
+(`scenes/debug/fps_counter.gd`). It is hidden until the key under Esc shows it. That key is
+the `toggle_fps` action: `` ` `` or `~` on an English layout, the same key on Polish and German
+ones. `ScreenManager` keeps the choice for the rest of the session, so every level after the
+toggle shows the label too. A name box being typed into keeps the key for itself.
+`tests/check_fps_toggle.gd` covers it.
+
 `tests/check_world_depth_goldens.gd` holds the bake to fixed sha256 hashes, so an
 optimisation cannot change it unnoticed. The hashes cover levels 1 and 19, one clip repainted
 in place on each, and a composed cluster.
@@ -112,9 +119,9 @@ brains running and 8 s per level.
   because the resources are still cached, but it bakes again in full.
 - **The sporadic long frames are three things.**
   - `chars.depth_load`: a character frame's depth texture is loaded the first time the frame
-    is shown, 25–33 ms for five to seven of them in one frame.
+	is shown, 25–33 ms for five to seven of them in one frame.
   - `chars.compose`: two overlapping characters are composed on the CPU, 13–20 ms per pair
-    each time either one changes frame.
+	each time either one changes frame.
   - `npc.navigate`: a burst of pathfinding, 9–14 ms.
 - **A swap costs more on larger maps.** On level 19, `world.rebuild` takes 47–75 ms:
   `world.compose` 16–49 ms, `world.collect` 10–16 ms over every actor, and `world.publish`

@@ -15,7 +15,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Margin" type="ColorRect" parent="."]
+[node name="Margin" type="ColorRect" parent="." unique_id=1742210805]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -25,7 +25,8 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="SafeFrame" type="Control" parent="."]
+[node name="SafeFrame" type="Control" parent="." unique_id=310317943]
+clip_contents = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -38,9 +39,7 @@ offset_right = 400.0
 offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
-clip_contents = true
 mouse_filter = 2
-
 
 [node name="Background" type="Sprite2D" parent="SafeFrame" unique_id=204783885]
 texture_filter = 1
@@ -50,9 +49,9 @@ texture = ExtResource("2_bg")
 
 [node name="Char" type="Sprite2D" parent="SafeFrame" unique_id=1100630806]
 texture_filter = 1
-centered = false
 position = Vector2(64, 0)
 texture = ExtResource("3_char")
+centered = false
 
 [node name="Buttons" type="Control" parent="SafeFrame" unique_id=240105901]
 layout_mode = 1

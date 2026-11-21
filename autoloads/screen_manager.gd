@@ -55,6 +55,11 @@ const DEFAULT_PLAYER_NAMES := {
 }
 const PLAYER_NAME_MAX_LENGTH := 16
 
+# Whether a level shows its FPS label, toggled by the key under Esc (the toggle_fps action) and
+# kept for the session, so every level after the toggle shows it as well. Hidden at launch.
+signal fps_shown_changed(shown: bool)
+var fps_shown := false
+
 var current: Screen = Screen.BOOT_LOADING
 var selected_level := 1
 var selected_game_mode: StringName = &"time"
@@ -90,6 +95,21 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F1:
 		toggle_window_mode()
 		get_viewport().set_input_as_handled()
+
+
+# Unhandled rather than in _input like F1, so a name box being typed into keeps its ` and ~.
+# Shift is not required either way: ~ is Shift on an English layout, the bare key on others.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"toggle_fps"):
+		set_fps_shown(not fps_shown)
+		get_viewport().set_input_as_handled()
+
+
+func set_fps_shown(shown: bool) -> void:
+	if shown == fps_shown:
+		return
+	fps_shown = shown
+	fps_shown_changed.emit(shown)
 
 
 func _ready() -> void:
