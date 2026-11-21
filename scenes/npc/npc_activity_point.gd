@@ -120,7 +120,7 @@ func _room_from_map() -> int:
 	var layer := _collision_layer()
 	if object == null or layer == null:
 		return 0
-	var tile := _anchor_tile(object, layer)
+	var tile := anchor_tile()
 	var cell := Vector2i(floori(tile.x + 0.5), floori(tile.y + 0.5))
 	var size: Vector2i = layer.room_grid_size
 	if cell.x < 0 or cell.y < 0 or cell.x >= size.x or cell.y >= size.y:
@@ -133,8 +133,13 @@ func _room_from_map() -> int:
 # The object's anchor in tiles. An imported object still standing where the importer put it
 # answers its manifest tile exactly, as the builder did, since recomputing it from float32
 # pixels can land on the other side of a half-cell boundary; one moved since, or dropped into
-# a map, answers where it stands. Neither needs the scene tree.
-func _anchor_tile(object: Node2D, layer: TileMapLayer) -> Vector2:
+# a map, answers where it stands. Neither needs the scene tree. NPCStartup's desk search reads
+# it too.
+func anchor_tile() -> Vector2:
+	var object := get_parent() as Node2D
+	var layer := _collision_layer()
+	if object == null or layer == null:
+		return Vector2.ZERO
 	var origin := layer.map_to_local(Vector2i.ZERO)
 	var axes := Transform2D(layer.map_to_local(Vector2i(1, 0)) - origin, layer.map_to_local(Vector2i(0, 1)) - origin, origin)
 	if object.has_meta("original_tile_position"):

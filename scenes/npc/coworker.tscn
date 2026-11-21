@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="1_npc"]
+[ext_resource type="Resource" path="res://scenes/npc/profiles/male-employee-1.tres" id="2_profile"]
+[ext_resource type="Script" path="res://scenes/npc/npc_brain.gd" id="3_brain"]
+[ext_resource type="Script" path="res://scenes/npc/thought_bubble.gd" id="4_bubble"]
+
+[node name="Coworker" instance=ExtResource("1_npc")]
+profile = ExtResource("2_profile")
+
+[node name="Brain" type="Node" parent="."]
+script = ExtResource("3_brain")
+
+[node name="ThoughtBubble" type="Sprite2D" parent="."]
+script = ExtResource("4_bubble")

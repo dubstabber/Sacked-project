@@ -49,6 +49,12 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+	# The level start's desk search, for any agent the importer did not search for: one dropped
+	# into a map. Children are ready before their parent's later siblings, so every brain exists,
+	# and their deferred _initialize reads the desks after this.
+	var world := get_parent().get_node_or_null("World") if get_parent() != null else null
+	if world != null:
+		NPCStartup.assign(world)
 	# Resolved by path, not by the autoload name: the level tests load this scene from a
 	# SceneTree script where the autoloads do not exist.
 	var screen_manager := get_node_or_null("/root/ScreenManager")

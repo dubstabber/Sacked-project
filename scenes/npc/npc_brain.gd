@@ -128,6 +128,7 @@ static func profiles() -> Dictionary:
 			"speed_tiles": float(entry.get("speed_tiles", 0.0)),
 			"notice_radius_tiles": float(entry.get("notice_radius_tiles", 0.0)),
 			"notice_cone_degrees": float(entry.get("notice_cone_degrees", 0.0)),
+			"spawn_id": int(entry.get("spawn_id", 0)),
 		}
 	return _profile_table
 

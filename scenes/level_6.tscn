@@ -1644,11 +1644,13 @@ profile = ExtResource("98")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 2
 metadata/original_instance_id = 149
+metadata/original_tile_position = Vector2(22, 3)
 
 [node name="Brain" type="Node" parent="World/Npc149Secretary"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object054MonitorTastaturLinks/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object025Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc149Secretary"]
 script = ExtResource("101")
@@ -1659,9 +1661,11 @@ profile = ExtResource("95")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 3
 metadata/original_instance_id = 139
+metadata/original_tile_position = Vector2(27, 8)
 
 [node name="Brain" type="Node" parent="World/Npc139Janitor"]
 script = ExtResource("100")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc139Janitor"]
 script = ExtResource("101")
@@ -1672,11 +1676,13 @@ profile = ExtResource("96")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 4
 metadata/original_instance_id = 138
+metadata/original_tile_position = Vector2(14, 3)
 
 [node name="Brain" type="Node" parent="World/Npc138MaleEmployee1"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object053MonitorTastaturFrontal/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object023Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc138MaleEmployee1"]
 script = ExtResource("101")
@@ -1687,11 +1693,13 @@ profile = ExtResource("96")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 4
 metadata/original_instance_id = 141
+metadata/original_tile_position = Vector2(6, 7)
 
 [node name="Brain" type="Node" parent="World/Npc141MaleEmployee1"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object058MonitorTastaturFrontal/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object031Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc141MaleEmployee1"]
 script = ExtResource("101")
@@ -1702,11 +1710,13 @@ profile = ExtResource("97")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 5
 metadata/original_instance_id = 142
+metadata/original_tile_position = Vector2(10, 3)
 
 [node name="Brain" type="Node" parent="World/Npc142MaleEmployee2"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object056MonitorTastaturRechts/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object022Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc142MaleEmployee2"]
 script = ExtResource("101")
@@ -1717,11 +1727,13 @@ profile = ExtResource("97")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 5
 metadata/original_instance_id = 145
+metadata/original_tile_position = Vector2(16, 7)
 
 [node name="Brain" type="Node" parent="World/Npc145MaleEmployee2"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object062MonitorTastaturLinks/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object033Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc145MaleEmployee2"]
 script = ExtResource("101")
@@ -1732,11 +1744,13 @@ profile = ExtResource("97")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 5
 metadata/original_instance_id = 146
+metadata/original_tile_position = Vector2(22, 7)
 
 [node name="Brain" type="Node" parent="World/Npc146MaleEmployee2"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object060MonitorTastaturRechts/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object035Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc146MaleEmployee2"]
 script = ExtResource("101")
@@ -1747,11 +1761,13 @@ profile = ExtResource("93")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 6
 metadata/original_instance_id = 143
+metadata/original_tile_position = Vector2(6, 3)
 
 [node name="Brain" type="Node" parent="World/Npc143FemaleEmployee1"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object055MonitorTastaturLinks/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object021Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc143FemaleEmployee1"]
 script = ExtResource("101")
@@ -1762,11 +1778,13 @@ profile = ExtResource("93")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 6
 metadata/original_instance_id = 147
+metadata/original_tile_position = Vector2(20, 3)
 
 [node name="Brain" type="Node" parent="World/Npc147FemaleEmployee1"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object057MonitorTastaturRechts/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object024Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc147FemaleEmployee1"]
 script = ExtResource("101")
@@ -1777,11 +1795,13 @@ profile = ExtResource("94")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 7
 metadata/original_instance_id = 144
+metadata/original_tile_position = Vector2(10, 7)
 
 [node name="Brain" type="Node" parent="World/Npc144FemaleEmployee2"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object061MonitorTastaturRechts/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object032Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc144FemaleEmployee2"]
 script = ExtResource("101")
@@ -1792,11 +1812,13 @@ profile = ExtResource("94")
 initial_direction = Vector2(0.8944272, -0.4472136)
 metadata/original_spawn_id = 7
 metadata/original_instance_id = 148
+metadata/original_tile_position = Vector2(18, 7)
 
 [node name="Brain" type="Node" parent="World/Npc148FemaleEmployee2"]
 script = ExtResource("100")
 assigned_workstation = NodePath("../../Objects/Object059MonitorTastaturFrontal/InteractionPoint")
 assigned_chair = NodePath("../../Objects/Object034Drehstuhl03/InteractionPoint")
+metadata/startup_assigned = true
 
 [node name="ThoughtBubble" type="Sprite2D" parent="World/Npc148FemaleEmployee2"]
 script = ExtResource("101")

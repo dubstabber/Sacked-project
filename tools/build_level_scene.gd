@@ -339,9 +339,13 @@ func _build_npcs(manifest: Dictionary, floor_layer: TileMapLayer, world: Node2D)
 		npc.set("initial_direction", IsoDirection.get_screen_directions()[int(npc_data["initial_direction_index"])])
 		npc.set_meta("original_spawn_id", int(npc_data["spawn_id"]))
 		npc.set_meta("original_instance_id", int(npc_data["instance_id"]))
+		npc.set_meta("original_tile_position", _vector2(npc_data["tile_position"]))
 		var brain := Node.new()
 		brain.name = "Brain"
 		brain.script = load(NPC_BRAIN_SCRIPT)
+		# The importer ran the level start's desk search (build_npcs); NPCStartup runs it at
+		# run time only for an agent that has not had it.
+		brain.set_meta("startup_assigned", true)
 		for field in ["assigned_workstation", "assigned_chair"]:
 			var instance_id = npc_data.get(field + "_instance_id")
 			if instance_id != null:
