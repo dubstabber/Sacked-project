@@ -82,6 +82,11 @@ const PISS_VIEWS := {
 # +0x40 values that are markers rather than states.
 const STATE_KEEP := 17
 const STATE_IN_USE := 18
+# FLIPBAG and FLIPBAG2 carry the container in the player's hands. The original leaves the
+# object drawn beside that copy, and only the boss's case hides it, by a blank DESTROY_1 as
+# long as its action. Port decision (2026-11-21): hide the object for any of these actions.
+# See docs/player-action-reference.md, "The flip clips carry the object".
+const HELD_SELECTORS := [4, 14]
 const INVENTORY_SLOTS := 31
 
 # ABILITY is modes 2 to 5, the lamps' abilities, which AbilityController runs. The prank
@@ -278,6 +283,7 @@ func confirm() -> void:
 		_acting_point.set("in_use", true)
 	elif bool(action.get("state_at_start", false)):
 		_apply_result_state(object, action, int(entry["action_id"]))
+	_hold(object, action, true)
 	action_started.emit(action, _acting_point)
 	progress_changed.emit(0.0, _timer.total_seconds())
 
@@ -316,6 +322,7 @@ func _apply_action() -> void:
 	point.set("tampered", true)
 	if int(action.get("result_state", 0)) == STATE_IN_USE:
 		point.set("in_use", false)
+	_hold(object, action, false)
 
 	for required in action.get("requires_items", []):
 		var item := int(required)
@@ -712,6 +719,12 @@ func _object_of(point: Node) -> Node:
 	return point.get_parent() if point != null else null
 
 
+# Hidden, the object also leaves the static composite and the pick, as marker 18's is.
+func _hold(object: Node, action: Dictionary, held: bool) -> void:
+	if object is CanvasItem and int(action.get("player_animation", -1)) in HELD_SELECTORS:
+		(object as CanvasItem).visible = not held
+
+
 # sub_41B240 state 0 (0x41B290) aims at the focused item's own position, not its interaction
 # point: 180 - atan2(dx, dz) in logical units, which sub_41A400 bins into
 # int((a + 22.5) / 45) & 7, the index of the _NNN view.
@@ -826,6 +839,7 @@ func abort_action() -> void:
 	_acting_entry = {}
 	_step_back()
 	if point != null and is_instance_valid(point):
+		_hold(_object_of(point), action, false)
 		if int(action.get("result_state", 0)) == STATE_IN_USE:
 			point.set("in_use", false)
 		elif bool(action.get("state_at_start", false)):

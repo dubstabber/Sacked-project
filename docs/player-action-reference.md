@@ -529,6 +529,25 @@ any mode, and the player is playing an animation rather than walking. The port t
 swaps in `images/gui/cursors/clock-000.png` and sets `input_locked` on the player for the
 length of the action, releasing both when it applies.
 
+### The flip clips carry the object
+
+`FLIPBAG` (selector 4) and `FLIPBAG2` (selector 14) show the player holding the container
+and tipping it out. Four records use them: 2 (the manager's case), 3 (the boss's case) and
+51 (the janitor's case) set their `DESTROY_1` as they start, and 20 (the handbag) sets it as
+it ends. Nothing in `sub_41B240` hides the object for them, so in the original it stays drawn
+beside the copy in the player's hands, unless its own clip covers the action. Only the
+boss's case does that: its `DESTROY_1` is 3 blank frames at 1 fps, exactly its 3 s action.
+The manager's case is blank for 1 s, the janitor's for 1/16 s (one frame at 16 fps, see
+[prank-reference.md](prank-reference.md)), and the handbag keeps its IDLE art until the
+action ends.
+
+**Port decision (2026-11-21):** the port hides the object for the whole of any selector 4
+or 14 action, as the boss's case shows the designers meant, and shows it again, in whatever
+state it has reached, when the action applies or is aborted (`HELD_SELECTORS` and `_hold()`
+in `scenes/player/prank_controller.gd`, tested in `tests/check_prank_consequences.gd`).
+Hidden, it also leaves the static composite and the pick, as marker 18's item+232 hide
+does, but the two are kept apart: item+232 is the original's, this is not.
+
 ## The action machine
 
 `sub_41CFC0` dispatches on mode `+900`; mode 1 is `sub_41B240`, whose six states are listed

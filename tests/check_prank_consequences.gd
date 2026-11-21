@@ -33,8 +33,9 @@ func _run() -> void:
 	_check_the_turn_toward_the_item()
 	_check_the_start_state_actions_level_2_places()
 	_check_marker_18_hides_its_object()
+	_check_flip_clips_hide_their_object()
 	if _failures == 0:
-		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift, the turn toward the item, the start-state actions and marker 18's hide passed")
+		print("Prank consequences: the blackout and its countdown, the projector box, the heating sweep, the cubicle rule, the reposition and its lift, the turn toward the item, the start-state actions, marker 18's hide and the flip clips' hide passed")
 	quit(1 if _failures else 0)
 
 
@@ -407,6 +408,45 @@ func _check_marker_18_hides_its_object() -> void:
 	_expect(point.in_use and not object.visible, "an item reset leaves the hide flag alone, as sub_4100B0 does")
 	controller.abort_action()
 	_expect(not point.in_use and object.visible, "an aborted action brings it back")
+	_drop(fixture)
+
+
+# Port decision: FLIPBAG (selector 4) and FLIPBAG2 (14) carry the container in the player's
+# hands, so the object itself is hidden while either runs, then shown in whatever state the
+# action left it. Every other clip leaves the object drawn, as the original does.
+func _check_flip_clips_hide_their_object() -> void:
+	var fixture := _player_fixture()
+	var world: Node2D = fixture["world"]
+	var controller: Node = fixture["controller"]
+	for action_id in [2, 3, 20, 51]:
+		var selector := int(ActionTable.get_action(action_id).get("player_animation", -1))
+		_expect(selector in CONTROLLER.HELD_SELECTORS, "action %d tips a container out, selector %d" % [action_id, selector])
+
+	# 51 empties the janitor's case and sets its state the moment it starts.
+	var point := _item(world, Vector2(1, 1), Vector2(1, 2), 0, [51, 52])
+	var object := point.get_parent() as Node2D
+	_open_and_commit(controller, point, 51)
+	_expect(not object.visible, "the case is hidden while the player tips it out")
+	_expect(int(object.state) == 2, "its start-state DESTROY_1 is applied under the hide")
+	_run_prank_to_end(controller)
+	_expect(object.visible and int(object.state) == 2, "it comes back in that state when the action applies")
+	_open_and_commit(controller, point, 52)
+	_expect(object.visible, "a clip that does not carry the case leaves it drawn")
+	controller.abort_action()
+
+	# 20 empties a handbag and sets its state only when it ends.
+	var bag_point := _item(world, Vector2(3, 3), Vector2(3, 4), 0, [20])
+	var bag := bag_point.get_parent() as Node2D
+	_open_and_commit(controller, bag_point, 20)
+	_expect(not bag.visible and int(bag.state) == 0, "the handbag is hidden, still in IDLE")
+	_run_prank_to_end(controller)
+	_expect(bag.visible and int(bag.state) == 2, "it comes back as the action applies its DESTROY_1")
+
+	bag_point.reset_actions()
+	_open_and_commit(controller, bag_point, 20)
+	_expect(not bag.visible, "a second run hides it again")
+	controller.abort_action()
+	_expect(bag.visible, "an aborted action brings it back")
 	_drop(fixture)
 
 
