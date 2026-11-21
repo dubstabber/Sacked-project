@@ -10,6 +10,8 @@ var depth_texture: ImageTexture
 var revision := 0
 var partial_rebuilds := 0
 var full_rebuilds := 0
+# How many object actors were prepared from their node rather than reused unchanged.
+var actors_prepared := 0
 
 var _composite: Sprite2D
 var _image_compositor: Sprite2D
@@ -30,6 +32,11 @@ var _score_image: Image
 var _snapshot: Dictionary = {}
 var _order: Array = []
 var _tile_actors_cache: Dictionary = {}
+# Object instance id -> [depth_revision, global transform, prepared actor]. An object that
+# announced no change since it was prepared, and has not moved, is reused as it is, images,
+# opaque rectangle and signature included. The transform is compared as well because a move
+# only reaches NOTIFICATION_TRANSFORM_CHANGED at the tree's next transform flush.
+var _object_actors: Dictionary = {}
 
 
 func _ready() -> void:
@@ -65,6 +72,7 @@ func _exit_tree() -> void:
 	_snapshot.clear()
 	_order.clear()
 	_tile_actors_cache.clear()
+	_object_actors.clear()
 	_signature = ""
 	_dirty = true
 	request_ready()
@@ -213,7 +221,7 @@ func _dirty_rects(actors: Array, ids: Array) -> Array[Rect2i]:
 		var previous = _snapshot.get(id)
 		if previous == null:
 			rects.append(_image_compositor.actor_buffer_rect(actors[index], origin))
-		elif previous["signature"] != _signature_for(actors[index]):
+		elif previous["signature"] != actors[index]["signature"]:
 			rects.append(_image_compositor.actor_buffer_rect(actors[index], origin))
 			rects.append(previous["rect"])
 	for id in _snapshot:
@@ -263,7 +271,7 @@ func _remember(actors: Array) -> void:
 	_order.clear()
 	for actor in actors:
 		var id = actor["id"]
-		var signature := _signature_for(actor)
+		var signature: String = actor["signature"]
 		# An actor that did not change still covers the rectangle it covered before, and
 		# the origin it was measured against only moves on a full recomposite.
 		var known = previous.get(id)
@@ -310,15 +318,35 @@ func _collect_actors(sources: Array[CanvasItem]) -> Array:
 		if not layer_actors.is_empty():
 			sources.append(layer)
 			actors.append_array(layer_actors)
+	var live := {}
 	for node in get_tree().get_nodes_in_group("depth_world_objects"):
 		if not _belongs_to_world(node) or not node.has_method("get_depth_actor"):
 			continue
 		if node.has_signal("changed") and not node.changed.is_connected(_mark_dirty):
 			node.changed.connect(_mark_dirty)
-		var actor: Dictionary = node.get_depth_actor()
-		if _prepare_actor(actor):
-			actors.append(actor)
-			sources.append(actor.sprite)
+		var id := node.get_instance_id()
+		live[id] = true
+		var node_revision = node.get("depth_revision")
+		var transform: Transform2D = (node as Node2D).global_transform
+		var cached: Array = _object_actors.get(id, [])
+		var actor: Dictionary
+		if node_revision != null and not cached.is_empty() and cached[0] == node_revision and cached[1] == transform:
+			actor = cached[2]
+		else:
+			actor = node.get_depth_actor()
+			if not _prepare_actor(actor):
+				_object_actors.erase(id)
+				continue
+			actor["signature"] = _signature_for(actor)
+			actors_prepared += 1
+			if node_revision != null:
+				_object_actors[id] = [node_revision, transform, actor]
+		actors.append(actor)
+		sources.append(actor.sprite)
+	if _object_actors.size() > live.size():
+		for id in _object_actors.keys():
+			if not live.has(id):
+				_object_actors.erase(id)
 	for index in range(actors.size()):
 		actors[index]["index"] = index
 	return actors
@@ -376,6 +404,7 @@ func _tile_actors(layer: TileMapLayer) -> Array:
 			"id": "%d:%d:%d" % [layer.get_instance_id(), cell.x, cell.y],
 		}
 		actor["opaque_rect"] = _opaque_rect(color_region)
+		actor["signature"] = _signature_for(actor)
 		actors.append(actor)
 	return actors
 
@@ -439,6 +468,7 @@ func _invalidate_images() -> void:
 	_regions.clear()
 	_opaque_rects.clear()
 	_tile_actors_cache.clear()
+	_object_actors.clear()
 	if is_instance_valid(_image_compositor):
 		_image_compositor.clear_image_caches()
 	_signature = ""
@@ -466,7 +496,7 @@ func _signature_for(actor: Dictionary) -> String:
 func _actor_signature(actors: Array) -> String:
 	var parts := PackedStringArray()
 	for actor in actors:
-		parts.append(_signature_for(actor))
+		parts.append(actor["signature"])
 	return "|".join(parts)
 
 

@@ -38,7 +38,10 @@ const PICK_GROUP := &"map_objects"
 @export var depth_texture: Texture2D:
 	set(value):
 		depth_texture = value
-		changed.emit()
+		# Like a new frame in _refresh_sprite: while drawn as an actor this object is not in
+		# the bake, so its depth plane is nothing the world composite has to hear about.
+		if not _drawn_as_actor:
+			_announce_change()
 @export var pivot := Vector2.ZERO:
 	set(value):
 		pivot = value
@@ -61,6 +64,9 @@ var _clip_loops := false
 # anim+556: a one-shot that has run out holds its last frame with this raised.
 var _clip_finished := false
 var _drawn_as_actor := false
+# Counts every change this object announces, so the world compositor can keep what it
+# prepared from the object until the object changes again.
+var depth_revision := 0
 
 
 func _enter_tree() -> void:
@@ -75,7 +81,7 @@ func _ready() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSFORM_CHANGED or what == NOTIFICATION_VISIBILITY_CHANGED:
-		changed.emit()
+		_announce_change()
 
 
 func _refresh_sprite() -> void:
@@ -87,7 +93,12 @@ func _refresh_sprite() -> void:
 	# While drawn as an actor this object is not in the bake, so a new frame is nothing the
 	# world composite has to hear about.
 	if not _drawn_as_actor:
-		changed.emit()
+		_announce_change()
+
+
+func _announce_change() -> void:
+	depth_revision += 1
+	changed.emit()
 
 
 func _set_drawn_as_actor(value: bool) -> void:
@@ -98,7 +109,7 @@ func _set_drawn_as_actor(value: bool) -> void:
 		remove_from_group(WORLD_GROUP if value else ACTOR_GROUP)
 		add_to_group(ACTOR_GROUP if value else WORLD_GROUP)
 	# Either way the bake changes: it loses this object, or it gains it back.
-	changed.emit()
+	_announce_change()
 
 
 func _load_states() -> void:

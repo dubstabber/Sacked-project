@@ -65,6 +65,8 @@ func _run() -> void:
 				worst = time
 				worst_label = "%s %s" % [entry[0], entry[2]]
 	_check_removal(level, mask)
+	_check_only_the_changed_object_is_prepared_again(level, mask)
+	_check_a_looping_clip_leaves_the_bake_alone(level, mask)
 
 	swaps.sort()
 	var median := swaps[swaps.size() / 2] if not swaps.is_empty() else 0.0
@@ -149,6 +151,58 @@ func _check_removal(level: Node, mask: Node) -> void:
 	_expect(mask.partial_rebuilds == partial_before + 1, "removing a picked-up object repaints in place")
 	_expect(mask.full_rebuilds == full_before, "removing a picked-up object does not recompose the world")
 	_expect_matches_reference(mask, "a removed object")
+
+
+# A swap re-reads one object, not every object and wall tile on the map: the rest are reused
+# exactly as they were prepared, images and signature included.
+func _check_only_the_changed_object_is_prepared_again(level: Node, mask: Node) -> void:
+	var object: MapObject = level.get_node_or_null("World/Objects/Object036Colamat")
+	if object == null:
+		_expect(false, "level 1 places Object036Colamat")
+		return
+	var prepared_before: int = mask.actors_prepared
+	object.set_state(int(_clip("aktiv-colamat-000", "DESTROY_2")["state"]))
+	object.set_process(false)
+	mask.rebuild()
+	_expect(
+		mask.actors_prepared == prepared_before + 1,
+		"a state swap prepares only the object that changed (%d prepared)" % (mask.actors_prepared - prepared_before)
+	)
+	_expect_matches_reference(mask, "a swap that reuses every other actor")
+	object.set_state(0)
+	mask.rebuild()
+
+
+# A radiator's DESTROYED_1 loops, so it leaves the bake and is drawn as an actor. Its frames
+# after that are no business of the world composite: they must not mark it dirty, or every
+# frame of the loop re-collects every actor on the map only to find nothing changed.
+func _check_a_looping_clip_leaves_the_bake_alone(level: Node, mask: Node) -> void:
+	var object: MapObject = level.get_node_or_null("World/Objects/Object055Heizkorper")
+	if object == null:
+		_expect(false, "level 1 places Object055Heizkorper")
+		return
+	var clip := _clip(object.color_texture.resource_path.get_file().get_basename(), "DESTROYED_1")
+	if clip.is_empty() or (clip["frames"] as Array).size() < 2:
+		_expect(false, "the radiator's DESTROYED_1 loops over several frames")
+		return
+	object.set_state(int(clip["state"]))
+	object.set_process(false)
+	mask.rebuild()
+	_expect(not mask._dirty, "leaving the bake is one repaint")
+	var revision: int = mask.revision
+	var step := 1.0 / maxf(float(clip["fps"]), 1.0)
+	var dirtied := 0
+	for index in range((clip["frames"] as Array).size() * 2):
+		object._process(step)
+		if mask._dirty:
+			dirtied += 1
+			mask.rebuild()
+	_expect(dirtied == 0, "a looping clip's frames leave the world composite clean (%d dirtied it)" % dirtied)
+	_expect(mask.revision == revision, "and repaint nothing")
+	object.set_state(0)
+	_expect(mask._dirty, "coming back into the bake marks the composite dirty")
+	mask.rebuild()
+	_expect_matches_reference(mask, "a looping object back in the bake")
 
 
 func _expect_matches_reference(mask: Node, label: String) -> void:
