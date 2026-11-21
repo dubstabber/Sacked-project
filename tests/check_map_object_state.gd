@@ -10,6 +10,9 @@ const MirrorScene := "res://scenes/objects/aktiv-spiegel-000.tscn"
 # The copier is level 2's looping case: DESTROYED_1 runs 25 frames at 16 fps and never
 # settles, and the first NPC to use the copier puts it there in ordinary play.
 const CopierScene := "res://scenes/objects/aktiv-kopierer-000.tscn"
+# The janitor's case (level 8, action 51) ships a one-frame DESTROY_1 at 16 fps that is a
+# 16x16 square of its own colour key: invisible in the original, then DESTROYED_1.
+const CaseScene := "res://scenes/objects/aktiv-hmkoffer-000.tscn"
 
 var _failures := 0
 
@@ -22,6 +25,7 @@ func _run() -> void:
 	_check_state_names()
 	await _check_single_frame_swap()
 	await _check_transition_settles()
+	await _check_single_frame_transition_settles()
 	await _check_missing_transition_settles_immediately()
 	await _check_idle_restores()
 	await _check_looping_state_runs_and_leaves_the_bake()
@@ -88,6 +92,32 @@ func _check_transition_settles() -> void:
 	_expect(settled == [3, 10], "the object reported both states, got %s" % [settled])
 	_expect(server.color_texture != first, "the settled state is not the transition's first frame")
 	_release(server)
+
+
+func _check_single_frame_transition_settles() -> void:
+	var case_node := _instance(CaseScene)
+	await process_frame
+	var settled: Array = []
+	case_node.state_changed.connect(func(state: int) -> void: settled.append(state))
+	case_node.set_state(2)
+	_expect(case_node.state == 2, "the case enters its one-frame DESTROY_1")
+	_expect(case_node.is_processing(), "a one-frame transition still runs on the clock")
+	var image := (case_node.color_texture as Texture2D).get_image()
+	image.convert(Image.FORMAT_RGBA8)
+	var opaque := 0
+	for y in range(image.get_height()):
+		for x in range(image.get_width()):
+			if image.get_pixel(x, y).a8 > 0:
+				opaque += 1
+	_expect(opaque == 0, "the case's DESTROY_1 is all colour key and draws nothing, %d pixels show" % opaque)
+	# One frame at 16 fps lasts a sixteenth of a second.
+	case_node._process(0.05)
+	_expect(case_node.state == 2, "the frame holds for its own duration, got %d" % case_node.state)
+	case_node._process(0.02)
+	_expect(case_node.state == 9, "a finished one-frame DESTROY_1 advances to DESTROYED_1, got %d" % case_node.state)
+	_expect(not case_node.is_processing(), "the settled single frame stops the clock")
+	_expect(settled == [2, 9], "the case reported both states, got %s" % [settled])
+	_release(case_node)
 
 
 func _check_missing_transition_settles_immediately() -> void:

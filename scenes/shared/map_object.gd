@@ -155,8 +155,10 @@ func set_state(target: int) -> void:
 	# The container's own loop flag, which every DESTROYED_n carries and no DESTROY_n does:
 	# a transition plays once and settles, a damaged state runs for as long as it is held.
 	_clip_loops = bool(clip.get("loop", false))
-	# A single frame is a plain swap; a real transition animates and then settles.
-	set_process(frames.size() > 1)
+	# A looping single frame is a plain swap. A DESTROY_n runs on the clock even when it is
+	# one frame: CObjectAnim_SelectFrameFromTime flags a one-shot finished once
+	# int(t * fps) reaches its frame count (0x407F27), and sub_410290 then settles it.
+	set_process(frames.size() > 1 or _clip_advances_to >= 0)
 	_set_drawn_as_actor(_clip_loops and frames.size() > 1)
 	_show_frame(0)
 	state_changed.emit(state)
@@ -205,7 +207,7 @@ func _stop_clip() -> void:
 
 
 func _process(delta: float) -> void:
-	if _clip.size() < 2:
+	if _clip.is_empty() or (_clip.size() < 2 and _clip_advances_to < 0):
 		set_process(false)
 		return
 	_clip_elapsed += delta

@@ -65,6 +65,13 @@ GLOBAL_CONSEQUENCE_TARGETS = {
 # composite bounds out with it.
 PIVOT_SANITY_LIMIT = 4096
 
+# A sprite header carries its own colour key, a little-endian 0x00RRGGBB at +524, which
+# OGD_LoadContainer_Parse stores in the sprite (sub_42C300, 0x42E099) and sub_42CCF0 copies
+# into the blit (0x42CDF9). World items draw in mode 7 (Main_RenderUpdate, 0x4029AF), whose
+# 32bpp blitters (0x444E30, and 0x444C10 with depth) skip any pixel whose low three bytes
+# match it. 8bpp frames key on palette index 255 instead, which their extracted PNGs carry.
+COLOUR_KEY_OFFSET = 524
+
 # States a level can ask an object for that ship no art at all. sub_40FDA0 stores the state
 # regardless and keeps the previous clip, so the object reaches its damaged look without a
 # transition; the port settles an unplayable DESTROY_n on its DESTROYED_n instead. Listing
@@ -182,6 +189,27 @@ def frame_paths(root: Path, sprites: dict, frame_ids: list) -> list:
     return result
 
 
+def keyed_frame_rgba(folder: Path, info):
+    """A 32bpp frame's pixels with its colour key cleared, or None when nothing matches it.
+
+    The extraction writes 32bpp frames out as stored, key colour and all. The janitor's
+    case ships a DESTROY_1 that is a 16x16 square of nothing but its own key, so copied as
+    is it drew a magenta block where the original draws nothing.
+    """
+    pixels = folder / "SPRITECB.bin"
+    if not pixels.is_file():
+        return None
+    data = pixels.read_bytes()
+    key = (folder / "SPRITEHDR.bin").read_bytes()[COLOUR_KEY_OFFSET : COLOUR_KEY_OFFSET + 3]
+    keyed = [offset for offset in range(0, len(data), 4) if data[offset : offset + 3] == key]
+    if not keyed:
+        return None
+    rgba = bytearray(data)
+    for offset in keyed:
+        rgba[offset + 3] = 0
+    return bytes(rgba)
+
+
 def export(root: Path, check: bool) -> int:
     actions = json.loads((root / ACTIONS_REL).read_text())
     state_names = actions["item_states"]
@@ -221,13 +249,20 @@ def export(root: Path, check: bool) -> int:
                         "size": [info.w, info.h],
                     }
                 )
+                keyed = keyed_frame_rgba(folder, info)
                 if check:
-                    if not destination.is_file() or destination.read_bytes() != source.read_bytes():
-                        failures.append(str(destination.relative_to(root)))
+                    if keyed is None:
+                        if not destination.is_file() or destination.read_bytes() != source.read_bytes():
+                            failures.append(str(destination.relative_to(root)))
+                    elif not _matches_rgba(destination, info, keyed):
+                        failures.append(f"{destination.relative_to(root)} (colour key not cleared)")
                     _check_depth(root, folder, info, depth_destination, failures)
                 else:
                     destination.parent.mkdir(parents=True, exist_ok=True)
-                    destination.write_bytes(source.read_bytes())
+                    if keyed is None:
+                        destination.write_bytes(source.read_bytes())
+                    else:
+                        write_rgba_png(destination, info.w, info.h, keyed)
                     _write_depth(folder, info, depth_destination)
             states[state_names[state]] = {
                 "state": state,
@@ -290,6 +325,13 @@ def _write_depth(folder: Path, info, destination: Path) -> None:
         return
     depth, mask = read_frame_depth(folder, info.w, info.h)
     write_rgba_png(destination, info.w, info.h, encode_depth_rgba(depth, mask, info.w, info.h))
+
+
+def _matches_rgba(destination: Path, info, expected: bytes) -> bool:
+    if not destination.is_file():
+        return False
+    with Image.open(destination) as actual:
+        return actual.size == (info.w, info.h) and actual.convert("RGBA").tobytes() == expected
 
 
 def _check_depth(root: Path, folder: Path, info, destination: Path, failures: list) -> None:

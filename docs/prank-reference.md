@@ -142,9 +142,35 @@ when the slot is null, so those objects reach their damaged art without a transi
 port takes the same route explicitly, settling an unplayable `DESTROY_n` on its
 `DESTROYED_n`.
 
-The precise moment an absent clip settles depends on when the engine raises the finished
-flag at `anim+556` for the clip still playing, which is not recovered. It does not change
-where the object ends up, only whether a frame or two of the old art is shown first.
+The finished flag is raised by the item's frame selector, `CObjectAnim_SelectFrameFromTime`
+(item vtable `0x46555C` +36, called from `sub_410290` at `0x4102CE`, after the settle test).
+For a clip whose loop flag `anim+548` is clear it sets `anim+556` once
+`int((now − anim+552) · fps · speed)` reaches the frame count (`0x407F21`–`0x407F27`), and
+`sub_40FDA0` starts every `DESTROY_n` as such a one-shot from the current time
+(`0x40FE0C`–`0x40FE1F`). So a `DESTROY_n` of **one frame** is shown for exactly `1/fps`
+seconds and then settles, by the same rule as a longer one; the port's one-frame clips run
+on the same clock (`scenes/shared/map_object.gd`). Ten such clips are in reach: `DESTROY_1`
+of the janitor's case (`HMKOFFER`, 16 fps), the handbag (16 fps), the case (1 fps) and the
+phone `TELEFON01` (16 fps), at each angle shipped. The phone has no `DESTROYED_1`, so it
+settles on state 9 still showing its `DESTROY_1` frame, as `sub_40FDA0` keeps the previous
+clip.
+
+The looping branch of the same function never raises the flag. By the recovered code alone,
+then, an absent `DESTROY_n` entered from a looping clip such as `IDLE` would hold state n on
+that clip and never reach `DESTROYED_n`. The port settles it at once, as above. That has not
+been compared with the running original.
+
+The case's one-frame `DESTROY_1` is also a 16×16 square of nothing but its own colour key
+(`0xFF00FF`). The sprite header's colour key is the little-endian `0x00RRGGBB` at +524, which
+`OGD_LoadContainer_Parse` stores in the sprite (`sub_42C300`, `0x42E099`) and `sub_42CCF0`
+copies into the blit (`0x42CDF9`). Items draw in mode 7 (`Main_RenderUpdate`, `0x4029AF`),
+whose 32bpp blitters (`0x444E30`, and `0x444C10` with depth) skip every pixel whose low three
+bytes match it, so the original draws that frame as nothing. The extraction writes 32bpp
+frames as stored, so `tools/export_object_state_assets.py` clears the key itself. 8bpp
+frames key on palette index 255, which their extracted PNGs already carry. The handbag's
+and the case's one-frame `DESTROY_1` are 4×4 squares of (116, 116, 116) with a key of 0 and
+a stored alpha of 0. Mode 7 ignores alpha, so the original draws them as a small grey square
+for `1/fps`. The port keeps the stored alpha and draws nothing there.
 
 ### Cost of a state change in the port
 
