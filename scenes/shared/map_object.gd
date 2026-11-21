@@ -7,7 +7,8 @@ signal changed
 signal state_changed(state: int)
 
 # sub_40FDA0 clamps an item state to 0..15 and picks its clip from a per-state slot.
-# DESTROY_1..7 play once and then advance to the matching DESTROYED_n, which loops.
+# DESTROY_1..7 play once and then advance to the matching DESTROYED_n, which loops. A state
+# the container ships no clip for plays the IDLE clip. See docs/prank-reference.md.
 const STATE_NAMES := [
 	"IDLE", "USE",
 	"DESTROY_1", "DESTROY_2", "DESTROY_3", "DESTROY_4", "DESTROY_5", "DESTROY_6", "DESTROY_7",
@@ -49,13 +50,16 @@ var _states: Dictionary = {}
 var _states_loaded := false
 var _idle_texture: Texture2D
 var _idle_pivot := Vector2.ZERO
+# The IDLE clip's fps and frame count, which an empty DESTROY_n plays once.
+var _idle_clip: Dictionary = {}
 var _clip: Array = []
 var _clip_textures: Array = []
 var _clip_fps := 0.0
 var _clip_elapsed := 0.0
 var _clip_frame := -1
-var _clip_advances_to := -1
 var _clip_loops := false
+# anim+556: a one-shot that has run out holds its last frame with this raised.
+var _clip_finished := false
 var _drawn_as_actor := false
 
 
@@ -114,6 +118,7 @@ func _load_states() -> void:
 	var parsed = JSON.parse_string(file.get_as_text())
 	if parsed is Dictionary:
 		_states = parsed.get("states", {})
+		_idle_clip = parsed.get("idle", {})
 
 
 func has_state(target: int) -> bool:
@@ -121,47 +126,55 @@ func has_state(target: int) -> bool:
 	return target == 0 or _states.has(STATE_NAMES[target]) if target >= 0 and target < STATE_NAMES.size() else false
 
 
-# The engine stores the requested state even when the object ships no art for it, and an
-# unplayable DESTROY_n settles on its DESTROYED_n. See docs/prank-reference.md.
 func set_state(target: int) -> void:
 	_load_states()
 	target = clampi(target, 0, STATE_NAMES.size() - 1)
 	state = target
-	var clip: Dictionary = _states.get(STATE_NAMES[target], {})
-	if clip.is_empty():
-		if FIRST_TRANSITION_STATE <= target and target <= LAST_TRANSITION_STATE:
-			var settled := target + DESTROYED_OFFSET
-			if _states.has(STATE_NAMES[settled]):
-				set_state(settled)
-				return
-		if target == 0:
-			_stop_clip()
-			_apply_texture(_idle_texture, _idle_pivot)
+	if target == 0:
+		_stop_clip()
+		_apply_texture(_idle_texture, _idle_pivot)
 		_set_drawn_as_actor(false)
+		state_changed.emit(state)
+		return
+	var clip := _clip_for(target)
+	var frames: Array = clip.get("frames", [])
+	if frames.is_empty():
+		# Only an object with no state manifest at all lands here; it never changes look.
 		state_changed.emit(state)
 		return
 
-	var frames: Array = clip.get("frames", [])
-	if frames.is_empty():
-		_set_drawn_as_actor(false)
-		state_changed.emit(state)
-		return
 	_clip = frames
 	_warm_clip_textures(frames)
 	_clip_fps = maxf(float(clip.get("fps", 8.0)), 0.001)
 	_clip_elapsed = 0.0
 	_clip_frame = -1
-	_clip_advances_to = int(clip.get("advances_to", -1)) if clip.get("advances_to") != null else -1
-	# The container's own loop flag, which every DESTROYED_n carries and no DESTROY_n does:
-	# a transition plays once and settles, a damaged state runs for as long as it is held.
-	_clip_loops = bool(clip.get("loop", false))
+	_clip_finished = false
+	# sub_40FDA0 sets the loop flag by state, not by clip (0x40FE07): a DESTROY_n plays once
+	# and settles, every other state runs for as long as it is held.
+	_clip_loops = not (FIRST_TRANSITION_STATE <= target and target <= LAST_TRANSITION_STATE)
 	# A looping single frame is a plain swap. A DESTROY_n runs on the clock even when it is
 	# one frame: CObjectAnim_SelectFrameFromTime flags a one-shot finished once
 	# int(t * fps) reaches its frame count (0x407F27), and sub_410290 then settles it.
-	set_process(frames.size() > 1 or _clip_advances_to >= 0)
+	set_process(frames.size() > 1 or not _clip_loops)
 	_set_drawn_as_actor(_clip_loops and frames.size() > 1)
 	_show_frame(0)
 	state_changed.emit(state)
+
+
+# sub_410550 names the sixteen slots and gives every state the container ships no clip for
+# the IDLE clip instead (0x41087C), so no state is without one: an empty DESTROY_n plays
+# IDLE once and settles, an empty DESTROYED_n shows IDLE. See docs/prank-reference.md.
+func _clip_for(target: int) -> Dictionary:
+	var clip: Dictionary = _states.get(STATE_NAMES[target], {})
+	if not (clip.get("frames", []) as Array).is_empty():
+		return clip
+	if _idle_texture == null or _idle_clip.is_empty():
+		return {}
+	var frame := {"texture": _idle_texture.resource_path, "pivot": [_idle_pivot.x, _idle_pivot.y]}
+	var frames := []
+	for index in range(maxi(int(_idle_clip.get("frame_count", 1)), 1)):
+		frames.append(frame)
+	return {"frames": frames, "fps": float(_idle_clip.get("fps", 0.0))}
 
 
 # Frames are loaded by path as they are shown. Holding them for the length of the clip
@@ -202,28 +215,30 @@ func _stop_clip() -> void:
 	_clip = []
 	_clip_textures.clear()
 	_clip_frame = -1
-	_clip_advances_to = -1
 	_clip_loops = false
+	_clip_finished = false
 
 
 func _process(delta: float) -> void:
-	if _clip.is_empty() or (_clip.size() < 2 and _clip_advances_to < 0):
+	if _clip.is_empty() or _clip_finished or (_clip_loops and _clip.size() < 2):
 		set_process(false)
 		return
 	_clip_elapsed += delta
 	var index := int(_clip_elapsed * _clip_fps)
-	if index >= _clip.size():
-		if _clip_loops:
-			_clip_elapsed = fmod(_clip_elapsed, float(_clip.size()) / _clip_fps)
-			_show_frame(int(_clip_elapsed * _clip_fps))
-			return
-		# sub_410290 advances a finished DESTROY_n to its DESTROYED_n.
-		var settled := _clip_advances_to
-		_stop_clip()
-		if settled >= 0:
-			set_state(settled)
+	if index < _clip.size():
+		_show_frame(index)
 		return
-	_show_frame(index)
+	if _clip_loops:
+		_clip_elapsed = fmod(_clip_elapsed, float(_clip.size()) / _clip_fps)
+		_show_frame(int(_clip_elapsed * _clip_fps))
+		return
+	_show_frame(_clip.size() - 1)
+	_clip_finished = true
+	_clip_textures.clear()
+	set_process(false)
+	# sub_410290 (0x4102BC): a DESTROY_n whose clip has finished steps forward by seven.
+	if FIRST_TRANSITION_STATE <= state and state <= LAST_TRANSITION_STATE:
+		set_state(state + DESTROYED_OFFSET)
 
 
 func get_depth_actor() -> Dictionary:

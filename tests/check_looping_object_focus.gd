@@ -224,6 +224,8 @@ func _check_copier_after_asscopy() -> void:
 	_expect_lit_over(copier, "idle copier")
 
 	await _run_action(copier, ASSCOPY)
+	# The copier ships no DESTROY_1, so it plays its IDLE clip once before DESTROYED_1.
+	copier._process(0.125)
 	_expect(copier.state == 9, "ASSCOPY leaves the copier on DESTROYED_1, got %d" % copier.state)
 	_expect(copier.is_in_group(MapObject.ACTOR_GROUP), "the looping copier is drawn as a depth actor")
 	await _place_player(clean)

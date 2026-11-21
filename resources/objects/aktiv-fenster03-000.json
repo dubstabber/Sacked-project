@@ -1,6 +1,10 @@
 {
   "angle": "000",
   "generated_by": "tools/export_object_state_assets.py",
+  "idle": {
+    "fps": 16.0,
+    "frame_count": 1
+  },
   "sprite": "FENSTER03",
   "states": {
     "DESTROYED_1": {

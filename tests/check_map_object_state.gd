@@ -5,8 +5,12 @@ const MapObjectScript := preload("res://scenes/shared/map_object.gd")
 # The server is the richest level-1 case: a real seven frame transition plus three
 # single frame results.
 const ServerScene := "res://scenes/objects/aktiv-server-000.tscn"
-# The mirror ships no DESTROY_1 at all, so breaking it settles straight on DESTROYED_1.
+# The mirror ships DESTROYED_1 but no DESTROY_1, so breaking it plays the IDLE clip the
+# factory put in that slot, once, and then settles on its broken art.
 const MirrorScene := "res://scenes/objects/aktiv-spiegel-000.tscn"
+# The phone's one-frame DESTROY_1 finishes into a DESTROYED_1 it does not ship, which shows
+# IDLE again.
+const PhoneScene := "res://scenes/objects/aktiv-telefon01-000.tscn"
 # The copier is level 2's looping case: DESTROYED_1 runs 25 frames at 16 fps and never
 # settles, and the first NPC to use the copier puts it there in ordinary play.
 const CopierScene := "res://scenes/objects/aktiv-kopierer-000.tscn"
@@ -26,7 +30,9 @@ func _run() -> void:
 	await _check_single_frame_swap()
 	await _check_transition_settles()
 	await _check_single_frame_transition_settles()
-	await _check_missing_transition_settles_immediately()
+	await _check_missing_transition_plays_idle_once()
+	await _check_missing_settled_state_shows_idle()
+	await _check_new_state_replaces_a_running_clip()
 	await _check_idle_restores()
 	await _check_looping_state_runs_and_leaves_the_bake()
 	if _failures == 0:
@@ -120,15 +126,52 @@ func _check_single_frame_transition_settles() -> void:
 	_release(case_node)
 
 
-func _check_missing_transition_settles_immediately() -> void:
+func _check_missing_transition_plays_idle_once() -> void:
 	var mirror := _instance(MirrorScene)
 	await process_frame
 	var idle: Texture2D = mirror.color_texture
 	_expect(not mirror.has_state(2), "the mirror ships no DESTROY_1")
+	_expect(mirror.has_state(9), "the mirror does ship DESTROYED_1")
 	mirror.set_state(2)
-	_expect(mirror.state == 9, "a missing transition settles straight on DESTROYED_1, got %d" % mirror.state)
-	_expect(mirror.color_texture != idle, "the mirror still shows its damaged art")
+	_expect(mirror.state == 2, "the missing DESTROY_1 is entered, got %d" % mirror.state)
+	_expect(mirror.color_texture == idle, "and plays the IDLE clip in its place")
+	_expect(mirror.is_processing(), "once, on the clock")
+	# The mirror's IDLE is one frame at 16 fps.
+	mirror._process(0.05)
+	_expect(mirror.state == 2, "IDLE holds for its own length, got %d" % mirror.state)
+	mirror._process(0.02)
+	_expect(mirror.state == 9, "and then settles on DESTROYED_1, got %d" % mirror.state)
+	_expect(mirror.color_texture != idle, "the mirror shows its broken art")
 	_release(mirror)
+
+
+func _check_missing_settled_state_shows_idle() -> void:
+	var phone := _instance(PhoneScene)
+	await process_frame
+	var idle: Texture2D = phone.color_texture
+	_expect(not phone.has_state(9), "the phone ships no DESTROYED_1")
+	phone.set_state(2)
+	_expect(phone.color_texture != idle, "its DESTROY_1 shows a frame of its own")
+	phone._process(0.1)
+	_expect(phone.state == 9, "the phone's DESTROY_1 settles on DESTROYED_1, got %d" % phone.state)
+	_expect(phone.color_texture == idle, "which shows IDLE again")
+	_expect(not phone.is_processing(), "and runs no clock")
+	_release(phone)
+
+
+# Every state has a clip, so every set_state replaces the one playing and a clip only ever
+# settles its own state.
+func _check_new_state_replaces_a_running_clip() -> void:
+	var server := _instance(ServerScene)
+	await process_frame
+	var idle: Texture2D = server.color_texture
+	server.set_state(3)
+	server._process(0.25)
+	server.set_state(2)
+	_expect(server.state == 2 and server.color_texture == idle, "a missing DESTROY_1 mid-transition shows IDLE at once")
+	server._process(0.07)
+	_expect(server.state == 9, "and settles on DESTROYED_1 after IDLE's length, got %d" % server.state)
+	_release(server)
 
 
 func _check_idle_restores() -> void:

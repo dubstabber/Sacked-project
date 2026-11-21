@@ -1,6 +1,6 @@
 {
   "generated_by": "tools/export_object_state_assets.py",
-  "comment": "States a level asks an object for that ship no art at all. sub_40FDA0 stores the state regardless and keeps the previous clip, so the object reaches its damaged look without a transition; the port settles an unplayable DESTROY_n on its DESTROYED_n instead. The list is generated so a batch of new levels does not have to be transcribed, and --check diffs it both ways, so a state that stops resolving still fails.",
+  "comment": "States a level asks an object for that ship no art at all. sub_410550 gives each of them the IDLE clip, so an empty DESTROY_n plays IDLE once and settles on its DESTROYED_n, and an empty DESTROYED_n shows IDLE (docs/prank-reference.md). The list is generated so a batch of new levels does not have to be transcribed, and --check diffs it both ways, so a state that stops resolving still fails.",
   "states": [
     "aktiv-aktenablage-000 DESTROY_1 (no clip in the container)",
     "aktiv-aktenablage-090 DESTROY_1 (no clip in the container)",

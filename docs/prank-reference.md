@@ -133,11 +133,12 @@ if ( n2 >= 2 && n2 <= 8 && *(_DWORD *)(*(this + 116) + 556) == 1 )
 
 so a finished transition steps forward by exactly seven into its matching damaged state.
 
-The object factory fills one animation slot per state at `item + 128 + 4*state`, naming
-each clip `CO_OBJECTS_<family>_<sprite>_<state>_<angle>`, and leaves the slot null when
-the container has no such clip. **Most objects ship no `DESTROY_n` at all**: of the 80
-state clips level 1 can reach, 38 are single frames, 12 are real clips (ten one-shot
-transitions and two loops) and 30 are absent.
+The object factory `sub_410550` fills one animation slot per state at
+`item + 128 + 4*state`, naming each clip `CO_OBJECTS_<family>_<sprite>_<state>_<angle>`.
+A state the container ships no such clip for **gets the IDLE clip** (`0x41087C`–`0x410880`);
+only a missing IDLE drops the object (`0x4107BF`). **Most objects ship no `DESTROY_n` at
+all**: of the 80 state clips level 1 can reach, 38 are single frames, 12 are real clips (ten
+one-shot transitions and two loops) and 30 are absent.
 
 The names keep the container's own spelling, `KÜHLSCHRANK`, `MÜLLEIMER01`, `POSTFÄCHER`,
 `MONITOR&TASTATUR#FRONTAL`, `SALZ&ZUCKER`, `TOIKABINE&EIMER`, and so do the sprites in
@@ -147,28 +148,48 @@ each object through the IDLE clip whose first frame is its own sprite, checks th
 prefix ends in the item's sprite name as the factory's lookup does, and finds each frame
 through its sanitised folder. Until 2026-11-21 it cut the prefix from the folder name, so
 the fridge, the three bins, the four monitors, the pigeonholes, salt and sugar, the sink,
-the dishwasher and the toilet cubicle with its bucket showed none of their 84 states. `sub_40FDA0` stores the requested state regardless but keeps the previous clip
-when the slot is null, so those objects reach their damaged art without a transition. The
-port takes the same route explicitly, settling an unplayable `DESTROY_n` on its
-`DESTROYED_n`.
+the dishwasher and the toilet cubicle with its bucket showed none of their 84 states.
 
 The finished flag is raised by the item's frame selector, `CObjectAnim_SelectFrameFromTime`
 (item vtable `0x46555C` +36, called from `sub_410290` at `0x4102CE`, after the settle test).
 For a clip whose loop flag `anim+548` is clear it sets `anim+556` once
-`int((now − anim+552) · fps · speed)` reaches the frame count (`0x407F21`–`0x407F27`), and
-`sub_40FDA0` starts every `DESTROY_n` as such a one-shot from the current time
-(`0x40FE0C`–`0x40FE1F`). So a `DESTROY_n` of **one frame** is shown for exactly `1/fps`
-seconds and then settles, by the same rule as a longer one; the port's one-frame clips run
-on the same clock (`scenes/shared/map_object.gd`). Ten such clips are in reach: `DESTROY_1`
-of the janitor's case (`HMKOFFER`, 16 fps), the handbag (16 fps), the case (1 fps) and the
-phone `TELEFON01` (16 fps), at each angle shipped. The phone has no `DESTROYED_1`, so it
-settles on state 9 still showing its `DESTROY_1` frame, as `sub_40FDA0` keeps the previous
-clip.
+`int((now − anim+552) · fps · speed)` reaches the frame count (`0x407F21`–`0x407F27`); the
+looping branch never raises it. `sub_40FDA0` sets that loop flag by **state**, not by clip
+(`0x40FE07`): every `DESTROY_n` starts as a one-shot from the current time
+(`0x40FE0C`–`0x40FE1F`), every other state loops. So a `DESTROY_n` of **one frame** is shown
+for exactly `1/fps` seconds and then settles, by the same rule as a longer one. Ten such
+clips are in reach: `DESTROY_1` of the janitor's case (`HMKOFFER`, 16 fps), the handbag
+(16 fps), the case (1 fps) and the phone `TELEFON01` (16 fps), at each angle shipped.
 
-The looping branch of the same function never raises the flag. By the recovered code alone,
-then, an absent `DESTROY_n` entered from a looping clip such as `IDLE` would hold state n on
-that clip and never reach `DESTROYED_n`. The port settles it at once, as above. That has not
-been compared with the running original.
+The IDLE clip in an empty slot plays by the same rules as a real one:
+
+- an absent `DESTROY_n` plays IDLE **once**, for IDLE's own length, then settles on its
+  `DESTROYED_n`. Every prankable object's IDLE is one frame at 16 fps, so the object shows
+  its intact art for 1/16 s and then its damaged art. The mirror on level 1 ships a broken
+  `DESTROYED_1` and no `DESTROY_1` (the raw `CO_OBJECTS.OGD` has no `SPIEGEL_DESTROY_*`
+  name at all), so it breaks that way;
+- an absent `DESTROYED_n` shows IDLE for as long as it is held. The phone has no
+  `DESTROYED_1`, so after its one-frame `DESTROY_1` it settles on state 9 looking intact.
+
+Of the 206 entries in `resources/objects/missing_states.json`, 191 are absent `DESTROY_n`
+and 15 absent `DESTROYED_n`. Since every state has a clip, every call to `sub_40FDA0`
+replaces the one playing, and the settle test in `sub_410290` reads the object's current
+state, a clip only ever settles its own state. The callers are the factory's start at IDLE
+(`0x4107D7`, `0x410B47`), the reset `sub_4100B0`, the player's action `sub_41B240`, the
+consequences `sub_41DC80`, the end of prank 79's blackout putting the air conditioners back
+to 0 (`0x41D4B3`) and a colleague's use (state 9, then 0, `sub_416340`). Every unpaused
+tick updates every item (`sub_402590`, `0x402600`).
+
+An `Animation` is one object per clip, shared by every item that draws it. So the IDLE clip
+an empty `DESTROY_n` plays once has its loop flag, start and finished flag rewritten for
+every item of that sprite and view, until one of them is put back in IDLE. Every prankable
+IDLE is a single frame, so nothing on screen changes; the port keeps no such sharing.
+
+The port follows this in `MapObject._clip_for` and `set_state`
+(`scenes/shared/map_object.gd`), with each object's IDLE fps and frame count exported into
+its state manifest as `idle`, and `tests/check_map_object_state.gd` covers it. Until
+2026-11-21 the port settled an absent `DESTROY_n` at once and held an absent `DESTROYED_n`
+on the last frame shown.
 
 The case's one-frame `DESTROY_1` is also a 16×16 square of nothing but its own colour key
 (`0xFF00FF`). The sprite header's colour key is the little-endian `0x00RRGGBB` at +524, which

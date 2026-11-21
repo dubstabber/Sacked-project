@@ -72,10 +72,10 @@ PIVOT_SANITY_LIMIT = 4096
 # match it. 8bpp frames key on palette index 255 instead, which their extracted PNGs carry.
 COLOUR_KEY_OFFSET = 524
 
-# States a level can ask an object for that ship no art at all. sub_40FDA0 stores the state
-# regardless and keeps the previous clip, so the object reaches its damaged look without a
-# transition; the port settles an unplayable DESTROY_n on its DESTROYED_n instead. Listing
-# them keeps the gap from growing silently -- a state that stops resolving fails the check.
+# States a level can ask an object for that ship no art at all. sub_410550 gives each of
+# them the IDLE clip, so an empty DESTROY_n plays IDLE once and settles on its DESTROYED_n,
+# and an empty DESTROYED_n shows IDLE (docs/prank-reference.md). Listing them keeps the gap
+# from growing silently -- a state that stops resolving fails the check.
 MISSING_STATES_REL = Path("resources/objects/missing_states.json")
 
 
@@ -91,12 +91,12 @@ def missing_states_text(states) -> str:
         {
             "generated_by": "tools/export_object_state_assets.py",
             "comment": (
-                "States a level asks an object for that ship no art at all. sub_40FDA0 "
-                "stores the state regardless and keeps the previous clip, so the object "
-                "reaches its damaged look without a transition; the port settles an "
-                "unplayable DESTROY_n on its DESTROYED_n instead. The list is generated so "
-                "a batch of new levels does not have to be transcribed, and --check diffs "
-                "it both ways, so a state that stops resolving still fails."
+                "States a level asks an object for that ship no art at all. sub_410550 "
+                "gives each of them the IDLE clip, so an empty DESTROY_n plays IDLE once "
+                "and settles on its DESTROYED_n, and an empty DESTROYED_n shows IDLE "
+                "(docs/prank-reference.md). The list is generated so a batch of new levels "
+                "does not have to be transcribed, and --check diffs it both ways, so a "
+                "state that stops resolving still fails."
             ),
             "states": sorted(states),
         },
@@ -302,10 +302,13 @@ def export(root: Path, check: bool) -> int:
                 "frames": entries,
             }
 
+        # sub_410550 plays the IDLE clip in every slot the container leaves empty (0x41087C),
+        # so an empty DESTROY_n lasts as long as IDLE does.
         manifest = {
             "generated_by": "tools/export_object_state_assets.py",
             "sprite": spec["sprite"],
             "angle": spec["angle"],
+            "idle": {"fps": float(idle.fps), "frame_count": len(idle.frames)},
             "states": states,
         }
         path = root / STATE_MANIFEST_DIR_REL / f"{key}.json"
@@ -341,7 +344,7 @@ def export(root: Path, check: bool) -> int:
 
     print(
         f"{'Verified' if check else 'Exported'} {written} frames across {clips} state clips. "
-        f"{len(unresolved)} states have no art and settle on the object's damaged state instead."
+        f"{len(unresolved)} states have no art and play the IDLE clip instead."
     )
     return 0
 
