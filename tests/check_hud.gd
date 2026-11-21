@@ -170,43 +170,62 @@ func _check_lamps(console: Node) -> void:
 
 
 # game+14724 sits at (662, 536), the stopwatch, and is fed player+992 * 100 / player+1000.
+# A half and a whole sweep cover what the original's fan does at 0.5 and 1.0, 2178 and 4413
+# pixels (tests/fixtures/round_bar_goldens.json).
 func _check_action_progress(console: Node) -> void:
 	var bar := console.get_node("Band/ClockBar") as Sprite2D
 	console.set_action_progress(0.0, 0.0)
 	_expect(not bar.visible, "the progress bar is hidden while no action runs")
 	console.set_action_progress(2.5, 5.0)
 	_expect(bar.visible, "the progress bar shows while an action runs")
-	var swept: float = (bar.material as ShaderMaterial).get_shader_parameter("progress")
-	_expect(is_equal_approx(swept, 0.5), "the stopwatch is swept to how far the action has come, got %f" % swept)
+	_expect(_drawn_pixels(console) == 2178, "half an action sweeps half the dial, got %d pixels" % _drawn_pixels(console))
 	console.set_action_progress(9.0, 5.0)
-	swept = (bar.material as ShaderMaterial).get_shader_parameter("progress")
-	_expect(is_equal_approx(swept, 1.0), "the sweep never runs past a full turn, got %f" % swept)
+	_expect(_drawn_pixels(console) == 4413, "the sweep never runs past a full turn, got %d pixels" % _drawn_pixels(console))
 	console.set_action_progress(0.0, 0.0)
 
 
-# CGUIRoundBarTex fans out *from* (662, 536): every vertex is r away from it and the texel
-# it samples is the same offset from the texture's own centre, so the 72 x 72 texels the fan
-# can reach are painted a radius up and left of the element. Its sweep starts at +1140
-# rather than at the top, which is the tilt of the painted dial. See docs/hud-reference.md.
+# The window the console last drew. The headless renderer keeps no texture data, so this reads
+# the image the bar's texture is updated from.
+func _drawn_pixels(console: Node) -> int:
+	var image: Image = console.get("_clock_image")
+	var count := 0
+	for y in range(image.get_height()):
+		for x in range(image.get_width()):
+			if image.get_pixel(x, y).a > 0.0:
+				count += 1
+	return count
+
+
+# CGUIRoundBarTex fans out *from* (662, 536) with the radius, step and start angle
+# sub_405930 gives it, so the console draws a window around that centre rather than the
+# texture at its corner, and every pixel it draws is a texel of the dial art.
+# See docs/hud-reference.md.
 func _check_the_stopwatch_sweeps_the_dial(console: Node) -> void:
 	var bar := console.get_node("Band/ClockBar") as Sprite2D
-	_expect(not bar.centered, "the stopwatch texture is placed from its top left")
-	_expect(
-		bar.offset == Vector2(-36, -36),
-		"the sweep hangs a radius up and left of the element, got %s" % bar.offset
-	)
-	var material := bar.material as ShaderMaterial
-	_expect(material != null, "the stopwatch carries the sweep shader")
-	if material == null:
-		return
-	var radius: float = material.get_shader_parameter("radius")
-	var start: float = material.get_shader_parameter("start_angle")
-	_expect(is_equal_approx(radius, 36.0), "the fan keeps the original radius, got %f" % radius)
-	_expect(is_equal_approx(start, 0.5), "the sweep starts at the original angle, got %f" % start)
-	_expect(
-		bar.texture != null and bar.texture.get_width() >= 2 * radius and bar.texture.get_height() >= 2 * radius,
-		"the dial art covers the whole 2r x 2r window the fan samples"
-	)
+	_expect(not bar.centered, "the stopwatch window is placed from its top left")
+	_expect(console.CLOCK_BAR_RADIUS == 38.0, "the fan keeps the original radius, got %f" % console.CLOCK_BAR_RADIUS)
+	_expect(console.CLOCK_BAR_STEP == 15, "the fan keeps the original step, got %d" % console.CLOCK_BAR_STEP)
+	_expect(console.CLOCK_BAR_START_ANGLE == 0.5, "the sweep starts at the original angle")
+	var half := RoundBarFan.WINDOW / 2
+	_expect(bar.position == Vector2(662, 536), "the stopwatch element sits at its centre, got %s" % bar.position)
+	_expect(bar.offset == Vector2(-half, -half), "the window hangs half its size up and left, got %s" % bar.offset)
+	var dial := (load("res://images/gui/hud/clock-full.png") as Texture2D).get_image()
+	dial.convert(Image.FORMAT_RGBA8)
+	var fan := RoundBarFan.new(console.CLOCK_BAR_CENTRE, console.CLOCK_BAR_RADIUS, console.CLOCK_BAR_STEP, console.CLOCK_BAR_START_ANGLE, dial.get_width())
+	var texels: PackedInt32Array = fan.draw(1.0)[0]
+	console.set_action_progress(1.0, 1.0)
+	var image: Image = console.get("_clock_image")
+	var wrong := 0
+	for index in range(texels.size()):
+		if texels[index] == RoundBarFan.NONE:
+			continue
+		var texel := texels[index]
+		var expected := dial.get_pixel(texel % dial.get_width(), texel / dial.get_width())
+		var shown := image.get_pixel(index % RoundBarFan.WINDOW, index / RoundBarFan.WINDOW)
+		if not shown.is_equal_approx(Color(expected.r, expected.g, expected.b, 1.0)):
+			wrong += 1
+	_expect(wrong == 0, "every swept pixel shows the dial texel the fan maps to it, %d do not" % wrong)
+	console.set_action_progress(0.0, 0.0)
 
 
 # game+14732 is fed `188 - (aggro * 1.42 + 46)` as the width to crop off its right edge.

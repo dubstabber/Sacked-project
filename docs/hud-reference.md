@@ -20,7 +20,7 @@ fixed only in height, so it keeps them as offsets inside two anchored 800 × 600
 | Hover text | `(135, 556)` | 100 | Arial 22, regular (flags `0x64`), colour `(250, 250, 250)`, initially `...` |
 | Action icon | `(170, 477)` | 100 | a `CGUIRectangle` over the ACTICON set, `+1163 = 255` |
 | Aggression bar | `(410, 497)` | 100 | `CO_GUI_CONSOLE_AGGRO_FULL` |
-| Clock bar | `(662, 536)` (its **centre**) | 0x8000 | `CO_GUI_CONSOLE_CLOCK_FULL`, radius `+96 = 36.0`, start angle `+1140 = 0.5` |
+| Clock bar | `(662, 536)` (its **centre**) | 0x8000 | `CO_GUI_CONSOLE_CLOCK_FULL`, radius `+96 = 38.0`, step `+100 = 15`, start angle `+1140 = 0.5` |
 | Matrix lamp | `(754, 537)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_MATRIX_ACT` |
 | Urination lamp | `(756, 485)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_PISS_ACT` |
 | Smoking lamp | `(717, 461)` | 1 | `CGUIActionIcon`, `CO_GUI_CONSOLE_SMOKE_ACT` |
@@ -591,7 +591,7 @@ An ability feeds the stopwatch and the hover bar from the same fields as a prank
 change. See [player-ability-reference.md](player-ability-reference.md).
 
 `game+14724` is the widget at **(662, 536)** — the stopwatch, `CO_GUI_CONSOLE_CLOCK_FULL`,
-radius `+96 = 36.0` — so the running action sweeps around the stopwatch, not along the
+radius `+96 = 38.0` — so the running action sweeps around the stopwatch, not along the
 aggression bar at (410, 497).
 
 ## The aggression bar and its warning
@@ -631,28 +631,49 @@ under "Fonts"). In the port the 220 is the banner sprite's `self_modulate`, not 
 
 ## How the stopwatch is swept
 
-`CGUIRoundBarTex::Draw` is `sub_45AEE0`. It emits a gouraud-textured **triangle fan**, one
-triangle per angular step, each sharing the element's own position as its apex:
+`CGUIRoundBarTex::Draw` is `sub_45AEE0`. It emits a textured **triangle fan**, one triangle
+per angular step, each sharing the element's own position as its apex. `sub_405930` builds
+the stopwatch with radius `+96 = 38.0` (`0x405A2E`, `0x42180000`) and start angle
+`+1140 = 0.5` (`0x405A66`); the step `+100 = 15` is the `CGUIRoundBar` constructor's default
+(`sub_45A960`, `0x45A983`), which nothing changes. (An earlier reading had the radius at 36.0.
+The port drew a 2-pixel-narrower disc 2 pixels off, and the console's white dial showed through
+the rim as gaps.)
 
 ```text
-vertex at angle a:  x = cx + r * sin a          u = (sin a + 1) * r
-                    y = cy - r * cos a          v = r - r * cos a
-apex:               x = cx, y = cy              u = r, v = r
-sweep:              a from  this+1140  to  this+1140 + progress * 6.28 + 0.01
+step:               (12.56 / (r * 12.56)) * 15 = 15 / r radians, a float  (0x45B023)
+vertex at angle a:  x = trunc(r sin a + cx)        u = trunc((sin a + 1) r)
+                    y = trunc(cy - r cos a)        v = trunc(r - r cos a)
+apex:               x = cx, y = cy                 u = v = trunc(r)
+sweep:              whole triangles from +1140 while the next one still ends short of
+                    +1140 + progress * 6.28 + 0.01, then one partial triangle up to it
 ```
+
+At 38 the step is 0.3947 radians, so a whole turn is **16 triangles**, and the rim is a
+16-sided polygon with truncated corners, not a circle. Each triangle goes through
+`sub_42C900` to the filler `sub_457400`, which sorts the corners by row, steps a left and a
+right edge with a Bresenham error term (`sub_456F10`, `sub_4570F0`; the slope divides by
+`sub_427900`, a floor division), and fills rows one past the top down to the bottom,
+columns one past the left edge up to and including the right one. The texel is the left
+edge's `u, v`, stepped across the span in 12-bit fixed point, so along a span the texels
+drift against the pixels: at a full sweep, 54% of the dial shows texel `(x − 625, y − 498)`
+and 46% `(x − 626, y − 498)`. The blit copies the 32-bit texel whole, with no key and no
+alpha.
 
 Three consequences the port has to honour:
 
-- **`(662, 536)` is the centre of the disc, not the corner of the texture.** `cx` and `cy`
-  are integers and the vertex coordinates are truncated, so texel `(u, v)` lands on screen
-  pixel `(cx - r + u, cy - r + v)` exactly: the texture's top-left `2r × 2r = 72 × 72`
-  texels are painted over `(626, 500)`–`(698, 572)`. Sampling the exported art against the
-  console frame agrees — the dial correlates best with its top-left texel at `(625, 499)`.
-- **Only the disc is drawn.** The fan never covers the texture's corners, so the 75 × 77
-  sprite's last three columns and five rows are never sampled.
+- **`(662, 536)` is the centre of the fan, not the corner of the texture.** At a full sweep
+  the fan covers x 625–699, y 499–572, 4413 pixels.
+- **Neither the rim nor the texels follow from a disc test.** A circle of radius 38 still
+  differs from the fan on 124 pixels once drawn, and of radius 36 on 4392.
 - **The sweep does not start at the top.** `+1140 = 0.5` radians ≈ 28.6°, which is the angle
   the painted dial is tilted by: starting there puts angle zero on the dial's own `60` mark
   and 45% of a turn on its `27`.
 
-The port reproduces this in `scenes/shared/round_bar.gdshader`, with the sprite offset by
-`-radius` on both axes so its node still sits at the original element position.
+The port runs the same fan and filler in `scenes/shared/round_bar_fan.gd` (`RoundBarFan`),
+keeping the whole triangles drawn so far and drawing only the partial one afresh each frame.
+`scenes/hud/console.gd` uploads its 80 × 80 window, centred on the element, as the
+`ClockBar`'s texture. `tools/export_round_bar_goldens.py` runs the original `sub_45AEE0`
+under emulation (unicorn) for 19 progress values, either side of three steps included, and
+records which texel lands on each pixel in `tests/fixtures/round_bar_goldens.json`.
+`tests/check_round_bar.gd` holds the port to it pixel for pixel, from a fresh fan, a fan
+climbing through every case and one falling back.

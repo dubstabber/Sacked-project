@@ -385,7 +385,7 @@ func _check_the_console_reads_the_ability() -> void:
 	var icon := _console.get_node("Band/ActionIcon") as Sprite2D
 	for _i in range(96):
 		_abilities.advance(STEP)
-	var progress := float((clock.material as ShaderMaterial).get_shader_parameter("progress"))
+	var progress := float(_console.action_progress)
 	_expect(clock.visible and is_equal_approx(progress, _abilities.elapsed * 100.0 / 1200.0), "the stopwatch sweeps elapsed / 12 s, got %f" % progress)
 	_expect(not icon.visible, "the centre icon stays hidden")
 	_expect(_hover_text() == ActionTable.action_name(76), "the hover bar holds the record's name")
@@ -685,7 +685,7 @@ func _check_urinating_pays_by_room() -> void:
 			_abilities.advance(STEP)
 			guard += 1
 			if guard == 56:
-				var progress := float((clock.material as ShaderMaterial).get_shader_parameter("progress"))
+				var progress := float(_console.action_progress)
 				_expect(clock.visible and is_equal_approx(progress, _abilities.elapsed * 100.0 / 700.0), "the stopwatch sweeps elapsed / 7 s, got %f" % progress)
 			if _abilities.state == 23 and state_23_at < 0.0:
 				state_23_at = _abilities.now - started

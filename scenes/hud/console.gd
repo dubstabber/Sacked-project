@@ -22,10 +22,12 @@ const PAINTED_FRAMES := {
 }
 const UNLABELLED_FRAME := preload("res://images/gui/hud/console-unlabelled.png")
 
-const PROGRESS_SHADER := preload("res://scenes/shared/round_bar.gdshader")
-# CGUIRoundBarTex's own fields: +96 is the fan radius and +1140 the angle its sweep starts
-# at, which is short of the top because the painted dial is tilted.
-const CLOCK_BAR_RADIUS := 36.0
+# CGUIRoundBarTex as sub_405930 builds the stopwatch: its centre (662, 536), radius +96 = 38.0
+# (0x405A2E), the fan's step +100 = 15 (the CGUIRoundBar default, 0x45A983) and the angle its
+# sweep starts at, +1140 = 0.5, short of the top because the painted dial is tilted.
+const CLOCK_BAR_CENTRE := Vector2i(662, 536)
+const CLOCK_BAR_RADIUS := 38.0
+const CLOCK_BAR_STEP := 15
 const CLOCK_BAR_START_ANGLE := 0.5
 
 const AbilityController := preload("res://scenes/player/ability_controller.gd")
@@ -74,7 +76,11 @@ var _abilities: Node
 var _left_held := false
 var _latched := false
 var _pointer := Vector2.INF
-var _progress_material: ShaderMaterial
+# game+14724's +112: how far the running action has come, as last drawn.
+var action_progress := 0.0
+var _clock_fan: RoundBarFan
+var _clock_image: Image
+var _clock_texture: ImageTexture
 var _thermo_remaining := 0.0
 var _aggro_up_remaining := 0.0
 
@@ -94,14 +100,18 @@ func _ready() -> void:
 	_match_frame_to_language()
 
 	# game+14724 sits at (662, 536) -- the stopwatch -- and is fed
-	# player+992 * 100 / player+1000, swept rather than clipped. That position is the centre
-	# of the sweep, not the texture's corner, which is why the sprite hangs a radius up and
-	# left of it. See docs/hud-reference.md.
-	_progress_material = ShaderMaterial.new()
-	_progress_material.shader = PROGRESS_SHADER
-	_progress_material.set_shader_parameter("radius", CLOCK_BAR_RADIUS)
-	_progress_material.set_shader_parameter("start_angle", CLOCK_BAR_START_ANGLE)
-	_progress.material = _progress_material
+	# player+992 * 100 / player+1000, swept rather than clipped: RoundBarFan draws the
+	# original's own triangle fan from the clock texture into a window around that centre.
+	# See docs/hud-reference.md.
+	var source := _progress.texture.get_image()
+	if source.is_compressed():
+		source.decompress()
+	source.convert(Image.FORMAT_RGBA8)
+	_clock_fan = RoundBarFan.new(CLOCK_BAR_CENTRE, CLOCK_BAR_RADIUS, CLOCK_BAR_STEP, CLOCK_BAR_START_ANGLE, source.get_width(), source.get_data())
+	_clock_image = Image.create_empty(RoundBarFan.WINDOW, RoundBarFan.WINDOW, false, Image.FORMAT_RGBA8)
+	_clock_texture = ImageTexture.create_from_image(_clock_image)
+	_progress.texture = _clock_texture
+	_progress.offset = Vector2(_clock_fan.origin - CLOCK_BAR_CENTRE)
 	set_action_progress(0.0, 0.0)
 
 	_actions = get_tree().get_first_node_in_group("player_actions")
@@ -122,11 +132,16 @@ func _on_highlight_changed(entry: Dictionary) -> void:
 
 
 func set_action_progress(elapsed: float, total: float) -> void:
-	if _progress.texture == null:
+	if _clock_fan == null:
 		return
 	var fraction := clampf(elapsed / total, 0.0, 1.0) if total > 0.0 else 0.0
+	action_progress = fraction
 	_progress.visible = fraction > 0.0
-	_progress_material.set_shader_parameter("progress", fraction)
+	if not _progress.visible:
+		return
+	var drawn: Array = _clock_fan.draw(fraction)
+	_clock_image.set_data(RoundBarFan.WINDOW, RoundBarFan.WINDOW, false, Image.FORMAT_RGBA8, drawn[1])
+	_clock_texture.update(_clock_image)
 
 
 # The original crops the bar's right edge by a truncated width, so what survives is the
